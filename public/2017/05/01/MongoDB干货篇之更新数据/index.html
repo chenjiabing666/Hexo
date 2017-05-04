@@ -1,0 +1,712 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>MongoDB干货篇之更新数据 | 觅</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Chenjiabing">
+    
+
+    
+    <meta name="description" content="MongoDB干货篇之数据更新常用的函数
+
+update(&amp;lt;query&amp;gt;,&amp;lt;update&amp;gt;,&amp;lt;upsert&amp;gt;,&amp;lt;multi&amp;gt;),其中&amp;lt;query&amp;gt;表示筛选的条件，&amp;lt;update&amp;gt;是要更新的数据
+
+updateMany()   更新所有匹配到的数据
+
+
+
+upsert
+upsert是一个布尔类型的数据，如果为true时，当根据q">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB干货篇之更新数据">
+<meta property="og:url" content="http://chenjiabing666.github.io/2017/05/01/MongoDB干货篇之更新数据/index.html">
+<meta property="og:site_name" content="觅">
+<meta property="og:description" content="MongoDB干货篇之数据更新常用的函数
+
+update(&amp;lt;query&amp;gt;,&amp;lt;update&amp;gt;,&amp;lt;upsert&amp;gt;,&amp;lt;multi&amp;gt;),其中&amp;lt;query&amp;gt;表示筛选的条件，&amp;lt;update&amp;gt;是要更新的数据
+
+updateMany()   更新所有匹配到的数据
+
+
+
+upsert
+upsert是一个布尔类型的数据，如果为true时，当根据q">
+<meta property="og:updated_time" content="2017-05-01T00:16:55.183Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MongoDB干货篇之更新数据">
+<meta name="twitter:description" content="MongoDB干货篇之数据更新常用的函数
+
+update(&amp;lt;query&amp;gt;,&amp;lt;update&amp;gt;,&amp;lt;upsert&amp;gt;,&amp;lt;multi&amp;gt;),其中&amp;lt;query&amp;gt;表示筛选的条件，&amp;lt;update&amp;gt;是要更新的数据
+
+updateMany()   更新所有匹配到的数据
+
+
+
+upsert
+upsert是一个布尔类型的数据，如果为true时，当根据q">
+
+    
+    <link rel="alternative" href="/atom.xml" title="觅" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="觅" title="觅"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="觅">觅</a></h1>
+				<h2 class="blog-motto">爱生活爱编码</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/05/01/MongoDB干货篇之更新数据/" title="MongoDB干货篇之更新数据" itemprop="url">MongoDB干货篇之更新数据</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Chenjiabing" target="_blank" itemprop="author">Chenjiabing</a>
+		
+  <p class="article-time">
+    <time datetime="2017-05-01T00:13:32.000Z" itemprop="datePublished"> 发表于 2017-05-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MongoDB干货篇之数据更新"><span class="toc-number">1.</span> <span class="toc-text">MongoDB干货篇之数据更新</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#常用的函数"><span class="toc-number">1.1.</span> <span class="toc-text">常用的函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#upsert"><span class="toc-number">1.1.1.</span> <span class="toc-text">upsert</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#multi"><span class="toc-number">1.1.2.</span> <span class="toc-text">multi</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#字段更新操作符-Field-Update-Operators"><span class="toc-number">1.2.</span> <span class="toc-text">字段更新操作符 Field Update Operators</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#set"><span class="toc-number">1.2.1.</span> <span class="toc-text">$set</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#unset"><span class="toc-number">1.2.2.</span> <span class="toc-text">$unset</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#inc"><span class="toc-number">1.2.3.</span> <span class="toc-text">$inc</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rename"><span class="toc-number">1.2.4.</span> <span class="toc-text">$rename</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数组更新操作符-Array-Update-Operators"><span class="toc-number">1.3.</span> <span class="toc-text">数组更新操作符 Array Update Operators</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#query"><span class="toc-number">1.3.1.</span> <span class="toc-text">$ (query)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#push"><span class="toc-number">1.3.2.</span> <span class="toc-text">$push</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pull"><span class="toc-number">1.3.3.</span> <span class="toc-text">$pull</span></a></li></ol></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="MongoDB干货篇之数据更新"><a href="#MongoDB干货篇之数据更新" class="headerlink" title="MongoDB干货篇之数据更新"></a>MongoDB干货篇之数据更新</h1><h2 id="常用的函数"><a href="#常用的函数" class="headerlink" title="常用的函数"></a>常用的函数</h2><blockquote>
+<ul>
+<li><p><code>update(&lt;query&gt;,&lt;update&gt;,&lt;upsert&gt;,&lt;multi&gt;)</code>,其中<code>&lt;query&gt;</code>表示筛选的条件，<code>&lt;update&gt;</code>是要更新的数据</p>
+</li>
+<li><p><code>updateMany()</code>   更新所有匹配到的数据</p>
+</li>
+</ul>
+</blockquote>
+<h3 id="upsert"><a href="#upsert" class="headerlink" title="upsert"></a>upsert</h3><blockquote>
+<p><code>upsert</code>是一个布尔类型的数据，如果为<code>true</code>时，当根据<code>query</code>条件没有找到匹配的数据时，就表示插入此条数据，如果为<code>false</code>就表示不插入数据</p>
+<p>下面将会在一个空的集合中更新数据<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//就会插入此条数据，因为没有找到匹配的信息</span></div><div class="line">db.user.update(&#123;<span class="string">'name'</span>:<span class="string">'chenjiabing'</span>,<span class="string">'age'</span>:<span class="number">22</span>,<span class="string">'sex'</span>:<span class="string">"Man"</span>&#125;,&#123;<span class="attr">$set</span>:&#123;<span class="string">'hobby'</span>:<span class="string">'read'</span>&#125;&#125;,&#123;<span class="string">'upsert'</span>:<span class="literal">true</span>&#125;);  </div><div class="line"></div><div class="line">db.user.update(&#123;<span class="string">'name'</span>:<span class="string">'chenjiabing'</span>,<span class="string">'age'</span>:<span class="number">22</span>,<span class="string">'sex'</span>:<span class="string">"Man"</span>&#125;,&#123;<span class="attr">$set</span>:&#123;<span class="string">'hobby'</span>:<span class="string">'read'</span>&#125;&#125;,<span class="literal">true</span>);   <span class="comment">//和上面的语句等价</span></div><div class="line"></div><div class="line"><span class="comment">//输出  db.user.find()</span></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59067b70856d5893a687655f"</span>), <span class="string">"age"</span> : <span class="number">22</span>, <span class="string">"name"</span> : <span class="string">"chenjiabing"</span>, <span class="string">"sex"</span> : <span class="string">"Man"</span>, <span class="string">"hobby"</span> : <span class="string">"read"</span> &#125;</div></pre></td></tr></table></figure></p>
+</blockquote>
+<h3 id="multi"><a href="#multi" class="headerlink" title="multi"></a>multi</h3><blockquote>
+<p><em>如果这个参数为<code>true</code>,就把按条件查出来多条记录全部更新。默认为<code>false</code>,如果为<code>true</code>的话和<code>updateMany()</code>一样的效果</em></p>
+<p>下面将会更新所有匹配到的数据</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">db.user.update(&#123;<span class="attr">name</span>:<span class="string">'chenjiabing'</span>&#125;,&#123;<span class="attr">$set</span>:&#123;<span class="string">'hobby'</span>:<span class="string">'code'</span>&#125;&#125;,&#123;<span class="string">'multi'</span>:<span class="literal">true</span>&#125;);</div></pre></td></tr></table></figure>
+<h2 id="字段更新操作符-Field-Update-Operators"><a href="#字段更新操作符-Field-Update-Operators" class="headerlink" title="字段更新操作符 Field Update Operators"></a>字段更新操作符 Field Update Operators</h2><h3 id="set"><a href="#set" class="headerlink" title="$set"></a>$set</h3><blockquote>
+<p><code>$set</code>用来指定一个键的值。如果这个键不存在，则创建它。<strong>注意这里的更新默认是只更新第一条匹配到的数据，如果第一条匹配的数据已经满足修改后的条件，那么将不会执行下面匹配的信息</strong></p>
+<ul>
+<li>下面我们将会添加一条信息在数据库中</li>
+</ul>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">db.user.insert(&#123;<span class="string">"name"</span>:<span class="string">'jack'</span>,<span class="string">"age"</span>:<span class="number">22</span>,<span class="string">"sex"</span>:<span class="string">'Man'</span>,<span class="string">'school'</span>:&#123;<span class="string">'name'</span>:<span class="string">'jsnu'</span>,<span class="string">'city'</span>:<span class="string">'xuzhou'</span>&#125;&#125;);</div></pre></td></tr></table></figure>
+<blockquote>
+<blockquote>
+<p>运行下面的代码，将该用户的兴趣设置为“读书”并添加至文档中(此时文档中<code>hobby</code>键是不存在，该条文档就会创建它)</p>
+</blockquote>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">db.user.update(&#123;<span class="attr">name</span>:<span class="string">'jack'</span>&#125;,&#123;<span class="attr">$set</span>:&#123;<span class="string">'hobby'</span>:<span class="string">'read'</span>&#125;&#125;)</div></pre></td></tr></table></figure>
+<blockquote>
+<blockquote>
+<p>下面将会修改用户的<strong>年龄</strong></p>
+</blockquote>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">db.user.update(&#123;<span class="string">'name'</span>:<span class="string">'jack'</span>&#125;,&#123;<span class="attr">$set</span>:&#123;<span class="string">'age'</span>:<span class="number">20</span>&#125;&#125;)</div></pre></td></tr></table></figure>
+<blockquote>
+<blockquote>
+<p>下面用<code>$set</code>修改<strong>数据类型</strong>，将<code>sex</code>设置为<code>1</code></p>
+</blockquote>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">db.user.update(&#123;<span class="string">'name'</span>:<span class="string">'jack'</span>&#125;,&#123;<span class="attr">$set</span>:&#123;<span class="string">'sex'</span>:<span class="number">1</span>&#125;&#125;)</div></pre></td></tr></table></figure>
+<blockquote>
+<blockquote>
+<p>下面用<code>$set</code>修改<strong>内嵌文档</strong>，必须指定文档的名字和键值</p>
+</blockquote>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">db.user.update(&#123;<span class="attr">name</span>:<span class="string">'jack'</span>&#125;,&#123;<span class="attr">$set</span>:&#123;<span class="string">'school.name'</span>:<span class="string">'shida'</span>,<span class="string">'school.city'</span>:<span class="string">'beijing'</span>&#125;&#125;)</div></pre></td></tr></table></figure>
+<h3 id="unset"><a href="#unset" class="headerlink" title="$unset"></a>$unset</h3><blockquote>
+<p>从文档中<strong>移除</strong>指定的键</p>
+<p>下面将要删除上面插入的<code>hobby</code>键</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">db.user.update(&#123;<span class="attr">name</span>:<span class="string">'jack'</span>&#125;,&#123;<span class="attr">$unset</span>:&#123;<span class="string">'hobby'</span>:<span class="number">1</span>&#125;&#125;)   <span class="comment">//这里的值是任意给的，随便什么值</span></div></pre></td></tr></table></figure>
+<h3 id="inc"><a href="#inc" class="headerlink" title="$inc"></a>$inc</h3><blockquote>
+<p><code>$inc</code>修改器用来<strong>增加</strong>已有键的值，<strong>或者在键不存在时创建一个键</strong><code>$inc</code>就是专门来增加（和减少）数字的。<code>$inc</code>只能用于<strong>整数、长整数或双精度浮点数</strong>。要是用在其他类型的数据上就会导致操作失败</p>
+<p>例如毎次有人访问该博文，该条博文的浏览数就加<code>1</code>，用键<code>pageViews</code>保存浏览数信息。这个键值上面没有定义过，所以会自动创建一个</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">db.user.update(&#123;<span class="attr">name</span>:<span class="string">'jack'</span>&#125;,&#123;<span class="attr">$inc</span>:&#123;<span class="string">'pageViews'</span>:<span class="number">1</span>&#125;&#125;);    <span class="comment">//起初没有就会自动创建一个键</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>下面演示增加和减少</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">db.user.update(&#123;<span class="attr">name</span>:<span class="string">'jack'</span>&#125;,&#123;<span class="attr">$inc</span>:&#123;<span class="string">'pageViews'</span>:<span class="number">100</span>&#125;&#125;)  ;  <span class="comment">//这里是在上面的基础上加上100，此时变成了101</span></div><div class="line"></div><div class="line">db.user.update(&#123;<span class="attr">name</span>:<span class="string">'jack'</span>&#125;,&#123;<span class="attr">$inc</span>:&#123;<span class="string">"pageViews"</span>:<span class="number">-100</span>&#125;&#125;) ;   <span class="comment">//这里是在上面的基础上减去100,此时还是变成了1</span></div></pre></td></tr></table></figure>
+<h3 id="rename"><a href="#rename" class="headerlink" title="$rename"></a>$rename</h3><blockquote>
+<p><strong>语法：</strong><code>{$rename: { &lt;old name1&gt;: &lt;new name1&gt;, &lt;old name2&gt;: &lt;new name2&gt;, ... } }</code></p>
+<p><code>$rename</code>操作符可以<strong>重命名字段名称</strong>，新的字段名称不能和文档中现有的字段名相同。</p>
+<p>下面重新插入一条数据，并且改变这条数据的键的名称</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">db.user.insert(&#123;<span class="attr">name</span>:<span class="string">'chenjiabing'</span>,<span class="string">'age'</span>:<span class="number">22</span>,<span class="string">'sex'</span>:<span class="string">'Man'</span>,<span class="string">'school'</span>:&#123;<span class="string">'name'</span>:<span class="string">'jsnu'</span>,<span class="string">'city'</span>:<span class="string">'beijing'</span>&#125;&#125;);</div><div class="line"></div><div class="line">db.user.update(&#123;<span class="attr">name</span>:<span class="string">'chenjiabing'</span>&#125;,&#123;<span class="attr">$rename</span>:&#123;<span class="string">'age'</span>:<span class="string">'Age'</span>&#125;&#125;)   <span class="comment">//重命名age为Age</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>下面将要演示怎样改变内嵌文档的键的名称，<strong>注意一定要带上文档的名字</strong></p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">db.user.update(&#123;<span class="attr">name</span>:<span class="string">'chenjiabing'</span>&#125;,&#123;<span class="attr">$rename</span>:&#123;<span class="string">'school.name'</span>:<span class="string">'school.Name'</span>,<span class="string">'school.city'</span>:<span class="string">'school.City'</span>&#125;&#125;);</div></pre></td></tr></table></figure>
+<blockquote>
+<p>如果重命名的字段字和集合中原有的字段名字相同的话就会<strong>覆盖</strong>原有的字段名称，那么就会造成数据的丢失</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">db.user.update(&#123;<span class="attr">name</span>:<span class="string">'chenjiabing'</span>&#125;,&#123;<span class="string">'$rename'</span>:&#123;<span class="string">'sex'</span>,<span class="string">'age'</span>&#125;&#125;);  <span class="comment">//这里sex变成age和原来的age相同，那么原来的age就会丢失</span></div><div class="line"></div><div class="line">db.user.find(&#123;<span class="attr">name</span>:<span class="string">'chenjiabing'</span>&#125;);  </div><div class="line"></div><div class="line"><span class="comment">//输出，可以看到原来的age没有了,变成了覆盖之后的</span></div><div class="line"></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"590674ce30b9f88dd43d7ee4"</span>), <span class="string">"name"</span> : <span class="string">"chenjiabing"</span>, <span class="string">"age"</span> : <span class="string">"Man"</span>, <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"jsnu"</span>, <span class="string">"city"</span> : <span class="string">"beijing"</span> &#125; &#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>如果指定的字段不存在，那么将不会更新，对原来的字段没有影响</strong></p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">db.user.update(&#123;<span class="attr">name</span>:<span class="string">'chenjiabing'</span>&#125;,&#123;<span class="attr">$rename</span>:&#123;<span class="attr">value</span>:<span class="string">'name'</span>&#125;&#125;);  <span class="comment">//将不会有任何的改变，因为value这个字段根本不存在</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p><strong><code>$rename</code>操作符也可以将子文档中键值移到其他子文档中</strong></p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">db.user.update(&#123;<span class="attr">name</span>:<span class="string">'chenjiabing'</span>&#125;,&#123;<span class="attr">$rename</span>:&#123;<span class="string">'school.name'</span>:<span class="string">'contact.name'</span>&#125;&#125;);<span class="comment">// 这里将会将school.name这个字段的值移到contact.name之中，如果contact不存在，那么就会创建一个</span></div><div class="line"></div><div class="line"><span class="comment">//输出</span></div><div class="line"></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"590674ce30b9f88dd43d7ee4"</span>), <span class="string">"name"</span> : <span class="string">"chenjiabing"</span>, <span class="string">"age"</span> : <span class="string">"Man"</span>, <span class="string">"school"</span> : &#123; <span class="string">"city"</span> : <span class="string">"beijing"</span> &#125;, <span class="string">"contact"</span> : &#123; <span class="string">"name"</span> : <span class="string">"jsnu"</span> &#125; &#125;</div></pre></td></tr></table></figure>
+<h2 id="数组更新操作符-Array-Update-Operators"><a href="#数组更新操作符-Array-Update-Operators" class="headerlink" title="数组更新操作符 Array Update Operators"></a>数组更新操作符 Array Update Operators</h2><blockquote>
+<p><em>只能用在键值为数组的键上的数组操作。</em></p>
+</blockquote>
+<h3 id="query"><a href="#query" class="headerlink" title="$ (query)"></a>$ (query)</h3><blockquote>
+<p><strong>语法</strong>:<code>{ &quot;&lt;array&gt;.$&quot; : value }</code></p>
+<p>当对数组字段进行更新时，且没有明确指定的元素在数组中的位置，我们使用定位操作符<code>$</code>标识一个元素，数字都是以<code>0</code>开始的。</p>
+<p><strong>注意:</strong></p>
+<ul>
+<li>定位操作符(“$”)作为第一个匹配查询条件的元素的占位符，也就是在数组中的索引值。</li>
+<li>数组字段必须出现查询文档中。</li>
+</ul>
+<p>向集合中插入两条数据</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">db.students.insert(&#123; <span class="string">"_id"</span> : <span class="number">1</span>, <span class="string">"grades"</span> : [ <span class="number">78</span>, <span class="number">88</span>, <span class="number">88</span> ] &#125;);</div><div class="line">db.students.insert(&#123; <span class="string">"_id"</span> : <span class="number">2</span>, <span class="string">"grades"</span> : [ <span class="number">88</span>, <span class="number">90</span>, <span class="number">92</span> ] &#125;);</div></pre></td></tr></table></figure>
+<blockquote>
+<p>执行下列操作</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//查询匹配的文档中，数组有2个88，只更新第一个匹配的元素，也就是"grades.1"</span></div><div class="line">db.students.update( &#123; <span class="attr">_id</span>: <span class="number">1</span>, <span class="attr">grades</span>: <span class="number">88</span> &#125;, &#123; <span class="attr">$set</span>: &#123; <span class="string">"grades.$"</span> : <span class="number">82</span> &#125; &#125;) ;</div><div class="line"><span class="comment">//查询文档中没有出现grades字段，查询报错</span></div><div class="line">db.students.update( &#123; <span class="attr">_id</span>: <span class="number">2</span> &#125;, &#123; <span class="attr">$set</span>: &#123; <span class="string">"grades.$"</span> : <span class="number">82</span> &#125; &#125; );</div></pre></td></tr></table></figure>
+<h3 id="push"><a href="#push" class="headerlink" title="$push"></a>$push</h3><blockquote>
+<p><em>如果指定的键已经存在，会向已有的数组末尾加入一个元素，要是没有就会创建一个新的数组。</em></p>
+<p>下面我们将使用<code>$push</code>对该文档添加一条评论信息。</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">//将会创建一个comments数组，因为一开始这个数组没有存在</span></div><div class="line">db.user.update(&#123;<span class="attr">name</span>:<span class="string">'chenjiabing'</span>&#125;,&#123;<span class="attr">$push</span>:&#123;<span class="attr">comments</span>:&#123;<span class="string">'name'</span>:<span class="string">'jack'</span>,<span class="string">'content'</span>:<span class="string">'hello thanks'</span>&#125;&#125;&#125;)</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">//继续添加一条，在comments的末尾进行添加，此时comments变成两条数据了</span></div><div class="line">db.user.update(&#123;<span class="attr">name</span>:<span class="string">'chenjiabing'</span>&#125;,&#123;<span class="attr">$push</span>:&#123;<span class="attr">comments</span>:&#123;<span class="string">'name'</span>:<span class="string">'john'</span>,<span class="string">'content'</span>:<span class="string">'hello'</span>&#125;&#125;&#125;)</div></pre></td></tr></table></figure>
+<h3 id="pull"><a href="#pull" class="headerlink" title="$pull"></a>$pull</h3><blockquote>
+<p><strong>语法</strong>：<code>db.collection.update( { field: &lt;query&gt; }, { $pull: { field: &lt;query&gt; } } );</code></p>
+<p><em><code>$pull</code>操作符移除指定字段值为数组，且匹配<code>$pull</code>操作符移除指定字段值为数组，且匹配<code>$pull</code>语句声明的查询条件的所有元素。</em></p>
+<p>执行如下操作</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">//插入一条文档</span></div><div class="line">db.profiles.insert(&#123; <span class="attr">votes</span>: [ <span class="number">3</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">7</span>, <span class="number">8</span> ] &#125;);</div><div class="line"><span class="comment">//移除数组中所有元素7</span></div><div class="line">db.profiles.update( &#123; <span class="attr">votes</span>: <span class="number">3</span> &#125;, &#123; <span class="attr">$pull</span>: &#123; <span class="attr">votes</span>: <span class="number">7</span> &#125; &#125; );</div><div class="line"><span class="comment">//移除数组中所有大于6的元素</span></div><div class="line">db.profiles.update( &#123; <span class="attr">votes</span>: <span class="number">3</span> &#125;, &#123; <span class="attr">$pull</span>: &#123; <span class="attr">votes</span>: &#123; <span class="attr">$gt</span>: <span class="number">6</span> &#125; &#125; &#125; );</div><div class="line"></div><div class="line"><span class="comment">//Result</span></div><div class="line">&#123; <span class="attr">votes</span>: [ <span class="number">3</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">8</span> ] &#125;</div><div class="line"></div><div class="line">&#123; <span class="attr">votes</span>: [ <span class="number">3</span>, <span class="number">5</span>, <span class="number">6</span> ] &#125;</div></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/数据库干货篇/">数据库干货篇</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/MongoDB/">MongoDB</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2017/05/01/MongoDB干货篇之更新数据/" data-title="MongoDB干货篇之更新数据 | 觅" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2017/04/30/MongoDB干货篇之查询数据/"  title="MongoDB干货篇之查询数据">
+ <strong>下一篇：</strong><br/> 
+ <span>MongoDB干货篇之查询数据
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MongoDB干货篇之数据更新"><span class="toc-number">1.</span> <span class="toc-text">MongoDB干货篇之数据更新</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#常用的函数"><span class="toc-number">1.1.</span> <span class="toc-text">常用的函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#upsert"><span class="toc-number">1.1.1.</span> <span class="toc-text">upsert</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#multi"><span class="toc-number">1.1.2.</span> <span class="toc-text">multi</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#字段更新操作符-Field-Update-Operators"><span class="toc-number">1.2.</span> <span class="toc-text">字段更新操作符 Field Update Operators</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#set"><span class="toc-number">1.2.1.</span> <span class="toc-text">$set</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#unset"><span class="toc-number">1.2.2.</span> <span class="toc-text">$unset</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#inc"><span class="toc-number">1.2.3.</span> <span class="toc-text">$inc</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rename"><span class="toc-number">1.2.4.</span> <span class="toc-text">$rename</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数组更新操作符-Array-Update-Operators"><span class="toc-number">1.3.</span> <span class="toc-text">数组更新操作符 Array Update Operators</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#query"><span class="toc-number">1.3.1.</span> <span class="toc-text">$ (query)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#push"><span class="toc-number">1.3.2.</span> <span class="toc-text">$push</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pull"><span class="toc-number">1.3.3.</span> <span class="toc-text">$pull</span></a></li></ol></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/BootStrap学习/" title="BootStrap学习">BootStrap学习<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/JQuery学习/" title="JQuery学习">JQuery学习<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Scrapy学习/" title="Scrapy学习">Scrapy学习<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python数据挖掘与分析/" title="python数据挖掘与分析">python数据挖掘与分析<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/scrapy/" title="scrapy">scrapy<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/swing/" title="swing">swing<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java图形与文本处理/" title="java图形与文本处理">java图形与文本处理<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JQuery/" title="JQuery">JQuery<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JDBC/" title="JDBC">JDBC<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BootStrap/" title="BootStrap">BootStrap<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/matplotlib/" title="matplotlib">matplotlib<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 人前显贵人后受罪 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="Chenjiabing">Chenjiabing</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

@@ -1,0 +1,607 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>scrapy设置请求池 | 觅</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Chenjiabing">
+    
+
+    
+    <meta name="description" content="scrapy设置”请求池”引言
+相信大家有时候爬虫发出请求的时候会被ban，返回的是403错误，这个就是请求头的问题，其实在python发出请求时，使用的是默认的自己的请求头，网站管理者肯定会不允许机器访问的，但是有些比较low的网站还是可以访问的，有时候网站管理者看到同一个请求头在一秒内请求多次，傻子都知道这是机器在访问，因此会被ban掉，这时就需要设置请求池了，这个和ip代理池是一个概念
+爬虫">
+<meta property="og:type" content="article">
+<meta property="og:title" content="scrapy设置请求池">
+<meta property="og:url" content="http://chenjiabing666.github.io/2017/03/26/scrapy设置请求池/index.html">
+<meta property="og:site_name" content="觅">
+<meta property="og:description" content="scrapy设置”请求池”引言
+相信大家有时候爬虫发出请求的时候会被ban，返回的是403错误，这个就是请求头的问题，其实在python发出请求时，使用的是默认的自己的请求头，网站管理者肯定会不允许机器访问的，但是有些比较low的网站还是可以访问的，有时候网站管理者看到同一个请求头在一秒内请求多次，傻子都知道这是机器在访问，因此会被ban掉，这时就需要设置请求池了，这个和ip代理池是一个概念
+爬虫">
+<meta property="og:updated_time" content="2017-03-27T03:31:34.444Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="scrapy设置请求池">
+<meta name="twitter:description" content="scrapy设置”请求池”引言
+相信大家有时候爬虫发出请求的时候会被ban，返回的是403错误，这个就是请求头的问题，其实在python发出请求时，使用的是默认的自己的请求头，网站管理者肯定会不允许机器访问的，但是有些比较low的网站还是可以访问的，有时候网站管理者看到同一个请求头在一秒内请求多次，傻子都知道这是机器在访问，因此会被ban掉，这时就需要设置请求池了，这个和ip代理池是一个概念
+爬虫">
+
+    
+    <link rel="alternative" href="/atom.xml" title="觅" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="觅" title="觅"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="觅">觅</a></h1>
+				<h2 class="blog-motto">爱生活爱编码</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/03/26/scrapy设置请求池/" title="scrapy设置请求池" itemprop="url">scrapy设置请求池</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Chenjiabing" target="_blank" itemprop="author">Chenjiabing</a>
+		
+  <p class="article-time">
+    <time datetime="2017-03-26T06:20:10.000Z" itemprop="datePublished"> 发表于 2017-03-26</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#scrapy设置”请求池”"><span class="toc-number">1.</span> <span class="toc-text">scrapy设置”请求池”</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#引言"><span class="toc-number">1.1.</span> <span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#爬虫请求常见的错误"><span class="toc-number">1.2.</span> <span class="toc-text">爬虫请求常见的错误</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#话不多说直接撸代码"><span class="toc-number">1.3.</span> <span class="toc-text">话不多说直接撸代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#说明"><span class="toc-number">1.4.</span> <span class="toc-text">说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意"><span class="toc-number">1.5.</span> <span class="toc-text">注意</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作者说"><span class="toc-number">1.6.</span> <span class="toc-text">作者说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="scrapy设置”请求池”"><a href="#scrapy设置”请求池”" class="headerlink" title="scrapy设置”请求池”"></a>scrapy设置”请求池”</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><blockquote>
+<p>相信大家有时候爬虫发出请求的时候会被ban，返回的是403错误，这个就是请求头的问题，其实在python发出请求时，使用的是默认的自己的请求头，网站管理者肯定会不允许机器访问的，但是有些比较low的网站还是可以访问的，有时候网站管理者看到同一个请求头在一秒内请求多次，傻子都知道这是机器在访问，因此会被ban掉，这时就需要设置请求池了，这个和ip代理池是一个概念</p>
+<h2 id="爬虫请求常见的错误"><a href="#爬虫请求常见的错误" class="headerlink" title="爬虫请求常见的错误"></a>爬虫请求常见的错误</h2><blockquote>
+<p>200：请求成功      处理方式：获得响应的内容，进行处理<br>201：请求完成，结果是创建了新资源。新创建资源的 URI 可在响应的实体中得到    处理方式：爬虫中不会遇到<br>202：请求被接受，但处理尚未完成    处理方式：阻塞等待<br>204：服务器端已经实现了请求，但是没有返回新的信 息。如果客户是用户代理，则无须为此更新自身的文档视图。    处理方式：丢弃<br>300：该状态码不被 HTTP/1.0 的应用程序直接使用， 只是作为 3XX 类型回应的默认解释。存在多个可用的被请求资源。    处理方式：若程序中能够处理，则进行进一步处理，如果程序中不能处理，则丢弃<br>301：请求到的资源都会分配一个永久的 URL，这样就可以在将来通过该 URL 来访问此资源    处理方式：重定向到分配的 URL<br>302：请求到的资源在一个不同的 URL 处临时保存     处理方式：重定向到临时的 URL<br>304 请求的资源未更新     处理方式：丢弃<br>400 非法请求     处理方式：丢弃<br>401 未授权     处理方式：丢弃<br>403 禁止     处理方式：丢弃<br>404 没有找到     处理方式：丢弃<br>5XX 回应代码以“5”开头的状态码表示服务器端发现自己出现错误，不能继续执行请求    处理方式：丢弃</p>
+</blockquote>
+</blockquote>
+<h2 id="话不多说直接撸代码"><a href="#话不多说直接撸代码" class="headerlink" title="话不多说直接撸代码"></a>话不多说直接撸代码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">from</span> scrapy <span class="keyword">import</span> log</div><div class="line"><span class="keyword">import</span> random</div><div class="line"><span class="keyword">from</span> scrapy.downloadermiddlewares.useragent <span class="keyword">import</span> UserAgentMiddleware</div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">RotateUserAgentMiddleware</span><span class="params">(UserAgentMiddleware)</span>:</span></div><div class="line"><span class="comment"># for more user agent strings,you can find it in http://www.useragentstring.com/pages/useragentstring.php</span></div><div class="line">user_agent_list = [</div><div class="line">    <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/22.0.1207.1 Safari/537.1"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (X11; CrOS i686 2268.111.0) AppleWebKit/536.11 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/20.0.1132.57 Safari/536.11"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.6 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/20.0.1092.0 Safari/536.6"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.6 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/20.0.1090.0 Safari/536.6"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.1 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/19.77.34.5 Safari/537.1"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.5 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/19.0.1084.9 Safari/536.5"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (Windows NT 6.0) AppleWebKit/536.5 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/19.0.1084.36 Safari/536.5"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (Windows NT 5.1) AppleWebKit/536.3 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/536.3 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/19.0.1063.0 Safari/536.3"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/19.0.1062.0 Safari/536.3"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/19.0.1062.0 Safari/536.3"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/536.3 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (Windows NT 6.1) AppleWebKit/536.3 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/19.0.1061.1 Safari/536.3"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (Windows NT 6.2) AppleWebKit/536.3 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/19.0.1061.0 Safari/536.3"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.24 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"</span>,</div><div class="line">    <span class="string">"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/535.24 "</span></div><div class="line">    <span class="string">"(KHTML, like Gecko) Chrome/19.0.1055.1 Safari/535.24"</span></div><div class="line">]</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">process_request</span><span class="params">(self, request, spider)</span>:</span></div><div class="line">    ua = random.choice(self.user_agent_list)</div><div class="line">    <span class="keyword">if</span> ua:</div><div class="line">        <span class="comment"># 显示当前使用的useragent</span></div><div class="line">        <span class="keyword">print</span> <span class="string">"********Current UserAgent:%s************"</span> % ua</div><div class="line">        <span class="comment"># 记录</span></div><div class="line">        log.msg(<span class="string">'Current UserAgent: '</span> + ua)</div><div class="line">        request.headers.setdefault(<span class="string">'User-Agent'</span>, ua)</div></pre></td></tr></table></figure>
+<h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><blockquote>
+<blockquote>
+<p>这里的思路就是在下载器中间件中对request设置请求，这里是使用<code>request.headers.setdefault(&quot;User-Agent&quot;,user_agent)</code>这个函数设置请求头，对于下载器中间件在我博客前面的文章已经有说明，想要了解的请<a href="https://chenjiabing666.github.io/2017/03/25/scrapy%E7%9A%84%E4%B8%8B%E8%BD%BD%E5%99%A8%E4%B8%AD%E9%97%B4%E4%BB%B6/">点击</a></p>
+</blockquote>
+</blockquote>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><blockquote>
+<blockquote>
+<p>这里还要说明的是设置了请求池还要在配置文件settins中设置一下，具体设置方法和设置代理ip一样，详情请看<a href="https://chenjiabing666.github.io/2017/03/26/scrapy%E8%AE%BE%E7%BD%AE%E4%BB%A3%E7%90%86ip/">scrapy代理ip的设置</a></p>
+<h2 id="作者说"><a href="#作者说" class="headerlink" title="作者说"></a>作者说</h2><blockquote>
+<p>本人秉着方便他人的想法才开始写技术文章的，因为对于自学的人来说想要找到系统的学习教程很困难，这一点我深有体会，我也是在不断的摸索中才小有所成，如果你们觉得我写的不错就帮我推广一下，让更多的人看到。另外如果有什么错误的地方也要及时联系我，方便我改进，谢谢大家对我的支持</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><em>版权信息所有者：chenjiabing</em><br><em>如若转载请标明出处：chenjiabing666.github.io6</em></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Scrapy学习/">Scrapy学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/scrapy/">scrapy</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2017/03/26/scrapy设置请求池/" data-title="scrapy设置请求池 | 觅" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/03/27/Swing-干货系列之JSlider/" title="Swing干货系列之JSlider(滑块)">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Swing干货系列之JSlider(滑块)</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/03/26/Scrapy中使用cookie免于验证登录和模拟登录/"  title="Scrapy中使用cookie免于验证登录和模拟登录">
+ <strong>下一篇：</strong><br/> 
+ <span>Scrapy中使用cookie免于验证登录和模拟登录
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#scrapy设置”请求池”"><span class="toc-number">1.</span> <span class="toc-text">scrapy设置”请求池”</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#引言"><span class="toc-number">1.1.</span> <span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#爬虫请求常见的错误"><span class="toc-number">1.2.</span> <span class="toc-text">爬虫请求常见的错误</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#话不多说直接撸代码"><span class="toc-number">1.3.</span> <span class="toc-text">话不多说直接撸代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#说明"><span class="toc-number">1.4.</span> <span class="toc-text">说明</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注意"><span class="toc-number">1.5.</span> <span class="toc-text">注意</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作者说"><span class="toc-number">1.6.</span> <span class="toc-text">作者说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/BootStrap学习/" title="BootStrap学习">BootStrap学习<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/JQuery学习/" title="JQuery学习">JQuery学习<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Scrapy学习/" title="Scrapy学习">Scrapy学习<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python数据挖掘与分析/" title="python数据挖掘与分析">python数据挖掘与分析<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/scrapy/" title="scrapy">scrapy<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/swing/" title="swing">swing<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java图形与文本处理/" title="java图形与文本处理">java图形与文本处理<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JQuery/" title="JQuery">JQuery<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JDBC/" title="JDBC">JDBC<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BootStrap/" title="BootStrap">BootStrap<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/matplotlib/" title="matplotlib">matplotlib<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 人前显贵人后受罪 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="Chenjiabing">Chenjiabing</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

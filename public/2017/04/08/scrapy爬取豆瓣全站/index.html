@@ -1,0 +1,635 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>scrapy爬取豆瓣全站 | 觅</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Chenjiabing">
+    
+
+    
+    <meta name="description" content="Scrapy爬取豆瓣读书全站分析网页
+首先打开豆瓣读书中的分类浏览，可以看到其中有很多的分类
+
+豆瓣应该是一个比较好爬的网站，所有的数据都不是ajax加载的，我们打开谷歌的F12或者是火狐的FireBug可以很轻松的找到每一个分类的链接
+
+这里我们使用scrapy中的一个linkextractors库,这个库的作用是会根据提供的限制，自动爬取和深入每一个页面并且提取需要的链接，如果想要找到每一个分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="scrapy爬取豆瓣全站">
+<meta property="og:url" content="http://chenjiabing666.github.io/2017/04/08/scrapy爬取豆瓣全站/index.html">
+<meta property="og:site_name" content="觅">
+<meta property="og:description" content="Scrapy爬取豆瓣读书全站分析网页
+首先打开豆瓣读书中的分类浏览，可以看到其中有很多的分类
+
+豆瓣应该是一个比较好爬的网站，所有的数据都不是ajax加载的，我们打开谷歌的F12或者是火狐的FireBug可以很轻松的找到每一个分类的链接
+
+这里我们使用scrapy中的一个linkextractors库,这个库的作用是会根据提供的限制，自动爬取和深入每一个页面并且提取需要的链接，如果想要找到每一个分">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/2.bmp">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/NonName.bmp">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/3.bmp">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/6.bmp">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/4.bmp">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/5.bmp">
+<meta property="og:updated_time" content="2017-04-08T06:36:20.431Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="scrapy爬取豆瓣全站">
+<meta name="twitter:description" content="Scrapy爬取豆瓣读书全站分析网页
+首先打开豆瓣读书中的分类浏览，可以看到其中有很多的分类
+
+豆瓣应该是一个比较好爬的网站，所有的数据都不是ajax加载的，我们打开谷歌的F12或者是火狐的FireBug可以很轻松的找到每一个分类的链接
+
+这里我们使用scrapy中的一个linkextractors库,这个库的作用是会根据提供的限制，自动爬取和深入每一个页面并且提取需要的链接，如果想要找到每一个分">
+<meta name="twitter:image" content="http://ono60m7tl.bkt.clouddn.com/2.bmp">
+
+    
+    <link rel="alternative" href="/atom.xml" title="觅" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="觅" title="觅"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="觅">觅</a></h1>
+				<h2 class="blog-motto">爱生活爱编码</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/08/scrapy爬取豆瓣全站/" title="scrapy爬取豆瓣全站" itemprop="url">scrapy爬取豆瓣全站</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Chenjiabing" target="_blank" itemprop="author">Chenjiabing</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-08T06:24:26.000Z" itemprop="datePublished"> 发表于 2017-04-08</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Scrapy爬取豆瓣读书全站"><span class="toc-number">1.</span> <span class="toc-text">Scrapy爬取豆瓣读书全站</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#分析网页"><span class="toc-number">1.1.</span> <span class="toc-text">分析网页</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档："><span class="toc-number">1.2.</span> <span class="toc-text">参考文档：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作者说"><span class="toc-number">1.3.</span> <span class="toc-text">作者说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Scrapy爬取豆瓣读书全站"><a href="#Scrapy爬取豆瓣读书全站" class="headerlink" title="Scrapy爬取豆瓣读书全站"></a>Scrapy爬取豆瓣读书全站</h1><h2 id="分析网页"><a href="#分析网页" class="headerlink" title="分析网页"></a>分析网页</h2><blockquote>
+<p>首先打开<a href="https://book.douban.com/tag/?icn=index-nav" target="_blank" rel="external">豆瓣读书中的分类浏览</a>，可以看到其中有很多的分类</p>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/2.bmp" alt="分类"></p>
+<p>豆瓣应该是一个比较好爬的网站，所有的数据都不是<code>ajax</code>加载的，我们打开谷歌的<code>F12</code>或者是火狐的<code>FireBug</code>可以很轻松的找到每一个分类的链接</p>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/NonName.bmp" alt="url所在地"></p>
+<p>这里我们使用scrapy中的一个<a href="http://scrapy-chs.readthedocs.io/zh_CN/0.24/topics/link-extractors.html" target="_blank" rel="external">linkextractors库</a>,这个库的作用是会根据提供的限制，自动爬取和深入每一个页面并且提取需要的链接，如果想要找到每一个分类的url,只需<code>Rule(LinkExtractor(allow=&#39;/tag/&#39;,restrict_xpaths=&quot;//div[@class=&#39;article&#39;]&quot;),follow=True),</code>这里的allow是一个<code>正则表达式</code>，用来筛选分类url,<code>restrict_xpaths</code>是限制在哪个结构中筛选url,这里限制的是在<code>&lt;div class=&#39;article&#39;&gt;</code>这个盒模型中，<code>follow</code>表示是否深入，这里当然是要深入,这里就能得到每一个分类url了，自己可以在<code>回调函数</code>中测试下，输入所得的url,可以使用<code>respose.url</code></p>
+<p>得到所有的分类url，就可以继续深入到每一步作品所在的页面了，如下图!</p>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/3.bmp" alt="作品网页"><br>但是我们需要不止是这一页，我们要爬的时全站，因此这里必须实现翻页，我们可以看到页面底部清楚的写着下一页，我们通过解析页面同样可以得到url,如下图所示</p>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/6.bmp" alt="翻页url"><br>可以看到所有的url的规则，我们就可以用正则表达式限制，以获取我们的需要，我们可以写出翻页的代码</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Rule(LinkExtractor(allow=<span class="string">"\?start=\d+\&amp;type="</span>,restrict_xpaths=<span class="string">"//div[@class='pa&gt;ginator']"</span>),follow=<span class="keyword">True</span>),</div></pre></td></tr></table></figure>
+<blockquote>
+<p>最后一步就是打开每一部书的网页得到所需的信息了，我们就可以通过这里通过解析网页还是可以很清楚的知道url,这里就不再详细的说怎么解析了，这里可以看到所有的url都在<code>li</code>标签中，如下图</p>
+<blockquote>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/4.bmp" alt="url"></p>
+</blockquote>
+<p>我们打开<code>li</code>标签可以很清楚的看大url的规律，因此这里还是用到上面说的库解析深入，连同上面的代码如下</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Rule(LinkExtractor(allow=<span class="string">'/tag/'</span>,restrict_xpaths=<span class="string">"/ /div[@class='article']"</span>),follow=<span class="keyword">True</span>),<span class="comment">#第一步</span></div><div class="line">Rule(LinkExtractor(allow=<span class="string">"\?start=\d+\&amp;type="</span>,restrict_xpaths=<span class="string">"//div[@class='pa&gt;ginator']"</span>),follow=<span class="keyword">True</span>),  <span class="comment">#第二步翻翻页</span></div><div class="line">Rule(LinkExtractor(allow=<span class="string">"/subject/\d+/$"</span>,restrict_&gt;xpaths=<span class="string">"//ul[@class='subject-list']"</span>),callback=<span class="string">'parse_item'</span>)<span class="comment">#得到所需网页的url</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>到了这里总算是大功告成了，下面就需要解析自己的所需要的信息了,这里附上网页</p>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/5.bmp" alt="图片"><br>下面就是写自己解析代码了，这里就不需要详细的说了，详细内容请看<a href="https://github.com/chenjiabing666/douban_book_spider" target="_blank" rel="external">源码</a>,值得注意的是爬取的网页速度不要太快，豆瓣会禁IP的，这里可以采用一些反爬虫措施,如请求头的更换，ip地址的更换，下一篇会详细解说。</p>
+</blockquote>
+<h2 id="参考文档："><a href="#参考文档：" class="headerlink" title="参考文档："></a>参考文档：</h2><blockquote>
+<p><strong><a href="http://scrapy-chs.readthedocs.io/zh_CN/0.24/index.html#" target="_blank" rel="external">scrapy中文文档</a></strong></p>
+<p><strong>最后附上本人的<a href="https://github.com/chenjiabing666" target="_blank" rel="external">github地址</a>,不要忘了给个star哦</strong></p>
+<blockquote>
+<h2 id="作者说"><a href="#作者说" class="headerlink" title="作者说"></a>作者说</h2><blockquote>
+<p>本人秉着方便他人的想法才开始写技术文章的，因为对于自学的人来说想要找到系统的学习教程很困难，这一点我深有体会，我也是在不断的摸索中才小有所成，如果你们觉得我写的不错就帮我推广一下，让更多的人看到。另外如果有什么错误的地方也要及时联系我，方便我改进，谢谢大家对我的支持</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><em>版权信息所有者：chenjiabing</em><br><em>如若转载请标明出处：chenjiabing666.github.io6</em></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Scrapy学习/">Scrapy学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/scrapy/">scrapy</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2017/04/08/scrapy爬取豆瓣全站/" data-title="scrapy爬取豆瓣全站 | 觅" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/04/08/Swing干货系列之JTextField/" title="swing干货系列之JTextField">
+  <strong>上一篇：</strong><br/>
+  <span>
+  swing干货系列之JTextField</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/04/06/SQL基本操作/"  title="SQL干货篇一">
+ <strong>下一篇：</strong><br/> 
+ <span>SQL干货篇一
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Scrapy爬取豆瓣读书全站"><span class="toc-number">1.</span> <span class="toc-text">Scrapy爬取豆瓣读书全站</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#分析网页"><span class="toc-number">1.1.</span> <span class="toc-text">分析网页</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档："><span class="toc-number">1.2.</span> <span class="toc-text">参考文档：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作者说"><span class="toc-number">1.3.</span> <span class="toc-text">作者说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/BootStrap学习/" title="BootStrap学习">BootStrap学习<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/JQuery学习/" title="JQuery学习">JQuery学习<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Scrapy学习/" title="Scrapy学习">Scrapy学习<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python数据挖掘与分析/" title="python数据挖掘与分析">python数据挖掘与分析<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/scrapy/" title="scrapy">scrapy<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/swing/" title="swing">swing<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java图形与文本处理/" title="java图形与文本处理">java图形与文本处理<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JQuery/" title="JQuery">JQuery<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JDBC/" title="JDBC">JDBC<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BootStrap/" title="BootStrap">BootStrap<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/matplotlib/" title="matplotlib">matplotlib<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 人前显贵人后受罪 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="Chenjiabing">Chenjiabing</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

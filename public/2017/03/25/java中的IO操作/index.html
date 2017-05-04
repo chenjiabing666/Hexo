@@ -1,0 +1,705 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>java中的IO操作 | 觅</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Chenjiabing">
+    
+
+    
+    <meta name="description" content="java中IO操作读取文件中的内容
+使用Scanner读取文本中的内容
+相信大家都知道Scanner console=new Scanner(System.in)是用来读取控制台上输入的内容，但是这里是用来读取文件的内容，原理是一样的，只是对象不同罢了，这里用到的是File对象，用来创建一个文件对象
+
+
+123456Scanner input=new Scanner(new">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java中的IO操作">
+<meta property="og:url" content="http://chenjiabing666.github.io/2017/03/25/java中的IO操作/index.html">
+<meta property="og:site_name" content="觅">
+<meta property="og:description" content="java中IO操作读取文件中的内容
+使用Scanner读取文本中的内容
+相信大家都知道Scanner console=new Scanner(System.in)是用来读取控制台上输入的内容，但是这里是用来读取文件的内容，原理是一样的，只是对象不同罢了，这里用到的是File对象，用来创建一个文件对象
+
+
+123456Scanner input=new Scanner(new">
+<meta property="og:updated_time" content="2017-03-27T03:28:49.061Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="java中的IO操作">
+<meta name="twitter:description" content="java中IO操作读取文件中的内容
+使用Scanner读取文本中的内容
+相信大家都知道Scanner console=new Scanner(System.in)是用来读取控制台上输入的内容，但是这里是用来读取文件的内容，原理是一样的，只是对象不同罢了，这里用到的是File对象，用来创建一个文件对象
+
+
+123456Scanner input=new Scanner(new">
+
+    
+    <link rel="alternative" href="/atom.xml" title="觅" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="觅" title="觅"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="觅">觅</a></h1>
+				<h2 class="blog-motto">爱生活爱编码</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/03/25/java中的IO操作/" title="java中的IO操作" itemprop="url">java中的IO操作</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Chenjiabing" target="_blank" itemprop="author">Chenjiabing</a>
+		
+  <p class="article-time">
+    <time datetime="2017-03-25T05:52:53.000Z" itemprop="datePublished"> 发表于 2017-03-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#java中IO操作"><span class="toc-number">1.</span> <span class="toc-text">java中IO操作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#读取文件中的内容"><span class="toc-number">1.1.</span> <span class="toc-text">读取文件中的内容</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#使用Scanner读取文本中的内容"><span class="toc-number">1.1.0.1.</span> <span class="toc-text">使用Scanner读取文本中的内容</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用FileReader读取"><span class="toc-number">1.1.1.</span> <span class="toc-text">使用FileReader读取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用BufferedReader的类实现高效的读取文件"><span class="toc-number">1.1.2.</span> <span class="toc-text">使用BufferedReader的类实现高效的读取文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文件的写入"><span class="toc-number">1.2.</span> <span class="toc-text">文件的写入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#用FileWriter写入文件"><span class="toc-number">1.2.1.</span> <span class="toc-text">用FileWriter写入文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#用PrintStream写入文件"><span class="toc-number">1.2.2.</span> <span class="toc-text">用PrintStream写入文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#这里是用BufferedWriter类写入文件-一个高效的写入方式"><span class="toc-number">1.3.</span> <span class="toc-text">这里是用BufferedWriter类写入文件(一个高效的写入方式)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简单介绍"><span class="toc-number">1.3.1.</span> <span class="toc-text">简单介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#例子"><span class="toc-number">1.3.2.</span> <span class="toc-text">例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其他的方法"><span class="toc-number">1.3.3.</span> <span class="toc-text">其他的方法</span></a></li></ol></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="java中IO操作"><a href="#java中IO操作" class="headerlink" title="java中IO操作"></a>java中IO操作</h1><h2 id="读取文件中的内容"><a href="#读取文件中的内容" class="headerlink" title="读取文件中的内容"></a>读取文件中的内容</h2><blockquote>
+<h4 id="使用Scanner读取文本中的内容"><a href="#使用Scanner读取文本中的内容" class="headerlink" title="使用Scanner读取文本中的内容"></a>使用<code>Scanner</code>读取文本中的内容</h4><blockquote>
+<p>相信大家都知道<code>Scanner console=new Scanner(System.in)</code>是用来读取控制台上输入的内容，但是这里是用来读取文件的内容，原理是一样的，只是对象不同罢了，这里用到的是<code>File</code>对象，用来创建一个文件对象</p>
+</blockquote>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Scanner input=<span class="keyword">new</span> Scanner(<span class="keyword">new</span>                         File(<span class="string">"hello.txt"</span>));<span class="comment">//创建一个对象input</span></div><div class="line"><span class="keyword">while</span>(input.hasNextLine()) <span class="comment">//这里用来判断是否还有内容，    以免读到最后发生错误</span></div><div class="line">&#123;</div><div class="line">String content=input.nextLine();</div><div class="line">System.out.println(content);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<blockquote>
+<p>这里顺便补充一下<code>Scannner</code>中的几个函数：</p>
+<blockquote>
+<ol>
+<li><code>nextLine()</code>:读取一行的内容，包括空格，换行</li>
+<li><code>nextInt()</code>:读取一个整型内容</li>
+<li><code>nexDouble()</code>:读取一个双精度的浮点数</li>
+<li><code>next()</code>:读取下一个内容，无论什么类型，其中遇到空格和换行默认是一个标记（即是跳过）和<code>nextLine()</code>类似</li>
+<li><code>hasNext()</code>:用来判断文件中的还有下一个内容，无论什么类型的</li>
+<li><code>hasNextInt()</code></li>
+<li><code>hasNextDouble()</code>://相似，不在赘述</li>
+</ol>
+</blockquote>
+</blockquote>
+<h3 id="使用FileReader读取"><a href="#使用FileReader读取" class="headerlink" title="使用FileReader读取"></a>使用<code>FileReader</code>读取</h3><blockquote>
+<p>用来读取字符文件的便捷类。此类的构造方法假定默认字符编码和默认字节缓冲区大小都是适当的。要自己指定这些值，可以先在 <code>FileInputStream</code>上构造一个 <code>InputStreamReader</code>。<br>FileReader 用于读取字符流。要读取原始字节流，请考虑使用 FileInputStream。</p>
+</blockquote>
+</blockquote>
+<pre><code>//这里使用new File创建一个对象，同样的也可以直接将文件的绝对路径传入
+FileReader file=new FileReader(new File(&quot;hello.txt&quot;));
+while(file.ready())   //用来判断是否还有字符可读
+        {
+        int content=file.read();   //这里的read是读取将单个字符 返回的是int，即是ascii码,这里官方文档说返回的是读取的字符数，但是我实验了一下返回的ascii码
+        System.out.println((char)content);  //所以要将ascii码转换成字符
+        }
+        file.close();
+</code></pre><blockquote>
+<blockquote>
+<blockquote>
+<p>常用的几个方法：</p>
+<blockquote>
+<ol>
+<li><code>read()</code>: return int 上面介绍过</li>
+<li><code>read(char[] cbuf,int int length)</code>:将内容读入到一个<code>char</code>类型的数组，<code>length</code>是读取的字符数，<code>offest</code>是偏移量</li>
+</ol>
+</blockquote>
+</blockquote>
+</blockquote>
+<h3 id="使用BufferedReader的类实现高效的读取文件"><a href="#使用BufferedReader的类实现高效的读取文件" class="headerlink" title="使用BufferedReader的类实现高效的读取文件"></a>使用<code>BufferedReader</code>的类实现高效的读取文件</h3></blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//传入一个reader创建一个对象</span></div><div class="line">        BufferedReader file= <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> FileReader(<span class="string">"hello.txt"</span>));  </div><div class="line">        System.out.println(file.skip(<span class="number">3</span>));<span class="comment">//实现将指针跳过3个字符</span></div><div class="line">        System.out.println((<span class="keyword">char</span>)file.read()); <span class="comment">//read的方法，和FileReader中的read一样</span></div><div class="line">        String line=file.readLine();   <span class="comment">//读取一行</span></div><div class="line">        System.out.println(line);</div></pre></td></tr></table></figure>
+<blockquote>
+<blockquote>
+<p>常用的方法：</p>
+<blockquote>
+<ol>
+<li><code>readLine()</code></li>
+<li><code>read()</code>：如果到了末尾返回-1</li>
+<li><code>read(char [],int off,int length)</code>:和FileReader中的一样</li>
+<li><code>ready()</code>:判断是否还可以读取，一般和read配对使用</li>
+<li><code>skip(long n)</code>:跳过的字符数</li>
+<li><code>close()</code></li>
+</ol>
+</blockquote>
+</blockquote>
+</blockquote>
+<h2 id="文件的写入"><a href="#文件的写入" class="headerlink" title="文件的写入"></a>文件的写入</h2><blockquote>
+<h3 id="用FileWriter写入文件"><a href="#用FileWriter写入文件" class="headerlink" title="用FileWriter写入文件"></a>用<code>FileWriter</code>写入文件</h3></blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*创建将对象f传入FileWriter,其中Filewriter有两个参数，第一个是File对象后者是一个String(即是文件的路径），第二个参数是boolean类型的，表示是否在文件的末尾追加内容，默认的是false表示不用在末尾追加，如果想要在末尾追加要写入另外一个参数true,当然这里可以用更加简洁的方式创建：FileWriter file=new FileWriter("hello.txt",false);</span></div><div class="line">*/</div><div class="line">FileWriter file=<span class="keyword">new</span> FileWriter(f,<span class="keyword">true</span>);</div><div class="line">file.write(<span class="string">"chenjiabing"</span>);<span class="comment">//写入函数write</span></div><div class="line">file.close();  <span class="comment">//最后必须关闭文件的输入流，否则写入将会失败，这里不想c和c++</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>其中Filewriter中的方法还有</p>
+<blockquote>
+<ol>
+<li><code>flush</code>：刷新缓存流</li>
+<li><code>close</code></li>
+<li><code>append()</code>:当前的领会的就是写入数组:<code>append(Arrays.toString(list))</code>;</li>
+<li><code>getEncoding()</code>:返回此流使用的字符编码</li>
+</ol>
+</blockquote>
+</blockquote>
+<h3 id="用PrintStream写入文件"><a href="#用PrintStream写入文件" class="headerlink" title="用PrintStream写入文件"></a>用<code>PrintStream</code>写入文件</h3><blockquote>
+<p>这里同样的是和<code>System.out.println()</code>一样的原理，<code>System.out.println</code>只是内部实现了<code>PrintStream</code>，这里是用来将指定的内容写入到文件中而已</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">PrintStream output=<span class="keyword">new</span> PrintStream(<span class="keyword">new</span>     File(<span class="string">"hello.txt"</span>));</div><div class="line"><span class="comment">//创建一个写入的对象output</span></div><div class="line">output.print(<span class="string">"flan"</span>);</div><div class="line">output.println(<span class="string">"vmlkfamla"</span>);</div><div class="line">output.println(<span class="string">"vmslfkmadvmfs;dm"</span>);</div></pre></td></tr></table></figure>
+<blockquote>
+<h2 id="这里是用BufferedWriter类写入文件-一个高效的写入方式"><a href="#这里是用BufferedWriter类写入文件-一个高效的写入方式" class="headerlink" title="这里是用BufferedWriter类写入文件(一个高效的写入方式)"></a>这里是用<code>BufferedWriter</code>类写入文件(一个高效的写入方式)</h2><blockquote>
+<h3 id="简单介绍"><a href="#简单介绍" class="headerlink" title="简单介绍"></a>简单介绍</h3><blockquote>
+<p>将文本写入字符输出流，缓冲各个字符，从而提供单个字符、数组和字符串的高效写入。<br>可以指定缓冲区的大小，或者接受默认的大小。在大多数情况下，默认值就足够大了。<br>该类提供了 <code>newLine()</code> 方法，它使用平台自己的行分隔符概念，此概念由系统属性 line.separator 定义。并非所有平台都使用新行符 (‘\n’) 来终止各行。因此调用此方法来终止每个输出行要优于直接写入新行符。<br>通常 <code>Writer</code> 将其输出立即发送到底层字符或字节流。除非要求提示输出，否则建议用 <code>BufferedWriter</code> 包装所有其 <code>write()</code> 操作可能开销很高的 <code>Writer</code>（如 <code>FileWriters</code> 和 <code>OutputStreamWriters</code>）。例如，</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<pre><code>PrintWriter out= new PrintWriter(new BufferedWriter(new FileWriter(&quot;foo.out&quot;)));
+</code></pre><p>将缓冲 <code>PrintWriter</code>对文件的输出。如果没有缓冲，则每次调用 <code>print()</code> 方法会导致将字符转换为字节，然后立即入到文件，而这是极其低效的。</p>
+<blockquote>
+<blockquote>
+<h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3></blockquote>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">BufferedWriter input=<span class="keyword">new</span> BufferedWriter(<span class="keyword">new</span> FileWriter(<span class="string">"hello.txt"</span>));</div><div class="line">        input.write(<span class="string">"这是一个文件读入的方法"</span>);</div><div class="line">        input.newLine();</div><div class="line">        input.write(<span class="string">"一个高效的方法"</span>);</div><div class="line">        input.close();</div></pre></td></tr></table></figure>
+<blockquote>
+<blockquote>
+<h3 id="其他的方法"><a href="#其他的方法" class="headerlink" title="其他的方法"></a>其他的方法</h3><blockquote>
+<ol>
+<li><code>close()</code></li>
+<li><code>flush()</code></li>
+<li><code>newLine()</code>:写入一个换行，因为每一个操作系统上的换行符可能不一样，不能系统的都用”\n”表示</li>
+<li><code>write()</code><blockquote>
+<p>详情参见<code>API</code></p>
+</blockquote>
+</li>
+</ol>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><em>版权信息所有者：chenjiabing</em><br><em>如若转载请标明出处：chenjiabing666.github.io6</em></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/java学习/">java学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/java基础/">java基础</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2017/03/25/java中的IO操作/" data-title="java中的IO操作 | 觅" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/03/25/scrapy初试/" title="scrapy初试">
+  <strong>上一篇：</strong><br/>
+  <span>
+  scrapy初试</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/03/25/scrapy架构初探/"  title="scrapy架构初探">
+ <strong>下一篇：</strong><br/> 
+ <span>scrapy架构初探
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#java中IO操作"><span class="toc-number">1.</span> <span class="toc-text">java中IO操作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#读取文件中的内容"><span class="toc-number">1.1.</span> <span class="toc-text">读取文件中的内容</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#使用Scanner读取文本中的内容"><span class="toc-number">1.1.0.1.</span> <span class="toc-text">使用Scanner读取文本中的内容</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用FileReader读取"><span class="toc-number">1.1.1.</span> <span class="toc-text">使用FileReader读取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用BufferedReader的类实现高效的读取文件"><span class="toc-number">1.1.2.</span> <span class="toc-text">使用BufferedReader的类实现高效的读取文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文件的写入"><span class="toc-number">1.2.</span> <span class="toc-text">文件的写入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#用FileWriter写入文件"><span class="toc-number">1.2.1.</span> <span class="toc-text">用FileWriter写入文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#用PrintStream写入文件"><span class="toc-number">1.2.2.</span> <span class="toc-text">用PrintStream写入文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#这里是用BufferedWriter类写入文件-一个高效的写入方式"><span class="toc-number">1.3.</span> <span class="toc-text">这里是用BufferedWriter类写入文件(一个高效的写入方式)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简单介绍"><span class="toc-number">1.3.1.</span> <span class="toc-text">简单介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#例子"><span class="toc-number">1.3.2.</span> <span class="toc-text">例子</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其他的方法"><span class="toc-number">1.3.3.</span> <span class="toc-text">其他的方法</span></a></li></ol></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/BootStrap学习/" title="BootStrap学习">BootStrap学习<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/JQuery学习/" title="JQuery学习">JQuery学习<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Scrapy学习/" title="Scrapy学习">Scrapy学习<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python数据挖掘与分析/" title="python数据挖掘与分析">python数据挖掘与分析<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/scrapy/" title="scrapy">scrapy<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/swing/" title="swing">swing<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java图形与文本处理/" title="java图形与文本处理">java图形与文本处理<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JQuery/" title="JQuery">JQuery<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JDBC/" title="JDBC">JDBC<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BootStrap/" title="BootStrap">BootStrap<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/matplotlib/" title="matplotlib">matplotlib<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 人前显贵人后受罪 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="Chenjiabing">Chenjiabing</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

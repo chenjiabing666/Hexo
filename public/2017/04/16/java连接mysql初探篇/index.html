@@ -1,0 +1,657 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>java连接mysql初探篇 | 觅</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Chenjiabing">
+    
+
+    
+    <meta name="description" content="java连接mysql基本连接
+
+加载驱动: Class.forName(com.mysql.jdbc.Driver)
+
+建立连接:Connection conn=DriverManager.getConnection(url,user,password)
+
+其中url=&amp;quot;jdbc:mysql://localhost:3306/java_demo&amp;quot;,这里的java_demo是自">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java连接mysql初探篇">
+<meta property="og:url" content="http://chenjiabing666.github.io/2017/04/16/java连接mysql初探篇/index.html">
+<meta property="og:site_name" content="觅">
+<meta property="og:description" content="java连接mysql基本连接
+
+加载驱动: Class.forName(com.mysql.jdbc.Driver)
+
+建立连接:Connection conn=DriverManager.getConnection(url,user,password)
+
+其中url=&amp;quot;jdbc:mysql://localhost:3306/java_demo&amp;quot;,这里的java_demo是自">
+<meta property="og:updated_time" content="2017-04-27T15:06:02.711Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="java连接mysql初探篇">
+<meta name="twitter:description" content="java连接mysql基本连接
+
+加载驱动: Class.forName(com.mysql.jdbc.Driver)
+
+建立连接:Connection conn=DriverManager.getConnection(url,user,password)
+
+其中url=&amp;quot;jdbc:mysql://localhost:3306/java_demo&amp;quot;,这里的java_demo是自">
+
+    
+    <link rel="alternative" href="/atom.xml" title="觅" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="觅" title="觅"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="觅">觅</a></h1>
+				<h2 class="blog-motto">爱生活爱编码</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/16/java连接mysql初探篇/" title="java连接mysql初探篇" itemprop="url">java连接mysql初探篇</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Chenjiabing" target="_blank" itemprop="author">Chenjiabing</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-16T06:13:04.000Z" itemprop="datePublished"> 发表于 2017-04-16</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#java连接mysql"><span class="toc-number">1.</span> <span class="toc-text">java连接mysql</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本连接"><span class="toc-number">1.1.</span> <span class="toc-text">基本连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查询数据"><span class="toc-number">1.2.</span> <span class="toc-text">查询数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#插入数据"><span class="toc-number">1.3.</span> <span class="toc-text">插入数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新数据"><span class="toc-number">1.4.</span> <span class="toc-text">更新数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后说"><span class="toc-number">1.5.</span> <span class="toc-text">最后说</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作者说"><span class="toc-number">1.6.</span> <span class="toc-text">作者说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="java连接mysql"><a href="#java连接mysql" class="headerlink" title="java连接mysql"></a>java连接mysql</h1><h2 id="基本连接"><a href="#基本连接" class="headerlink" title="基本连接"></a>基本连接</h2><blockquote>
+<ul>
+<li><p><strong>加载驱动:</strong> <code>Class.forName(com.mysql.jdbc.Driver)</code></p>
+</li>
+<li><p><strong>建立连接:<code>Connection conn=DriverManager.getConnection(url,user,password)</code></strong></p>
+<blockquote>
+<p>其中<code>url=&quot;jdbc:mysql://localhost:3306/java_demo&quot;</code>,这里的<code>java_demo</code>是自己创建的数据库的名字,<code>user</code>是<code>mysql</code>数据库的管理员，<code>password</code>是密码<br><strong>下面直接连接数据库，返回的是接口Connection对象</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.sql.*;</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Connection <span class="title">getConnection</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    Connection conn;</div><div class="line">    String driver=<span class="string">"com.mysql.jdbc.Driver"</span>;   <span class="comment">//驱动名称</span></div><div class="line">    String url=<span class="string">"jdbc:mysql://localhost:3306/java_demo"</span>;   <span class="comment">//url</span></div><div class="line">    String user=<span class="string">"root"</span>;</div><div class="line">    String password=<span class="string">"root"</span>;    <span class="comment">//管理员和密码都是root</span></div><div class="line">    <span class="keyword">try</span>&#123;</div><div class="line">        Class.forName(driver);    <span class="comment">//加载驱动，但是会有ClassNotFoundException异常，因此要避免异常</span></div><div class="line">        <span class="keyword">try</span>&#123;</div><div class="line">            conn = Dri verManager.getConnection(url, user, password);   <span class="comment">//获得数据库连接</span></div><div class="line">            <span class="keyword">return</span> conn;    <span class="comment">//返回conn</span></div><div class="line">             </div><div class="line">        &#125;<span class="keyword">catch</span>(SQLException e)</div><div class="line">        &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    </div><div class="line">        </div><div class="line">    &#125;<span class="keyword">catch</span> (ClassNotFoundException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;  <span class="comment">//如果出现异常就会返回null</span></div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+<h2 id="查询数据"><a href="#查询数据" class="headerlink" title="查询数据"></a>查询数据</h2><blockquote>
+<ul>
+<li><p>**首先根据所得的<code>Connection</code>对象创建<code>Statement</code>对象：<code>Statement statement = connection.createStatement()</code>;</p>
+</li>
+<li><p><strong>写查询语句：<code>String sql=&quot;select * from student;&quot;</code>这里是查询所有student中的数据，详细内容请看我的<a href="https://chenjiabing666.github.io/2017/04/09/SQL%E5%B9%B2%E8%B4%A7%E7%AF%87%E4%BA%8C/">SQL干货篇二</a></strong></p>
+</li>
+<li><p><strong>创建ResultSet对象存储查询结果:<code>ResultSet res=statement.executeQuery(sql)</code>,详细的内容请看<a href="http://tool.oschina.net/uploads/apidocs/jdk-zh/java/sql/ResultSet.html" target="_blank" rel="external">官方文档ResultSet详细用法</a></strong></p>
+</li>
+</ul>
+</blockquote>
+<p><strong>代码</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">String sql=<span class="string">"select * from student"</span>;</div><div class="line"><span class="keyword">if</span>(!conn.isClosed())</div><div class="line">&#123;</div><div class="line">    Statement statement=conn.createStatement();   <span class="comment">//这里的conn是上面连接数据库的返回的Connection对象</span></div><div class="line">    ResultSet res=statement.executeQuery(sql);   <span class="comment">//执行查询，注意这里只能是executeQuery，Statement还有一些执行mysql函数，但是都不适合查询，后面会详细说</span></div><div class="line">    <span class="keyword">while</span>(res.next())    <span class="comment">//如果res结果中还有元素，那么返回true，否则返回的是false,用来判断是否res中还有结果</span></div><div class="line">    &#123;</div><div class="line">        <span class="keyword">int</span> id=res.getInt(<span class="string">"id"</span>);    <span class="comment">//得到id,这里的id是student表中的属性名 对应的时int BigInt smallint.....</span></div><div class="line">        String name=res.getString(<span class="string">"name"</span>);  <span class="comment">//得到姓名，对应的是mysql中的Char varChar类型</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p><strong>当然上面只是对于基本的查询数据，在一些项目中根本用不到，因为不太灵活，上面的方法只适合全局查询，并不适合在项目中根据条件查询，下面介绍预编译sql语句的接口<a href="http://tool.oschina.net/uploads/apidocs/jdk-zh/java/sql/PreparedStatement.html" target="_blank" rel="external">PrepareStatement</a></strong></p>
+<ul>
+<li><p><strong>首先编写sql语句:<code>sql=&quot;select * from student where id=?;&quot;;</code>,这里的<code>?</code>表示一个占位，将条件在后面给出，但是这里一定要用<code>?</code></strong></p>
+</li>
+<li><p><strong>创建对象：<code>PrepareStatement pre=conn.preparestatement(sql);</code>这里传入参数<code>sql</code></strong></p>
+</li>
+<li><p><strong>设置<code>sql</code>中的条件语句，填补占位<code>?</code>的值:pre.setInt(1,1);这里的<code>SetInt</code>设置<code>id</code>值的为1，因为这的<code>id</code>是<code>int</code>类型的，第一个参数是表示<code>prepareindex</code>，就是表示第一个占位<code>?</code>,当然第二个就是2,其中还有<code>SetString(prepareindex String var)</code>,用来给定表中的<code>char</code>后者<code>varchar</code>类型的值</strong></p>
+</li>
+</ul>
+<p><strong>代码：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span>(!connection.isClosed())</div><div class="line">                &#123;</div><div class="line">                    String sql=<span class="string">"select * from course where id=?,name=?"</span>;      </div><div class="line">                    PreparedStatement preparedStatement=connection.prepareStatement(sql);</div><div class="line">                    preparedStatement.setInt(<span class="number">1</span>,<span class="number">1</span>);    <span class="comment">//给定条件中的值</span></div><div class="line">                    prepareStatement.setString(<span class="number">2</span>,<span class="string">"jack"</span>);  <span class="comment">//为第二个？赋值</span></div><div class="line">                    ResultSet res=preparedStatement.executeQuery();    <span class="comment">//执行查询，返回的仍然是ResultSet对象</span></div><div class="line">                    <span class="keyword">while</span>(res.next())</div><div class="line">                    &#123;</div><div class="line">                        <span class="keyword">int</span> id=res.getInt(<span class="string">"id"</span>);</div><div class="line">                        String name=res.getString(<span class="string">"name"</span>);</div><div class="line">                        System.out.println(id+<span class="string">"--"</span>+name);</div><div class="line">                    &#125;</div><div class="line">                &#125;</div></pre></td></tr></table></figure></p>
+</blockquote>
+<h2 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h2><blockquote>
+<p><strong>插入数据和上面的两种方法基本是一样的，不同的是<code>mysql</code>语句不同，还有的就是执行语句改成了<code>executeUpdate(sql)</code>，下面的代码值给出了预编译对象的方法，另外一种的方法使用范围并不是很大，只要把上面的查询改为<code>executeUpdate</code>即可</strong></p>
+<p><strong>代码：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">save</span><span class="params">(MemoBean memo)</span> </span>&#123;</div><div class="line">       String sql = <span class="string">"insert into student (username, title, content, momotype, memotime) values (?, ?, ?, ?, ?);"</span>;</div><div class="line">       Connection conn = getConnection();</div><div class="line">       PreparedStatement ps = <span class="keyword">null</span>;</div><div class="line">       <span class="keyword">try</span> &#123;</div><div class="line">           ps = conn.prepareStatement(sql);</div><div class="line">           ps.setString(<span class="number">1</span>, memo.getUsername());     <span class="comment">//设值value中的值 </span></div><div class="line">           ps.setString(<span class="number">2</span>, memo.getTitle());</div><div class="line">           ps.setString(<span class="number">3</span>, memo.getContent());</div><div class="line">           ps.setString(<span class="number">4</span>, memo.getMemotype());</div><div class="line">           ps.setString(<span class="number">5</span>, memo.getMemotime());</div><div class="line">           <span class="keyword">return</span> ps.executeUpdate();     <span class="comment">//这里使用的是excuteUpdate</span></div><div class="line">       &#125; <span class="keyword">catch</span> (SQLException e) &#123;</div><div class="line">           e.printStackTrace();</div><div class="line">       &#125; <span class="keyword">finally</span> &#123;</div><div class="line">           <span class="keyword">if</span> (ps != <span class="keyword">null</span>) &#123;</div><div class="line">               <span class="keyword">try</span> &#123;</div><div class="line">                   ps.close();   <span class="comment">//关闭预编译对象</span></div><div class="line">               &#125; <span class="keyword">catch</span> (SQLException e) &#123; </div><div class="line">                   e.printStackTrace();   </div><div class="line">               &#125;</div><div class="line">           &#125;</div><div class="line">           <span class="keyword">if</span> (conn != <span class="keyword">null</span>) &#123;</div><div class="line">               <span class="keyword">try</span> &#123;</div><div class="line">                   conn.close();       <span class="comment">//关闭Connection对象</span></div><div class="line">               &#125; <span class="keyword">catch</span> (SQLException e) &#123;</div><div class="line">                   e.printStackTrace();</div><div class="line">               &#125;</div><div class="line">           &#125;</div><div class="line">       &#125; </div><div class="line">       <span class="keyword">return</span> -<span class="number">1</span>;          <span class="comment">//没有插入成功返回-1</span></div><div class="line">   &#125;</div></pre></td></tr></table></figure></p>
+</blockquote>
+<h2 id="更新数据"><a href="#更新数据" class="headerlink" title="更新数据"></a>更新数据</h2><blockquote>
+<p><strong>这里是同样的思路，和插入的基本是一样，只需要改变sql语句即可</strong></p>
+<p><strong>代码：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">update</span><span class="params">(MemoBean memo)</span> </span>&#123;</div><div class="line">        String sql = <span class="string">"update student set username=?,title=?,content=?,momotype=?,memotime=? where id=?;"</span>;<span class="comment">//查询语句</span></div><div class="line">        Connection connection = getConnection();</div><div class="line">        PreparedStatement ps = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            ps = connection.prepareStatement(sql);</div><div class="line">            ps.setString(<span class="number">1</span>, memo.getUsername());    <span class="comment">//设置条件语句中的值</span></div><div class="line">            ps.setString(<span class="number">2</span>, memo.getTitle()); </div><div class="line">            ps.setString(<span class="number">3</span>, memo.getContent());</div><div class="line">            ps.setString(<span class="number">4</span>, memo.getMemotype());</div><div class="line">            ps.setString(<span class="number">5</span>, memo.getMemotime());</div><div class="line">            ps.setInt(<span class="number">6</span>,memo.getId());</div><div class="line">            <span class="keyword">return</span> ps.executeUpdate();</div><div class="line">        &#125; <span class="keyword">catch</span> (SQLException e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">finally</span> &#123;</div><div class="line">            <span class="keyword">if</span>(ps!=<span class="keyword">null</span>)</div><div class="line">            &#123;</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    ps.close();</div><div class="line">                &#125;<span class="keyword">catch</span> (SQLException e)</div><div class="line">                &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">if</span>(connection!=<span class="keyword">null</span>)</div><div class="line">            &#123;</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    connection.close();</div><div class="line">                &#125;<span class="keyword">catch</span> (SQLException e)</div><div class="line">                &#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+</blockquote>
+<h2 id="最后说"><a href="#最后说" class="headerlink" title="最后说"></a>最后说</h2><blockquote>
+<ul>
+<li><p><strong>上面的代码是从自己项目中截取的一部分代码，这个是比较适用于面向对象的，也是最常用的对于目前来看</strong></p>
+</li>
+<li><p><strong>上面只是给出了查询，插入，更新，因为这是最常用到的方法，其中还有创建表，删除表，当然还有一些他的，这里的创建表直接用<code>execute(sql)</code>即可执行，删除表也是用<code>execute(sql)</code>即可执行，当然如果要按照指定的条件删除，那么可以使用预编译对象执行</strong></p>
+</li>
+<li><p><strong>其中<code>executeUpdate(sql)</code>适用于<code>create</code>,<code>insert</code>,<code>update</code>,<code>delete</code>,但是<code>executeQuery(sql)</code>适用于<code>select</code>,具体见官方文档</strong></p>
+</li>
+</ul>
+<blockquote>
+<h2 id="作者说"><a href="#作者说" class="headerlink" title="作者说"></a>作者说</h2><blockquote>
+<p>本人秉着方便他人的想法才开始写技术文章的，因为对于自学的人来说想要找到系统的学习教程很困难，这一点我深有体会，我也是在不断的摸索中才小有所成，如果你们觉得我写的不错就帮我推广一下，让更多的人看到。另外如果有什么错误的地方也要及时联系我，方便我改进，谢谢大家对我的支持</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><em>版权信息所有者：chenjiabing</em><br><em>如若转载请标明出处：chenjiabing666.github.io6</em></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/java学习/">java学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/JDBC/">JDBC</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2017/04/16/java连接mysql初探篇/" data-title="java连接mysql初探篇 | 觅" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/04/16/SQL干货篇三/" title="SQL干货篇三">
+  <strong>上一篇：</strong><br/>
+  <span>
+  SQL干货篇三</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/04/13/Linux干货篇一/"  title="Linux干货篇一">
+ <strong>下一篇：</strong><br/> 
+ <span>Linux干货篇一
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#java连接mysql"><span class="toc-number">1.</span> <span class="toc-text">java连接mysql</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#基本连接"><span class="toc-number">1.1.</span> <span class="toc-text">基本连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查询数据"><span class="toc-number">1.2.</span> <span class="toc-text">查询数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#插入数据"><span class="toc-number">1.3.</span> <span class="toc-text">插入数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#更新数据"><span class="toc-number">1.4.</span> <span class="toc-text">更新数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后说"><span class="toc-number">1.5.</span> <span class="toc-text">最后说</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作者说"><span class="toc-number">1.6.</span> <span class="toc-text">作者说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/BootStrap学习/" title="BootStrap学习">BootStrap学习<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/JQuery学习/" title="JQuery学习">JQuery学习<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Scrapy学习/" title="Scrapy学习">Scrapy学习<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python数据挖掘与分析/" title="python数据挖掘与分析">python数据挖掘与分析<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/scrapy/" title="scrapy">scrapy<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/swing/" title="swing">swing<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java图形与文本处理/" title="java图形与文本处理">java图形与文本处理<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JQuery/" title="JQuery">JQuery<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JDBC/" title="JDBC">JDBC<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BootStrap/" title="BootStrap">BootStrap<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/matplotlib/" title="matplotlib">matplotlib<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 人前显贵人后受罪 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="Chenjiabing">Chenjiabing</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>
