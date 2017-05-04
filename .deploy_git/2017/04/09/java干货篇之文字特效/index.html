@@ -1,0 +1,614 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>java干货篇之文字特效 | 觅</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Chenjiabing">
+    
+
+    
+    <meta name="description" content="java干货篇文字特效立体效果的文字主要使用了Graphics类中的setFont和setColor的方法，绘制多层字然后加上平移一个坐标即可实现多重叠加的效果,让人看起来就像是立体一样,详情请见源码
+阴影效果的文字和面一样，只是平移的方式有些不同，详情请见源码
+倾斜效果的文字主要使用的时Graphics2D类的shear方法，使绘图上下文倾斜，详情见源码public abstract void">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java干货篇之文字特效">
+<meta property="og:url" content="http://chenjiabing666.github.io/2017/04/09/java干货篇之文字特效/index.html">
+<meta property="og:site_name" content="觅">
+<meta property="og:description" content="java干货篇文字特效立体效果的文字主要使用了Graphics类中的setFont和setColor的方法，绘制多层字然后加上平移一个坐标即可实现多重叠加的效果,让人看起来就像是立体一样,详情请见源码
+阴影效果的文字和面一样，只是平移的方式有些不同，详情请见源码
+倾斜效果的文字主要使用的时Graphics2D类的shear方法，使绘图上下文倾斜，详情见源码public abstract void">
+<meta property="og:updated_time" content="2017-04-09T08:15:55.282Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="java干货篇之文字特效">
+<meta name="twitter:description" content="java干货篇文字特效立体效果的文字主要使用了Graphics类中的setFont和setColor的方法，绘制多层字然后加上平移一个坐标即可实现多重叠加的效果,让人看起来就像是立体一样,详情请见源码
+阴影效果的文字和面一样，只是平移的方式有些不同，详情请见源码
+倾斜效果的文字主要使用的时Graphics2D类的shear方法，使绘图上下文倾斜，详情见源码public abstract void">
+
+    
+    <link rel="alternative" href="/atom.xml" title="觅" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="觅" title="觅"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="觅">觅</a></h1>
+				<h2 class="blog-motto">爱生活爱编码</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/09/java干货篇之文字特效/" title="java干货篇之文字特效" itemprop="url">java干货篇之文字特效</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Chenjiabing" target="_blank" itemprop="author">Chenjiabing</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-09T08:15:16.000Z" itemprop="datePublished"> 发表于 2017-04-09</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#java干货篇文字特效"><span class="toc-number">1.</span> <span class="toc-text">java干货篇文字特效</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#立体效果的文字"><span class="toc-number">1.1.</span> <span class="toc-text">立体效果的文字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#阴影效果的文字"><span class="toc-number">1.2.</span> <span class="toc-text">阴影效果的文字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#倾斜效果的文字"><span class="toc-number">1.3.</span> <span class="toc-text">倾斜效果的文字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#渐变效果的文字"><span class="toc-number">1.4.</span> <span class="toc-text">渐变效果的文字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#会变色的文字"><span class="toc-number">1.5.</span> <span class="toc-text">会变色的文字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#水印文字特效-源码"><span class="toc-number">1.6.</span> <span class="toc-text">水印文字特效(源码)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动态绘制文本-源码"><span class="toc-number">1.7.</span> <span class="toc-text">动态绘制文本(源码)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作者说"><span class="toc-number">1.8.</span> <span class="toc-text">作者说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="java干货篇文字特效"><a href="#java干货篇文字特效" class="headerlink" title="java干货篇文字特效"></a>java干货篇文字特效</h1><h2 id="立体效果的文字"><a href="#立体效果的文字" class="headerlink" title="立体效果的文字"></a>立体效果的文字</h2><p><strong>主要使用了Graphics类中的setFont和setColor的方法，绘制多层字然后加上平移一个坐标即可实现多重叠加的效果,让人看起来就像是立体一样,详情请见<a href="https://github.com/chenjiabing666/java_provide/tree/master/039" target="_blank" rel="external">源码</a></strong></p>
+<h2 id="阴影效果的文字"><a href="#阴影效果的文字" class="headerlink" title="阴影效果的文字"></a>阴影效果的文字</h2><p><strong>和面一样，只是平移的方式有些不同，详情请见<a href="https://github.com/chenjiabing666/java_provide/tree/master/040" target="_blank" rel="external">源码</a></strong></p>
+<h2 id="倾斜效果的文字"><a href="#倾斜效果的文字" class="headerlink" title="倾斜效果的文字"></a>倾斜效果的文字</h2><p><strong>主要使用的时Graphics2D类的shear方法，使绘图上下文倾斜，详情见<a href="https://github.com/chenjiabing666/java_provide/tree/master/041" target="_blank" rel="external">源码</a></strong><br><strong><code>public abstract void shear(double shx,double shy)</code>其中shx表示在正x轴方向移动坐标的乘数，可以作为其y坐标的函数</strong></p>
+<h2 id="渐变效果的文字"><a href="#渐变效果的文字" class="headerlink" title="渐变效果的文字"></a>渐变效果的文字</h2><p><strong>主要使用了Graphics2D中的setPaint的方法,详情请见<a href="https://github.com/chenjiabing666/java_provide/tree/master/042" target="_blank" rel="external">源码</a></strong><br><strong><code>public abstract void setPaint(Paint paint)</code>paint封装了渐变颜色的Paint对象</strong><br><strong>其中Paint对象的创建是由<a href="http://tool.oschina.net/uploads/apidocs/jdk-zh/java/awt/GradientPaint.html" target="_blank" rel="external">GradientPaint</a>初始化的,其中的构造函数如下：<code>GradientPaint(float x1, float y1, Color color1, float x2, float y2, Color color2)</code></strong></p>
+<h2 id="会变色的文字"><a href="#会变色的文字" class="headerlink" title="会变色的文字"></a>会变色的文字</h2><p><strong>这个主要使用了多线程的方式实现的，用多线程改变Color方法中的RGB的值,用Random在指定范围内任意取值然后组成了不同的颜色，详情请见<a href="https://github.com/chenjiabing666/java_provide/tree/master/043" target="_blank" rel="external">源码</a></strong></p>
+<h2 id="水印文字特效-源码"><a href="#水印文字特效-源码" class="headerlink" title="水印文字特效(源码)"></a>水印文字特效(<a href="https://github.com/chenjiabing666/java_provide/tree/master/044" target="_blank" rel="external">源码</a>)</h2><p><strong>水印文字主要通过改变了文字的透明度实现的，将文字绘制在图片上，然后改变图片的透明度，主要使用了Graphaics2D中的setComposite方法，定义如下：</strong><br><strong><code>public abstract void setComposite(Composite comp)</code>，其中Comp是<a href="http://tool.oschina.net/uploads/apidocs/jdk-zh/java/awt/AlphaComposite.html" target="_blank" rel="external">AlphaComposite</a>对象，可以使用以下两种方式创建</strong></p>
+<blockquote>
+<ul>
+<li><code>AlphaComposite alpha=AlphaComposite.getInstance(AlphaComposite.SRC_OVER,0.3f)</code>获得一个SRC_OVER规则的对象</li>
+<li><code>AlphaComposite alpha=AlphaComposite.SC_OVER.driver(0.3f)</code>同上</li>
+</ul>
+</blockquote>
+<h2 id="动态绘制文本-源码"><a href="#动态绘制文本-源码" class="headerlink" title="动态绘制文本(源码)"></a>动态绘制文本(<a href="https://github.com/chenjiabing666/java_provide/tree/master/046" target="_blank" rel="external">源码</a>)</h2><p><strong>主要使用BufferedReader缓冲流从指定文件中读取一个字符，然后使用线程一个一个的绘制在画板上，中间sleep了400ms，这样就能展示出动态的效果，还使用了System类的getProperty方法获得项目的路径,以下提供了两种方法读取文件，更多的读取方法请看我的<a href="https://chenjiabing666.github.io/2017/03/25/java%E4%B8%AD%E7%9A%84IO%E6%93%8D%E4%BD%9C/">博客文章</a></strong></p>
+<blockquote>
+<ul>
+<li><code>BufferedReader read=new BufferedReader(new FileReader(pathname))</code></li>
+<li><code>BufferedReader read=new BufferedReader(new InputStreamReader(in))</code></li>
+</ul>
+</blockquote>
+<p><strong>由于都是比较简单的代码，这里不再贴出来le，有想要看的朋友，请点击上面的源码</strong></p>
+<blockquote>
+<blockquote>
+<h2 id="作者说"><a href="#作者说" class="headerlink" title="作者说"></a>作者说</h2><blockquote>
+<p>本人秉着方便他人的想法才开始写技术文章的，因为对于自学的人来说想要找到系统的学习教程很困难，这一点我深有体会，我也是在不断的摸索中才小有所成，如果你们觉得我写的不错就帮我推广一下，让更多的人看到。另外如果有什么错误的地方也要及时联系我，方便我改进，谢谢大家对我的支持</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><em>版权信息所有者：chenjiabing</em><br><em>如若转载请标明出处：chenjiabing666.github.io6</em></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/java学习/">java学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/java图形与文本处理/">java图形与文本处理</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2017/04/09/java干货篇之文字特效/" data-title="java干货篇之文字特效 | 觅" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/04/09/SQL干货篇二/" title="SQL干货篇二">
+  <strong>上一篇：</strong><br/>
+  <span>
+  SQL干货篇二</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/04/08/Swing干货系列之JTextField/"  title="swing干货系列之JTextField">
+ <strong>下一篇：</strong><br/> 
+ <span>swing干货系列之JTextField
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#java干货篇文字特效"><span class="toc-number">1.</span> <span class="toc-text">java干货篇文字特效</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#立体效果的文字"><span class="toc-number">1.1.</span> <span class="toc-text">立体效果的文字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#阴影效果的文字"><span class="toc-number">1.2.</span> <span class="toc-text">阴影效果的文字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#倾斜效果的文字"><span class="toc-number">1.3.</span> <span class="toc-text">倾斜效果的文字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#渐变效果的文字"><span class="toc-number">1.4.</span> <span class="toc-text">渐变效果的文字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#会变色的文字"><span class="toc-number">1.5.</span> <span class="toc-text">会变色的文字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#水印文字特效-源码"><span class="toc-number">1.6.</span> <span class="toc-text">水印文字特效(源码)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#动态绘制文本-源码"><span class="toc-number">1.7.</span> <span class="toc-text">动态绘制文本(源码)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作者说"><span class="toc-number">1.8.</span> <span class="toc-text">作者说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/BootStrap学习/" title="BootStrap学习">BootStrap学习<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/JQuery学习/" title="JQuery学习">JQuery学习<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Scrapy学习/" title="Scrapy学习">Scrapy学习<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python数据挖掘与分析/" title="python数据挖掘与分析">python数据挖掘与分析<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/scrapy/" title="scrapy">scrapy<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/swing/" title="swing">swing<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JQuery/" title="JQuery">JQuery<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java图形与文本处理/" title="java图形与文本处理">java图形与文本处理<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JDBC/" title="JDBC">JDBC<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/matplotlib/" title="matplotlib">matplotlib<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BootStrap/" title="BootStrap">BootStrap<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 人前显贵人后受罪 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="Chenjiabing">Chenjiabing</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

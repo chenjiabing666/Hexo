@@ -1,0 +1,637 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Swing干货系列之JSplitPane(分割面板) | 觅</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Chenjiabing">
+    
+
+    
+    <meta name="description" content="Swing中的JSplitPane(分割面板)引言
+JSplitPane 用于分隔两个（只能两个）Component。两个 Component 图形化分隔以外观实现为基础，并且这两个 Component 可以由用户交互式调整大小。有关如何使用 JSplitPane 的信息，请参阅 The Java Tutorial 中的 How to Use Split Panes 一节。
+使用 JSplitPa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swing干货系列之JSplitPane(分割面板)">
+<meta property="og:url" content="http://chenjiabing666.github.io/2017/03/28/Swing中的JSplitPane/index.html">
+<meta property="og:site_name" content="觅">
+<meta property="og:description" content="Swing中的JSplitPane(分割面板)引言
+JSplitPane 用于分隔两个（只能两个）Component。两个 Component 图形化分隔以外观实现为基础，并且这两个 Component 可以由用户交互式调整大小。有关如何使用 JSplitPane 的信息，请参阅 The Java Tutorial 中的 How to Use Split Panes 一节。
+使用 JSplitPa">
+<meta property="og:updated_time" content="2017-03-29T07:16:29.302Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Swing干货系列之JSplitPane(分割面板)">
+<meta name="twitter:description" content="Swing中的JSplitPane(分割面板)引言
+JSplitPane 用于分隔两个（只能两个）Component。两个 Component 图形化分隔以外观实现为基础，并且这两个 Component 可以由用户交互式调整大小。有关如何使用 JSplitPane 的信息，请参阅 The Java Tutorial 中的 How to Use Split Panes 一节。
+使用 JSplitPa">
+
+    
+    <link rel="alternative" href="/atom.xml" title="觅" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="觅" title="觅"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="觅">觅</a></h1>
+				<h2 class="blog-motto">爱生活爱编码</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/03/28/Swing中的JSplitPane/" title="Swing干货系列之JSplitPane(分割面板)" itemprop="url">Swing干货系列之JSplitPane(分割面板)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Chenjiabing" target="_blank" itemprop="author">Chenjiabing</a>
+		
+  <p class="article-time">
+    <time datetime="2017-03-28T14:49:39.000Z" itemprop="datePublished"> 发表于 2017-03-28</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Swing中的JSplitPane-分割面板"><span class="toc-number">1.</span> <span class="toc-text">Swing中的JSplitPane(分割面板)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#引言"><span class="toc-number">1.1.</span> <span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构造函数"><span class="toc-number">1.2.</span> <span class="toc-text">构造函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常用方法"><span class="toc-number">1.3.</span> <span class="toc-text">常用方法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#开始撸代码"><span class="toc-number">2.</span> <span class="toc-text">开始撸代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#类-PropertyChangeEvent"><span class="toc-number">2.0.1.</span> <span class="toc-text">类 PropertyChangeEvent</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">2.1.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作者说"><span class="toc-number">2.2.</span> <span class="toc-text">作者说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Swing中的JSplitPane-分割面板"><a href="#Swing中的JSplitPane-分割面板" class="headerlink" title="Swing中的JSplitPane(分割面板)"></a>Swing中的JSplitPane(分割面板)</h1><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><blockquote>
+<p><code>JSplitPane</code> 用于分隔两个（只能两个）<code>Component</code>。两个 <code>Component</code> 图形化分隔以外观实现为基础，并且这两个 <code>Component</code> 可以由用户交互式调整大小。有关如何使用 <code>JSplitPane</code> 的信息，请参阅 <a href="http://tool.oschina.net/apidocs/apidoc?api=jdk-zh" target="_blank" rel="external">The Java Tutorial</a> 中的 How to Use Split Panes 一节。</p>
+<p>使用 <code>JSplitPane.HORIZONTAL_SPLIT</code> 可让分隔窗格中的两个 Component 从左到右排列，或者使用 <code>JSplitPane.VERTICAL_SPLIT</code> 使其从上到下排列。改变 Component 大小的首选方式是调用 <code>setDividerLocation</code>，其中 <code>location</code> 是新的 x 或 y 位置，具体取决于 JSplitPane 的方向。</p>
+<p>要将 Component 调整到其首选大小，可调用 <code>resetToPreferredSizes</code>。</p>
+<p>当用户调整 Component 的大小时，Component 的最小大小用于确定 Component 能够设置的最大/最小位置。如果两个组件的最小大小大于分隔窗格的大小，则分隔条将不允许您调整其大小。改变 JComponent 最小大小，请参阅 <a href="http://tool.oschina.net/apidocs/apidoc?api=jdk-zh" target="_blank" rel="external">JComponent.setMinimumSize(java.awt.Dimension)</a>。</p>
+<p>当用户调整分隔窗格大小时，新的空间以 resizeWeight 为基础在两个组件之间分配。默认情况下，值为 0 表示右边/底部的组件获得所有空间，而值为 1 表示左边/顶部的组件获得所有空间。<br><strong>补充说明：</strong></p>
+<blockquote>
+<p>这里的<code>JComponebt.SetMinimumSize(java.awt.Dimension)</code>:用于设置组件的最小值，这里的Dimension是一个封装组件的高度和宽度的一个类，其中的一个构造函数就是<code>Dimension(int width,int height)</code>,详情见<a href="http://tool.oschina.net/apidocs/apidoc?api=jdk-zh" target="_blank" rel="external">文档</a>，当然有设置最小的就有设置最大的啊，详情看文档吧</p>
+</blockquote>
+</blockquote>
+<h2 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h2><blockquote>
+<ul>
+<li><code>public JSplitPanel()</code>:创建一个配置为将其子组件水平排列、无连续布局、为组件使用两个按钮的新 JSplitPane</li>
+<li><code>public JSplitPanel(int newOrientation)</code>:创建一个指定方向的分割板，这里的<code>newOrientation</code>可以设置两个值， <code>VERTICAL_SPLIT</code>(设置分割板为上下布局),<code>HORIZONTAL_SPLIT</code>(设置分隔板左右布局)</li>
+<li><code>public JSplitPane(int newOrientation,Component newLeftComponent,Component newRightComponent)</code>:创建一个具有指定方向和不连续重绘的指定组件的新 JSplitPane。</li>
+<li><code>public JSplitPane(int newOrientation,boolean newContinuousLayout,Component newLeftComponent,Component newRightComponent)</code>:创建一个具有指定方向、重绘方式和指定组件的新 JSplitPane。</li>
+</ul>
+</blockquote>
+<h2 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h2><blockquote>
+<ul>
+<li><code>setContinuousLayout(boolean newContinuousLayout)</code>:设置是否连续重新显示组件，如果为false就会发现在调整面板的过程中会显示一道黑线，只有当停下的时候才能正常的显示，默认是<code>false</code></li>
+<li><code>setDividerSize(int newSize)</code>:设置分割条的大小<br>*　<code>setDividerLocation(double size)</code>:设置分隔条的位置,这里的size是小数，个人觉得官方文档好像这里有点对劲，相当于占整个面板的百分比</li>
+<li><code>setLeftComponent(Componentcomp)</code>/<code>setTopComponent(Component comp)</code>: 将组件设置到分隔条的上面或者左边。</li>
+<li><code>setRightComponent(Component comp)</code>/<code>setBottomComponent(Component comp)</code>:将组件设置到分隔条的下面或者右边。</li>
+<li><code>setOneTouchExpandable(boolean newValue)</code>:设置 oneTouchExpandable 属性的值，要使 JSplitPane 在分隔条上提供一个 UI 小部件来快速展开/折叠分隔条，此属性必须为 true。</li>
+</ul>
+<p><strong>补充说明：</strong></p>
+<blockquote>
+<p>上面只是常用的几个函数，具体的请看官方文档，注意这里的setLeftComponent的四个设置组件的函数要根据分隔板的分布来确定</p>
+</blockquote>
+</blockquote>
+<h1 id="开始撸代码"><a href="#开始撸代码" class="headerlink" title="开始撸代码"></a>开始撸代码</h1><blockquote>
+<p><strong>初步实现(创建两个按钮实现分隔板的布局)</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">import</span> java.awt.BorderLayout;</div><div class="line"><span class="keyword">import</span> javax.swing.JButton;</div><div class="line"><span class="keyword">import</span> javax.swing.JComponent;</div><div class="line"><span class="keyword">import</span> javax.swing.JFrame;</div><div class="line"><span class="keyword">import</span> javax.swing.JSplitPane;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] a)</span> </span>&#123;</div><div class="line">    JFrame horizontalFrame = <span class="keyword">new</span> JFrame();</div><div class="line">    horizontalFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</div><div class="line"></div><div class="line">    JComponent topButton = <span class="keyword">new</span> JButton(<span class="string">"Left"</span>);</div><div class="line">    JComponent bottomButton = <span class="keyword">new</span> JButton(<span class="string">"Right"</span>);</div><div class="line">    <span class="keyword">final</span> JSplitPane splitPane = <span class="keyword">new</span> JSplitPane(JSplitPane.VERTICAL_SPLIT);</div><div class="line"></div><div class="line">    splitPane.setTopComponent(topButton);</div><div class="line">    splitPane.setBottomComponent(bottomButton);</div><div class="line"></div><div class="line">    </div><div class="line"></div><div class="line">    horizontalFrame.add(splitPane, BorderLayout.CENTER);</div><div class="line">    horizontalFrame.setSize(<span class="number">150</span>, <span class="number">150</span>);</div><div class="line">    horizontalFrame.setVisible(<span class="keyword">true</span>);</div><div class="line"></div><div class="line">    splitPane.setDividerLocation(<span class="number">0.5</span>);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>更进一步(两种布局的操作)</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.awt.BorderLayout;</div><div class="line"><span class="keyword">import</span> javax.swing.JButton;</div><div class="line"><span class="keyword">import</span> javax.swing.JComponent;</div><div class="line"><span class="keyword">import</span> javax.swing.JFrame;</div><div class="line"><span class="keyword">import</span> javax.swing.JSplitPane;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] a)</span> </span>&#123;</div><div class="line">    JFrame horizontalFrame = <span class="keyword">new</span> JFrame();</div><div class="line">    horizontalFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</div><div class="line">    </div><div class="line">    </div><div class="line">    JComponent leftButton = <span class="keyword">new</span> JButton(<span class="string">"Left"</span>);</div><div class="line">    JComponent rightButton = <span class="keyword">new</span> JButton(<span class="string">"Right"</span>);</div><div class="line">    JSplitPane splitPane = <span class="keyword">new</span> JSplitPane(JSplitPane.VERTICAL_SPLIT);</div><div class="line">    splitPane.setLeftComponent(leftButton);</div><div class="line">    splitPane.setRightComponent(rightButton);</div><div class="line">    </div><div class="line">    horizontalFrame.add(splitPane, BorderLayout.CENTER);</div><div class="line">    horizontalFrame.setSize(<span class="number">150</span>, <span class="number">150</span>);</div><div class="line">    horizontalFrame.setVisible(<span class="keyword">true</span>);</div><div class="line">    </div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>嵌套分隔板</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> javax.swing.JApplet;</div><div class="line"><span class="keyword">import</span> javax.swing.JFrame;</div><div class="line"><span class="keyword">import</span> javax.swing.JLabel;</div><div class="line"><span class="keyword">import</span> javax.swing.JSplitPane;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span></span>&#123;</div><div class="line">  </div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] a)</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> HORIZSPLIT = JSplitPane.HORIZONTAL_SPLIT;</div><div class="line"></div><div class="line">    <span class="keyword">int</span> VERTSPLIT = JSplitPane.VERTICAL_SPLIT;</div><div class="line"></div><div class="line">    <span class="keyword">boolean</span> continuousLayout = <span class="keyword">true</span>;</div><div class="line"></div><div class="line"></div><div class="line">    JLabel label1 = <span class="keyword">new</span> JLabel(<span class="string">"a"</span>);</div><div class="line">    JLabel label2 = <span class="keyword">new</span> JLabel(<span class="string">"b"</span>);</div><div class="line">    JLabel label3 = <span class="keyword">new</span> JLabel(<span class="string">"c"</span>);</div><div class="line">    JSplitPane splitPane1 = <span class="keyword">new</span> JSplitPane(VERTSPLIT, continuousLayout, label1, label2);</div><div class="line">    splitPane1.setOneTouchExpandable(<span class="keyword">true</span>);</div><div class="line">    splitPane1.setDividerSize(<span class="number">2</span>);</div><div class="line">    splitPane1.setDividerLocation(<span class="number">0.5</span>);</div><div class="line"></div><div class="line">    JSplitPane splitPane2 = <span class="keyword">new</span> JSplitPane(HORIZSPLIT, splitPane1, label3);<span class="comment">//将分隔板和一个label放在第二个分割板中实现嵌套</span></div><div class="line">    splitPane2.setOneTouchExpandable(<span class="keyword">true</span>);</div><div class="line">    splitPane2.setDividerLocation(<span class="number">0.4</span>);</div><div class="line">    splitPane2.setDividerSize(<span class="number">2</span>);</div><div class="line"></div><div class="line">    JFrame frame = <span class="keyword">new</span> JFrame();</div><div class="line">    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</div><div class="line">    frame.add(splitPane2);</div><div class="line">    frame.pack();</div><div class="line">    frame.setVisible(<span class="keyword">true</span>);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>事件监听</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.awt.BorderLayout;</div><div class="line"><span class="keyword">import</span> java.beans.PropertyChangeEvent;</div><div class="line"><span class="keyword">import</span> java.beans.PropertyChangeListener;</div><div class="line"><span class="comment">// w  w  w . j a  va2s .  co m</span></div><div class="line"><span class="keyword">import</span> javax.swing.JButton;</div><div class="line"><span class="keyword">import</span> javax.swing.JComponent;</div><div class="line"><span class="keyword">import</span> javax.swing.JFrame;</div><div class="line"><span class="keyword">import</span> javax.swing.JSplitPane;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123;</div><div class="line">    JFrame frame = <span class="keyword">new</span> JFrame(<span class="string">"Property Split"</span>);</div><div class="line">    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</div><div class="line"></div><div class="line">    JSplitPane splitPane = <span class="keyword">new</span> JSplitPane(JSplitPane.VERTICAL_SPLIT);</div><div class="line">    splitPane.setContinuousLayout(<span class="keyword">true</span>);</div><div class="line">    splitPane.setOneTouchExpandable(<span class="keyword">true</span>);</div><div class="line"></div><div class="line">    JComponent topComponent = <span class="keyword">new</span> JButton(<span class="string">"A"</span>);</div><div class="line">    splitPane.setTopComponent(topComponent);</div><div class="line"></div><div class="line">    JComponent bottomComponent = <span class="keyword">new</span> JButton(<span class="string">"B"</span>);</div><div class="line">    splitPane.setBottomComponent(bottomComponent);</div><div class="line"></div><div class="line">    PropertyChangeListener propertyChangeListener = <span class="keyword">new</span> PropertyChangeListener() &#123;</div><div class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">propertyChange</span><span class="params">(PropertyChangeEvent changeEvent)</span> </span>&#123;</div><div class="line">        JSplitPane sourceSplitPane = (JSplitPane) changeEvent.getSource();</div><div class="line">        String propertyName = changeEvent.getPropertyName();</div><div class="line">        <span class="keyword">if</span> (propertyName.equals(JSplitPane.LAST_DIVIDER_LOCATION_PROPERTY)) &#123;</div><div class="line">          <span class="keyword">int</span> current = sourceSplitPane.getDividerLocation();</div><div class="line">          System.out.println(<span class="string">"Current: "</span> + current);</div><div class="line">          Integer last = (Integer) changeEvent.getNewValue();</div><div class="line">          System.out.println(<span class="string">"Last: "</span> + last);</div><div class="line">          Integer priorLast = (Integer) changeEvent.getOldValue();</div><div class="line">          System.out.println(<span class="string">"Prior last: "</span> + priorLast);</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    splitPane.addPropertyChangeListener(propertyChangeListener);</div><div class="line"></div><div class="line">    frame.add(splitPane, BorderLayout.CENTER);</div><div class="line">    frame.setSize(<span class="number">300</span>, <span class="number">150</span>);</div><div class="line">    frame.setVisible(<span class="keyword">true</span>);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>说明</strong><br>无论 <code>bean</code> 何时更改 <code>bound</code> 属性，都会激发一个 <code>PropertyChange</code> 事件。可以向源 <code>bean</code> 注册一个 <code>PropertyChangeListener</code>，以便获得所有绑定 (<code>bound</code>) 属性更改的通知。</p>
+<h3 id="类-PropertyChangeEvent"><a href="#类-PropertyChangeEvent" class="headerlink" title="类 PropertyChangeEvent"></a>类 <a href="http://tool.oschina.net/apidocs/apidoc?api=jdk-zh" target="_blank" rel="external">PropertyChangeEvent</a></h3><p>无论 bean 何时更改 “bound” 或 “constrained” 属性，都会提交一个 “PropertyChange” 事件。PropertyChangeEvent 对象被作为参数发送给 PropertyChangeListener 和 VetoableChangeListener 方法。<br>通常 PropertyChangeEvent 还附带名称和已更改属性的旧值和新值。如果新值是基本类型（比如 int 或 boolean），则必须将它包装为相应的 java.lang.* Object 类型（比如 Integer 或 Boolean）。<br>如果旧值和新值的真实值是未知的，则可能为它们提供 null 值。<br>事件源可能发送一个 null 对象作为名称，以指示其属性的任意事件集已更改。在这种情况下，旧值和新值应该仍然为 null。<br><code>getSource()</code>:返回最初未变化的对象，未Object类型的,因此这里需要强制转换成<code>JSplitPanel</code></p>
+</blockquote>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><blockquote>
+<ul>
+<li><a href="http://tool.oschina.net/apidocs/apidoc?api=jdk-zh" target="_blank" rel="external">官方文档</a></li>
+<li><a href="http://www.java2s.com/Tutorials/Java/Java_Swing/1310__Java_Swing_JSplitPane.htm" target="_blank" rel="external">英文Swing教程</a></li>
+</ul>
+<blockquote>
+<h2 id="作者说"><a href="#作者说" class="headerlink" title="作者说"></a>作者说</h2><blockquote>
+<p>本人秉着方便他人的想法才开始写技术文章的，因为对于自学的人来说想要找到系统的学习教程很困难，这一点我深有体会，我也是在不断的摸索中才小有所成，如果你们觉得我写的不错就帮我推广一下，让更多的人看到。另外如果有什么错误的地方也要及时联系我，方便我改进，谢谢大家对我的支持</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><em>版权信息所有者：chenjiabing</em><br><em>如若转载请标明出处：chenjiabing666.github.io6</em></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/java学习/">java学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/swing/">swing</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2017/03/28/Swing中的JSplitPane/" data-title="Swing干货系列之JSplitPane(分割面板) | 觅" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/04/01/matplotlib绘制图形基础/" title="matplotlib绘制图形基础">
+  <strong>上一篇：</strong><br/>
+  <span>
+  matplotlib绘制图形基础</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/03/27/Swing-干货系列之JSlider/"  title="Swing干货系列之JSlider(滑块)">
+ <strong>下一篇：</strong><br/> 
+ <span>Swing干货系列之JSlider(滑块)
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Swing中的JSplitPane-分割面板"><span class="toc-number">1.</span> <span class="toc-text">Swing中的JSplitPane(分割面板)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#引言"><span class="toc-number">1.1.</span> <span class="toc-text">引言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#构造函数"><span class="toc-number">1.2.</span> <span class="toc-text">构造函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常用方法"><span class="toc-number">1.3.</span> <span class="toc-text">常用方法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#开始撸代码"><span class="toc-number">2.</span> <span class="toc-text">开始撸代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#类-PropertyChangeEvent"><span class="toc-number">2.0.1.</span> <span class="toc-text">类 PropertyChangeEvent</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">2.1.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作者说"><span class="toc-number">2.2.</span> <span class="toc-text">作者说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/BootStrap学习/" title="BootStrap学习">BootStrap学习<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/JQuery学习/" title="JQuery学习">JQuery学习<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Scrapy学习/" title="Scrapy学习">Scrapy学习<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python数据挖掘与分析/" title="python数据挖掘与分析">python数据挖掘与分析<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/scrapy/" title="scrapy">scrapy<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/swing/" title="swing">swing<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JQuery/" title="JQuery">JQuery<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java图形与文本处理/" title="java图形与文本处理">java图形与文本处理<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JDBC/" title="JDBC">JDBC<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/matplotlib/" title="matplotlib">matplotlib<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BootStrap/" title="BootStrap">BootStrap<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 人前显贵人后受罪 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="Chenjiabing">Chenjiabing</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

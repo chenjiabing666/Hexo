@@ -1,0 +1,697 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>MongoDB干货篇之查询数据 | 觅</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Chenjiabing">
+    
+
+    
+    <meta name="description" content="MongoDB干货篇之查询准备工作
+在开始之前我们应该先准备数据方便演示，这里我插入的了几条数据，数据如下：12345678910111213141516171819202122232425262728293031323334db.user.insertMany([&amp;#123;name:&apos;jack&apos;,age:22,sex:&apos;Man&apos;,tags:[&apos;python&apos;,&apos;c++&apos;,&apos;c&apos;],grades">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB干货篇之查询数据">
+<meta property="og:url" content="http://chenjiabing666.github.io/2017/04/30/MongoDB干货篇之查询数据/index.html">
+<meta property="og:site_name" content="觅">
+<meta property="og:description" content="MongoDB干货篇之查询准备工作
+在开始之前我们应该先准备数据方便演示，这里我插入的了几条数据，数据如下：12345678910111213141516171819202122232425262728293031323334db.user.insertMany([&amp;#123;name:&apos;jack&apos;,age:22,sex:&apos;Man&apos;,tags:[&apos;python&apos;,&apos;c++&apos;,&apos;c&apos;],grades">
+<meta property="og:updated_time" content="2017-04-30T21:10:23.666Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MongoDB干货篇之查询数据">
+<meta name="twitter:description" content="MongoDB干货篇之查询准备工作
+在开始之前我们应该先准备数据方便演示，这里我插入的了几条数据，数据如下：12345678910111213141516171819202122232425262728293031323334db.user.insertMany([&amp;#123;name:&apos;jack&apos;,age:22,sex:&apos;Man&apos;,tags:[&apos;python&apos;,&apos;c++&apos;,&apos;c&apos;],grades">
+
+    
+    <link rel="alternative" href="/atom.xml" title="觅" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="觅" title="觅"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="觅">觅</a></h1>
+				<h2 class="blog-motto">爱生活爱编码</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/30/MongoDB干货篇之查询数据/" title="MongoDB干货篇之查询数据" itemprop="url">MongoDB干货篇之查询数据</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Chenjiabing" target="_blank" itemprop="author">Chenjiabing</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-30T06:53:00.000Z" itemprop="datePublished"> 发表于 2017-04-30</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MongoDB干货篇之查询"><span class="toc-number">1.</span> <span class="toc-text">MongoDB干货篇之查询</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-number">1.1.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#find"><span class="toc-number">1.2.</span> <span class="toc-text">find()</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实例："><span class="toc-number">1.2.1.</span> <span class="toc-text">实例：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查询内嵌文档"><span class="toc-number">1.3.</span> <span class="toc-text">查询内嵌文档</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#完全匹配查询"><span class="toc-number">1.3.1.</span> <span class="toc-text">完全匹配查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#键值对查询"><span class="toc-number">1.3.2.</span> <span class="toc-text">键值对查询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查询操作符"><span class="toc-number">1.4.</span> <span class="toc-text">查询操作符</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实例"><span class="toc-number">1.4.1.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ne"><span class="toc-number">1.4.2.</span> <span class="toc-text">$ne</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#slice"><span class="toc-number">1.4.3.</span> <span class="toc-text">slice</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#exists"><span class="toc-number">1.4.4.</span> <span class="toc-text">$exists</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#or"><span class="toc-number">1.4.5.</span> <span class="toc-text">$or</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#and"><span class="toc-number">1.4.6.</span> <span class="toc-text">$and</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#in"><span class="toc-number">1.4.7.</span> <span class="toc-text">$in</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nin"><span class="toc-number">1.4.8.</span> <span class="toc-text">$nin</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#not"><span class="toc-number">1.4.9.</span> <span class="toc-text">$not</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#迭代游标的查询"><span class="toc-number">1.5.</span> <span class="toc-text">迭代游标的查询</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="MongoDB干货篇之查询"><a href="#MongoDB干货篇之查询" class="headerlink" title="MongoDB干货篇之查询"></a>MongoDB干货篇之查询</h1><h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><blockquote>
+<p><strong>在开始之前我们应该先准备数据方便演示，这里我插入的了几条数据，数据如下：</strong><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line">db.user.insertMany(</div><div class="line">[&#123;</div><div class="line"><span class="attr">name</span>:<span class="string">'jack'</span>,</div><div class="line"><span class="attr">age</span>:<span class="number">22</span>,</div><div class="line"><span class="attr">sex</span>:<span class="string">'Man'</span>,</div><div class="line"><span class="attr">tags</span>:[<span class="string">'python'</span>,<span class="string">'c++'</span>,<span class="string">'c'</span>],</div><div class="line"><span class="attr">grades</span>:[<span class="number">22</span>,<span class="number">33</span>,<span class="number">44</span>,<span class="number">55</span>],</div><div class="line"><span class="attr">school</span>:&#123;</div><div class="line"><span class="attr">name</span>:<span class="string">'shida'</span>,</div><div class="line"><span class="attr">city</span>:<span class="string">'xuzhou'</span></div><div class="line">&#125;</div><div class="line">&#125;,&#123;</div><div class="line"><span class="attr">name</span>:<span class="string">'jhon'</span>,</div><div class="line"><span class="attr">age</span>:<span class="number">33</span>,</div><div class="line"><span class="attr">sex</span>:<span class="literal">null</span>,</div><div class="line"><span class="attr">tags</span>:[<span class="string">'python'</span>,<span class="string">'java'</span>],</div><div class="line"><span class="attr">grades</span>:[<span class="number">66</span>,<span class="number">22</span>,<span class="number">44</span>,<span class="number">88</span>],</div><div class="line"><span class="attr">school</span>:&#123;</div><div class="line"><span class="attr">name</span>:<span class="string">'kuangda'</span>,</div><div class="line"><span class="attr">city</span>:<span class="string">'xuzhou'</span></div><div class="line">&#125;</div><div class="line">&#125;,</div><div class="line">&#123;</div><div class="line"><span class="attr">name</span>:<span class="string">'xiaoming'</span>,</div><div class="line"><span class="attr">age</span>:<span class="number">33</span>,</div><div class="line"><span class="attr">tags</span>:[<span class="string">'python'</span>,<span class="string">'java'</span>],</div><div class="line"><span class="attr">grades</span>:[<span class="number">66</span>,<span class="number">22</span>,<span class="number">44</span>,<span class="number">88</span>],</div><div class="line"><span class="attr">school</span>:&#123;</div><div class="line"><span class="attr">name</span>:<span class="string">'kuangda'</span>,</div><div class="line"><span class="attr">city</span>:<span class="string">'xuzhou'</span></div><div class="line">&#125;</div><div class="line">&#125;</div><div class="line">]</div><div class="line">)</div></pre></td></tr></table></figure></p>
+</blockquote>
+<h2 id="find"><a href="#find" class="headerlink" title="find()"></a>find()</h2><blockquote>
+<p><strong>其中<code>query</code>表示查找的条件，相当于<code>mysql</code>中<code>where</code>子句,<code>projection</code>列出你想要查找的数据，格式为<code>db.collection.find(find(&lt;query filter&gt;, &lt;projection&gt;))</code></strong></p>
+</blockquote>
+<h3 id="实例："><a href="#实例：" class="headerlink" title="实例："></a>实例：</h3><blockquote>
+<ul>
+<li><p><strong>下面不带参数的查找，将会查找出所有的结果</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">    db.find().pretty();</div><div class="line">    </div><div class="line">    //输出结果</div><div class="line">    </div><div class="line">    </div><div class="line">&#123;                                                     </div><div class="line">        &quot;_id&quot; : ObjectId(&quot;59056f81299fe049404b2899&quot;), </div><div class="line">        &quot;name&quot; : &quot;jack&quot;,                              </div><div class="line">        &quot;age&quot; : 22,                                   </div><div class="line">        &quot;tags&quot; : [                                    </div><div class="line">                &quot;python&quot;,                             </div><div class="line">                &quot;c++&quot;,                                </div><div class="line">                &quot;c&quot;                                   </div><div class="line">        ],                                            </div><div class="line">        &quot;grades&quot; : [                                  </div><div class="line">                22,                                   </div><div class="line">                33,                                   </div><div class="line">                44,                                   </div><div class="line">                55                                    </div><div class="line">        ],                                            </div><div class="line">        &quot;school&quot; : &#123;                                  </div><div class="line">                &quot;name&quot; : &quot;shida&quot;,                     </div><div class="line">                &quot;city&quot; : &quot;xuzhou&quot;                     </div><div class="line">        &#125;                                             </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><strong>下面找出满足<code>name</code>为<code>jack</code>的数据，并且只输出<code>name</code>,<code>age</code>,这里的<code>_id</code>是默认输出的，如果不想输出将将它设置为<code>0</code>，想要输出那个字段将它设置为1</strong></p>
+</li>
+</ul>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;<span class="attr">name</span>:<span class="string">'jack'</span>&#125;,&#123;<span class="attr">name</span>:<span class="number">1</span>,<span class="attr">age</span>:<span class="number">1</span>&#125;)</div><div class="line"></div><div class="line"><span class="comment">//输出结果</span></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59056f81299fe049404b2899"</span>), <span class="string">"name"</span> : <span class="string">"jack"</span>, <span class="string">"age"</span> : <span class="number">22</span> &#125;</div><div class="line"></div><div class="line"></div><div class="line">db.user.find(&#123;<span class="attr">name</span>:<span class="string">'jack'</span>&#125;,&#123;<span class="attr">name</span>:<span class="number">1</span>,<span class="attr">age</span>:<span class="number">1</span>，_id:<span class="number">0</span>&#125;)</div><div class="line"></div><div class="line"><span class="comment">//输出结果</span></div><div class="line">&#123;<span class="string">"name"</span> : <span class="string">"jack"</span>, <span class="string">"age"</span> : <span class="number">22</span> &#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<blockquote>
+<p>**注意这里的一个 <code>projection</code>不能 同时 指定包括和排除字段，除了排除 <code>_id</code>字段。 在 显式包括 字段的映射中，<code>_id</code> 字段是唯一一个您可以 显式排除 的。</p>
+</blockquote>
+</blockquote>
+<h2 id="查询内嵌文档"><a href="#查询内嵌文档" class="headerlink" title="查询内嵌文档"></a>查询内嵌文档</h2><blockquote>
+<p><strong>上述例子中插入的<code>school</code>数据就表示内嵌文档</strong></p>
+</blockquote>
+<h3 id="完全匹配查询"><a href="#完全匹配查询" class="headerlink" title="完全匹配查询"></a>完全匹配查询</h3><blockquote>
+<p><strong>完全匹配查询表示<code>school</code>中的查询数组必须和插入的数组完全一样，顺序都必须一样才能查找出来</strong></p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;<span class="attr">name</span>:<span class="string">'jack'</span>,<span class="attr">school</span>:&#123;<span class="attr">name</span>:<span class="string">'shida'</span>,<span class="attr">city</span>:<span class="string">'xuzhou'</span>&#125;&#125;);</div><div class="line"></div><div class="line"><span class="comment">//输出结果</span></div><div class="line"></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59056f81299fe049404b2899"</span>), <span class="string">"name"</span> : <span class="string">"jack"</span>, <span class="string">"age"</span> : <span class="number">22</span>, <span class="string">"tags"</span> : [ <span class="string">"python"</span>, <span class="string">"c++"</span>, <span class="string">"c"</span> ], <span class="string">"grades"</span> : [ <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>, <span class="number">55</span> ], <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"shida"</span>, <span class="string">"city"</span> : <span class="string">"xuzhou"</span> &#125; &#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">//下面是指定输出的字段，这里的school.name表示只输出school文档中name字段，必须加引号</span></div><div class="line">db.user.find(&#123;<span class="attr">name</span>:<span class="string">'jack'</span>,<span class="attr">school</span>:&#123;<span class="attr">name</span>:<span class="string">'shida'</span>,<span class="attr">city</span>:<span class="string">'xuzhou'</span>&#125;&#125;,&#123;<span class="attr">name</span>:<span class="number">1</span>,<span class="attr">age</span>:<span class="number">1</span>,<span class="string">'school.name'</span>:<span class="number">1</span>&#125;);</div><div class="line"><span class="comment">//输出结果</span></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59056f81299fe049404b2899"</span>), <span class="string">"name"</span> : <span class="string">"jack"</span>, <span class="string">"age"</span> : <span class="number">22</span>, <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"shida"</span> &#125; &#125;</div></pre></td></tr></table></figure>
+<h3 id="键值对查询"><a href="#键值对查询" class="headerlink" title="键值对查询"></a>键值对查询</h3><blockquote>
+<p><strong>可以通过键值对查询，不用考虑顺序，比如<code>&#39;school.name&#39;:&#39;shida&#39;</code>，表示查询学校名字为<code>shida</code>的数据，这里的引号是必须要的</strong></p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;<span class="string">'school.name'</span>:<span class="string">'shida'</span>&#125;,&#123;<span class="attr">name</span>:<span class="number">1</span>,<span class="attr">school</span>:<span class="number">1</span>&#125;);</div><div class="line"></div><div class="line"><span class="comment">//输出结果</span></div><div class="line"></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59056f81299fe049404b2899"</span>), <span class="string">"name"</span> : <span class="string">"jack"</span>, <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"shida"</span>, <span class="string">"city"</span> : <span class="string">"xuzhou"</span> &#125; &#125;</div></pre></td></tr></table></figure>
+<h2 id="查询操作符"><a href="#查询操作符" class="headerlink" title="查询操作符"></a>查询操作符</h2><blockquote>
+<p><strong>下面我们将配合查询操作符来执行复杂的查询操作，比如元素查询、 逻辑查询 、比较查询操作。我们使用下面的比较操作符<code>&quot;$gt&quot;</code> 、<code>&quot;$gte&quot;</code>、 <code>&quot;$lt&quot;</code>、 <code>&quot;$lte&quot;</code>(分别对应<code>&quot;&gt;&quot;</code>、 <code>&quot;&gt;=&quot;</code> 、<code>&quot;&lt;&quot;</code> 、<code>&quot;&lt;=&quot;</code>)</strong></p>
+</blockquote>
+<h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><blockquote>
+<p><strong>下面查询年龄在<code>20-30</code>之间的信息</strong></p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;</div><div class="line"><span class="attr">age</span>:&#123;<span class="attr">$gt</span>:<span class="number">20</span>,<span class="attr">$lt</span>:<span class="number">30</span>&#125;  </div><div class="line">&#125;)</div><div class="line"></div><div class="line"><span class="comment">//输出</span></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59056f81299fe049404b2899"</span>), <span class="string">"name"</span> : <span class="string">"jack"</span>, <span class="string">"age"</span> : <span class="number">22</span>, <span class="string">"tags"</span> : [ <span class="string">"python"</span>, <span class="string">"c++"</span>, <span class="string">"c"</span> ], <span class="string">"grades"</span> : [ <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>, <span class="number">55</span> ], <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"shida"</span>, <span class="string">"city"</span> : <span class="string">"xuzhou"</span> &#125; &#125;</div></pre></td></tr></table></figure>
+<h3 id="ne"><a href="#ne" class="headerlink" title="$ne"></a>$ne</h3><blockquote>
+<p><strong><code>$ne</code>表示不相等，例如查询年龄不等于<code>22</code>岁的信息</strong></p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;<span class="attr">age</span>:&#123;<span class="attr">$ne</span>:<span class="number">22</span>&#125;&#125;)</div><div class="line"></div><div class="line"><span class="comment">//输出</span></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59057c16f551d8c9003d31e0"</span>), <span class="string">"name"</span> : <span class="string">"jhon"</span>, <span class="string">"age"</span> : <span class="number">33</span>, <span class="string">"tags"</span> : [ <span class="string">"python"</span>, <span class="string">"java"</span> ], <span class="string">"grades"</span> : [ <span class="number">66</span>, <span class="number">22</span>, <span class="number">44</span>, <span class="number">88</span> ], <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"kuangda"</span>, <span class="string">"city"</span> : <span class="string">"xuzhou"</span> &#125; &#125;</div></pre></td></tr></table></figure>
+<h3 id="slice"><a href="#slice" class="headerlink" title="slice"></a>slice</h3><blockquote>
+<p><strong><code>$slice</code>操作符控制查询返回的数组中元素的个数。此操作符根据参数<code>{ field: value }</code> 指定键名和键值选择出文档集合，并且该文档集合中指定<code>array</code>键将返回从指定数量的元素。如果<code>count</code>的值大于数组中元素的数量，该查询返回数组中的所有元素的。</strong></p>
+<p><strong>语法：<code>db.collection.find( { field: value }, { array: {$slice: count }})</code>;</strong></p>
+<ul>
+<li><strong>下面将查询<code>grades</code>中的前两个数</strong></li>
+</ul>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;<span class="attr">name</span>:<span class="string">'jack'</span>&#125;,&#123;<span class="attr">grades</span>:&#123;<span class="attr">$slice</span>:<span class="number">2</span>&#125;,<span class="attr">name</span>:<span class="number">1</span>,<span class="attr">age</span>:<span class="number">1</span>,<span class="string">'school.name'</span>:<span class="number">1</span>&#125;);</div><div class="line"></div><div class="line"><span class="comment">//输出，可以看出这里的grades只输出了前面两个</span></div><div class="line"></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59057c16f551d8c9003d31df"</span>), <span class="string">"name"</span> : <span class="string">"jack"</span>, <span class="string">"age"</span> : <span class="number">22</span>, <span class="string">"grades"</span> : [ <span class="number">22</span>, <span class="number">33</span> ], <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"shida"</span> &#125; &#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li><strong>下面将输出后3个数据</strong></li>
+</ul>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;<span class="attr">name</span>:<span class="string">'jhon'</span>&#125;,&#123;<span class="attr">grades</span>:&#123;<span class="attr">$slice</span>:<span class="number">-3</span>&#125;,<span class="attr">name</span>:<span class="number">1</span>&#125;);</div><div class="line"></div><div class="line"><span class="comment">//输出</span></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59057c16f551d8c9003d31e0"</span>), <span class="string">"name"</span> : <span class="string">"jhon"</span>, <span class="string">"grades"</span> : [ <span class="number">22</span>, <span class="number">44</span>, <span class="number">88</span> ] &#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li><strong>下面介绍指定一个数组作为参数。数组参数使用<code>[ skip , limit ]</code> 格式，其中第一个值表示在数组中跳过的项目数,第二个值表示返回的项目数。</strong></li>
+</ul>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;<span class="attr">name</span>:<span class="string">'jack'</span>&#125;,&#123;<span class="attr">grades</span>:&#123;<span class="attr">$slice</span>:[<span class="number">2</span>,<span class="number">2</span>]&#125;,<span class="attr">name</span>:<span class="number">1</span>&#125;);  <span class="comment">//这里将会跳过前面的两个，直接得到后面的两个数据</span></div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">//输出</span></div><div class="line"></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59057c16f551d8c9003d31df"</span>), <span class="string">"name"</span> : <span class="string">"jack"</span>, <span class="string">"grades"</span> : [ <span class="number">44</span>, <span class="number">55</span> ] &#125;</div></pre></td></tr></table></figure>
+<h3 id="exists"><a href="#exists" class="headerlink" title="$exists"></a>$exists</h3><blockquote>
+<p><strong>如果<code>$exists</code>的值为<code>true</code>,选择存在该字段的文档,若值为<code>false</code>则选择不包含该字段的文档</strong></p>
+<p><strong>下面将会查询不存在sex这一项的信息</strong></p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;<span class="attr">sex</span>:&#123;<span class="attr">$exists</span>:<span class="literal">false</span>&#125;&#125;)</div><div class="line"></div><div class="line"><span class="comment">//结果</span></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59058460fe58ed1089f2a5cd"</span>), <span class="string">"name"</span> : <span class="string">"xiaoming"</span>, <span class="string">"age"</span> : <span class="number">33</span>, <span class="string">"tags"</span> : [ <span class="string">"python"</span>, <span class="string">"java"</span> ], <span class="string">"grades"</span> : [ <span class="number">66</span>, <span class="number">22</span>, <span class="number">44</span>, <span class="number">88</span> ], <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"kuangda"</span>, <span class="string">"city"</span> : <span class="string">"xuzhou"</span> &#125; &#125;</div><div class="line"></div><div class="line"></div><div class="line">db.user.find(&#123;<span class="attr">sex</span>:&#123;<span class="attr">$exists</span>:<span class="literal">true</span>&#125;&#125;);</div><div class="line"></div><div class="line"><span class="comment">//结果</span></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59058460fe58ed1089f2a5cb"</span>), <span class="string">"name"</span> : <span class="string">"jack"</span>, <span class="string">"age"</span> : <span class="number">22</span>, <span class="string">"sex"</span> : <span class="string">"Man"</span>, <span class="string">"tags"</span> : [ <span class="string">"python"</span>, <span class="string">"c++"</span>, <span class="string">"c"</span> ], <span class="string">"grades"</span> : [ <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>, <span class="number">55</span> ], <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"shida"</span>, <span class="string">"city"</span> : <span class="string">"xuzhou"</span> &#125; &#125;</div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59058460fe58ed1089f2a5cc"</span>), <span class="string">"name"</span> : <span class="string">"jhon"</span>, <span class="string">"age"</span> : <span class="number">33</span>, <span class="string">"sex"</span> : <span class="literal">null</span>, <span class="string">"tags"</span> : [ <span class="string">"python"</span>, <span class="string">"java"</span> ], <span class="string">"grades"</span> : [ <span class="number">66</span>, <span class="number">22</span>, <span class="number">44</span>, <span class="number">88</span> ], <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"kuangda"</span>, <span class="string">"city"</span> : <span class="string">"xuzhou"</span> &#125; &#125;</div></pre></td></tr></table></figure>
+<h3 id="or"><a href="#or" class="headerlink" title="$or"></a>$or</h3><blockquote>
+<p><strong>执行逻辑<code>OR</code>运算,指定一个至少包含两个表达式的数组，选择出至少满足数组中一条表达式的文档。</strong><br><strong>语法：<code>{ $or: [ { &lt;expression1&gt; }, { &lt;expression2&gt; }, ... , { &lt;expressionN&gt; } ] }</code></strong></p>
+<ul>
+<li><strong>下面将要查找<code>age</code>等于<code>22</code>或者<code>age</code>等于<code>33</code>的值</strong></li>
+</ul>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;<span class="attr">$or</span>:[&#123;<span class="attr">age</span>:<span class="number">22</span>&#125;,&#123;<span class="attr">age</span>:<span class="number">33</span>&#125;]&#125;)</div><div class="line"></div><div class="line"><span class="comment">//结果</span></div><div class="line"></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59058460fe58ed1089f2a5cb"</span>), <span class="string">"name"</span> : <span class="string">"jack"</span>, <span class="string">"age"</span> : <span class="number">22</span>, <span class="string">"sex"</span> : <span class="string">"Man"</span>, <span class="string">"tags"</span> : [ <span class="string">"python"</span>, <span class="string">"c++"</span>, <span class="string">"c"</span> ], <span class="string">"grades"</span> : [ <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>, <span class="number">55</span> ], <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"shida"</span>, <span class="string">"city"</span> : <span class="string">"xuzhou"</span> &#125; &#125;</div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59058460fe58ed1089f2a5cc"</span>), <span class="string">"name"</span> : <span class="string">"jhon"</span>, <span class="string">"age"</span> : <span class="number">33</span>, <span class="string">"sex"</span> : <span class="literal">null</span>, <span class="string">"tags"</span> : [ <span class="string">"python"</span>, <span class="string">"java"</span> ], <span class="string">"grades"</span> : [ <span class="number">66</span>, <span class="number">22</span>, <span class="number">44</span>, <span class="number">88</span> ], <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"kuangda"</span>, <span class="string">"city"</span> : <span class="string">"xuzhou"</span> &#125; &#125;</div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59058460fe58ed1089f2a5cd"</span>), <span class="string">"name"</span> : <span class="string">"xiaoming"</span>, <span class="string">"age"</span> : <span class="number">33</span>, <span class="string">"tags"</span> : [ <span class="string">"python"</span>, <span class="string">"java"</span> ], <span class="string">"grades"</span> : [ <span class="number">66</span>, <span class="number">22</span>, <span class="number">44</span>, <span class="number">88</span> ], <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"kuangda"</span>, <span class="string">"city"</span> : <span class="string">"xuzhou"</span> &#125; &#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li><strong>下面将会查找出年龄为22或者33并且姓名为<code>jack</code>的人的信息</strong></li>
+</ul>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;<span class="attr">name</span>:<span class="string">'jack'</span>,<span class="attr">$or</span>:[&#123;<span class="attr">age</span>:<span class="number">33</span>&#125;,&#123;<span class="attr">age</span>:<span class="number">22</span>&#125;]&#125;)</div><div class="line"></div><div class="line"><span class="comment">//结果</span></div><div class="line"></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59058460fe58ed1089f2a5cb"</span>), <span class="string">"name"</span> : <span class="string">"jack"</span>, <span class="string">"age"</span> : <span class="number">22</span>, <span class="string">"sex"</span> : <span class="string">"Man"</span>, <span class="string">"tags"</span> : [ <span class="string">"python"</span>, <span class="string">"c++"</span>, <span class="string">"c"</span> ], <span class="string">"grades"</span> : [ <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>, <span class="number">55</span> ], <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"shida"</span>, <span class="string">"city"</span> : <span class="string">"xuzhou"</span> &#125; &#125;</div></pre></td></tr></table></figure>
+<h3 id="and"><a href="#and" class="headerlink" title="$and"></a>$and</h3><blockquote>
+<p><strong>指定一个至少包含两个表达式的数组，选择出满足该数组中所有表达式的文档。<code>$and</code>操作符使用短路操作，若第一个表达式的值为“<code>false</code>”,余下的表达式将不会执行。</strong><br><strong>语法：<code>{ $and: [ { &lt;expression1&gt; }, { &lt;expression2&gt; } , ... , { &lt;expressionN&gt; } ] }</code></strong></p>
+<ul>
+<li><strong>下面将会查找年龄在<code>20-30</code>之间的信息，对于下面使用逗号分隔符的表达式列表，<code>MongoDB</code>会提供一个隐式的<code>$and</code>操作：</strong></li>
+</ul>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;<span class="attr">$and</span>:[&#123;<span class="attr">age</span>:&#123;<span class="attr">$gt</span>:<span class="number">20</span>&#125;&#125;,&#123;<span class="attr">age</span>:&#123;<span class="attr">$lt</span>:<span class="number">30</span>&#125;&#125;]&#125;)</div><div class="line"><span class="comment">//上述语句相当于db.user.find(&#123;age:&#123;$gt:20&#125;,age:&#123;$lt:30&#125;&#125;)</span></div><div class="line"></div><div class="line"><span class="comment">//结果</span></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59058460fe58ed1089f2a5cb"</span>), <span class="string">"name"</span> : <span class="string">"jack"</span>, <span class="string">"age"</span> : <span class="number">22</span>, <span class="string">"sex"</span> : <span class="string">"Man"</span>, <span class="string">"tags"</span> : [ <span class="string">"python"</span>, <span class="string">"c++"</span>, <span class="string">"c"</span> ], <span class="string">"grades"</span> : [ <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>, <span class="number">55</span> ], <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"shida"</span>, <span class="string">"city"</span> : <span class="string">"xuzhou"</span> &#125; &#125;</div></pre></td></tr></table></figure>
+<h3 id="in"><a href="#in" class="headerlink" title="$in"></a>$in</h3><blockquote>
+<p><strong>匹配键值等于指定数组中任意值的文档。类似<code>sql</code>中<code>in</code>，只要匹配一个<code>value</code>就会输出</strong><br><strong>语法：<code>{ field: { $in: [&lt;value1&gt;, &lt;value2&gt;, ... &lt;valueN&gt; ] } }</code></strong></p>
+<ul>
+<li><strong>下面将会查找grades中存在22,33之间的任意一个数的信息</strong></li>
+</ul>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"> db.user.find(&#123;<span class="attr">grades</span>:&#123;<span class="attr">$in</span>:[<span class="number">22</span>,<span class="number">33</span>]&#125;&#125;)</div><div class="line"> </div><div class="line"> <span class="comment">//输出</span></div><div class="line"> </div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59058460fe58ed1089f2a5cb"</span>), <span class="string">"name"</span> : <span class="string">"jack"</span>, <span class="string">"age"</span> : <span class="number">22</span>, <span class="string">"sex"</span> : <span class="string">"Man"</span>, <span class="string">"tags"</span> : [ <span class="string">"python"</span>, <span class="string">"c++"</span>, <span class="string">"c"</span> ], <span class="string">"grades"</span> : [ <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>, <span class="number">55</span> ], <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"shida"</span>, <span class="string">"city"</span> : <span class="string">"xuzhou"</span> &#125; &#125;</div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59058460fe58ed1089f2a5cc"</span>), <span class="string">"name"</span> : <span class="string">"jhon"</span>, <span class="string">"age"</span> : <span class="number">33</span>, <span class="string">"sex"</span> : <span class="literal">null</span>, <span class="string">"tags"</span> : [ <span class="string">"python"</span>, <span class="string">"java"</span> ], <span class="string">"grades"</span> : [ <span class="number">66</span>, <span class="number">22</span>, <span class="number">44</span>, <span class="number">88</span> ], <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"kuangda"</span>, <span class="string">"city"</span> : <span class="string">"xuzhou"</span> &#125; &#125;</div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59058460fe58ed1089f2a5cd"</span>), <span class="string">"name"</span> : <span class="string">"xiaoming"</span>, <span class="string">"age"</span> : <span class="number">33</span>, <span class="string">"tags"</span> : [ <span class="string">"python"</span>, <span class="string">"java"</span> ], <span class="string">"grades"</span> : [ <span class="number">66</span>, <span class="number">22</span>, <span class="number">44</span>, <span class="number">88</span> ], <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"kuangda"</span>, <span class="string">"city"</span> : <span class="string">"xuzhou"</span> &#125; &#125;</div></pre></td></tr></table></figure>
+<h3 id="nin"><a href="#nin" class="headerlink" title="$nin"></a>$nin</h3><blockquote>
+<p><strong>　匹配键不存在或者键值不等于指定数组的任意值的文档。类似<code>sql</code>中<code>not in</code>(SQL中字段不存在使用会有语法错误).</strong></p>
+<ul>
+<li><strong>查询出<code>grades</code>中不存在100或者44的文档</strong></li>
+</ul>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;<span class="attr">grades</span>:&#123;<span class="attr">$nin</span>:[<span class="number">100</span>,<span class="number">44</span>]&#125;&#125;)</div></pre></td></tr></table></figure>
+<h3 id="not"><a href="#not" class="headerlink" title="$not"></a>$not</h3><blockquote>
+<p><strong>执行逻辑<code>NOT</code>运算，选择出不能匹配表达式的文档 ，包括没有指定键的文档。<code>$not</code>操作符不能独立使用，必须跟其他操作一起使用</strong></p>
+<p><strong>语法:{ field: { $not: { <operator-expression> } } }</operator-expression></strong></p>
+<ul>
+<li><strong>查询年龄不大于30的信息</strong></li>
+</ul>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;<span class="attr">age</span>:&#123;<span class="attr">$not</span>:&#123;<span class="attr">$gt</span>:<span class="number">30</span>&#125;&#125;&#125;)</div><div class="line"></div><div class="line"><span class="comment">//输出</span></div><div class="line">&#123; <span class="string">"_id"</span> : ObjectId(<span class="string">"59058460fe58ed1089f2a5cb"</span>), <span class="string">"name"</span> : <span class="string">"jack"</span>, <span class="string">"age"</span> : <span class="number">22</span>, <span class="string">"sex"</span> : <span class="string">"Man"</span>, <span class="string">"tags"</span> : [ <span class="string">"python"</span>, <span class="string">"c++"</span>, <span class="string">"c"</span> ], <span class="string">"grades"</span> : [ <span class="number">22</span>, <span class="number">33</span>, <span class="number">44</span>, <span class="number">55</span> ], <span class="string">"school"</span> : &#123; <span class="string">"name"</span> : <span class="string">"shida"</span>, <span class="string">"city"</span> : <span class="string">"xuzhou"</span> &#125; &#125;</div></pre></td></tr></table></figure>
+<h2 id="迭代游标的查询"><a href="#迭代游标的查询" class="headerlink" title="迭代游标的查询"></a>迭代游标的查询</h2><blockquote>
+<p><strong>学过高级语言的朋友都知道迭代的问题，像java,下面使用迭代的方法查询</strong></p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> cursor=db.usr.find();</div><div class="line"></div><div class="line"><span class="comment">//这里使用迭代输出所有的数据</span></div><div class="line"><span class="keyword">while</span>(cursor.hasNext())    <span class="comment">//这里的hasNext()是判断是否下一个中还有可迭代的值，如果没有返回false</span></div><div class="line">&#123;</div><div class="line">    printjson(cursor.next());     <span class="comment">//这里的cursor.next是迭代的输出，printjson是代替print(tojson()) </span></div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">print cursor.count()    <span class="comment">//输出其中有多少个数据</span></div><div class="line"></div><div class="line">cursor.forEach(printjson);   <span class="comment">//forEach输出</span></div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">var</span> <span class="built_in">document</span>=cursor.toArray();     <span class="comment">//将迭代对象转换成数组</span></div><div class="line"></div><div class="line">print <span class="built_in">document</span>[<span class="number">0</span>];       <span class="comment">//以数组的形式输出</span></div></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/数据库干货篇/">数据库干货篇</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/MongoDB/">MongoDB</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2017/04/30/MongoDB干货篇之查询数据/" data-title="MongoDB干货篇之查询数据 | 觅" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/05/01/MongoDB干货篇之更新数据/" title="MongoDB干货篇之更新数据">
+  <strong>上一篇：</strong><br/>
+  <span>
+  MongoDB干货篇之更新数据</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/04/29/python爬虫之BeautifulSoup/"  title="python爬虫之BeautifulSoup">
+ <strong>下一篇：</strong><br/> 
+ <span>python爬虫之BeautifulSoup
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MongoDB干货篇之查询"><span class="toc-number">1.</span> <span class="toc-text">MongoDB干货篇之查询</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-number">1.1.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#find"><span class="toc-number">1.2.</span> <span class="toc-text">find()</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实例："><span class="toc-number">1.2.1.</span> <span class="toc-text">实例：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查询内嵌文档"><span class="toc-number">1.3.</span> <span class="toc-text">查询内嵌文档</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#完全匹配查询"><span class="toc-number">1.3.1.</span> <span class="toc-text">完全匹配查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#键值对查询"><span class="toc-number">1.3.2.</span> <span class="toc-text">键值对查询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查询操作符"><span class="toc-number">1.4.</span> <span class="toc-text">查询操作符</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实例"><span class="toc-number">1.4.1.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ne"><span class="toc-number">1.4.2.</span> <span class="toc-text">$ne</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#slice"><span class="toc-number">1.4.3.</span> <span class="toc-text">slice</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#exists"><span class="toc-number">1.4.4.</span> <span class="toc-text">$exists</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#or"><span class="toc-number">1.4.5.</span> <span class="toc-text">$or</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#and"><span class="toc-number">1.4.6.</span> <span class="toc-text">$and</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#in"><span class="toc-number">1.4.7.</span> <span class="toc-text">$in</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#nin"><span class="toc-number">1.4.8.</span> <span class="toc-text">$nin</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#not"><span class="toc-number">1.4.9.</span> <span class="toc-text">$not</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#迭代游标的查询"><span class="toc-number">1.5.</span> <span class="toc-text">迭代游标的查询</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/BootStrap学习/" title="BootStrap学习">BootStrap学习<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/JQuery学习/" title="JQuery学习">JQuery学习<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Scrapy学习/" title="Scrapy学习">Scrapy学习<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python数据挖掘与分析/" title="python数据挖掘与分析">python数据挖掘与分析<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/scrapy/" title="scrapy">scrapy<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/swing/" title="swing">swing<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JQuery/" title="JQuery">JQuery<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java图形与文本处理/" title="java图形与文本处理">java图形与文本处理<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JDBC/" title="JDBC">JDBC<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/matplotlib/" title="matplotlib">matplotlib<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BootStrap/" title="BootStrap">BootStrap<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 人前显贵人后受罪 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="Chenjiabing">Chenjiabing</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

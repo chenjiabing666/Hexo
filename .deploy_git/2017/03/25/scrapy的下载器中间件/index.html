@@ -1,0 +1,646 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>scrapy的下载器中间件 | 觅</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Chenjiabing">
+    
+
+    
+    <meta name="description" content="scrapy中的下载器中间件下载中间件
+下载器中间件是介于Scrapy的request/response处理的钩子框架。 是用于全局修改Scrapy request和response的一个轻量、底层的系统。
+
+编写下载器中间件
+1. process_request(request, spider)当每个request通过下载中间件时，该方法被调用。process_request() 必须返回其中之">
+<meta property="og:type" content="article">
+<meta property="og:title" content="scrapy的下载器中间件">
+<meta property="og:url" content="http://chenjiabing666.github.io/2017/03/25/scrapy的下载器中间件/index.html">
+<meta property="og:site_name" content="觅">
+<meta property="og:description" content="scrapy中的下载器中间件下载中间件
+下载器中间件是介于Scrapy的request/response处理的钩子框架。 是用于全局修改Scrapy request和response的一个轻量、底层的系统。
+
+编写下载器中间件
+1. process_request(request, spider)当每个request通过下载中间件时，该方法被调用。process_request() 必须返回其中之">
+<meta property="og:updated_time" content="2017-03-25T07:08:40.498Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="scrapy的下载器中间件">
+<meta name="twitter:description" content="scrapy中的下载器中间件下载中间件
+下载器中间件是介于Scrapy的request/response处理的钩子框架。 是用于全局修改Scrapy request和response的一个轻量、底层的系统。
+
+编写下载器中间件
+1. process_request(request, spider)当每个request通过下载中间件时，该方法被调用。process_request() 必须返回其中之">
+
+    
+    <link rel="alternative" href="/atom.xml" title="觅" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="觅" title="觅"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="觅">觅</a></h1>
+				<h2 class="blog-motto">爱生活爱编码</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/03/25/scrapy的下载器中间件/" title="scrapy的下载器中间件" itemprop="url">scrapy的下载器中间件</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Chenjiabing" target="_blank" itemprop="author">Chenjiabing</a>
+		
+  <p class="article-time">
+    <time datetime="2017-03-25T07:04:08.000Z" itemprop="datePublished"> 发表于 2017-03-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#scrapy中的下载器中间件"><span class="toc-number">1.</span> <span class="toc-text">scrapy中的下载器中间件</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#下载中间件"><span class="toc-number">1.1.</span> <span class="toc-text">下载中间件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编写下载器中间件"><span class="toc-number">1.2.</span> <span class="toc-text">编写下载器中间件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-process-request-request-spider"><span class="toc-number">1.2.1.</span> <span class="toc-text">1. process_request(request, spider)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-process-response-request-response-spider"><span class="toc-number">1.2.2.</span> <span class="toc-text">2. process_response(request, response, spider)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-process-exception-request-exception-spider"><span class="toc-number">1.2.3.</span> <span class="toc-text">3.process_exception(request, exception, spider)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结："><span class="toc-number">1.3.</span> <span class="toc-text">总结：</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="scrapy中的下载器中间件"><a href="#scrapy中的下载器中间件" class="headerlink" title="scrapy中的下载器中间件"></a>scrapy中的下载器中间件</h1><h2 id="下载中间件"><a href="#下载中间件" class="headerlink" title="下载中间件"></a>下载中间件</h2><blockquote>
+<p>下载器中间件是介于Scrapy的request/response处理的钩子框架。 是用于全局修改Scrapy request和response的一个轻量、底层的系统。</p>
+<blockquote>
+<h2 id="编写下载器中间件"><a href="#编写下载器中间件" class="headerlink" title="编写下载器中间件"></a>编写下载器中间件</h2><blockquote>
+<h3 id="1-process-request-request-spider"><a href="#1-process-request-request-spider" class="headerlink" title="1. process_request(request, spider)"></a>1. <code>process_request(request, spider)</code></h3><p>当每个<code>request</code>通过下载中间件时，该方法被调用。<br><code>process_request()</code> 必须返回其中之一: 返回 <code>None</code> 、返回一个 <code>Response</code> 对象、返回一个 <code>Request</code>对象或<code>raise IgnoreRequest</code> 。</p>
+<p>如果其返回 <code>None</code> ，Scrapy将继续处理该<code>request</code>，执行其他的中间件的相应方法，直到合适的下载器处理函数(<code>download handler</code>)被调用， 该<code>request</code>被执行(其<code>response</code>被下载)。</p>
+<p>如果其返回 <code>Response</code> 对象，Scrapy将不会调用 任何 其他的 <code>process_request()</code> 或 <code>process_exception()</code> 方法，或相应地下载函数； 其将返回该<code>response</code>。 已安装的中间件的 <code>process_response()</code> 方法则会在每个<code>response</code>返回时被调用。</p>
+<p>如果其返回 <code>Request</code> 对象，Scrapy则停止调用 <code>process_request</code>方法并重新调度返回的<code>request</code>。当新返回的<code>request</code>被执行后， 相应地中间件链将会根据下载的<code>response</code>被调用。</p>
+<p>如果其<code>raise</code>一个 <code>IgnoreRequest</code> 异常，则安装的下载中间件的 <code>process_exception()</code> 方法会被调用。如果没有任何一个方法处理该异常， 则<code>request</code>的<code>errback(Request.errback)</code>方法会被调用。如果没有代码处理抛出的异常， 则该异常被忽略且不记录(不同于其他异常那样)。</p>
+<p>参数:    </p>
+<blockquote>
+<ul>
+<li><code>request</code> (<code>Request</code> 对象) – 处理的<code>request</code></li>
+<li><code>spider</code> (<code>Spider</code> 对象) – 该<code>request</code>对应的<code>spider</code></li>
+</ul>
+</blockquote>
+<h3 id="2-process-response-request-response-spider"><a href="#2-process-response-request-response-spider" class="headerlink" title="2. process_response(request, response, spider)"></a>2. <code>process_response(request, response, spider)</code></h3><blockquote>
+<p><code>process_response()</code> 必须返回以下之一: 返回一个 <code>Response</code>对象、 返回一个<code>Request</code> 对象或<code>raise</code>一个 <code>IgnoreRequest</code> 异常。</p>
+<p>如果其返回一个 <code>Response</code> (可以与传入的<code>response</code>相同，也可以是全新的对象)， 该<code>response</code>会被在链中的其他中间件的 <code>process_response()</code> 方法处理。</p>
+<p>如果其返回一个 <code>Request</code> 对象，则中间件链停止， 返回的<code>request</code>会被重新调度下载。处理类似于 <code>process_request()</code> 返回<code>request</code>所做的那样。</p>
+<p>如果其抛出一个 <code>IgnoreRequest</code> 异常，则调用<code>request的errback(Request.errback)。</code> 如果没有代码处理抛出的异常，则该异常被忽略且不记录(不同于其他异常那样)。</p>
+<p>参数:    </p>
+<blockquote>
+<blockquote>
+<ul>
+<li><code>request</code> (<code>Request</code>对象) – <code>response</code>所对应的request</li>
+<li><code>response</code> (<code>Response</code> 对象) – 被处理的response</li>
+<li><code>spider</code> (<code>Spider</code> 对象) – <code>response</code>所对应的<code>spider</code></li>
+</ul>
+</blockquote>
+</blockquote>
+</blockquote>
+<h3 id="3-process-exception-request-exception-spider"><a href="#3-process-exception-request-exception-spider" class="headerlink" title="3.process_exception(request, exception, spider)"></a>3.<code>process_exception(request, exception, spider)</code></h3><blockquote>
+<p>当下载处理器(<code>download handler</code>)或 <code>process_request()</code> (下载中间件)抛出异常(包括 <code>IgnoreRequest</code> 异常)时， Scrapy调用 <code>process_exception()</code> 。</p>
+<p><code>process_exception()</code> 应该返回以下之一: 返回 <code>None</code> 、 一个 <code>Response</code> 对象、或者一个 <code>Request</code> 对象。</p>
+<p>如果其返回 <code>None</code> ，Scrapy将会继续处理该异常，接着调用已安装的其他中间件的 <code>process_exception()</code> 方法，直到所有中间件都被调用完毕，则调用默认的异常处理。</p>
+<p>如果其返回一个 <code>Response</code> 对象，则已安装的中间件链的 <code>process_response()</code> 方法被调用。Scrapy将不会调用任何其他中间件的 <code>process_exception()</code> 方法。</p>
+<p>如果其返回一个 <code>Request</code> 对象， 则返回的<code>request</code>将会被重新调用下载。这将停止中间件的 <code>process_exception()</code> 方法执行，就如返回一个<code>response</code>的那样。</p>
+<p>参数:    </p>
+<blockquote>
+<ul>
+<li><code>request</code> (是 <code>Request</code> 对象) – 产生异常的<code>request</code></li>
+<li><code>exception</code> (<code>Exception</code> 对象) – 抛出的异常</li>
+<li><code>spider</code> (<code>Spider</code> 对象) – <code>request</code>对应的<code>spider</code></li>
+</ul>
+</blockquote>
+</blockquote>
+</blockquote>
+<h2 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h2><blockquote>
+<p>总的来说下载器中间件就是起到处理request请求并且返回response的作用，一切从网页爬取的url发起的请求会组成一个请求队列，然后一个一个排队经过下载器中间件，之后下载器中间件会对request做出相应的处理，比如添加请求头，添加代理等等，然后通过process_response返回一个response，之后就是用得到的response做出相应的分析，当然这里的内容页可以不实现，但是如果要爬取大型的网站，会遇到被ban的可能就要在下载器中间件这里着手，设置一些相应的请求头，ip代理等等内容。<br><strong>以上纯属个人逐渐摸索总结出来的内容，如果有什么错误欢迎指正</strong></p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><em>版权信息所有者：chenjiabing</em><br><em>如若转载请标明出处：chenjiabing666.github.io6</em></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Scrapy学习/">Scrapy学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/scrapy/">scrapy</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2017/03/25/scrapy的下载器中间件/" data-title="scrapy的下载器中间件 | 觅" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/03/26/scrapy设置代理ip/" title="scrapy设置代理ip">
+  <strong>上一篇：</strong><br/>
+  <span>
+  scrapy设置代理ip</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/03/25/scrapy初试/"  title="scrapy初试">
+ <strong>下一篇：</strong><br/> 
+ <span>scrapy初试
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#scrapy中的下载器中间件"><span class="toc-number">1.</span> <span class="toc-text">scrapy中的下载器中间件</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#下载中间件"><span class="toc-number">1.1.</span> <span class="toc-text">下载中间件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编写下载器中间件"><span class="toc-number">1.2.</span> <span class="toc-text">编写下载器中间件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-process-request-request-spider"><span class="toc-number">1.2.1.</span> <span class="toc-text">1. process_request(request, spider)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-process-response-request-response-spider"><span class="toc-number">1.2.2.</span> <span class="toc-text">2. process_response(request, response, spider)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-process-exception-request-exception-spider"><span class="toc-number">1.2.3.</span> <span class="toc-text">3.process_exception(request, exception, spider)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结："><span class="toc-number">1.3.</span> <span class="toc-text">总结：</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/BootStrap学习/" title="BootStrap学习">BootStrap学习<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/JQuery学习/" title="JQuery学习">JQuery学习<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Scrapy学习/" title="Scrapy学习">Scrapy学习<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python数据挖掘与分析/" title="python数据挖掘与分析">python数据挖掘与分析<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/scrapy/" title="scrapy">scrapy<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/swing/" title="swing">swing<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JQuery/" title="JQuery">JQuery<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java图形与文本处理/" title="java图形与文本处理">java图形与文本处理<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JDBC/" title="JDBC">JDBC<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/matplotlib/" title="matplotlib">matplotlib<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BootStrap/" title="BootStrap">BootStrap<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 人前显贵人后受罪 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="Chenjiabing">Chenjiabing</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

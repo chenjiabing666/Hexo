@@ -1,0 +1,663 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Scrapyd部署爬虫 | 觅</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Chenjiabing">
+    
+
+    
+    <meta name="description" content="Scrapyd部署爬虫准备工作
+
+安装scrapyd: pip install scrapyd
+安装scrapyd-client : pip install scrapyd-client
+安装curl:[安装地址](http://ono60m7tl.bkt.clouddn.com/curl.exe),安装完成以后将所在目录配置到环境变量中
+
+
+开始部署
+
+修改scrapy项目目录下的scrapy.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scrapyd部署爬虫">
+<meta property="og:url" content="http://chenjiabing666.github.io/2017/04/24/Scrapyd部署爬虫/index.html">
+<meta property="og:site_name" content="觅">
+<meta property="og:description" content="Scrapyd部署爬虫准备工作
+
+安装scrapyd: pip install scrapyd
+安装scrapyd-client : pip install scrapyd-client
+安装curl:[安装地址](http://ono60m7tl.bkt.clouddn.com/curl.exe),安装完成以后将所在目录配置到环境变量中
+
+
+开始部署
+
+修改scrapy项目目录下的scrapy.">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/scrayd.bmp">
+<meta property="og:updated_time" content="2017-04-24T03:07:54.155Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Scrapyd部署爬虫">
+<meta name="twitter:description" content="Scrapyd部署爬虫准备工作
+
+安装scrapyd: pip install scrapyd
+安装scrapyd-client : pip install scrapyd-client
+安装curl:[安装地址](http://ono60m7tl.bkt.clouddn.com/curl.exe),安装完成以后将所在目录配置到环境变量中
+
+
+开始部署
+
+修改scrapy项目目录下的scrapy.">
+<meta name="twitter:image" content="http://ono60m7tl.bkt.clouddn.com/scrayd.bmp">
+
+    
+    <link rel="alternative" href="/atom.xml" title="觅" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="觅" title="觅"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="觅">觅</a></h1>
+				<h2 class="blog-motto">爱生活爱编码</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/24/Scrapyd部署爬虫/" title="Scrapyd部署爬虫" itemprop="url">Scrapyd部署爬虫</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Chenjiabing" target="_blank" itemprop="author">Chenjiabing</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-24T02:58:07.000Z" itemprop="datePublished"> 发表于 2017-04-24</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Scrapyd部署爬虫"><span class="toc-number">1.</span> <span class="toc-text">Scrapyd部署爬虫</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-number">1.1.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开始部署"><span class="toc-number">1.2.</span> <span class="toc-text">开始部署</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作者说"><span class="toc-number">1.3.</span> <span class="toc-text">作者说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Scrapyd部署爬虫"><a href="#Scrapyd部署爬虫" class="headerlink" title="Scrapyd部署爬虫"></a>Scrapyd部署爬虫</h1><h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><blockquote>
+<ul>
+<li><strong><code>安装scrapyd: pip install scrapyd</code></strong></li>
+<li><strong>安装<code>scrapyd-client : pip install scrapyd-client</code></strong></li>
+<li><strong><code>安装curl:[安装地址](http://ono60m7tl.bkt.clouddn.com/curl.exe)</code>,安装完成以后将所在目录配置到环境变量中</strong></li>
+</ul>
+</blockquote>
+<h2 id="开始部署"><a href="#开始部署" class="headerlink" title="开始部署"></a>开始部署</h2><blockquote>
+<ul>
+<li><p><strong>修改<code>scrapy</code>项目目录下的<code>scrapy.cfg</code>文件，修改如下</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[deploy:JD_Spider]    <span class="comment">#加上target   :name</span></div><div class="line">url = http://localhost:<span class="number">6800</span>/   <span class="comment">#将前面的#删除</span></div><div class="line">project = JD               <span class="comment">#project的名字，可以使用默认的，当然也可以改变</span></div></pre></td></tr></table></figure>
+</li>
+<li><p><strong>在任意目录下的打开终端，输入<code>scrapyd</code>,观察是否运行成功，运行成功的话，就可以打开<code>http://localhost:6800</code>看是否正常显示，如果正常显示则看到下面的这张图,这里的<code>JD</code>是部署之后才能看到的，现在是看不到的，所以没出现也不要担心：</strong></p>
+</li>
+</ul>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/scrayd.bmp" alt="scrapyd"></p>
+<ul>
+<li><p><strong>在项目的根目录下运行如下的命令：<code>python E:\python2.7\Scripts\scrapyd-deploy target -p project</code>,这里的E:\python2.7\Scripts\是你的python安装目录，Scripts是安装目录下的一个文件夹，注意前面一定要加上python,target是在前面scrapy.cfg中设置的deploy:JD_Spider，JD_Spider就是target,project 是JD,因此这个完整的命令是<code>python E:\python2.7\Scripts\scrapyd-deploy JD_Spider -p JD</code>,现在项目就部署到上面了，这下网页上就有<code>JD</code>了，详情请见上图</strong></p>
+</li>
+<li><p><strong>验证是否成功，你可以在网页上看有没有显示你的工程名字，另外在根目录下输入<code>python E:\python2.7\Scripts\scrapyd-deploy -l</code>就能列出你所有部署过的项目了</strong></p>
+</li>
+<li><p><strong>启动爬虫：<code>curl http://localhost:6800/schedule.json -d project=myproject -d spider=spider_name</code>,这里的<code>project</code>填入的是项目名，<code>spider_name</code>填入的是你的爬虫中定义的<code>name</code>,运行我的实例完整的代码为：<code>curl http://localhost:6800/schedule.json -d project=JD -d spider=spider</code>，这里将会显示如下信息：</strong></p>
+</li>
+</ul>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#这里的jobid比较重要，下面会用到这个取消爬虫</span></div><div class="line">&#123;<span class="string">"status"</span>: <span class="string">"ok"</span>, <span class="string">"jobid"</span>: <span class="string">"3013f9d1283611e79a63acb57dec5d04"</span>, <span class="string">"node_name"</span>: <span class="string">"DESKTOP-L78TJQ7"</span>&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li><strong>取消爬虫：<code>curl http://localhost:6800/cancel.json -d project=myproject -d job=jobid</code>,<code>jobid</code>就是上面的提到过的，如果取消我的这个实例代码如：<code>curl http://localhost:6800/cancel.json -d project=JD -d job=3013f9d1283611e79a63acb57dec5d04</code>,那么它的状态就会变成如下：</strong></li>
+</ul>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&#123;<span class="string">"status"</span>: <span class="string">"ok"</span>, <span class="string">"prevstate"</span>: <span class="string">"running"</span>, <span class="string">"node_name"</span>: <span class="string">"DESKTOP-L78TJQ7"</span>&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li><p><strong>列出项目：<code>curl http://localhost:6800/listprojects.json</code>,下面将会出现你已经部署的项目</strong></p>
+</li>
+<li><p><strong>删除项目：<code>curl http://localhost:6800/delproject.json -d project=myproject</code></strong></p>
+</li>
+<li><p><strong>列出版本：<code>curl http://localhost:6800/listversions.json?project=myproject</code>,这里的<code>project</code>是项目的名字，是在scrapy.cfg设置的</strong></p>
+</li>
+<li><p><strong>列出爬虫：<code>curl http://localhost:6800/listspiders.json?project=myproject</code>这里的<code>project</code>是项目的名字，是在scrapy.cfg设置的</strong></p>
+</li>
+<li><p><strong>列出<code>job</code>:<code>curl http://localhost:6800/listjobs.json?project=myproject</code>这里的<code>project</code>是项目的名字，是在<code>scrapy.cfg</code>设置的</strong></p>
+</li>
+<li><p><strong>删除版本：<code>curl http://localhost:6800/delversion.json -d project=myproject -d version=r99</code>，这里的<code>version</code>是自己的项目版本号，在删除之前需要查看版本号</strong></p>
+</li>
+</ul>
+<blockquote>
+<h2 id="作者说"><a href="#作者说" class="headerlink" title="作者说"></a>作者说</h2><blockquote>
+<p>本人秉着方便他人的想法才开始写技术文章的，因为对于自学的人来说想要找到系统的学习教程很困难，这一点我深有体会，我也是在不断的摸索中才小有所成，如果你们觉得我写的不错就帮我推广一下，让更多的人看到。另外如果有什么错误的地方也要及时联系我，方便我改进，谢谢大家对我的支持</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><em>版权信息所有者：chenjiabing</em><br><em>如若转载请标明出处：chenjiabing666.github.io6</em></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Scrapy学习/">Scrapy学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/scrapy/">scrapy</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2017/04/24/Scrapyd部署爬虫/" data-title="Scrapyd部署爬虫 | 觅" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/04/26/BootStrap干货篇之表单/" title="BootStrap干货篇之表单">
+  <strong>上一篇：</strong><br/>
+  <span>
+  BootStrap干货篇之表单</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/04/23/scrapy大战京东商城/"  title="scrapy大战京东商城">
+ <strong>下一篇：</strong><br/> 
+ <span>scrapy大战京东商城
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Scrapyd部署爬虫"><span class="toc-number">1.</span> <span class="toc-text">Scrapyd部署爬虫</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#准备工作"><span class="toc-number">1.1.</span> <span class="toc-text">准备工作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开始部署"><span class="toc-number">1.2.</span> <span class="toc-text">开始部署</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作者说"><span class="toc-number">1.3.</span> <span class="toc-text">作者说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/BootStrap学习/" title="BootStrap学习">BootStrap学习<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/JQuery学习/" title="JQuery学习">JQuery学习<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Scrapy学习/" title="Scrapy学习">Scrapy学习<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python数据挖掘与分析/" title="python数据挖掘与分析">python数据挖掘与分析<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/scrapy/" title="scrapy">scrapy<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/swing/" title="swing">swing<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JQuery/" title="JQuery">JQuery<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java图形与文本处理/" title="java图形与文本处理">java图形与文本处理<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JDBC/" title="JDBC">JDBC<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/matplotlib/" title="matplotlib">matplotlib<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BootStrap/" title="BootStrap">BootStrap<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 人前显贵人后受罪 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="Chenjiabing">Chenjiabing</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

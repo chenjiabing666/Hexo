@@ -1,0 +1,678 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>python爬虫大战京东商城 | 觅</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Chenjiabing">
+    
+
+    
+    <meta name="description" content="python大规模爬取京东主要工具
+
+scrapy
+BeautifulSoup
+requests
+
+
+分析步骤
+
+打开京东首页，输入裤子将会看到页面跳转到了这里，这就是我们要分析的起点
+
+我们可以看到这个页面并不是完全的，当我们往下拉的时候将会看到图片在不停的加载，这就是ajax,但是当我们下拉到底的时候就会看到整个页面加载了60条裤子的信息，我们打开chrome的调试工具，查找页面元素时可以看到">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python爬虫大战京东商城">
+<meta property="og:url" content="http://chenjiabing666.github.io/2017/04/23/python爬虫大战京东商城/index.html">
+<meta property="og:site_name" content="觅">
+<meta property="og:description" content="python大规模爬取京东主要工具
+
+scrapy
+BeautifulSoup
+requests
+
+
+分析步骤
+
+打开京东首页，输入裤子将会看到页面跳转到了这里，这就是我们要分析的起点
+
+我们可以看到这个页面并不是完全的，当我们往下拉的时候将会看到图片在不停的加载，这就是ajax,但是当我们下拉到底的时候就会看到整个页面加载了60条裤子的信息，我们打开chrome的调试工具，查找页面元素时可以看到">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/jd1.bmp">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/jd2.bmp">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/jd3.bmp">
+<meta property="og:updated_time" content="2017-04-23T10:48:02.496Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="python爬虫大战京东商城">
+<meta name="twitter:description" content="python大规模爬取京东主要工具
+
+scrapy
+BeautifulSoup
+requests
+
+
+分析步骤
+
+打开京东首页，输入裤子将会看到页面跳转到了这里，这就是我们要分析的起点
+
+我们可以看到这个页面并不是完全的，当我们往下拉的时候将会看到图片在不停的加载，这就是ajax,但是当我们下拉到底的时候就会看到整个页面加载了60条裤子的信息，我们打开chrome的调试工具，查找页面元素时可以看到">
+<meta name="twitter:image" content="http://ono60m7tl.bkt.clouddn.com/jd1.bmp">
+
+    
+    <link rel="alternative" href="/atom.xml" title="觅" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="觅" title="觅"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="觅">觅</a></h1>
+				<h2 class="blog-motto">爱生活爱编码</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="/search/index.html" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" autocomplete="off" name="q" maxlength="20" placeholder="搜索" />
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/04/23/python爬虫大战京东商城/" title="python爬虫大战京东商城" itemprop="url">python爬虫大战京东商城</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Chenjiabing" target="_blank" itemprop="author">Chenjiabing</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-23T10:34:48.000Z" itemprop="datePublished"> 发表于 2017-04-23</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python大规模爬取京东"><span class="toc-number">1.</span> <span class="toc-text">python大规模爬取京东</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#主要工具"><span class="toc-number">1.1.</span> <span class="toc-text">主要工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析步骤"><span class="toc-number">1.2.</span> <span class="toc-text">分析步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码讲解"><span class="toc-number">1.3.</span> <span class="toc-text">代码讲解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#拓展"><span class="toc-number">1.4.</span> <span class="toc-text">拓展</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作者说"><span class="toc-number">1.5.</span> <span class="toc-text">作者说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="python大规模爬取京东"><a href="#python大规模爬取京东" class="headerlink" title="python大规模爬取京东"></a>python大规模爬取京东</h1><h2 id="主要工具"><a href="#主要工具" class="headerlink" title="主要工具"></a>主要工具</h2><blockquote>
+<ul>
+<li><strong><code>scrapy</code></strong></li>
+<li><strong><code>BeautifulSoup</code></strong></li>
+<li><strong><code>requests</code></strong></li>
+</ul>
+</blockquote>
+<h2 id="分析步骤"><a href="#分析步骤" class="headerlink" title="分析步骤"></a>分析步骤</h2><blockquote>
+<ul>
+<li><p><strong>打开京东首页，输入</strong>裤子<strong>将会看到页面跳转到了<a href="https://search.jd.com/Search?keyword=%E8%A3%A4%E5%AD%90&amp;enc=utf-8&amp;wq=%E8%A3%A4%E5%AD%90&amp;pvid=a424f5c84d7844aaa56d4d62286878be" target="_blank" rel="external">这里</a>，这就是我们要分析的起点</strong></p>
+</li>
+<li><p><strong>我们可以看到这个页面并不是完全的，当我们往下拉的时候将会看到图片在不停的加载，这就是<code>ajax</code>,但是当我们下拉到底的时候就会看到整个页面加载了60条裤子的信息，我们打开chrome的调试工具，查找页面元素时可以看到每条裤子的信息都在<code>&lt;li class=&#39;gl-item&#39;&gt;&lt;/li&gt;</code>这个标签中，如下图：</strong></p>
+</li>
+</ul>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/jd1.bmp" alt="生成图"></p>
+<ul>
+<li><strong>接着我们打开网页源码就会发现其实网页源码只有前30条的数据，后面30条的数据找不到，因此这里就会想到ajax，一种异步加载的方式，于是我们就要开始抓包了，我们打开chrome按F12，点击上面的NetWork,然后点击XHR,这个比较容易好找,下面开始抓包，如下图：</strong></li>
+</ul>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/jd2.bmp" alt="抓包图"></p>
+<ul>
+<li><strong>从上面可以找到请求的<code>url</code>，发现有很长的一大段，我们试着去掉一些看看可不可以打开，简化之后的<code>url</code>=<a href="https://search.jd.com/s_new.php?keyword=%E8%A3%A4%E5%AD%90&amp;enc=utf-8&amp;qrst=1&amp;rt=1&amp;stop=1&amp;vt=2&amp;offset=3&amp;wq=%E8%A3%A4%E5%AD%90&amp;page={0}&amp;s=26&amp;scrolling=y&amp;pos=30&amp;show_items={1}" target="_blank" rel="external">https://search.jd.com/s_new.php?keyword=%E8%A3%A4%E5%AD%90&amp;enc=utf-8&amp;qrst=1&amp;rt=1&amp;stop=1&amp;vt=2&amp;offset=3&amp;wq=%E8%A3%A4%E5%AD%90&amp;page={0}&amp;s=26&amp;scrolling=y&amp;pos=30&amp;show_items={1}</a></strong><br><strong>这里的<code>showitems</code>是裤子的<code>id</code>,<code>page</code>是翻页的，可以看出来我们只需要改动两处就可以打开不同的网页了，这里的<code>page</code>很好找，你会发现一个很好玩的事情，就是主网页的<code>page</code>是奇数，但是异步加载的网页中的<code>page</code>是偶数，因此这里只要填上偶数就可以了，但是填奇数也是可以访问的。这里的<code>show_items</code>就是<code>id</code>了，我们可以在页面的源码中找到，通过查找可以看到<code>id</code>在<code>li</code>标签的<code>data-pid</code>中，详情请看下图</strong></li>
+</ul>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/jd3.bmp" alt="id"></p>
+<ul>
+<li><strong>上面我们知道怎样找参数了，现在就可以撸代码了</strong></li>
+</ul>
+</blockquote>
+<h2 id="代码讲解"><a href="#代码讲解" class="headerlink" title="代码讲解"></a>代码讲解</h2><blockquote>
+<ul>
+<li><p><strong>首先我们要获取网页的源码，这里我用的requests库，安装方法为<code>pip install requests</code>，代码如下:</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_html</span><span class="params">(self)</span>:</span></div><div class="line">    res = requests.get(self.url, headers=self.headers)</div><div class="line">    html = res.text     </div><div class="line">    <span class="keyword">return</span> html    <span class="comment">#返回的源代码</span></div></pre></td></tr></table></figure>
+</li>
+<li><p><strong>根据上面的分析可以知道，第二步就是得到异步加载的url中的参数<code>show_items</code>,就是<code>li</code>标签中的<code>data-pid</code>,代码如下：</strong></p>
+</li>
+</ul>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_pids</span><span class="params">(self)</span>:</span></div><div class="line">    html = self.get_html()</div><div class="line">    soup = BeautifulSoup(html, <span class="string">'lxml'</span>)    <span class="comment">#创建BeautifulSoup对象</span></div><div class="line">    lis = soup.find_all(<span class="string">"li"</span>, class_=<span class="string">'gl-item'</span>)   <span class="comment">#查找li标签</span></div><div class="line">    <span class="keyword">for</span> li <span class="keyword">in</span> lis:</div><div class="line">        data_pid = li.get(<span class="string">"data-pid"</span>)      <span class="comment">#得到li标签下的data-pid</span></div><div class="line">        <span class="keyword">if</span> (data_pid):</div><div class="line">            self.pids.add(data_pid)    <span class="comment">#这里的self.pids是一个集合，用于过滤重复的</span></div></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li><strong>下面就是获取前30张图片的url了，也就是主网页上的图片，其中一个问题是img标签的属性并不是一样的，也就是源码中的<code>img</code>中不都是<code>src</code>属性，一开始已经加载出来的图片就是src属性，但是没有加载出来的图片是<code>data-lazy-img</code>，因此在解析页面的时候要加上讨论。代码如下：</strong></li>
+</ul>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_src_imgs_data</span><span class="params">(self)</span>:</span></div><div class="line">    html = self.get_html()</div><div class="line">    soup = BeautifulSoup(html, <span class="string">'lxml'</span>)</div><div class="line">    divs = soup.find_all(<span class="string">"div"</span>, class_=<span class="string">'p-img'</span>)  <span class="comment"># 图片</span></div><div class="line">    <span class="comment"># divs_prices = soup.find_all("div", class_='p-price')   #价格</span></div><div class="line">    <span class="keyword">for</span> div <span class="keyword">in</span> divs:</div><div class="line">        img_1 = div.find(<span class="string">"img"</span>).get(<span class="string">'data-lazy-img'</span>)  <span class="comment"># 得到没有加载出来的url</span></div><div class="line">        img_2 = div.find(<span class="string">"img"</span>).get(<span class="string">"src"</span>)  <span class="comment"># 得到已经加载出来的url</span></div><div class="line">        <span class="keyword">if</span> img_1:</div><div class="line">            <span class="keyword">print</span> img_1</div><div class="line">            self.sql.save_img(img_1)</div><div class="line">            self.img_urls.add(img_1)</div><div class="line">        <span class="keyword">if</span> img_2:</div><div class="line">            <span class="keyword">print</span> img_2</div><div class="line">            self.sql.save_img(img_2)</div><div class="line">            self.img_urls.add(img_2)</div></pre></td></tr></table></figure>
+<blockquote>
+<p><strong>前三十张图片找到了，现在开始找后三十张图片了，当然是要请求那个异步加载的<code>url</code>，前面已经把需要的参数给找到了，下面就好办了，直接贴代码：</strong></p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_extend_imgs_data</span><span class="params">(self)</span>:</span></div><div class="line">    <span class="comment"># self.search_urls=self.search_urls+','.join(self.pids)</span></div><div class="line">    self.search_urls = self.search_urls.format(str(self.search_page), <span class="string">','</span>.join(self.pids))  <span class="comment">#拼凑url,将获得的单数拼成url,其中show_items中的id是用','隔开的，因此要对集合中的每一个id分割，page就是偶数，这里直接用主网页的page加一就可以了</span></div><div class="line">    <span class="keyword">print</span> self.search_urls</div><div class="line">    html = requests.get(self.search_urls, headers=self.headers).text   <span class="comment">#请求</span></div><div class="line">    soup = BeautifulSoup(html, <span class="string">'lxml'</span>)   </div><div class="line">    div_search = soup.find_all(<span class="string">"div"</span>, class_=<span class="string">'p-img'</span>)   <span class="comment">#解析</span></div><div class="line">    <span class="keyword">for</span> div <span class="keyword">in</span> div_search:  </div><div class="line">        img_3 = div.find(<span class="string">"img"</span>).get(<span class="string">'data-lazy-img'</span>)    <span class="comment">#这里可以看到分开查找img属性了</span></div><div class="line">        img_4 = div.find(<span class="string">"img"</span>).get(<span class="string">"src"</span>)</div><div class="line"></div><div class="line">        <span class="keyword">if</span> img_3:    <span class="comment">#如果是data-lazy-img</span></div><div class="line">            <span class="keyword">print</span> img_3</div><div class="line">            self.sql.save_img(img_3)    <span class="comment">#存储到数据库</span></div><div class="line">            self.img_urls.add(img_3)      <span class="comment">#用集合去重</span></div><div class="line">        <span class="keyword">if</span> img_4:    <span class="comment">#如果是src属性</span></div><div class="line">            <span class="keyword">print</span> img_4</div><div class="line">            self.sql.save_img(img_4)     </div><div class="line">            self.img_urls.add(img_4)</div></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li><strong>通过上面就可以爬取了，但是还是要考虑速度的问题，这里我用了多线程，直接每一页面开启一个线程，速度还是可以的，感觉这个速度还是可以的，几分钟解决问题，总共爬取了<code>100</code>个网页,这里的存储方式是<code>mysql</code>数据库存储的，要用发哦<code>MySQLdb</code>这个库，详情自己百度，当然也可以用mogodb但是还没有学呢，想要的源码的朋友请看<a href="https://github.com/chenjiabing666/JD_Spider_python/tree/master" target="_blank" rel="external">GitHub源码</a></strong></li>
+</ul>
+</blockquote>
+<h2 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h2><p><strong>写到这里可以看到搜索首页的网址中<code>keyword</code>和<code>wq</code>都是你输入的词，如果你想要爬取更多的信息，可以将这两个词改成你想要搜索的词即可，直接将汉字写上，在请求的时候会自动帮你编码的，我也试过了，可以抓取源码的，如果你想要不断的抓取，可以将要搜索的词写上文件里，然后从文件中读取就可以了。以上只是一个普通的爬虫，并没有用到什么框架，接下来将会写<code>scrapy</code>框架爬取的，请继续关注我的博客哦！！！</strong></p>
+<blockquote>
+<blockquote>
+<h2 id="作者说"><a href="#作者说" class="headerlink" title="作者说"></a>作者说</h2><blockquote>
+<p>本人秉着方便他人的想法才开始写技术文章的，因为对于自学的人来说想要找到系统的学习教程很困难，这一点我深有体会，我也是在不断的摸索中才小有所成，如果你们觉得我写的不错就帮我推广一下，让更多的人看到。另外如果有什么错误的地方也要及时联系我，方便我改进，谢谢大家对我的支持</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<p><em>版权信息所有者：chenjiabing</em><br><em>如若转载请标明出处：chenjiabing666.github.io6</em></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/python/">python</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/python爬虫/">python爬虫</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2017/04/23/python爬虫大战京东商城/" data-title="python爬虫大战京东商城 | 觅" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/04/23/scrapy大战京东商城/" title="scrapy大战京东商城">
+  <strong>上一篇：</strong><br/>
+  <span>
+  scrapy大战京东商城</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/04/22/JQuery干货篇之处理元素/"  title="JQuery干货篇之处理元素">
+ <strong>下一篇：</strong><br/> 
+ <span>JQuery干货篇之处理元素
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#python大规模爬取京东"><span class="toc-number">1.</span> <span class="toc-text">python大规模爬取京东</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#主要工具"><span class="toc-number">1.1.</span> <span class="toc-text">主要工具</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析步骤"><span class="toc-number">1.2.</span> <span class="toc-text">分析步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码讲解"><span class="toc-number">1.3.</span> <span class="toc-text">代码讲解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#拓展"><span class="toc-number">1.4.</span> <span class="toc-text">拓展</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作者说"><span class="toc-number">1.5.</span> <span class="toc-text">作者说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/BootStrap学习/" title="BootStrap学习">BootStrap学习<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/JQuery学习/" title="JQuery学习">JQuery学习<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Scrapy学习/" title="Scrapy学习">Scrapy学习<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python数据挖掘与分析/" title="python数据挖掘与分析">python数据挖掘与分析<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>6</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/scrapy/" title="scrapy">scrapy<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/swing/" title="swing">swing<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JQuery/" title="JQuery">JQuery<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java图形与文本处理/" title="java图形与文本处理">java图形与文本处理<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JDBC/" title="JDBC">JDBC<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>2</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/matplotlib/" title="matplotlib">matplotlib<sup>1</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/BootStrap/" title="BootStrap">BootStrap<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 人前显贵人后受罪 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="Chenjiabing">Chenjiabing</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>
