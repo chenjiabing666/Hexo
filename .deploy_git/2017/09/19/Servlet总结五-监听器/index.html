@@ -1,0 +1,790 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Servlet总结五(监听器) | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="Servlet总结五(监听器)分类
+监听器按其功能可以分为三种，分别是生命周期监听器(ServletContextListener,ServletRequestListener,HttpSessionListener)，属性监听器(ServletRequestAttributeListener,HttpSessionAttributeListener,ServletContextAttribute">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Servlet总结五(监听器)">
+<meta property="og:url" content="http://chenjiabing666.github.io/2017/09/19/Servlet总结五-监听器/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="Servlet总结五(监听器)分类
+监听器按其功能可以分为三种，分别是生命周期监听器(ServletContextListener,ServletRequestListener,HttpSessionListener)，属性监听器(ServletRequestAttributeListener,HttpSessionAttributeListener,ServletContextAttribute">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/listener.jpg">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:09:58.407Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Servlet总结五(监听器)">
+<meta name="twitter:description" content="Servlet总结五(监听器)分类
+监听器按其功能可以分为三种，分别是生命周期监听器(ServletContextListener,ServletRequestListener,HttpSessionListener)，属性监听器(ServletRequestAttributeListener,HttpSessionAttributeListener,ServletContextAttribute">
+<meta name="twitter:image" content="http://ono60m7tl.bkt.clouddn.com/listener.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/09/19/Servlet总结五-监听器/" title="Servlet总结五(监听器)" itemprop="url">Servlet总结五(监听器)</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2017-09-19T02:37:23.000Z" itemprop="datePublished"> 发表于 2017-09-19</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Servlet总结五-监听器"><span class="toc-number">1.</span> <span class="toc-text">Servlet总结五(监听器)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#分类"><span class="toc-number">1.1.</span> <span class="toc-text">分类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#生命周期监听器"><span class="toc-number">1.2.</span> <span class="toc-text">生命周期监听器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ServletContextListener"><span class="toc-number">1.2.1.</span> <span class="toc-text">ServletContextListener</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ServletRequestListener"><span class="toc-number">1.2.2.</span> <span class="toc-text">ServletRequestListener</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例-1"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HttpSessionListener"><span class="toc-number">1.2.3.</span> <span class="toc-text">HttpSessionListener</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例-2"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">实例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#属性操作监听器"><span class="toc-number">1.3.</span> <span class="toc-text">属性操作监听器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HttpSessionAttributeListener"><span class="toc-number">1.3.1.</span> <span class="toc-text">HttpSessionAttributeListener</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#会话属性监听器"><span class="toc-number">1.4.</span> <span class="toc-text">会话属性监听器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HttpSessionBindingListener"><span class="toc-number">1.4.1.</span> <span class="toc-text">HttpSessionBindingListener</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.5.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Servlet总结五-监听器"><a href="#Servlet总结五-监听器" class="headerlink" title="Servlet总结五(监听器)"></a>Servlet总结五(监听器)</h1><h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><blockquote>
+<p>监听器按其功能可以分为三种，分别是生命周期监听器(<code>ServletContextListener</code>,<code>ServletRequestListener</code>,<code>HttpSessionListener</code>)，属性监听器(<code>ServletRequestAttributeListener</code>,<code>HttpSessionAttributeListener</code>,<code>ServletContextAttributeListener</code>)，会话属性监听器(<code>HttpSessionBindingListener</code>,<code>HttpSessionActivationListener</code>)。下面我们将会详细的介绍这三种监听器。</p>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/listener.jpg" alt="分类图"></p>
+<h2 id="生命周期监听器"><a href="#生命周期监听器" class="headerlink" title="生命周期监听器"></a>生命周期监听器</h2><p>生命周期就是从创建到销毁，因此顾名思义，就是在对象创建的时候会触发，销毁的时候也会触发</p>
+</blockquote>
+<h3 id="ServletContextListener"><a href="#ServletContextListener" class="headerlink" title="ServletContextListener"></a>ServletContextListener</h3><blockquote>
+<p>前面我们说过<code>ServletContext</code>是上下文的，是应用程序共享的，当应用程序启动就会生成的。在应用程序初始化或者结束前，会分别调用<code>contextInitialized()</code>和<code>contextDestroyed()</code>方法，通过传入的<code>ServletContextEvent</code>取得<code>ServletContext</code>对象。</p>
+</blockquote>
+<h4 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h4><blockquote>
+<p>下面读取设置的初始化参数，并且在监听器中将其绑定为属性实现全文共享</p>
+<blockquote>
+<ul>
+<li><code>web.xml</code>的文件，主要是设置初始化属性值，前面已经讲过</li>
+</ul>
+</blockquote>
+</blockquote>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 设置ServletContext初始参数 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">context-param</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">param-name</span>&gt;</span>username<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">param-value</span>&gt;</span>陈加兵<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">context-param</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="tag">&lt;<span class="name">context-param</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">param-name</span>&gt;</span>password<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">param-value</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">context-param</span>&gt;</span></div><div class="line">	<span class="comment">&lt;!-- 设置ServletContext初始参数 --&gt;</span></div><div class="line"></div><div class="line">    <span class="comment">&lt;!-- 设置监听器，ServletContextListener --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">listener</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>com.ServletContextListenerDemo<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">listener</span>&gt;</span></div><div class="line">    <span class="comment">&lt;!-- 设置监听器，ServletContextListener --&gt;</span></div></pre></td></tr></table></figure>
+<blockquote>
+<blockquote>
+<p>下面是实现监听器的功能</p>
+</blockquote>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.util.Enumeration;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.ServletContext;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletContextEvent;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletContextListener;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServletContextListenerDemo</span> <span class="keyword">implements</span> <span class="title">ServletContextListener</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="comment">// ServletContext销毁的时候触发</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextDestroyed</span><span class="params">(ServletContextEvent arg0)</span> </span>&#123;</div><div class="line">        <span class="comment">//当销毁的时候就移除其中绑定的属性</span></div><div class="line">		ServletContext context = arg0.getServletContext();</div><div class="line">		<span class="comment">// 获取所有属性的名称</span></div><div class="line">		Enumeration enumeration = context.getAttributeNames();</div><div class="line">		<span class="keyword">while</span> (enumeration.hasMoreElements()) &#123;</div><div class="line">			String name = (String) enumeration.nextElement();</div><div class="line">			<span class="comment">// 移除绑定的属性</span></div><div class="line">			context.removeAttribute(name);</div><div class="line"></div><div class="line">		&#125;</div><div class="line"></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">// ServletContext生成的时候触发，一般当web程序应用的时候就会初始化ServletContext参数</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextInitialized</span><span class="params">(ServletContextEvent arg0)</span> </span>&#123;</div><div class="line">		<span class="comment">//获取ServletContext对象</span></div><div class="line">		ServletContext context = arg0.getServletContext();</div><div class="line">		<span class="comment">// 读取参数</span></div><div class="line">		String name = context.getInitParameter(<span class="string">"username"</span>);</div><div class="line">		String password = context.getInitParameter(<span class="string">"password"</span>);</div><div class="line">		<span class="comment">// 绑定属性，用于全文共享</span></div><div class="line">		context.setAttribute(<span class="string">"username"</span>, name);</div><div class="line">		context.setAttribute(<span class="string">"password"</span>, password);</div><div class="line"></div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="ServletRequestListener"><a href="#ServletRequestListener" class="headerlink" title="ServletRequestListener"></a>ServletRequestListener</h3><blockquote>
+<p>这是在对象<code>ServletRequest</code>对象生成或结束时，会触发的监听器。当生成的时候会触发<code>requestInitialized()</code>,结束时会触发<code>requestDestroyed()</code>方法。<br>ServletRequest对象生成一般在浏览器发出请求，或者转发重定向。注意这个触发是在Servlet的doGet()或者doPost()之前。</p>
+</blockquote>
+<h4 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a>实例</h4><blockquote>
+<p><code>ServletRequestListener</code>文件:在<code>ServletRequest</code>对象生成时绑定属性</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.ServletRequestEvent;</div><div class="line"><span class="keyword">import</span> javax.servlet.ServletRequestListener;</div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServletRequestListenerDemo</span> <span class="keyword">implements</span> <span class="title">ServletRequestListener</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="comment">//在ServletRequest对象结束时触发</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">requestDestroyed</span><span class="params">(ServletRequestEvent arg0)</span> </span>&#123;</div><div class="line">		HttpServletRequest request=(HttpServletRequest)arg0.getServletRequest();</div><div class="line">	</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">//在ServletRequest对象生成时触发(比如浏览器请求)</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">requestInitialized</span><span class="params">(ServletRequestEvent arg0)</span> </span>&#123;</div><div class="line">		<span class="comment">//强制转换成其子类</span></div><div class="line">		HttpServletRequest request=(HttpServletRequest) arg0.getServletRequest();</div><div class="line">		<span class="comment">//绑定属性，这里的request和触发其的Servlet中的是一样的，因此可以实现共享</span></div><div class="line">		<span class="comment">//就好像forward,include一样</span></div><div class="line">		request.setAttribute(<span class="string">"login"</span>, <span class="string">"atuo"</span>);   <span class="comment">//绑定属性</span></div><div class="line">		</div><div class="line">		</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p><code>Servlet</code>文件：取得绑定的值</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></div><div class="line">			<span class="keyword">throws</span> ServletException, IOException &#123;</div><div class="line">		PrintWriter pWriter=response.getWriter();</div><div class="line">		pWriter.println(request.getAttribute(<span class="string">"login"</span>));   <span class="comment">//取得上面监听器绑定的值</span></div><div class="line">		</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p><code>web.xml</code>文件</p>
+</blockquote>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 设置监听器，ServletRequestListener --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">listener</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>com.ServletRequestListenerDemo<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">listener</span>&gt;</span></div><div class="line">	<span class="comment">&lt;!-- 设置监听器，ServletRequestListener --&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="HttpSessionListener"><a href="#HttpSessionListener" class="headerlink" title="HttpSessionListener"></a>HttpSessionListener</h3><blockquote>
+<p>在<code>HttpSession</code>对象初始化后或者结束时，会分别调用<code>sessionCreated()</code>和<code>sessionDestroyed()</code>方法，你可以通过传入的<code>HttpSessionEvent</code>来取得<code>HttpSession</code>，以针对会话对象做出响应的创建或者结束处理操作</p>
+</blockquote>
+<h4 id="实例-2"><a href="#实例-2" class="headerlink" title="实例"></a>实例</h4><blockquote>
+<p><code>Servlet</code>文件：用来验证登录是否正确，如果正确就创建<code>HttpSession</code>对象，并且绑定属性用来实现自动登录</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.PrintWriter;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.ServletException;</div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpServlet;</div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;</div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpSession;</div><div class="line"><span class="keyword">import</span> javax.xml.registry.infomodel.User;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServletDemo3</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></div><div class="line">			<span class="keyword">throws</span> ServletException, IOException &#123;</div><div class="line">		String name=request.getParameter(<span class="string">"username"</span>);</div><div class="line">		String password=request.getParameter(<span class="string">"password"</span>);</div><div class="line">		<span class="keyword">if</span> (<span class="string">"chenjiabing"</span>.equals(name)&amp;&amp;<span class="string">"123456"</span>.equals(password)) &#123;</div><div class="line">			<span class="comment">//用户名和密码正确创建对象</span></div><div class="line">			HttpSession session=request.getSession();</div><div class="line">			session.setAttribute(<span class="string">"login"</span>, <span class="string">"auto"</span>);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doPost</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></div><div class="line">			<span class="keyword">throws</span> ServletException, IOException &#123;</div><div class="line">			</div><div class="line">		</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> <span class="keyword">throws</span> ServletException </span>&#123;</div><div class="line">		</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<p><code>HttpSessionListenerDemo</code>文件：用来记录登录的人数</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpSession;</div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpSessionEvent;</div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpSessionListener;</div><div class="line"></div><div class="line"><span class="keyword">import</span> org.omg.CORBA.Request;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServletHttpSessionListenerDemo</span> <span class="keyword">implements</span> <span class="title">HttpSessionListener</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> count=<span class="number">0</span>;</div><div class="line">	<span class="comment">//HttpSession创建时触发</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sessionCreated</span><span class="params">(HttpSessionEvent arg0)</span> </span>&#123;</div><div class="line">		count++;    <span class="comment">//人数++</span></div><div class="line">		</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//HttpSession销毁时触发</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sessionDestroyed</span><span class="params">(HttpSessionEvent arg0)</span> </span>&#123;</div><div class="line">		<span class="comment">// TODO Auto-generated method stub</span></div><div class="line">		count--;   <span class="comment">//人数--</span></div><div class="line">		</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="属性操作监听器"><a href="#属性操作监听器" class="headerlink" title="属性操作监听器"></a>属性操作监听器</h2><blockquote>
+<p>顾名思义，属性操作监听器就是当绑定属性或者移除绑定属性的时候会触发，共有三个监听器，分别为：<code>ServletContextAttributeListener</code>,<code>ServletRequestAttributeListener</code>,<code>HttpSessionAtrributeListener</code>。相同的是它们都有共同需要实现的方法，分别为：<code>attributeAdded</code>(绑定属性的时候触发),<code>attributeRemoved</code>(属性移除的时候触发),<code>attributeReplace</code>(属性被替换的时候触发)</p>
+<p>由于这三个监听器实现的方法都是一样的，下面就演示一个即可，其他的都是相同的</p>
+</blockquote>
+<h3 id="HttpSessionAttributeListener"><a href="#HttpSessionAttributeListener" class="headerlink" title="HttpSessionAttributeListener"></a>HttpSessionAttributeListener</h3><blockquote>
+<p>这是监听<code>HttpSession</code>对象属性的，主要有（添加，移除，替换）,当然这个也是要在<code>web.xml</code>设置的</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpSession;</div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpSessionBindingEvent;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpSessionAttributeListener</span> <span class="keyword">implements</span> <span class="title">javax</span>.<span class="title">servlet</span>.<span class="title">http</span>.<span class="title">HttpSessionAttributeListener</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="comment">/*HttpSessionBindingEvent方法</span></div><div class="line">	 * String getName()  返回最近改变的属性的名称</div><div class="line">	 * Object getValue()   返回已添加、移除或替换的属性的值。如果添加（或绑定）了属性，则这是该属性的值。如果移除（或取消绑定）了属性，则这是被移除属性的值。如果替换了属性，则这是属性原来的值。</div><div class="line">	 * getSession()   获取HttpSession对象 </div><div class="line">	 */</div><div class="line">	</div><div class="line">	<span class="comment">//添加新的属性时触发，每绑定一个属性就触发一次</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">attributeAdded</span><span class="params">(HttpSessionBindingEvent arg0)</span> </span>&#123;</div><div class="line">		<span class="comment">//获取HttpSession对象</span></div><div class="line">		HttpSession session=arg0.getSession();</div><div class="line">		String name=arg0.getName();    <span class="comment">//获取添加的属性名称</span></div><div class="line">		String attribute=(String) arg0.getValue();   <span class="comment">//获取添加的属性的值</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">//移除属性的时候触发  ，每移除一次就会触发一次</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">attributeRemoved</span><span class="params">(HttpSessionBindingEvent arg0)</span> </span>&#123;</div><div class="line">		String value=(String) arg0.getValue();</div><div class="line">		System.out.println(<span class="string">"被移除的属性的值为："</span>+value);</div><div class="line">		</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//属性值被替换的时候触发，直接重新设置属性值就是替换</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">attributeReplaced</span><span class="params">(HttpSessionBindingEvent arg0)</span> </span>&#123;</div><div class="line">		System.out.println(<span class="string">"被替换的属性的值："</span>+arg0.getValue());</div><div class="line">		</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="会话属性监听器"><a href="#会话属性监听器" class="headerlink" title="会话属性监听器"></a>会话属性监听器</h2><blockquote>
+<p>先前介绍的几个监听器都是要在<code>web.xml</code>中使用<code>&lt;listener&gt;</code>定义的，这个会话属性监听器是不要在<code>web.xml</code>设置的</p>
+<p>这里介绍的监听器分别为：<code>HttpSessionBindingListener</code>,<code>HttpSessionActivationListener</code></p>
+</blockquote>
+<h3 id="HttpSessionBindingListener"><a href="#HttpSessionBindingListener" class="headerlink" title="HttpSessionBindingListener"></a>HttpSessionBindingListener</h3><blockquote>
+<p>当实现<code>HttpSessionBindingListener</code>接口的类的对象被移除或者绑定到<code>HttpSession</code>成为属性的时候就会触发</p>
+<p>下面是实现<code>HttpSessionBindingListener</code>接口的类</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpSession;</div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpSessionBindingEvent;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpSessionBindingListenerDemo</span> <span class="keyword">implements</span> <span class="title">javax</span>.<span class="title">servlet</span>.<span class="title">http</span>.<span class="title">HttpSessionBindingListener</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">public</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span>  age;</div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">HttpSessionBindingListenerDemo</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>();</div><div class="line">		<span class="keyword">this</span>.name=<span class="string">"陈加兵"</span>;</div><div class="line">		<span class="keyword">this</span>.age=<span class="number">22</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//当这个类的对象绑定成为HttpSession的属性的时候将会触发</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">valueBound</span><span class="params">(HttpSessionBindingEvent arg0)</span> </span>&#123;</div><div class="line">		<span class="comment">//获取绑定的属性的对象</span></div><div class="line">		HttpSessionBindingListenerDemo listenerDemo=(HttpSessionBindingListenerDemo)arg0.getValue();</div><div class="line">		<span class="comment">//获取对象的值</span></div><div class="line">		System.out.println(listenerDemo.name);</div><div class="line">		</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">//当这个类的对象被移除的时候就会触发</span></div><div class="line">	<span class="comment">//getValue()  getName()</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">valueUnbound</span><span class="params">(HttpSessionBindingEvent arg0)</span> </span>&#123;</div><div class="line">		</div><div class="line">		</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li>下面是<code>Servlet</code>文件：</li>
+</ul>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.PrintWriter;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.servlet.ServletException;</div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpServlet;</div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;</div><div class="line"><span class="keyword">import</span> javax.servlet.http.HttpSession;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServletDemo1</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></div><div class="line">			<span class="keyword">throws</span> ServletException, IOException &#123;</div><div class="line">        <span class="comment">//获取对象</span></div><div class="line">		HttpSession session=request.getSession(); </div><div class="line">        <span class="comment">//对象</span></div><div class="line">		HttpSessionBindingListenerDemo listener=<span class="keyword">new</span> HttpSessionBindingListenerDemo();</div><div class="line">		<span class="comment">//绑定对象</span></div><div class="line">		session.setAttribute(<span class="string">"listener"</span>, listener);</div><div class="line">		</div><div class="line">		</div><div class="line">			</div><div class="line">	&#125;</div><div class="line"></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doPost</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></div><div class="line">			<span class="keyword">throws</span> ServletException, IOException &#123;</div><div class="line"></div><div class="line">		</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> <span class="keyword">throws</span> ServletException </span>&#123;</div><div class="line">		</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/java学习/">java学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/java基础/">java基础</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2017/09/19/Servlet总结五-监听器/" data-title="Servlet总结五(监听器) | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2017/09/20/JSP总结一-标签）/" title="JSP总结一(标签）">
+  <strong>上一篇：</strong><br/>
+  <span>
+  JSP总结一(标签）</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/09/17/Servlet总结四-过滤器/"  title="Servlet总结四(过滤器)">
+ <strong>下一篇：</strong><br/> 
+ <span>Servlet总结四(过滤器)
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Servlet总结五-监听器"><span class="toc-number">1.</span> <span class="toc-text">Servlet总结五(监听器)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#分类"><span class="toc-number">1.1.</span> <span class="toc-text">分类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#生命周期监听器"><span class="toc-number">1.2.</span> <span class="toc-text">生命周期监听器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ServletContextListener"><span class="toc-number">1.2.1.</span> <span class="toc-text">ServletContextListener</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ServletRequestListener"><span class="toc-number">1.2.2.</span> <span class="toc-text">ServletRequestListener</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例-1"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#HttpSessionListener"><span class="toc-number">1.2.3.</span> <span class="toc-text">HttpSessionListener</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例-2"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">实例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#属性操作监听器"><span class="toc-number">1.3.</span> <span class="toc-text">属性操作监听器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HttpSessionAttributeListener"><span class="toc-number">1.3.1.</span> <span class="toc-text">HttpSessionAttributeListener</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#会话属性监听器"><span class="toc-number">1.4.</span> <span class="toc-text">会话属性监听器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HttpSessionBindingListener"><span class="toc-number">1.4.1.</span> <span class="toc-text">HttpSessionBindingListener</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.5.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

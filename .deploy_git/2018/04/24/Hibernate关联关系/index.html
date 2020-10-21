@@ -1,0 +1,978 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Hibernate关联关系 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="Hibernate关联关系一对一背景
+在中国一个丈夫只能有一个妻子，那么丈夫和妻子的关系就是一对一的关系
+
+准备
+创建丈夫和妻子的实体类
+
+丈夫的实体类
+
+
+1234567891011121314151617181920212223242526272829303132@Entity@Table(name=&quot;husband&quot;)public class Husband &amp;#123;	private i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hibernate关联关系">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/04/24/Hibernate关联关系/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="Hibernate关联关系一对一背景
+在中国一个丈夫只能有一个妻子，那么丈夫和妻子的关系就是一对一的关系
+
+准备
+创建丈夫和妻子的实体类
+
+丈夫的实体类
+
+
+1234567891011121314151617181920212223242526272829303132@Entity@Table(name=&quot;husband&quot;)public class Husband &amp;#123;	private i">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/manytomany.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T05:55:43.281Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hibernate关联关系">
+<meta name="twitter:description" content="Hibernate关联关系一对一背景
+在中国一个丈夫只能有一个妻子，那么丈夫和妻子的关系就是一对一的关系
+
+准备
+创建丈夫和妻子的实体类
+
+丈夫的实体类
+
+
+1234567891011121314151617181920212223242526272829303132@Entity@Table(name=&quot;husband&quot;)public class Husband &amp;#123;	private i">
+<meta name="twitter:image" content="http://ono60m7tl.bkt.clouddn.com/manytomany.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/04/24/Hibernate关联关系/" title="Hibernate关联关系" itemprop="url">Hibernate关联关系</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-04-24T03:05:56.000Z" itemprop="datePublished"> 发表于 2018-04-24</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Hibernate关联关系"><span class="toc-number">1.</span> <span class="toc-text">Hibernate关联关系</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一对一"><span class="toc-number">1.1.</span> <span class="toc-text">一对一</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#背景"><span class="toc-number">1.1.1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#准备"><span class="toc-number">1.1.2.</span> <span class="toc-text">准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#单向外键关联"><span class="toc-number">1.1.3.</span> <span class="toc-text">单向外键关联</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#通过丈夫访问妻子"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">通过丈夫访问妻子</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#通过妻子访问丈夫"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">通过妻子访问丈夫</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#总结"><span class="toc-number">1.1.3.3.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#双向外键关联-OneToOne-mappedBy-””"><span class="toc-number">1.1.4.</span> <span class="toc-text">双向外键关联(@OneToOne(mappedBy=””)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#问题"><span class="toc-number">1.1.4.1.</span> <span class="toc-text">问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#解决办法"><span class="toc-number">1.1.4.2.</span> <span class="toc-text">解决办法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实现"><span class="toc-number">1.1.4.3.</span> <span class="toc-text">实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#测试"><span class="toc-number">1.1.4.4.</span> <span class="toc-text">测试</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一对多"><span class="toc-number">1.2.</span> <span class="toc-text">一对多</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#准备-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前提须知"><span class="toc-number">1.2.2.</span> <span class="toc-text">前提须知</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#单向外键关联-1"><span class="toc-number">1.2.3.</span> <span class="toc-text">单向外键关联</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#从One的一方访问Many的一方-OneToMany"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">从One的一方访问Many的一方(@OneToMany)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#从Many的一方查询One的一方-ManyToOne"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">从Many的一方查询One的一方(@ManyToOne)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#双向外键关联"><span class="toc-number">1.2.4.</span> <span class="toc-text">双向外键关联</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#问题并解决"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">问题并解决</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实现-1"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">实现</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结-1"><span class="toc-number">1.2.5.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多对一"><span class="toc-number">1.3.</span> <span class="toc-text">多对一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多对多"><span class="toc-number">1.4.</span> <span class="toc-text">多对多</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#背景-1"><span class="toc-number">1.4.1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#准备-2"><span class="toc-number">1.4.2.</span> <span class="toc-text">准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前提须知-1"><span class="toc-number">1.4.3.</span> <span class="toc-text">前提须知</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#单向外键关联-ManyToMany"><span class="toc-number">1.4.4.</span> <span class="toc-text">单向外键关联(@ManyToMany)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#通过学生访问老师的信息"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">通过学生访问老师的信息</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JoinTable"><span class="toc-number">1.4.5.</span> <span class="toc-text">@JoinTable</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ManyToMany"><span class="toc-number">1.4.6.</span> <span class="toc-text">@ManyToMany</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#通过老师访问学生的信息"><span class="toc-number">1.4.6.1.</span> <span class="toc-text">通过老师访问学生的信息</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#双向外键关联-ManyToMany-mappedBy-””"><span class="toc-number">1.4.7.</span> <span class="toc-text">双向外键关联(@ManyToMany(mappedBy=””))</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#完整核心配置文件"><span class="toc-number">1.5.</span> <span class="toc-text">完整核心配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结-2"><span class="toc-number">1.6.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.7.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Hibernate关联关系"><a href="#Hibernate关联关系" class="headerlink" title="Hibernate关联关系"></a>Hibernate关联关系</h1><h2 id="一对一"><a href="#一对一" class="headerlink" title="一对一"></a>一对一</h2><h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><ul>
+<li>在中国一个丈夫只能有一个妻子，那么丈夫和妻子的关系就是一对一的关系</li>
+</ul>
+<h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><ul>
+<li><p>创建丈夫和妻子的实体类</p>
+</li>
+<li><p>丈夫的实体类</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"husband"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Husband</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span>   <span class="comment">//主键生成策略，自增长</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Column</span>(length=<span class="number">20</span>)   <span class="comment">//设置长度为20</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"Husband [id="</span> + id + <span class="string">", name="</span> + name + <span class="string">", age="</span> + age + <span class="string">"]"</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>妻子的实体类</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"wife"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Wife</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span>   <span class="comment">//主键生成策略，自增长</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Column</span>(length=<span class="number">20</span>)   <span class="comment">//设置长度为20</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"Husband [id="</span> + id + <span class="string">", name="</span> + name + <span class="string">", age="</span> + age + <span class="string">"]"</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">个</div></pre></td></tr></table></figure>
+<h3 id="单向外键关联"><a href="#单向外键关联" class="headerlink" title="单向外键关联"></a>单向外键关联</h3><ul>
+<li><p>单向外键关联简单的说就是只能通过一张表访问到另外一张表的数据，不能也从另外一张表访问到这张表的数据。</p>
+</li>
+<li><p>比如：我们可以通过丈夫的信息访问到妻子的信息，那么在丈夫的表中就必须有妻子的外键。同样的，我们也可以通过妻子的信息访问到丈夫的信息，那么在妻子的表中必须有丈夫的外键。</p>
+</li>
+<li><p>简单的说就是只能单向访问，要么是通过妻子访问丈夫，要么是通过丈夫访问妻子</p>
+</li>
+</ul>
+<h4 id="通过丈夫访问妻子"><a href="#通过丈夫访问妻子" class="headerlink" title="通过丈夫访问妻子"></a>通过丈夫访问妻子</h4><ul>
+<li><p>根据上面的需求，那么此时的<strong>妻子的主键将作为丈夫的外键</strong>，这样才可以通过丈夫访问到妻子的信息，其实的sql语句是这样的，如下：<code>select * from husband h join wife w on h.wife_id=w.id;</code></p>
+</li>
+<li><p>妻子的主键作为丈夫的外键，那么这个是表中的关系，在实体类中的关系就是妻子的对象作为丈夫的实体类的属性，这样丈夫才可以访问到妻子的信息。</p>
+</li>
+<li><p>完整的Husband实体类的代码</p>
+<ul>
+<li><strong>如果使用自动生成表的话，那么默认生成的外键名称为 <code>类名小写_id</code>，但是我们可以使用<code>@JoinColumn(name=&quot;&quot;)</code>改变外键的名称</strong></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> javax.persistence.Entity;</div><div class="line"><span class="keyword">import</span> javax.persistence.GeneratedValue;</div><div class="line"><span class="keyword">import</span> javax.persistence.Id;</div><div class="line"><span class="keyword">import</span> javax.persistence.JoinColumn;</div><div class="line"><span class="keyword">import</span> javax.persistence.OneToOne;</div><div class="line"><span class="keyword">import</span> javax.persistence.Table;</div><div class="line"><span class="meta">@Entity</span>   <span class="comment">//指定实体类</span></div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"husband"</span>)   <span class="comment">//指定对应数据库的表名为husband</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Husband</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="keyword">private</span> Wife Wife;</div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span>   <span class="comment">//主键生成策略，自增长</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@OneToOne</span>   <span class="comment">//设置wife的主键为Husband的外键，默认的对应表中的字段为wife_id</span></div><div class="line">	<span class="meta">@JoinColumn</span>(name=<span class="string">"wifeid"</span>) <span class="comment">// 默认外键的名字为wife_id.我们使用这个注解改变外键的名字为wifeid</span></div><div class="line">	<span class="function"><span class="keyword">public</span> Wife <span class="title">getWife</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> Wife;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setWife</span><span class="params">(Wife wife)</span> </span>&#123;</div><div class="line">		Wife = wife;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Column</span>(length=<span class="number">20</span>)   <span class="comment">//设置长度为20</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"Husband [id="</span> + id + <span class="string">", name="</span> + name + <span class="string">", age="</span> + age + <span class="string">"]"</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>实体类Wife的代码不用改变</p>
+</li>
+<li><p>在核心配置文件<code>hibernate.cfg.xml</code>添加实体类的映射即可</p>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">mapping</span> <span class="attr">class</span>=<span class="string">"cn.tedu.bean.Husband"</span>&gt;</span><span class="tag">&lt;/<span class="name">mapping</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">mapping</span> <span class="attr">class</span>=<span class="string">"cn.tedu.bean.Wife"</span>&gt;</span><span class="tag">&lt;/<span class="name">mapping</span>&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li><p><strong>启动服务器我们将会看到Hibernate已经为我们创建了两张表husband和wife，其中wife的主键设置为husband的外键了(wifeid)</strong></p>
+</li>
+<li><p>测试方法</p>
+<ul>
+<li><strong>我们知道妻子是作为丈夫的外键，因此这里需要先添加指定的wife数据，才可以添加对应的husband数据，所以下面的测试方法先保存了wife对象。但是在后面讲到级联操作，那么就可以直接保存husband对象便可以一起保存了wife对象数据到数据库中</strong></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> org.hibernate.Session;</div><div class="line"><span class="keyword">import</span> org.hibernate.Transaction;</div><div class="line"><span class="keyword">import</span> org.junit.Test;</div><div class="line"><span class="keyword">import</span> cn.tedu.bean.Husband;</div><div class="line"><span class="keyword">import</span> cn.tedu.bean.Teacher;</div><div class="line"><span class="keyword">import</span> cn.tedu.bean.Wife;</div><div class="line"><span class="keyword">import</span> cn.tedu.utils.HibernateUntil;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestOneToOne</span> </span>&#123;</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 添加数据到husband中</div><div class="line">	 */</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">TestAdd</span><span class="params">()</span> </span>&#123;</div><div class="line">		Session session = <span class="keyword">null</span>;</div><div class="line">		Transaction transaction = <span class="keyword">null</span>;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			<span class="comment">// 创建session</span></div><div class="line">			session = HibernateUntil.getSession();</div><div class="line">			<span class="comment">// 开始事务</span></div><div class="line">			transaction = session.beginTransaction();</div><div class="line"></div><div class="line">			<span class="comment">//创建wife对象，并且设置属性值，由于主键是自增长的，因此这里不需要自己设置</span></div><div class="line">			Wife wife=<span class="keyword">new</span> Wife();</div><div class="line">			wife.setAge(<span class="number">22</span>);</div><div class="line">			wife.setName(<span class="string">"Marry"</span>);</div><div class="line"></div><div class="line">			<span class="comment">//新建husband对象</span></div><div class="line">			Husband husband=<span class="keyword">new</span> Husband();</div><div class="line">			husband.setAge(<span class="number">22</span>);</div><div class="line">			husband.setName(<span class="string">"陈加兵"</span>);</div><div class="line">			<span class="comment">//将Wife的对象添加到Husband中，如果这里设置了级联操作，那么只需要保存husband对象即可完成wife的数据保存</span></div><div class="line">			husband.setWife(wife);</div><div class="line">			<span class="comment">//由于没有设置级联操作，因此这里需要先保存wife对象，否则将不能在数据库中添加成功</span></div><div class="line">			session.save(wife);</div><div class="line">			<span class="comment">//保存丈夫的信息</span></div><div class="line">			session.save(husband);</div><div class="line">			<span class="comment">// 提交事务</span></div><div class="line">			transaction.commit();</div><div class="line">		&#125; <span class="keyword">catch</span> (Exception exception) &#123;</div><div class="line">			transaction.rollback(); <span class="comment">// 事务回滚</span></div><div class="line">		&#125; <span class="keyword">finally</span> &#123;</div><div class="line">			<span class="keyword">if</span> (session!=<span class="keyword">null</span>) &#123;</div><div class="line">				session.close();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 查询丈夫和对应妻子的信息</div><div class="line">	 * 根据id查询，只要查询到丈夫的对象，那么妻子的信息就会保存在Husband的属性Wife对象中，因此可以通过访问其中的wife属性来获取对应妻子的信息</div><div class="line">	 * 原理：使用session.get(class&lt;T&gt; cls,id)，其实发出的sql语句是外连接语句：</div><div class="line">	 * 		select * from husband h left join wife w on h.wifeid=w.id where h.id=?</div><div class="line">	 * 		如果能够查找到对应的妻子信息就将其添加到Husband中的wife属性中，如果没有查找到那么设置wife属性为null即可，这个就是外连接</div><div class="line">	 */</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">TestGet</span><span class="params">()</span> </span>&#123;</div><div class="line">		Session session = <span class="keyword">null</span>;</div><div class="line">		Transaction transaction = <span class="keyword">null</span>;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			<span class="comment">// 创建session</span></div><div class="line">			session = HibernateUntil.getSession();</div><div class="line">			<span class="comment">// 开始事务</span></div><div class="line">			transaction = session.beginTransaction();</div><div class="line">			<span class="comment">//查询id=1的husband信息</span></div><div class="line">			Husband husband=session.get(Husband.class, <span class="number">1</span>);</div><div class="line">			<span class="comment">//获取对应的妻子对象</span></div><div class="line">			Wife wife=husband.getWife();</div><div class="line">			<span class="comment">//输出</span></div><div class="line">			System.out.println(husband);</div><div class="line">			System.out.println(wife);</div><div class="line">			<span class="comment">// 提交事务</span></div><div class="line">			transaction.commit();</div><div class="line">		&#125; <span class="keyword">catch</span> (Exception exception) &#123;</div><div class="line">			transaction.rollback(); <span class="comment">// 事务回滚</span></div><div class="line">		&#125; <span class="keyword">finally</span> &#123;</div><div class="line">			<span class="keyword">if</span> (session!=<span class="keyword">null</span>) &#123;</div><div class="line">				session.close();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 测试修改操作： 这里我们修改id=1的Husband对应的妻子的信息为id=2,当然前提是id=2的wife信息要存在，否则将不会成功</div><div class="line">	 * 想要修改妻子的数据，直接修改Husband中的wife属性即可</div><div class="line">	 */</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">TestUpdate</span><span class="params">()</span> </span>&#123;</div><div class="line">		Session session = <span class="keyword">null</span>;</div><div class="line">		Transaction transaction = <span class="keyword">null</span>;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			<span class="comment">// 创建session</span></div><div class="line">			session = HibernateUntil.getSession();</div><div class="line">			<span class="comment">// 开始事务</span></div><div class="line">			transaction = session.beginTransaction();</div><div class="line">			<span class="comment">//查询id=1的husband信息</span></div><div class="line">			Husband husband=session.get(Husband.class, <span class="number">1</span>);</div><div class="line">			<span class="comment">//查询wife的id=2的对象</span></div><div class="line">			Wife wife=session.get(Wife.class, <span class="number">2</span>);</div><div class="line">			<span class="comment">//如果这个对象查询到</span></div><div class="line">			<span class="keyword">if</span> (wife!=<span class="keyword">null</span>) &#123;</div><div class="line">				husband.setWife(wife);  <span class="comment">//修改Husband对象中的wife属性值即可</span></div><div class="line">			&#125;</div><div class="line">			session.update(husband);   <span class="comment">//执行更新操作</span></div><div class="line">			<span class="comment">//获取对应的妻子对象</span></div><div class="line">			<span class="comment">// 提交事务</span></div><div class="line">			transaction.commit();</div><div class="line">		&#125; <span class="keyword">catch</span> (Exception exception) &#123;</div><div class="line">			transaction.rollback(); <span class="comment">// 事务回滚</span></div><div class="line">		&#125; <span class="keyword">finally</span> &#123;</div><div class="line">			<span class="keyword">if</span> (session!=<span class="keyword">null</span>) &#123;</div><div class="line">				session.close();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 测试删除wife表中的数据</div><div class="line">	 * 原理： 如果设置了外键关联，那么我们想要删除wife的数据，必须先要删除其中与之外键关联的丈夫的信息，或者设置Husband表中的外键为其他的wife数据</div><div class="line">	 * 两种解决办法：</div><div class="line">	 * 			1. 先删除对应的丈夫的数据</div><div class="line">	 * 			2. 直接将丈夫对应的表的wifeId设置为其他或者为空即可</div><div class="line">	 *</div><div class="line">	 * 下面我们使用的是设置丈夫对应的wifeId为空，那么就可以删除其对应的妻子的数据</div><div class="line">	 */</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">TestDelete</span><span class="params">()</span> </span>&#123;</div><div class="line">		Session session = <span class="keyword">null</span>;</div><div class="line">		Transaction transaction = <span class="keyword">null</span>;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			<span class="comment">// 创建session</span></div><div class="line">			session = HibernateUntil.getSession();</div><div class="line">			<span class="comment">// 开始事务</span></div><div class="line">			transaction = session.beginTransaction();</div><div class="line"></div><div class="line">			<span class="comment">//查询到id=2的wife数据</span></div><div class="line">			Wife wife=session.get(Wife.class,<span class="number">2</span>);</div><div class="line">			<span class="comment">//查询其对应的丈夫，这里还没有讲到其他的查询条件，所以我们默认id=2就是wife的id=2的对应的丈夫</span></div><div class="line">			Husband husband=session.get(Husband.class, <span class="number">2</span>);</div><div class="line">			<span class="comment">//将wife设置null，表示将wifeId外键设置空，因此就断了外键关联</span></div><div class="line">			husband.setWife(<span class="keyword">null</span>);</div><div class="line">			<span class="comment">//删除wife</span></div><div class="line">			session.delete(wife);</div><div class="line">			<span class="comment">// 提交事务</span></div><div class="line">			transaction.commit();</div><div class="line">		&#125; <span class="keyword">catch</span> (Exception exception) &#123;</div><div class="line">			transaction.rollback(); <span class="comment">// 事务回滚</span></div><div class="line">		&#125; <span class="keyword">finally</span> &#123;</div><div class="line">			<span class="keyword">if</span> (session!=<span class="keyword">null</span>) &#123;</div><div class="line">				session.close();</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="通过妻子访问丈夫"><a href="#通过妻子访问丈夫" class="headerlink" title="通过妻子访问丈夫"></a>通过妻子访问丈夫</h4><ul>
+<li><p>那么根据需求，此时就是丈夫的主键作为妻子的外键，那么只需要在WIfe的类中添加一个Husband对象属性即可</p>
+</li>
+<li><p><code>Wife</code>类</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> javax.persistence.Column;</div><div class="line"><span class="keyword">import</span> javax.persistence.Entity;</div><div class="line"><span class="keyword">import</span> javax.persistence.GeneratedValue;</div><div class="line"><span class="keyword">import</span> javax.persistence.Id;</div><div class="line"><span class="keyword">import</span> javax.persistence.JoinColumn;</div><div class="line"><span class="keyword">import</span> javax.persistence.OneToOne;</div><div class="line"><span class="keyword">import</span> javax.persistence.Table;</div><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"wife"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Wife</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="keyword">private</span> Husband husband;</div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span>   <span class="comment">//主键生成策略，自增长</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@OneToOne</span>   <span class="comment">//设置丈夫的主键为妻子外键</span></div><div class="line">	<span class="meta">@JoinColumn</span>(name=<span class="string">"husbandId"</span>) <span class="comment">// 外键名称为husbandId</span></div><div class="line">	<span class="function"><span class="keyword">public</span> Husband <span class="title">getHusband</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> husband;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setHusband</span><span class="params">(Husband husband)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.husband = husband;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Column</span>(length=<span class="number">20</span>)   <span class="comment">//设置长度为20</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"Husband [id="</span> + id + <span class="string">", name="</span> + name + <span class="string">", age="</span> + age + <span class="string">"]"</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Husband的类不用改变，还是如第一个的样子</li>
+</ul>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><ul>
+<li>单向连接就是只能通过一个对象访问另一个对象的属性，只需要在一个实体类中添加另外一个类的对象为成员变量即可，并且在该对象的get方法上添加<code>OneToOne</code>注解即可，就表示这个对象的主键会作为该实体类的外键</li>
+</ul>
+<h3 id="双向外键关联-OneToOne-mappedBy-””"><a href="#双向外键关联-OneToOne-mappedBy-””" class="headerlink" title="双向外键关联(@OneToOne(mappedBy=””)"></a>双向外键关联(@OneToOne(mappedBy=””)</h3><ul>
+<li>所谓的双向的外键关联，就是两个实体类可以互相访问对方的属性，那么此时就需要在两个实体类中都要添加对方的对象为成员变量</li>
+</ul>
+<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h4><ul>
+<li>在两个实体类中都添加对方的对象作为自己的成员变量，那么我们此时就需要在两个实体类中都要使用<code>OneToOne</code>注解，但是我们使用了OneToOne就会在两张表中都会将对方的主键作为自己的外键，显然是没有必要的，冗余。</li>
+</ul>
+<h4 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h4><ul>
+<li><p>我们在不想作为外键的属性的get方法上添加<code>mappedBy</code>,或者在想要成为对方的外键的类中的对方的对象的get方法中添加即可。</p>
+</li>
+<li><p><strong>但是我们需要注意的是： <code>mappedBy=”“</code>，其中的值一定要和该类对象对方类中属性的字段相同</strong></p>
+</li>
+</ul>
+<h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><ul>
+<li><p>我们让Wife作为Husband的外键，所以<code>mappedBy</code>添加到Wife类中的Husband对象的get方法头上即可</p>
+</li>
+<li><p>Husband实体类</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> javax.persistence.Column;</div><div class="line"><span class="keyword">import</span> javax.persistence.Entity;</div><div class="line"><span class="keyword">import</span> javax.persistence.GeneratedValue;</div><div class="line"><span class="keyword">import</span> javax.persistence.Id;</div><div class="line"><span class="keyword">import</span> javax.persistence.JoinColumn;</div><div class="line"><span class="keyword">import</span> javax.persistence.OneToOne;</div><div class="line"><span class="keyword">import</span> javax.persistence.Table;</div><div class="line"><span class="meta">@Entity</span>   <span class="comment">//指定实体类</span></div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"husband"</span>)   <span class="comment">//指定对应数据库的表名为husband</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Husband</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="keyword">private</span> Wife Wife;   <span class="comment">//Wife对象</span></div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span>   <span class="comment">//主键生成策略，自增长</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@OneToOne</span>   <span class="comment">//设置wife的主键为Husband的外键，默认的对应表中的字段为wife_id</span></div><div class="line">	<span class="meta">@JoinColumn</span>(name=<span class="string">"wifeid"</span>) <span class="comment">// 默认外键的名字为wife_id.我们使用这个注解改变外键的名字为wifeid</span></div><div class="line">	<span class="function"><span class="keyword">public</span> Wife <span class="title">getWife</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> Wife;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setWife</span><span class="params">(Wife wife)</span> </span>&#123;</div><div class="line">		Wife = wife;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Column</span>(length=<span class="number">20</span>)   <span class="comment">//设置长度为20</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"Husband [id="</span> + id + <span class="string">", name="</span> + name + <span class="string">", age="</span> + age</div><div class="line">				+ <span class="string">", Wife="</span> + Wife + <span class="string">"]"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Wife类(添加@oneToOne(mappedBy=”wife”))<ul>
+<li><strong>将维护权交给了wife，表示wife作为husband的外键</strong></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> javax.persistence.Column;</div><div class="line"><span class="keyword">import</span> javax.persistence.Entity;</div><div class="line"><span class="keyword">import</span> javax.persistence.GeneratedValue;</div><div class="line"><span class="keyword">import</span> javax.persistence.Id;</div><div class="line"><span class="keyword">import</span> javax.persistence.JoinColumn;</div><div class="line"><span class="keyword">import</span> javax.persistence.OneToOne;</div><div class="line"><span class="keyword">import</span> javax.persistence.Table;</div><div class="line"></div><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"wife"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Wife</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="keyword">private</span> Husband husband;   <span class="comment">//Husband对象</span></div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span>   <span class="comment">//主键生成策略，自增长</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * mappedBy="对方类中的该类的属性名字"，注意这里的名字和一定要和对方类中的成员变量的字段一样</div><div class="line">	 * 			表示将维护权交给对方类中的当前类的对象，就是表示当前类的主键将会作为外键</div><div class="line">	 */</div><div class="line">	<span class="meta">@OneToOne</span>(mappedBy=<span class="string">"wife"</span>)  <span class="comment">//设置关联，并且将维护权交给了对方类中的属性wife，因此这里的外键就是wifeId</span></div><div class="line">	<span class="function"><span class="keyword">public</span> Husband <span class="title">getHusband</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> husband;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setHusband</span><span class="params">(Husband husband)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.husband = husband;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Column</span>(length=<span class="number">20</span>)   <span class="comment">//设置长度为20</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"Wife [id="</span> + id + <span class="string">", name="</span> + name + <span class="string">", age="</span> + age</div><div class="line">				+ <span class="string">", husband="</span> + husband + <span class="string">"]"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div><div class="line"><span class="keyword">import</span> javax.persistence.Column;</div><div class="line"><span class="keyword">import</span> javax.persistence.Entity;</div><div class="line"><span class="keyword">import</span> javax.persistence.GeneratedValue;</div><div class="line"><span class="keyword">import</span> javax.persistence.Id;</div><div class="line"><span class="keyword">import</span> javax.persistence.JoinColumn;</div><div class="line"><span class="keyword">import</span> javax.persistence.OneToOne;</div><div class="line"><span class="keyword">import</span> javax.persistence.Table;</div><div class="line"></div><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"wife"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Wife</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="keyword">private</span> Husband husband;   <span class="comment">//Husband对象</span></div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span>   <span class="comment">//主键生成策略，自增长</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * mappedBy="对方类中的该类的属性名字"，注意这里的名字和一定要和对方类中的成员变量的字段一样</div><div class="line">	 * 			表示将维护权交给对方类中的当前类的对象，就是表示当前类的主键将会作为外键</div><div class="line">	 */</div><div class="line">	<span class="meta">@OneToOne</span>(mappedBy=<span class="string">"wife"</span>)  <span class="comment">//设置关联，并且将维护权交给了对方类中的属性wife，因此这里的外键就是wifeId</span></div><div class="line">	<span class="function"><span class="keyword">public</span> Husband <span class="title">getHusband</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> husband;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setHusband</span><span class="params">(Husband husband)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.husband = husband;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Column</span>(length=<span class="number">20</span>)   <span class="comment">//设置长度为20</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"Wife [id="</span> + id + <span class="string">", name="</span> + name + <span class="string">", age="</span> + age</div><div class="line">				+ <span class="string">", husband="</span> + husband + <span class="string">"]"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><ul>
+<li><p>我们只要查询到Husband对象就可以访问到其中的Wife对象的数据，同样的只要查询到Wife对象就可以访问到其中的Husband对象的数据</p>
+</li>
+<li><p>这里就不再测试了</p>
+</li>
+</ul>
+<h2 id="一对多"><a href="#一对多" class="headerlink" title="一对多"></a>一对多</h2><ul>
+<li>一个宿舍可以被多个学生住，这个就是一对多的关系,其中宿舍是One的一方，学生是Many的一方</li>
+</ul>
+<h3 id="准备-1"><a href="#准备-1" class="headerlink" title="准备"></a>准备</h3><ul>
+<li>Student实体类</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> javax.persistence.Column;</div><div class="line"><span class="keyword">import</span> javax.persistence.Entity;</div><div class="line"><span class="keyword">import</span> javax.persistence.GeneratedValue;</div><div class="line"><span class="keyword">import</span> javax.persistence.GenerationType;</div><div class="line"><span class="keyword">import</span> javax.persistence.Id;</div><div class="line"><span class="keyword">import</span> javax.persistence.Table;</div><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"student"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;  <span class="comment">//主键</span></div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Column</span>(length=<span class="number">10</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>宿舍的实体类</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 一个宿舍可以被多个学生住</div><div class="line"> * 一个学生只能住在一个宿舍</div><div class="line"> * 学生是One</div><div class="line"> * 宿舍是Many</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Dormitory</span> </span>&#123;</div><div class="line">	 <span class="keyword">private</span> <span class="keyword">int</span> id;  <span class="comment">//主键</span></div><div class="line">	 <span class="keyword">private</span> Long number;   <span class="comment">//宿舍编号</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> Long <span class="title">getNumber</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> number;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setNumber</span><span class="params">(Long number)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.number = number;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="前提须知"><a href="#前提须知" class="headerlink" title="前提须知"></a>前提须知</h3><ul>
+<li>我们知道无论是一对多还是多对一的关系，在创建表的关联关系的时候，外键总是在多的一方，即是一的一方的主键作为多的一方的外键</li>
+</ul>
+<h3 id="单向外键关联-1"><a href="#单向外键关联-1" class="headerlink" title="单向外键关联"></a>单向外键关联</h3><ul>
+<li>前面已经说过，单向外键关联是只能单向访问，只能一张表访问另外一张表，比如通过One的一方可以访问到Many的一方，也可以通过Many的一方访问到One的一方</li>
+</ul>
+<h4 id="从One的一方访问Many的一方-OneToMany"><a href="#从One的一方访问Many的一方-OneToMany" class="headerlink" title="从One的一方访问Many的一方(@OneToMany)"></a>从One的一方访问Many的一方(@OneToMany)</h4><ul>
+<li>即是通过学生查询到其所住的宿舍</li>
+<li><p>想要通过学生查询到所住的宿舍，那么必须在Student的实体类中必须有Dormitory的对象作为其成员变量</p>
+</li>
+<li><p>Dormitory类(One的一方，使用@OneToMany)</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name = <span class="string">"dormitory"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Dormitory</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id; <span class="comment">// 主键</span></div><div class="line">	<span class="keyword">private</span> Long number; <span class="comment">// 宿舍编号</span></div><div class="line">	<span class="keyword">private</span> Set&lt;Student&gt; students;</div><div class="line"></div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@OneToMany</span>  <span class="comment">//Dormitory是One的一方，Student是Many的一方，因此这里使用OneToMany</span></div><div class="line">	<span class="meta">@JoinColumn</span>(name=<span class="string">"dormitory_id"</span>)  <span class="comment">//必须指定外键的名称，否则将会自动创建第三张表来管理关联关系</span></div><div class="line">	<span class="function"><span class="keyword">public</span> Set&lt;Student&gt; <span class="title">getStudents</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> students;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setStudents</span><span class="params">(Set&lt;Student&gt; students)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.students = students;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> Long <span class="title">getNumber</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> number;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setNumber</span><span class="params">(Long number)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.number = number;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>Student类(Many的一方，不变)</p>
+</li>
+<li><p>测试</p>
+<ul>
+<li><p>添加： 在为Many的一方(Student)添加宿舍信息的时候，这个宿舍的信息一定是在数据库中的，因为添加外键相当于必须这个外键存在才能添加</p>
+</li>
+<li><p>删除： 在删除的One的一方的时候，一定要确保Many的一方没有与其外键关联，否则将会删除失败，除非设置了级联删除，那么会连同外键关联的数据一起删除（以后再讲）</p>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">TestGet</span><span class="params">()</span> </span>&#123;</div><div class="line">	Session session = <span class="keyword">null</span>;</div><div class="line">	Transaction transaction = <span class="keyword">null</span>;</div><div class="line">	<span class="keyword">try</span> &#123;</div><div class="line">		<span class="comment">// 创建session</span></div><div class="line">		session = HibernateUntil.getSession();</div><div class="line">		<span class="comment">// 开始事务</span></div><div class="line">		transaction = session.beginTransaction();</div><div class="line">		Dormitory dormitory=<span class="keyword">new</span> Dormitory();</div><div class="line">		dormitory.setNumber(<span class="number">10011L</span>);</div><div class="line">		<span class="comment">//创建一个Set集合存储Student对象</span></div><div class="line">		Set&lt;Student&gt; students=<span class="keyword">new</span> HashSet&lt;Student&gt;();</div><div class="line">		 <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">5</span>;i++)&#123;</div><div class="line">			 Student student=<span class="keyword">new</span> Student();</div><div class="line">			 student.setAge(<span class="number">10</span>*i);</div><div class="line">			 student.setName(<span class="string">"name_"</span>+i);</div><div class="line">			 session.save(student);</div><div class="line">			 students.add(student); <span class="comment">// 添加到集合中</span></div><div class="line">		 &#125;</div><div class="line">		 dormitory.setStudents(students);  <span class="comment">//将学生信息添加到宿舍对象中</span></div><div class="line">		 session.save(dormitory);  <span class="comment">//保存宿舍信息</span></div><div class="line">		<span class="comment">// 提交事务</span></div><div class="line">		transaction.commit();</div><div class="line">	&#125; <span class="keyword">catch</span> (Exception exception) &#123;</div><div class="line">		transaction.rollback(); <span class="comment">// 事务回滚</span></div><div class="line">	&#125; <span class="keyword">finally</span> &#123;</div><div class="line">		<span class="keyword">if</span> (session != <span class="keyword">null</span>) &#123;</div><div class="line">			session.close();</div><div class="line">		&#125;</div><div class="line"></div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="从Many的一方查询One的一方-ManyToOne"><a href="#从Many的一方查询One的一方-ManyToOne" class="headerlink" title="从Many的一方查询One的一方(@ManyToOne)"></a>从Many的一方查询One的一方(@ManyToOne)</h4><ul>
+<li><p>即是通过学生对象查询到宿舍信息，因此需要在学生的实体类中添加宿舍的实体类对象</p>
+</li>
+<li><p>Student实体类（使用＠ManyToOne)</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"student"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;  <span class="comment">//主键</span></div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="keyword">private</span> Dormitory dormitory;   <span class="comment">//添加Dormitory对象，因为是One的一方，因此不用Set集合存储</span></div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@ManyToOne</span>   <span class="comment">//使用@ManyToOne，因为Student是Many的一方</span></div><div class="line">	<span class="meta">@JoinColumn</span>(name=<span class="string">"dormitory_id"</span>)   <span class="comment">//设置外键的字段值</span></div><div class="line">	<span class="function"><span class="keyword">public</span> Dormitory <span class="title">getDormitory</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> dormitory;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDormitory</span><span class="params">(Dormitory dormitory)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.dormitory = dormitory;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Column</span>(length=<span class="number">10</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Dormitory实体类，不用改变，还是和前面的最初的实体类一样</li>
+</ul>
+<h3 id="双向外键关联"><a href="#双向外键关联" class="headerlink" title="双向外键关联"></a>双向外键关联</h3><ul>
+<li>即是通过One的一方可以访问到Many的一方，也可以通过Many的一方访问到One的一方。简单的说就是可以互相访问对方的数据。</li>
+<li>要想实现双向外键关联，必须是两个实体类对象互为对方的成员属性</li>
+</ul>
+<h4 id="问题并解决"><a href="#问题并解决" class="headerlink" title="问题并解决"></a>问题并解决</h4><ul>
+<li><p>因为是双向关联，因此这里的要设置双向关联的主导对象（mappedBy），否则将会出现两张表的外键都是对方的主键，这显然是冗余的，因此我们需要设置一个主导的。我们这里应该选择多的一方为主导位置的，因此需要在一的这一方使用mppedBy指定主导对象。因此我们只需要在<code>@OneToMany</code>上加上<code>mappedBy</code>属性即可。</p>
+</li>
+<li><p>由于无论是一对多还是多对一的关系，外加都是One一方的主键，因此要将维护权交给One的一方，因此只需要在<code>@OneToMany</code>这个注解中添加<code>mappedBy</code>这个属性即可</p>
+</li>
+<li><p><strong>由于外键是在One的一方添加的，即是外键在student的表中，因此只有在Student的实体类中可以使用<code>@JoinColumn()</code>设置外键的字段名</strong></p>
+</li>
+</ul>
+<h4 id="实现-1"><a href="#实现-1" class="headerlink" title="实现"></a>实现</h4><ul>
+<li>Student实体类(Many的一方，因此使用@ManyToOne)</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"student"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;  <span class="comment">//主键</span></div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="keyword">private</span> Dormitory dormitory;   <span class="comment">//添加Dormitory对象，因为是One的一方，因此不用Set集合存储</span></div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@ManyToOne</span>   <span class="comment">//使用@ManyToOne，因为Student是Many的一方</span></div><div class="line">	<span class="meta">@JoinColumn</span>(name=<span class="string">"dormitory_id"</span>)   <span class="comment">//设置外键的字段值,因为外键是在student表中添加的，因此只能在这个地方设置外键的字段名</span></div><div class="line">	<span class="function"><span class="keyword">public</span> Dormitory <span class="title">getDormitory</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> dormitory;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDormitory</span><span class="params">(Dormitory dormitory)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.dormitory = dormitory;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Column</span>(length=<span class="number">10</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Dormitory实体类（One的一方，使用@OneToMany)</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name = <span class="string">"dormitory"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Dormitory</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id; <span class="comment">// 主键</span></div><div class="line">	<span class="keyword">private</span> Long number; <span class="comment">// 宿舍编号</span></div><div class="line">	<span class="keyword">private</span> Set&lt;Student&gt; students;</div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">//仍然需要注意的是mappedBy的值必须是对方类中该类对象的一样的字段</span></div><div class="line">	<span class="meta">@OneToMany</span>(mappedBy=<span class="string">"dormitory"</span>)  <span class="comment">//添加注解，由于是双向外键关联，必须添加mappedBy,由于外键就是One的一方的主键，因此这里的只需要在OneToMany中添加即可</span></div><div class="line">	<span class="function"><span class="keyword">public</span> Set&lt;Student&gt; <span class="title">getStudents</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> students;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setStudents</span><span class="params">(Set&lt;Student&gt; students)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.students = students;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> Long <span class="title">getNumber</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> number;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setNumber</span><span class="params">(Long number)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.number = number;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><ul>
+<li><p>无论是一对多还是多对一的关系，在建立表的时候总是在Many的一方添加One的一方的外键</p>
+</li>
+<li><p>在单向外键关联中，如果通过One的一方获取Many的一方数据，那么需要在One的实体类中添加Many的实体类的对象为其成员变量，同时在这个成员变量的get方法上方使用<code>@OneToMany</code>这个注解。如果想要通过Many的一方获取One的数据，那么需要在Many的实体类中添加One的实体类的对象为其成员变量，同时在这个成员变量的get方法上使用<code>@ManyToOne</code>这个注解</p>
+</li>
+<li><p>在双向外键关联，那么我们在使用<code>@JoinColumn</code>改变外键的字段名，那么必须在One的实体类中使用，因为外键是设置在One的一方的表中</p>
+</li>
+<li><p>双向外键关联必须使用<code>@OneToMany(mappedBy=)</code>设置主导地位的表，如果不设置这个mappedBy，那么就会出现双向外键，出现了冗余</p>
+</li>
+</ul>
+<h2 id="多对一"><a href="#多对一" class="headerlink" title="多对一"></a>多对一</h2><ul>
+<li>一对多和多对一是相对的，因此这里的使用和一对多是一样的，不再反复的讲述了</li>
+</ul>
+<h2 id="多对多"><a href="#多对多" class="headerlink" title="多对多"></a>多对多</h2><h3 id="背景-1"><a href="#背景-1" class="headerlink" title="背景"></a>背景</h3><ul>
+<li><p>一个老师可以教多个学生，一个学生可以被多个老师教，那么老师和学生的关系就是多对多的关系</p>
+<h3 id="准备-2"><a href="#准备-2" class="headerlink" title="准备"></a>准备</h3></li>
+<li><p>老师的实体类(Teacher)</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> javax.persistence.Column;</div><div class="line"><span class="keyword">import</span> javax.persistence.Entity;</div><div class="line"><span class="keyword">import</span> javax.persistence.GeneratedValue;</div><div class="line"><span class="keyword">import</span> javax.persistence.GenerationType;</div><div class="line"><span class="keyword">import</span> javax.persistence.Id;</div><div class="line"><span class="keyword">import</span> javax.persistence.Table;</div><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"teacher"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Teacher</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;  <span class="comment">//主键</span></div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Column</span>(length=<span class="number">10</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>学生的实体类(Student)</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> javax.persistence.Column;</div><div class="line"><span class="keyword">import</span> javax.persistence.Entity;</div><div class="line"><span class="keyword">import</span> javax.persistence.GeneratedValue;</div><div class="line"><span class="keyword">import</span> javax.persistence.GenerationType;</div><div class="line"><span class="keyword">import</span> javax.persistence.Id;</div><div class="line"><span class="keyword">import</span> javax.persistence.Table;</div><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"student"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;  <span class="comment">//主键</span></div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Column</span>(length=<span class="number">10</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="前提须知-1"><a href="#前提须知-1" class="headerlink" title="前提须知"></a>前提须知</h3><ul>
+<li>我们在处理多对多的关系，在建立表的时候使用的是第三张表来维护外键，如下：<br><img src="http://ono60m7tl.bkt.clouddn.com/manytomany.png" alt="第三张表"></li>
+</ul>
+<h3 id="单向外键关联-ManyToMany"><a href="#单向外键关联-ManyToMany" class="headerlink" title="单向外键关联(@ManyToMany)"></a>单向外键关联(@ManyToMany)</h3><h4 id="通过学生访问老师的信息"><a href="#通过学生访问老师的信息" class="headerlink" title="通过学生访问老师的信息"></a>通过学生访问老师的信息</h4><ul>
+<li><p>根据需求我们必须在Student的类中将Teacher类的对象声明为成员变量，多对多的关系，因此使用的是Set集合来存储</p>
+</li>
+<li><p>Student的实体类</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"student"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;  <span class="comment">//主键</span></div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="keyword">private</span> Set&lt;Teacher&gt; teachers;</div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@ManyToMany</span></div><div class="line">	<span class="comment">//指定第三张表的名称，如果默认的是student_teacher,joinColumns指定的是当前的实体类的外键名称，inverseJoinColumns指定的是另外一个实体类的外键名称</span></div><div class="line">	<span class="comment">//如果不指定外键的名称，那么默认的是student_id,和teacher_id</span></div><div class="line">	<span class="meta">@JoinTable</span>(name=<span class="string">"stu_tea"</span>,joinColumns=<span class="meta">@JoinColumn</span>(name=<span class="string">"st_id"</span>),inverseJoinColumns=<span class="meta">@JoinColumn</span>(name=<span class="string">"t_id"</span>))</div><div class="line">	<span class="function"><span class="keyword">public</span> Set&lt;Teacher&gt; <span class="title">getTeachers</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> teachers;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setTeachers</span><span class="params">(Set&lt;Teacher&gt; teachers)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.teachers = teachers;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Column</span>(length=<span class="number">10</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="JoinTable"><a href="#JoinTable" class="headerlink" title="@JoinTable"></a>@JoinTable</h3><ul>
+<li>在多对多的关系中，默认创建第三张表的名称为 ： <code>表名_表名</code>，但是我们可以使用<code>@JoinTable</code>这个注解来修改第三张表的名称</li>
+<li>其中的<code>name</code>属性可以修改</li>
+</ul>
+<h3 id="ManyToMany"><a href="#ManyToMany" class="headerlink" title="@ManyToMany"></a>@ManyToMany</h3><ul>
+<li>在多对多的关系中使用，在实体类对象的get方法上面使用</li>
+<li><code>joinColumns</code>指定的是当前的实体类对应的外键名称，其中的值使用的<code>@JoinColumn</code>注解</li>
+<li><code>inverseJoinColumns</code>指定的是另外一个实体类的外键名称，其中的值使用的是<code>@JoinColumn</code>注解</li>
+</ul>
+<h4 id="通过老师访问学生的信息"><a href="#通过老师访问学生的信息" class="headerlink" title="通过老师访问学生的信息"></a>通过老师访问学生的信息</h4><ul>
+<li><p>那么需要在Teacher类中添加一个成员变量的类型为Student对象，并且在该成员变量的<code>get</code>方法上使用<code>@ManyToMany</code></p>
+</li>
+<li><p>这个就不在演示了，和上面很相似</p>
+</li>
+</ul>
+<h3 id="双向外键关联-ManyToMany-mappedBy-””"><a href="#双向外键关联-ManyToMany-mappedBy-””" class="headerlink" title="双向外键关联(@ManyToMany(mappedBy=””))"></a>双向外键关联(@ManyToMany(mappedBy=””))</h3><ul>
+<li><p>如果老师想要知道自己教的学生的信息，学生也想知道老师的信息，那么就需要使用多对多双向关联，在两个实体类中都要定义对方的实体类的对象，因此这样就可以访问到对方的信息了。</p>
+</li>
+<li><p>这个和前面说的一样，当使用双向外键联系的时候，一定要设置主导的实体类(<code>mappedBy</code>)否则的话就会出现冗余，因此一定要指定主导关系。</p>
+</li>
+<li><p>下面我们的范例是指定学生的主导位置，因此要在老师的实体类中设置<code>mappedBy</code>属性</p>
+</li>
+<li><p>Student类</p>
+<ul>
+<li>由于指定Student为主导位置，因此设置外键的名称和第三张表名字只能在Student的类中设置</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"student"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;  <span class="comment">//主键</span></div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="keyword">private</span> Set&lt;Teacher&gt; teachers;</div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@ManyToMany</span></div><div class="line">	<span class="comment">//指定第三张表的名称，如果默认的是student_teacher,joinColumns指定的是当前的实体类的外键名称，inverseJoinColumns指定的是另外一个实体类的外键名称</span></div><div class="line">	<span class="comment">//如果不指定外键的名称，那么默认的是student_id,和teacher_id</span></div><div class="line">	<span class="meta">@JoinTable</span>(name=<span class="string">"stu_tea"</span>,joinColumns=<span class="meta">@JoinColumn</span>(name=<span class="string">"st_id"</span>),inverseJoinColumns=<span class="meta">@JoinColumn</span>(name=<span class="string">"t_id"</span>))</div><div class="line">	<span class="function"><span class="keyword">public</span> Set&lt;Teacher&gt; <span class="title">getTeachers</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> teachers;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setTeachers</span><span class="params">(Set&lt;Teacher&gt; teachers)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.teachers = teachers;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Column</span>(length=<span class="number">10</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>Teacher类（指定学生的主导位置，因此这里不能设置外键的名称和外键的字段名）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"teacher"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Teacher</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;  <span class="comment">//主键</span></div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="keyword">private</span> Set&lt;Student&gt; students;</div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@ManyToMany</span>(mappedBy=<span class="string">"teachers"</span>) <span class="comment">//将维护权交给teacher表，这里的teachers是Student类中的字段名，一定要一模一样的</span></div><div class="line">	<span class="function"><span class="keyword">public</span> Set&lt;Student&gt; <span class="title">getStudents</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> students;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setStudents</span><span class="params">(Set&lt;Student&gt; students)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.students = students;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Column</span>(length=<span class="number">10</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="完整核心配置文件"><a href="#完整核心配置文件" class="headerlink" title="完整核心配置文件"></a>完整核心配置文件</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"><span class="meta">&lt;!DOCTYPE hibernate-configuration PUBLIC</span></div><div class="line">	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"</div><div class="line">	"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd"&gt;</div><div class="line"><span class="tag">&lt;<span class="name">hibernate-configuration</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">session-factory</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 必须要配置的5大参数，4大参数，一个方言 其中的四大参数是连接JDBC必须的参数 这里的方言也是必须的 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hibernate.connection.driver_class"</span>&gt;</span>com.mysql.jdbc.Driver<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hibernate.connection.url"</span>&gt;</span>jdbc:mysql://localhost:3306/hirbernate<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hibernate.connection.username"</span>&gt;</span>root<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hibernate.connection.password"</span>&gt;</span>root<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- mysql的方言 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hibernate.dialect"</span>&gt;</span>org.hibernate.dialect.MySQLDialect<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 可选的配置文件 --&gt;</span></div><div class="line">		<span class="comment">&lt;!-- 输出所有的sql语句到控制台 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hibernate.show_sql"</span>&gt;</span>true<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 在控制台上打印出漂亮的sql语句 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hibernate.format_sql"</span>&gt;</span>true<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 配置如果这个表还没有创建，那么就会自动创建，如果已经创建了，那么会自动更新 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hibernate.hbm2ddl.auto"</span>&gt;</span>update<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!--  配置不生成Hibernate_sequence --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hibernate.id.new_generator_mappings"</span>&gt;</span>false<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 直接指定这个Teacher实体类的全类名即可，即是完成了映射 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">mapping</span> <span class="attr">class</span>=<span class="string">"cn.tedu.bean.Student"</span>&gt;</span><span class="tag">&lt;/<span class="name">mapping</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">mapping</span> <span class="attr">class</span>=<span class="string">"cn.tedu.bean.Teacher"</span>&gt;</span><span class="tag">&lt;/<span class="name">mapping</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">session-factory</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">hibernate-configuration</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>在双向外键关联的关系中，一定要使用<code>mappedBy</code>指定外键的维护权，否则将会出现数据冗余</li>
+<li>在一对以和一对多，多对一的关系中，我们可以使用<code>@JoinColumn</code>这个注解来设置外键的字段名，但是在多对多的关系中，因为需要第三张表来维护，因此要使用<code>@JoinTable</code>这个注解来设置外键和第三张表的一些属性</li>
+</ol>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Hibernate/">Hibernate</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Hibernate/">Hibernate</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/04/24/Hibernate关联关系/" data-title="Hibernate关联关系 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/04/24/Hibernate关联查询/" title="Hibernate关联查询">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Hibernate关联查询</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/04/22/Hibernate之一级缓存/"  title="Hibernate之一级缓存">
+ <strong>下一篇：</strong><br/> 
+ <span>Hibernate之一级缓存
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Hibernate关联关系"><span class="toc-number">1.</span> <span class="toc-text">Hibernate关联关系</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#一对一"><span class="toc-number">1.1.</span> <span class="toc-text">一对一</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#背景"><span class="toc-number">1.1.1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#准备"><span class="toc-number">1.1.2.</span> <span class="toc-text">准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#单向外键关联"><span class="toc-number">1.1.3.</span> <span class="toc-text">单向外键关联</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#通过丈夫访问妻子"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">通过丈夫访问妻子</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#通过妻子访问丈夫"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">通过妻子访问丈夫</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#总结"><span class="toc-number">1.1.3.3.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#双向外键关联-OneToOne-mappedBy-””"><span class="toc-number">1.1.4.</span> <span class="toc-text">双向外键关联(@OneToOne(mappedBy=””)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#问题"><span class="toc-number">1.1.4.1.</span> <span class="toc-text">问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#解决办法"><span class="toc-number">1.1.4.2.</span> <span class="toc-text">解决办法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实现"><span class="toc-number">1.1.4.3.</span> <span class="toc-text">实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#测试"><span class="toc-number">1.1.4.4.</span> <span class="toc-text">测试</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一对多"><span class="toc-number">1.2.</span> <span class="toc-text">一对多</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#准备-1"><span class="toc-number">1.2.1.</span> <span class="toc-text">准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前提须知"><span class="toc-number">1.2.2.</span> <span class="toc-text">前提须知</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#单向外键关联-1"><span class="toc-number">1.2.3.</span> <span class="toc-text">单向外键关联</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#从One的一方访问Many的一方-OneToMany"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">从One的一方访问Many的一方(@OneToMany)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#从Many的一方查询One的一方-ManyToOne"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">从Many的一方查询One的一方(@ManyToOne)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#双向外键关联"><span class="toc-number">1.2.4.</span> <span class="toc-text">双向外键关联</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#问题并解决"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">问题并解决</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实现-1"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">实现</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结-1"><span class="toc-number">1.2.5.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多对一"><span class="toc-number">1.3.</span> <span class="toc-text">多对一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多对多"><span class="toc-number">1.4.</span> <span class="toc-text">多对多</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#背景-1"><span class="toc-number">1.4.1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#准备-2"><span class="toc-number">1.4.2.</span> <span class="toc-text">准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前提须知-1"><span class="toc-number">1.4.3.</span> <span class="toc-text">前提须知</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#单向外键关联-ManyToMany"><span class="toc-number">1.4.4.</span> <span class="toc-text">单向外键关联(@ManyToMany)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#通过学生访问老师的信息"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">通过学生访问老师的信息</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JoinTable"><span class="toc-number">1.4.5.</span> <span class="toc-text">@JoinTable</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ManyToMany"><span class="toc-number">1.4.6.</span> <span class="toc-text">@ManyToMany</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#通过老师访问学生的信息"><span class="toc-number">1.4.6.1.</span> <span class="toc-text">通过老师访问学生的信息</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#双向外键关联-ManyToMany-mappedBy-””"><span class="toc-number">1.4.7.</span> <span class="toc-text">双向外键关联(@ManyToMany(mappedBy=””))</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#完整核心配置文件"><span class="toc-number">1.5.</span> <span class="toc-text">完整核心配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结-2"><span class="toc-number">1.6.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.7.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

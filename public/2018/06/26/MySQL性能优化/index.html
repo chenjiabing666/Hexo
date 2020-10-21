@@ -1,0 +1,973 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>MySQL性能优化 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="MySQL性能优化查看数据库性能参数
+show status like &amp;quot;value&amp;quot; ：value是要查询的参数值，常用的值如下：
+
+
+优化查询分析查询语句
+Mysql中提供explain和describe来分析查询语句
+格式：explain select selectStatemnt
+explain select * from user where id=1;
+查询结果如下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL性能优化">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/06/26/MySQL性能优化/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="MySQL性能优化查看数据库性能参数
+show status like &amp;quot;value&amp;quot; ：value是要查询的参数值，常用的值如下：
+
+
+优化查询分析查询语句
+Mysql中提供explain和describe来分析查询语句
+格式：explain select selectStatemnt
+explain select * from user where id=1;
+查询结果如下">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/sql1.png">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/sql2.png">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/sql3.png">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/sql4.png">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/sql5.png">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/sql6.png">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/sql7.png">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/sql8.png">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/sql9.png">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/sql11.png">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/sql12.png">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/sql13.png">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/sql14.png">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/sql15.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:05:01.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySQL性能优化">
+<meta name="twitter:description" content="MySQL性能优化查看数据库性能参数
+show status like &amp;quot;value&amp;quot; ：value是要查询的参数值，常用的值如下：
+
+
+优化查询分析查询语句
+Mysql中提供explain和describe来分析查询语句
+格式：explain select selectStatemnt
+explain select * from user where id=1;
+查询结果如下">
+<meta name="twitter:image" content="http://ono60m7tl.bkt.clouddn.com/sql1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/06/26/MySQL性能优化/" title="MySQL性能优化" itemprop="url">MySQL性能优化</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-06-26T14:59:48.000Z" itemprop="datePublished"> 发表于 2018-06-26</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MySQL性能优化"><span class="toc-number">1.</span> <span class="toc-text">MySQL性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#查看数据库性能参数"><span class="toc-number">1.1.</span> <span class="toc-text">查看数据库性能参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化查询"><span class="toc-number">1.2.</span> <span class="toc-text">优化查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#分析查询语句"><span class="toc-number">1.2.1.</span> <span class="toc-text">分析查询语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用索引查询的优化注意点"><span class="toc-number">1.2.2.</span> <span class="toc-text">使用索引查询的优化注意点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-使用LIKE关键字查询"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">1. 使用LIKE关键字查询</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-使用组合索引查询"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">2. 使用组合索引查询</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-使用or关键字查询语句"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">3. 使用or关键字查询语句</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-索引排序"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">4. 索引排序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-逻辑运算"><span class="toc-number">1.2.2.5.</span> <span class="toc-text">5. 逻辑运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-使用短索引"><span class="toc-number">1.2.2.6.</span> <span class="toc-text">6. 使用短索引</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-如何使用索引来排序"><span class="toc-number">1.2.2.7.</span> <span class="toc-text">7. 如何使用索引来排序</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#优化子查询"><span class="toc-number">1.2.3.</span> <span class="toc-text">优化子查询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化数据库结构"><span class="toc-number">1.3.</span> <span class="toc-text">优化数据库结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-将字段很多的表分解成多个表"><span class="toc-number">1.3.1.</span> <span class="toc-text">1. 将字段很多的表分解成多个表</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-增加中间表"><span class="toc-number">1.3.2.</span> <span class="toc-text">2. 增加中间表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-增加冗余字段"><span class="toc-number">1.3.3.</span> <span class="toc-text">3. 增加冗余字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-禁用唯一性检查"><span class="toc-number">1.3.4.</span> <span class="toc-text">1. 禁用唯一性检查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-禁用外键检查"><span class="toc-number">1.3.5.</span> <span class="toc-text">2. 禁用外键检查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-禁止自动提交"><span class="toc-number">1.3.6.</span> <span class="toc-text">3. 禁止自动提交</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化Mysql服务器"><span class="toc-number">1.4.</span> <span class="toc-text">优化Mysql服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#优化服务器硬件"><span class="toc-number">1.4.1.</span> <span class="toc-text">优化服务器硬件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#优化MySQL参数"><span class="toc-number">1.4.2.</span> <span class="toc-text">优化MySQL参数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.5.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.6.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="MySQL性能优化"><a href="#MySQL性能优化" class="headerlink" title="MySQL性能优化"></a>MySQL性能优化</h1><h2 id="查看数据库性能参数"><a href="#查看数据库性能参数" class="headerlink" title="查看数据库性能参数"></a>查看数据库性能参数</h2><ul>
+<li><code>show status like &quot;value&quot;</code> ：value是要查询的参数值，常用的值如下：</li>
+<li><img src="http://ono60m7tl.bkt.clouddn.com/sql1.png" alt=""></li>
+</ul>
+<h2 id="优化查询"><a href="#优化查询" class="headerlink" title="优化查询"></a>优化查询</h2><h3 id="分析查询语句"><a href="#分析查询语句" class="headerlink" title="分析查询语句"></a>分析查询语句</h3><ul>
+<li>Mysql中提供<code>explain</code>和<code>describe</code>来分析查询语句</li>
+<li>格式：<code>explain select selectStatemnt</code><ul>
+<li><code>explain select * from user where id=1</code>;</li>
+<li>查询结果如下：</li>
+<li><img src="http://ono60m7tl.bkt.clouddn.com/sql2.png" alt=""></li>
+</ul>
+</li>
+<li>查询的参数分析如下:</li>
+</ul>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/sql3.png" alt=""></p>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/sql4.png" alt=""></p>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/sql5.png" alt=""></p>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/sql6.png" alt=""></p>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/sql7.png" alt=""></p>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/sql8.png" alt=""></p>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/sql9.png" alt=""></p>
+<h3 id="使用索引查询的优化注意点"><a href="#使用索引查询的优化注意点" class="headerlink" title="使用索引查询的优化注意点"></a>使用索引查询的优化注意点</h3><ul>
+<li>索引是可以提高查询速度，但是并不是使用带有索引的字段查询时，索引都能起作用</li>
+<li>使用索引有几种特殊的情况，在这些特殊的情况下，有可能使用索引字段查询时，索引并没有起作用。下面会详细介绍</li>
+</ul>
+<h4 id="1-使用LIKE关键字查询"><a href="#1-使用LIKE关键字查询" class="headerlink" title="1. 使用LIKE关键字查询"></a>1. 使用LIKE关键字查询</h4><ul>
+<li><strong>使用<code>Like</code>关键字查询的时候，如果匹配字符串的第一个字符为<code>%</code>，那么索引不会起作用。只有<code>%</code>不在第一个位置，索引才会起作用。</strong></li>
+<li>我们使用<code>name</code>字段的索引<code>name_index</code>查询用户信息，如下<ul>
+<li><code>explain select * from user where name like &quot;%a&quot;;</code> ： 我们看到查询出来的信息，字段<code>possible_keys</code>的值为<code>NULL</code>，这里表示没有使用<code>name</code>的索引<code>name_index</code>，并且这里的<code>rows</code>显示扫描的行数</li>
+<li><code>explain select * from user where name like &quot;J%&quot;;</code> ：显示的<code>possible_keys</code>字段的值是<code>name_index</code>，表示使用了<code>name</code>字段的索引进行查询了</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-使用组合索引查询"><a href="#2-使用组合索引查询" class="headerlink" title="2. 使用组合索引查询"></a>2. 使用组合索引查询</h4><ul>
+<li><p><strong>匹配左前缀</strong>，只要使用了组合索引中的最左边的那个索引值进行查询，那么就会使用组合索引进行查询</p>
+</li>
+<li><p><strong>Mysql可以为多列创建索引，可以同时为16个字段创建索引。对于组合索引，只有查询条件中使用了这些字段的<code>第一个字段</code>时，才会使用索引查询。</strong></p>
+</li>
+<li>我们分析查询用户信息的语句，看看对于组合索引的使用<ol>
+<li>创建组合索引<code>name_age_index</code> ：<code>create index name_age_index on user(name,age)</code></li>
+<li>使用分析查询语句：<code>explain select * from user where age=22;</code>  ：这里查询没有使用第一个字段<code>name</code>字段查询，显示<code>possible_keys</code>为<code>NULL</code>表示没有相关索引</li>
+<li>使用分析查询语句：<code>explain select * from user where name=&quot;Jack&quot;</code> ：这里使用了第一个字段进行查询，显示的<code>possible_keys</code>为<code>name_index</code>，<code>key</code>为<code>name_index</code>表示使用了<code>name_index</code>进行查询了</li>
+<li><code>explain select * from user where name=&quot;Jack&quot; and age=22</code> ： 同样是使用了<code>name_index</code>索引进行查询</li>
+</ol>
+</li>
+</ul>
+<h4 id="3-使用or关键字查询语句"><a href="#3-使用or关键字查询语句" class="headerlink" title="3. 使用or关键字查询语句"></a>3. 使用or关键字查询语句</h4><ul>
+<li>在查询条件中只有<code>or</code>关键字，并且<code>or</code>的前后的两个条件的列都是索引的时候，查询中才会使用索引，否则不使用索引。</li>
+<li>我们仍然分析查询用户信息的语句，使用<code>OR</code>关键字查询<ul>
+<li>为字段<code>age</code>创建索引：<code>create index age_index on user(age)</code></li>
+<li>分析查询：<code>explain select * from user where id=1 or name=&quot;Jack&quot;;</code>  ：由于这里的<code>name</code>字段没有创建索引，显示的<code>key</code>为<code>NULL</code>表示该条查询语句并没有使用索引查询</li>
+<li>分析查询：<code>explain select * from user where id=1 or age=22;</code> ：由于<code>id</code>和<code>age</code>都创建了索引并且<code>key</code>显示为<code>PRIMARY,age_index</code>，表示使用了索引查询</li>
+</ul>
+</li>
+</ul>
+<h4 id="4-索引排序"><a href="#4-索引排序" class="headerlink" title="4. 索引排序"></a>4. 索引排序</h4><ul>
+<li>mysql查询只使用一个索引，<strong>因此如果<code>where子句</code>中已经使用了索引的话，那么<code>order by</code>中的列是不会使用索引的</strong>。因此数据库默认排序可以符合要求的情况下不要使用排序操作，尽量不要包含多个列的排序，如果需要最好给这些列建复合索引。</li>
+</ul>
+<h4 id="5-逻辑运算"><a href="#5-逻辑运算" class="headerlink" title="5. 逻辑运算"></a>5. 逻辑运算</h4><ul>
+<li>不使用<code>NOT IN</code> 、<code>&lt;&gt;</code>、<code>！=</code>操作，但<code>&lt;</code>,<code>&lt;=</code>，<code>=</code>，<code>&gt;</code>,<code>&gt;=</code>,<code>BETWEEN</code>,<code>IN</code>是可以用到索引的</li>
+</ul>
+<h4 id="6-使用短索引"><a href="#6-使用短索引" class="headerlink" title="6. 使用短索引"></a>6. 使用短索引</h4><ul>
+<li>对串列进行索引，如果可以就应该指定一个前缀长度。例如，如果有一个char（255）的列，如果在前10个或20个字符内，多数值是唯一的，那么就不要对整个列进行索引。短索引不仅可以提高查询速度而且可以节省磁盘空间和I/O操作。</li>
+</ul>
+<h4 id="7-如何使用索引来排序"><a href="#7-如何使用索引来排序" class="headerlink" title="7. 如何使用索引来排序"></a>7. 如何使用索引来排序</h4><p>在排序操作中如果能使用到索引来排序，那么可以极大的提高排序的速度，要使用索引来排序需要满足以下两点即可。</p>
+<ul>
+<li>1、ORDER BY子句后的列顺序要与组合索引的列顺序一致，且所有排序列的排序方向（正序/倒序）需一致</li>
+<li>2、所查询的字段值需要包含在索引列中，及满足覆盖索引</li>
+</ul>
+<p><strong>通过例子来具体分析</strong></p>
+<p>在user_test表上创建一个组合索引</p>
+<table>
+<thead>
+<tr>
+<th>1</th>
+<th>ALTER TABLE user_test ADD INDEX index_user(user_name , city , age);</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>可以使用到索引排序的案例</p>
+<table>
+<thead>
+<tr>
+<th>1234567</th>
+<th>1、SELECT user_name, city, age FROM user_test ORDER BY user_name; 2、SELECT user_name, city, age FROM user_test ORDER BY user_name, city; 3、SELECT user_name, city, age FROM user_test ORDER BY user_name DESC, city DESC; 4、SELECT user_name, city, age FROM user_test WHERE user_name = ‘feinik’ ORDER BY city;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>注：第4点比较特殊一点，如果where查询条件为索引列的第一列，且为常量条件，那么也可以使用到索引</p>
+</blockquote>
+<p>无法使用索引排序的案例</p>
+<p>1、sex不在索引列中</p>
+<table>
+<thead>
+<tr>
+<th>1</th>
+<th>SELECT user_name, city, age FROM user_test ORDER BY user_name, sex;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>2、排序列的方向不一致</p>
+<table>
+<thead>
+<tr>
+<th>1</th>
+<th>SELECT user_name, city, age FROM user_test ORDER BY user_name ASC, city DESC;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>3、所要查询的字段列sex没有包含在索引列中</p>
+<table>
+<thead>
+<tr>
+<th>1</th>
+<th>SELECT user_name, city, age, sex FROM user_test ORDER BY user_name;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>4、where查询条件后的user_name为范围查询，所以无法使用到索引的其他列</p>
+<table>
+<thead>
+<tr>
+<th>1</th>
+<th>SELECT user_name, city, age FROM user_test WHERE user_name LIKE ‘feinik%’ ORDER BY city;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="优化子查询"><a href="#优化子查询" class="headerlink" title="优化子查询"></a>优化子查询</h3><ul>
+<li>子查询就是一个<code>select</code>语句中嵌套多个<code>select</code>语句，虽然子查询使用起来方便灵活，但是执行的效率并不高。在执行子查询的时候需要为内层的查询语句结果建立一个临时表，然后外层的语句从临时表中查询数据。查询完毕之后再撤销临时表。因此子查询的速度会受到一定的影响。</li>
+<li>在Mysql中，可以使用连接<code>Join</code>查询代替子查询，连接查询不需要建立临时表，速度要比子查询要快。如果查询中使用索引的话，性能会更好</li>
+</ul>
+<h2 id="优化数据库结构"><a href="#优化数据库结构" class="headerlink" title="优化数据库结构"></a>优化数据库结构</h2><h3 id="1-将字段很多的表分解成多个表"><a href="#1-将字段很多的表分解成多个表" class="headerlink" title="1. 将字段很多的表分解成多个表"></a>1. 将字段很多的表分解成多个表</h3><ul>
+<li>对于字段较多的表，如果有些字段的使用频率很低，可以将这些字段分离出来形成新表。因为当一个表的数据量很大的时候，会由于使用频率低的字段存在而变慢。</li>
+</ul>
+<h4 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h4><ul>
+<li>假设会员表（members）存储会员登录认证信息，该表中有很多字段，如<code>id</code>，姓名，密码，地址，电话，个人描述等字段。其中地址，电话，个人描述字段并不常用。我们可以将这些字段分离出来形成一张新的表（member_detail）。表中有<code>member_id</code>，<code>address</code>，<code>phone</code>，<code>description</code>。其中<code>member_id</code>表示会员编号和<code>members</code>表中的<code>id</code>字段值对应</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">create table members(</div><div class="line">	id int(11) primary key auto_increment,</div><div class="line">    name varchar(20) default null,</div><div class="line">    password varchar(20) default null,</div><div class="line">    last_login_time datetime default null,</div><div class="line">    last_login_ip varchar(100) default null</div><div class="line">);</div><div class="line"></div><div class="line">create table member_detail(</div><div class="line">	member_id int(11) not null default 0,</div><div class="line">    address varchar(100) default null,</div><div class="line">    phone varchar(16) default null,</div><div class="line">    description text</div><div class="line">);</div></pre></td></tr></table></figure>
+<ul>
+<li>如果我们需要查询会员信息，可以使用连接查询：<code>select * from members left join member_detail on members.id=member_detail.member_id;</code></li>
+<li>通过这种分解可以提高查询效率，可以优化数据库的性能，因为我们大部分时间需要查询和操作的表就是<code>members</code></li>
+</ul>
+<h3 id="2-增加中间表"><a href="#2-增加中间表" class="headerlink" title="2. 增加中间表"></a>2. 增加中间表</h3><ul>
+<li><strong>对于需要经常联合查询的表，可以使用建立中间表用以提高查询速度。通过建立中间表，把需要经常联合查询的数据插入到中间表中，然后把原来的联合查询改为对中间表的查询，以此来提高查询效率。</strong></li>
+<li>假设有一个会员信息表(vip)，其中存储的是每一个会员的信息，还有一个会员组信息表（<code>vip_group</code>)其中存储的是会员组的信息，比如<code>名称</code>，<code>备注信息</code>。现在我们需要经常查询的是会员的名字及其所在会员组的信息，使用联合查询的语句如下：<ul>
+<li><code>select vip.name,vg.name,vg.remark from vip left join vip_group on vip.groupId=vg.id</code></li>
+</ul>
+</li>
+<li>我们可以添加一个中间表<code>temp_group</code>，表中存储的是会员名，会员组名称，会员组信息，我们将连接查询的结果添加到中间表中，那么我们以后就可以直接到中间表中查询了，不用每次都联合查询了。</li>
+</ul>
+<h3 id="3-增加冗余字段"><a href="#3-增加冗余字段" class="headerlink" title="3. 增加冗余字段"></a>3. 增加冗余字段</h3><ul>
+<li>设计数据库的时候应尽量遵循范式理论的规约，尽可能的减少冗余字段，让数据库设计看起来精致优雅。但是，合理的增加冗余字段可以提高查询速度。</li>
+<li>表的规范程度越高，表与表之间的关系就越多，需要连接查询的情况就越多。例如，员工信息表存储在staff表中，部门信息存储在department表中，通过staff表中的department_id字段与department建立联系。如果要查询一个员工所在部门的名称，必须从staff表中查找员工所在部门编号，然后根据这个编号从department表中查找部门的名称。如果经常需要进行这个操作，连接查询会浪费很多时间。此时我们可以在staff表中添加一个<code>department_name</code>字段，用来记录部门名称，这样就不需要每次连接操作了。</li>
+<li>冗余字段会导致很多问题，比如字段的值在一个表中改变了，在另外一个表中也要更新这个数据，很可能造成数据不一致，因此要根据实际需要综合分析是否使用冗余字段</li>
+</ul>
+<p>##　优化插入记录的速度</p>
+<ul>
+<li>插入记录的时候，影响插入速度的只要是索引、唯一性校验、一次插入多条记录等。根据这些情况，可以分别进行优化</li>
+</ul>
+<h3 id="1-禁用唯一性检查"><a href="#1-禁用唯一性检查" class="headerlink" title="1. 禁用唯一性检查"></a>1. 禁用唯一性检查</h3><ul>
+<li>插入数据之前执行<code>set unique_checks=0</code>来禁止对唯一性索引的检查，执行完成之后再执行<code>set unique_checks=1</code></li>
+</ul>
+<h3 id="2-禁用外键检查"><a href="#2-禁用外键检查" class="headerlink" title="2. 禁用外键检查"></a>2. 禁用外键检查</h3><ul>
+<li>插入数据之前执行禁止外键检查，数据插入完成之后再恢复对外键的检查，语句如下：<ul>
+<li><code>set foreign_key_checks=0</code> ：禁用</li>
+<li><code>set foreign_key_checks=1</code> ：启用外键检查</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-禁止自动提交"><a href="#3-禁止自动提交" class="headerlink" title="3. 禁止自动提交"></a>3. 禁止自动提交</h3><ul>
+<li>插入数据之前禁止事务的自动提交，在数据插入完成之后，执行恢复自动提交<ul>
+<li><code>set autocommit=0</code></li>
+<li><code>set autocommit=1</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="优化Mysql服务器"><a href="#优化Mysql服务器" class="headerlink" title="优化Mysql服务器"></a>优化Mysql服务器</h2><ul>
+<li>对硬件的优化，对Mysql服务的参数进行优化</li>
+</ul>
+<h3 id="优化服务器硬件"><a href="#优化服务器硬件" class="headerlink" title="优化服务器硬件"></a>优化服务器硬件</h3><ul>
+<li><img src="http://ono60m7tl.bkt.clouddn.com/sql11.png" alt=""></li>
+</ul>
+<h3 id="优化MySQL参数"><a href="#优化MySQL参数" class="headerlink" title="优化MySQL参数"></a>优化MySQL参数</h3><p><img src="http://ono60m7tl.bkt.clouddn.com/sql12.png" alt=""></p>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/sql13.png" alt=""></p>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/sql14.png" alt=""></p>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/sql15.png" alt=""></p>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ul>
+<li><a href="http://www.cnblogs.com/clsn/p/8214048.html" target="_blank" rel="external">http://www.cnblogs.com/clsn/p/8214048.html</a></li>
+<li><a href="https://blog.csdn.net/u013087513/article/details/77899412" target="_blank" rel="external">https://blog.csdn.net/u013087513/article/details/77899412</a></li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/数据库干货篇/">数据库干货篇</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/SQL/">SQL</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/06/26/MySQL性能优化/" data-title="MySQL性能优化 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/07/01/shell排序/" title="shell排序">
+  <strong>上一篇：</strong><br/>
+  <span>
+  shell排序</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/06/26/MySQL触发器/"  title="MySQL触发器">
+ <strong>下一篇：</strong><br/> 
+ <span>MySQL触发器
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MySQL性能优化"><span class="toc-number">1.</span> <span class="toc-text">MySQL性能优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#查看数据库性能参数"><span class="toc-number">1.1.</span> <span class="toc-text">查看数据库性能参数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化查询"><span class="toc-number">1.2.</span> <span class="toc-text">优化查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#分析查询语句"><span class="toc-number">1.2.1.</span> <span class="toc-text">分析查询语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用索引查询的优化注意点"><span class="toc-number">1.2.2.</span> <span class="toc-text">使用索引查询的优化注意点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-使用LIKE关键字查询"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">1. 使用LIKE关键字查询</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-使用组合索引查询"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">2. 使用组合索引查询</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-使用or关键字查询语句"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">3. 使用or关键字查询语句</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-索引排序"><span class="toc-number">1.2.2.4.</span> <span class="toc-text">4. 索引排序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-逻辑运算"><span class="toc-number">1.2.2.5.</span> <span class="toc-text">5. 逻辑运算</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-使用短索引"><span class="toc-number">1.2.2.6.</span> <span class="toc-text">6. 使用短索引</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-如何使用索引来排序"><span class="toc-number">1.2.2.7.</span> <span class="toc-text">7. 如何使用索引来排序</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#优化子查询"><span class="toc-number">1.2.3.</span> <span class="toc-text">优化子查询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化数据库结构"><span class="toc-number">1.3.</span> <span class="toc-text">优化数据库结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-将字段很多的表分解成多个表"><span class="toc-number">1.3.1.</span> <span class="toc-text">1. 将字段很多的表分解成多个表</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-增加中间表"><span class="toc-number">1.3.2.</span> <span class="toc-text">2. 增加中间表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-增加冗余字段"><span class="toc-number">1.3.3.</span> <span class="toc-text">3. 增加冗余字段</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-禁用唯一性检查"><span class="toc-number">1.3.4.</span> <span class="toc-text">1. 禁用唯一性检查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-禁用外键检查"><span class="toc-number">1.3.5.</span> <span class="toc-text">2. 禁用外键检查</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-禁止自动提交"><span class="toc-number">1.3.6.</span> <span class="toc-text">3. 禁止自动提交</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#优化Mysql服务器"><span class="toc-number">1.4.</span> <span class="toc-text">优化Mysql服务器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#优化服务器硬件"><span class="toc-number">1.4.1.</span> <span class="toc-text">优化服务器硬件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#优化MySQL参数"><span class="toc-number">1.4.2.</span> <span class="toc-text">优化MySQL参数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.5.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.6.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

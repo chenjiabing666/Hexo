@@ -1,0 +1,884 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Excel表格的写入读取 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="Excel的读取和写入准备
+首先需要导入jar包，请点击这里下载
+
+简介
+我们知道Excel表格在2007之后就不一样了，后缀名变为xlsx，之前的后缀名为xls,因此读取和写入的操作就对应着不同的方式，但是只是读取和写入的类不同了，思想还是一样的。
+我们要知道一个Excel文件(工作簿)包含三部分，分别是工作表(sheet),行(row),列(cell)
+
+工作簿
+工作簿对应的类是 XSSFWo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Excel表格的写入读取">
+<meta property="og:url" content="http://chenjiabing666.github.io/2017/09/27/Excel表格的写入读取/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="Excel的读取和写入准备
+首先需要导入jar包，请点击这里下载
+
+简介
+我们知道Excel表格在2007之后就不一样了，后缀名变为xlsx，之前的后缀名为xls,因此读取和写入的操作就对应着不同的方式，但是只是读取和写入的类不同了，思想还是一样的。
+我们要知道一个Excel文件(工作簿)包含三部分，分别是工作表(sheet),行(row),列(cell)
+
+工作簿
+工作簿对应的类是 XSSFWo">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T05:54:29.520Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Excel表格的写入读取">
+<meta name="twitter:description" content="Excel的读取和写入准备
+首先需要导入jar包，请点击这里下载
+
+简介
+我们知道Excel表格在2007之后就不一样了，后缀名变为xlsx，之前的后缀名为xls,因此读取和写入的操作就对应着不同的方式，但是只是读取和写入的类不同了，思想还是一样的。
+我们要知道一个Excel文件(工作簿)包含三部分，分别是工作表(sheet),行(row),列(cell)
+
+工作簿
+工作簿对应的类是 XSSFWo">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/09/27/Excel表格的写入读取/" title="Excel表格的写入读取" itemprop="url">Excel表格的写入读取</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2017-09-27T06:03:06.000Z" itemprop="datePublished"> 发表于 2017-09-27</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Excel的读取和写入"><span class="toc-number">1.</span> <span class="toc-text">Excel的读取和写入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#准备"><span class="toc-number">1.1.</span> <span class="toc-text">准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.2.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工作簿"><span class="toc-number">1.3.</span> <span class="toc-text">工作簿</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#构造方法"><span class="toc-number">1.3.1.</span> <span class="toc-text">构造方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的方法"><span class="toc-number">1.3.2.</span> <span class="toc-text">常用的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#例子"><span class="toc-number">1.3.3.</span> <span class="toc-text">例子</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#读取文件的例子"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">读取文件的例子</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#写入文件的例子"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">写入文件的例子</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工作表-sheet"><span class="toc-number">1.4.</span> <span class="toc-text">工作表(sheet)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用方法"><span class="toc-number">1.4.1.</span> <span class="toc-text">常用方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#例子-1"><span class="toc-number">1.4.2.</span> <span class="toc-text">例子</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#合并单元格"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">合并单元格</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#创建一行"><span class="toc-number">1.4.2.2.</span> <span class="toc-text">创建一行</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#行"><span class="toc-number">1.5.</span> <span class="toc-text">行</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的方法-1"><span class="toc-number">1.5.1.</span> <span class="toc-text">常用的方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#列"><span class="toc-number">1.6.</span> <span class="toc-text">列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的单元格类型"><span class="toc-number">1.6.1.</span> <span class="toc-text">常用的单元格类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的方法-2"><span class="toc-number">1.6.2.</span> <span class="toc-text">常用的方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置单元格样式"><span class="toc-number">1.7.</span> <span class="toc-text">设置单元格样式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的方法-3"><span class="toc-number">1.7.1.</span> <span class="toc-text">常用的方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#单元格字体的设置"><span class="toc-number">1.8.</span> <span class="toc-text">单元格字体的设置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的方法-4"><span class="toc-number">1.8.1.</span> <span class="toc-text">常用的方法:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#写入文件"><span class="toc-number">1.9.</span> <span class="toc-text">写入文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#写入文件-1"><span class="toc-number">1.10.</span> <span class="toc-text">写入文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.11.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.12.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Excel的读取和写入"><a href="#Excel的读取和写入" class="headerlink" title="Excel的读取和写入"></a>Excel的读取和写入</h1><h2 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h2><blockquote>
+<p>首先需要导入jar包，请点击<a href="http://download.csdn.net/download/qq_34162294/9997646" target="_blank" rel="external">这里下载</a></p>
+</blockquote>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><blockquote>
+<p>我们知道<code>Excel</code>表格在<code>2007</code>之后就不一样了，后缀名变为<code>xlsx</code>，之前的后缀名为<code>xls</code>,因此读取和写入的操作就对应着不同的方式，但是只是读取和写入的类不同了，思想还是一样的。</p>
+<p>我们要知道一个Excel文件(工作簿)包含三部分，分别是工作表(<code>sheet</code>),行(<code>row</code>),列(<code>cell</code>)</p>
+</blockquote>
+<h2 id="工作簿"><a href="#工作簿" class="headerlink" title="工作簿"></a>工作簿</h2><blockquote>
+<p>工作簿对应的类是 <code>XSSFWorkbook</code>(2007之后),在2007之前对应的类是<code>HSSFWorkbook</code></p>
+</blockquote>
+<h3 id="构造方法"><a href="#构造方法" class="headerlink" title="构造方法"></a>构造方法</h3><blockquote>
+<p><code>new XSSFWorkbook()</code>   创建一个工作簿用于写入文件</p>
+<p><code>new XSSFWorkbook(java.io.InputStream inputstream)</code>  创建一个工作簿，用于读取文件</p>
+</blockquote>
+<h3 id="常用的方法"><a href="#常用的方法" class="headerlink" title="常用的方法"></a>常用的方法</h3><blockquote>
+<ul>
+<li><code>XSSFFont createFont()</code>   返回一个<code>XSSFont</code>类的对象，主要用于设置字体用的</li>
+<li><code>XSSFSheet createSheet()</code>   创建一个工作表<br>   <code>XSSFSheet    createSheet(String name)</code>   创建一个工作表并且指定姓名<br>   <code>XSSFCellStyle    createCellStyle()</code>   创建一个单元格风格类的一个对象，便于设置单元格的属性</li>
+<li><code>write(OutputStream out)</code>    用于将文件写入到文件中</li>
+<li><code>close()</code>  </li>
+<li><code>setSheetName(int sheetIx,String name)</code>  为指定索引的工作表设置名称</li>
+<li><code>XSSFSheet getSheetAt(int index)</code>   获取指定索引的工作表对象，这个是用来读取文件的时候用的</li>
+</ul>
+</blockquote>
+<h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><h4 id="读取文件的例子"><a href="#读取文件的例子" class="headerlink" title="读取文件的例子"></a>读取文件的例子</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">  File file = <span class="keyword">new</span> File(<span class="string">"F:\\demo1.xlsx"</span>);</div><div class="line"><span class="comment">//创建输入流</span></div><div class="line">FileInputStream inputStream = <span class="keyword">new</span> FileInputStream(file);</div><div class="line"><span class="comment">//创建工作簿读取</span></div><div class="line">XSSFWorkbook workbook = <span class="keyword">new</span> XSSFWorkbook(inputStream);</div></pre></td></tr></table></figure>
+<h4 id="写入文件的例子"><a href="#写入文件的例子" class="headerlink" title="写入文件的例子"></a>写入文件的例子</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">XSSFWorkbook book=<span class="keyword">new</span> XSSFWorkbook();  <span class="comment">//创建工作簿</span></div><div class="line"></div><div class="line">.....省略写入的内容</div><div class="line"></div><div class="line">FileOutputStream out=<span class="keyword">new</span> FileOutputStream(<span class="string">"D:\\demo1.xlsx"</span>);  <span class="comment">//创建输出流</span></div><div class="line"></div><div class="line">book.write(out);     <span class="comment">//写入到指定的文件</span></div><div class="line"></div><div class="line">book.close(); <span class="comment">// 关闭</span></div><div class="line">out.close();</div></pre></td></tr></table></figure>
+<h2 id="工作表-sheet"><a href="#工作表-sheet" class="headerlink" title="工作表(sheet)"></a>工作表(sheet)</h2><blockquote>
+<p>工作表对应的类为<code>XSSFSheet</code>,2007之前对应的是HSSFSheet<br>一般工作表都是在工作簿基础上创建的，因此构造函数也用不到，所以这里就不多说了</p>
+</blockquote>
+<h3 id="常用方法"><a href="#常用方法" class="headerlink" title="常用方法"></a>常用方法</h3><blockquote>
+<ul>
+<li><p><code>int    addMergedRegion(CellRangeAddress region)</code>  合并单元格</p>
+</li>
+<li><p><code>XSSFRow    createRow(int rownum)</code>   创建一个行   rownum表示创建第几行，这是一个行的索引(0开始)  便于写入</p>
+</li>
+<li><p><code>XSSFRow getRow(int index)</code>  获取指定索引的那一行，便于读取</p>
+</li>
+<li><p><code>int getLastRowNum()</code>     获取文件中最后一行的索引，这个通常在读取的时候用到</p>
+</li>
+<li><p><code>int getFirsetRowNum()</code>   获取文件第一行的索引</p>
+</li>
+</ul>
+</blockquote>
+<h3 id="例子-1"><a href="#例子-1" class="headerlink" title="例子"></a>例子</h3><h4 id="合并单元格"><a href="#合并单元格" class="headerlink" title="合并单元格"></a>合并单元格</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 创建工作簿对象</span></div><div class="line">		XSSFWorkbook workbook = <span class="keyword">new</span> HSSFWorkbook();</div><div class="line">        XSSFSheet sheet = workbook.createSheet(<span class="string">"第一张表"</span>);   <span class="comment">//创建工作表对象</span></div><div class="line"></div><div class="line">        <span class="comment">//合并单元格    CellRangeAddress cell=new CellRangeAddress(int firstRow, int lastRow, int firstCol, int lastCol) </span></div><div class="line">        <span class="comment">//这里表示合并第一行的1-10列</span></div><div class="line">        sheet.addMergedRegion(<span class="keyword">new</span> CellRangeAddress(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">10</span>));</div></pre></td></tr></table></figure>
+<h4 id="创建一行"><a href="#创建一行" class="headerlink" title="创建一行"></a>创建一行</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">XSSFWorkbook workbook = <span class="keyword">new</span> HSSFWorkbook();</div><div class="line">XSSFSheet sheet = workbook.createSheet(<span class="string">"第一张表"</span>);   <span class="comment">//创建工作表对象</span></div><div class="line">XSSFRow row=sheet.createRow(<span class="number">0</span>);   <span class="comment">//创建第一行</span></div></pre></td></tr></table></figure>
+<h2 id="行"><a href="#行" class="headerlink" title="行"></a>行</h2><blockquote>
+<p>行对应的类为<code>XSFFRow</code>,2007之前对应的是HSSFRow</p>
+</blockquote>
+<h3 id="常用的方法-1"><a href="#常用的方法-1" class="headerlink" title="常用的方法"></a>常用的方法</h3><blockquote>
+<ul>
+<li><p><code>XSSFCell    createCell(int columnIndex)</code>  创建一列  columnIndex表示列的索引(0开始)</p>
+</li>
+<li><p><code>short    getFirstCellNum()</code>   返回文件中第一个列的索引，便于以后读取</p>
+</li>
+<li><p><code>short    getLastCellNum()</code>   返回全部的列数(不是索引)，这个和Sheet中getRowNum()方法不同，便于以后读取文件</p>
+</li>
+<li><p><code>XSSFCell    getCell(int cellnum)</code>    获取指定索引的那一列，便于以后的读取</p>
+</li>
+<li><p><code>XSSCellStyle getCellStyle()</code>   获取单元格风格的对象</p>
+</li>
+<li><p><code>void setCellStyle(XSSFCellStyle style)</code>  将设置的风格样式添加到单元格中，否则将不会起作用</p>
+</li>
+</ul>
+</blockquote>
+<h2 id="列"><a href="#列" class="headerlink" title="列"></a>列</h2><blockquote>
+<p>列对应的类为<code>XSSFCell</code>,2007之前对应的是HSSFCell</p>
+</blockquote>
+<h3 id="常用的单元格类型"><a href="#常用的单元格类型" class="headerlink" title="常用的单元格类型"></a>常用的单元格类型</h3><blockquote>
+<p>常用的单元格的类型有字符串，数字，布尔值，空值，可以使用<code>XSSFCell</code>的<code>int getCellType()</code> 方法获取类型</p>
+<ul>
+<li><code>CELL_TYPE_BLANK</code> 空值</li>
+<li><code>CELL_TYPE_STRING</code>  字符串</li>
+<li><code>CELL_TYPE_NUMERIC</code>   数字(浮点值，整型)</li>
+<li><code>CELL_TYPE_BOOLEAN</code> 布尔值(True,FALSE)</li>
+</ul>
+</blockquote>
+<h3 id="常用的方法-2"><a href="#常用的方法-2" class="headerlink" title="常用的方法"></a>常用的方法</h3><blockquote>
+<ul>
+<li><p><code>int getCellType()</code>获取单元格类型  可以和常用的单元格类型进行比较，然后使用不同的读取方法读取</p>
+</li>
+<li><p><code>XSSFCellStyle    getCellStyle()</code>   获取单元格风格对象，便于后面设置单元格的风格</p>
+</li>
+<li><p><code>setCellValue(Object value)</code>  设置单元格的内容，可以是任意类型的</p>
+</li>
+<li><p><code>java.util.Date    getDateCellValue()</code>   读取单元格的日期内容</p>
+</li>
+<li><p><code>String    getStringCellValue()</code>   读取单元格中的字符串内容</p>
+</li>
+<li><p><code>double    getNumericCellValue()</code>    读取单元格中的数字类型的内容</p>
+</li>
+<li><p><code>boolean    getBooleanCellValue()</code>   获取单元格中的布尔类型的内容</p>
+</li>
+</ul>
+</blockquote>
+<h2 id="设置单元格样式"><a href="#设置单元格样式" class="headerlink" title="设置单元格样式"></a>设置单元格样式</h2><blockquote>
+<p>对应的类为<code>XSSFCellStyle</code></p>
+</blockquote>
+<h3 id="常用的方法-3"><a href="#常用的方法-3" class="headerlink" title="常用的方法"></a>常用的方法</h3><blockquote>
+<ul>
+<li><p><code>void    setAlignment(HorizontalAlignment align)</code>   设置水平对齐方式 </p>
+</li>
+<li><p><code>void    setVerticalAlignment(VerticalAlignment align)</code>   设置垂直的对齐方式</p>
+</li>
+<li><p><code>void    setTopBorderColor(XSSFColor color)</code>   设置上边框的颜色(还有Left,right..)</p>
+</li>
+<li><p><code>void    setFont(Font font)</code>   设置字体  这里的Font是org.apache.poi.ss.usermodel.Font</p>
+</li>
+<li><p><code>void    setBorderTop(BorderStyle border)</code>   设置上边框的样式，在BorderStyle类中有很多的样式</p>
+</li>
+<li><p><code>void    setRotation(short rotation)</code> 设置文字的旋转度数</p>
+</li>
+</ul>
+</blockquote>
+<h2 id="单元格字体的设置"><a href="#单元格字体的设置" class="headerlink" title="单元格字体的设置"></a>单元格字体的设置</h2><blockquote>
+<p>对应的类为<code>XSSFFont</code></p>
+</blockquote>
+<h3 id="常用的方法-4"><a href="#常用的方法-4" class="headerlink" title="常用的方法:"></a>常用的方法:</h3><blockquote>
+<ul>
+<li><p><code>void    setBold(boolean bold)</code>  是否设置加粗</p>
+</li>
+<li><p><code>void    setItalic(boolean italic)</code>   设置是否倾斜</p>
+</li>
+<li><p><code>void    setUnderline(FontUnderline underline)</code> 设置下划线</p>
+</li>
+<li><p><code>void    setStrikeout(boolean strikeout)</code>   设置是否带有删除线</p>
+</li>
+<li><p><code>void    setColor(XSSFColor color)</code>   设置字体的颜色,只需要调用XSSFColor静态颜色变量即可</p>
+</li>
+<li><p><code>void    setFontHeight(double height)</code>   设置字体高度</p>
+</li>
+<li><p><code>void    setFontHeightInPoints(short height)</code> 设置字号</p>
+</li>
+<li><p><code>void    setFontName(java.lang.String name)</code>   设置字体样式(黑体，楷体…)</p>
+</li>
+</ul>
+</blockquote>
+<h2 id="写入文件"><a href="#写入文件" class="headerlink" title="写入文件"></a>写入文件</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.awt.Color;</div><div class="line"><span class="keyword">import</span> java.io.File;</div><div class="line"><span class="keyword">import</span> java.io.FileOutputStream;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"></div><div class="line"><span class="keyword">import</span> org.apache.poi.hssf.util.HSSFColor;</div><div class="line"><span class="keyword">import</span> org.apache.poi.ss.usermodel.FontUnderline;</div><div class="line"><span class="keyword">import</span> org.apache.poi.ss.usermodel.HorizontalAlignment;</div><div class="line"><span class="keyword">import</span> org.apache.poi.ss.usermodel.VerticalAlignment;</div><div class="line"><span class="keyword">import</span> org.apache.poi.ss.util.CellRangeAddress;</div><div class="line"><span class="keyword">import</span> org.apache.poi.xssf.usermodel.XSSFCell;</div><div class="line"><span class="keyword">import</span> org.apache.poi.xssf.usermodel.XSSFCellStyle;</div><div class="line"><span class="keyword">import</span> org.apache.poi.xssf.usermodel.XSSFColor;</div><div class="line"><span class="keyword">import</span> org.apache.poi.xssf.usermodel.XSSFFont;</div><div class="line"><span class="keyword">import</span> org.apache.poi.xssf.usermodel.XSSFRow;</div><div class="line"><span class="keyword">import</span> org.apache.poi.xssf.usermodel.XSSFSheet;</div><div class="line"><span class="keyword">import</span> org.apache.poi.xssf.usermodel.XSSFWorkbook;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestDemo</span> </span>&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">		XSSFWorkbook workbook = <span class="keyword">new</span> XSSFWorkbook(); <span class="comment">// 创建工作簿</span></div><div class="line">		XSSFSheet sheet = workbook.createSheet(<span class="string">"第一个工作表"</span>); <span class="comment">// 创建一个工作表</span></div><div class="line">		XSSFCellStyle style = workbook.createCellStyle(); <span class="comment">// 创建单元格风格对象</span></div><div class="line">		sheet.addMergedRegion(<span class="keyword">new</span> CellRangeAddress(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">10</span>)); <span class="comment">// 合并第一行的单元格</span></div><div class="line">		style.setAlignment(HorizontalAlignment.CENTER); <span class="comment">// 设置水平居中</span></div><div class="line">		style.setVerticalAlignment(VerticalAlignment.CENTER); <span class="comment">// 设置垂直居中</span></div><div class="line"></div><div class="line">		XSSFFont font = workbook.createFont(); <span class="comment">// 创建字体的对象</span></div><div class="line">		font.setFontName(<span class="string">"黑体"</span>); <span class="comment">// 设置字体的样式为黑体</span></div><div class="line">		font.setFontHeightInPoints((<span class="keyword">short</span>) <span class="number">20</span>); <span class="comment">// 设置字体的大小</span></div><div class="line">		font.setBold(<span class="keyword">true</span>); <span class="comment">// 设置粗体</span></div><div class="line">		font.setItalic(<span class="keyword">true</span>); <span class="comment">// 设置倾斜</span></div><div class="line">		font.setColor(HSSFColor.RED.index); <span class="comment">// 设置字体的颜色</span></div><div class="line">		font.setUnderline(FontUnderline.SINGLE); <span class="comment">// 设置下划线</span></div><div class="line">		font.setStrikeout(<span class="keyword">false</span>); <span class="comment">// 设置不带下划线</span></div><div class="line"></div><div class="line">		style.setFont(font); <span class="comment">// 将设置的字体添加到单元格样式中，显示出来</span></div><div class="line"></div><div class="line">		XSSFRow row1 = sheet.createRow(<span class="number">0</span>); <span class="comment">// 创建第一个行</span></div><div class="line">		XSSFCell cell1 = row1.createCell(<span class="number">0</span>); <span class="comment">// 创建第一行的第一列</span></div><div class="line">		cell1.setCellStyle(style); <span class="comment">// 将上面定义的风格设置到这个单元格中，这个是必须有的，否则根本不起作用</span></div><div class="line">		cell1.setCellValue(<span class="string">"员工信息表"</span>); <span class="comment">// 设置单元格的内容</span></div><div class="line"></div><div class="line">		<span class="comment">// 设置第二行的前三列的值</span></div><div class="line">		XSSFRow row2 = sheet.createRow(<span class="number">1</span>);</div><div class="line">		row2.createCell(<span class="number">0</span>).setCellValue(<span class="string">"姓名"</span>);</div><div class="line">		row2.createCell(<span class="number">1</span>).setCellValue(<span class="string">"性别"</span>);</div><div class="line">		row2.createCell(<span class="number">2</span>).setCellValue(<span class="string">"年龄"</span>);</div><div class="line"></div><div class="line">		<span class="comment">// 设置第三行的前三列</span></div><div class="line">		XSSFRow row3 = sheet.createRow(<span class="number">2</span>);</div><div class="line">		row3.createCell(<span class="number">0</span>).setCellValue(<span class="string">"陈加兵"</span>);</div><div class="line">		row3.createCell(<span class="number">1</span>).setCellValue(<span class="string">"男"</span>);</div><div class="line">		row3.createCell(<span class="number">2</span>).setCellValue(<span class="number">22</span>); <span class="comment">// 设置数字</span></div><div class="line"></div><div class="line">		<span class="comment">// 设置第四行的前三列</span></div><div class="line">		XSSFRow row4 = sheet.createRow(<span class="number">3</span>);</div><div class="line">		row4.createCell(<span class="number">0</span>).setCellValue(<span class="string">"郑元梅"</span>);</div><div class="line">		row4.createCell(<span class="number">1</span>).setCellValue(<span class="string">"女"</span>);</div><div class="line">		row4.createCell(<span class="number">2</span>).setCellValue(<span class="number">22</span>); <span class="comment">// 设置数字</span></div><div class="line"></div><div class="line">		<span class="comment">// 创建输出流对象</span></div><div class="line">		FileOutputStream stream = <span class="keyword">new</span> FileOutputStream(<span class="keyword">new</span> File(</div><div class="line">				<span class="string">"F:\\demo2.xlsx"</span>));</div><div class="line">		workbook.write(stream); <span class="comment">// 写入文件</span></div><div class="line">		workbook.close(); <span class="comment">// 关闭</span></div><div class="line">		stream.close();</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="写入文件-1"><a href="#写入文件-1" class="headerlink" title="写入文件"></a>写入文件</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.io.File;</div><div class="line"><span class="keyword">import</span> java.io.FileInputStream;</div><div class="line"><span class="keyword">import</span> java.io.FileNotFoundException;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"></div><div class="line"><span class="keyword">import</span> org.apache.poi.xssf.usermodel.XSSFCell;</div><div class="line"><span class="keyword">import</span> org.apache.poi.xssf.usermodel.XSSFRow;</div><div class="line"><span class="keyword">import</span> org.apache.poi.xssf.usermodel.XSSFSheet;</div><div class="line"><span class="keyword">import</span> org.apache.poi.xssf.usermodel.XSSFWorkbook;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestDemo1</span> </span>&#123;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">		File file = <span class="keyword">new</span> File(<span class="string">"F:\\demo2.xlsx"</span>);</div><div class="line">		FileInputStream inputStream = <span class="keyword">new</span> FileInputStream(file); <span class="comment">// 创建输入流</span></div><div class="line">		XSSFWorkbook workbook = <span class="keyword">new</span> XSSFWorkbook(inputStream); <span class="comment">// 创建读取工作簿的对象</span></div><div class="line">		XSSFSheet sheet = workbook.getSheetAt(<span class="number">0</span>); <span class="comment">// 获取第一个工作表的对象</span></div><div class="line"></div><div class="line">		<span class="comment">// 第一次循环取得所有的行的对象 getLastRowNum()是得到最后一行的索引</span></div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= sheet.getLastRowNum(); i++) &#123;</div><div class="line">			XSSFRow row = sheet.getRow(i); <span class="comment">// 获取每一行的对象</span></div><div class="line">			<span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; row.getLastCellNum(); j++) &#123;</div><div class="line">				XSSFCell cell = row.getCell(j); <span class="comment">// 获取每一行的每一列</span></div><div class="line">				<span class="keyword">int</span> type = cell.getCellType(); <span class="comment">// 获取每一个单元格对应的类型</span></div><div class="line">				<span class="keyword">switch</span> (type) &#123;</div><div class="line">				<span class="keyword">case</span> XSSFCell.CELL_TYPE_BOOLEAN:   <span class="comment">//如果是布尔类型</span></div><div class="line">					<span class="keyword">boolean</span> b=cell.getBooleanCellValue();</div><div class="line">					System.out.print(b + <span class="string">"    "</span>);</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">				<span class="keyword">case</span> XSSFCell.CELL_TYPE_NUMERIC:  <span class="comment">//如果是数字类型</span></div><div class="line">					<span class="keyword">double</span> d=cell.getNumericCellValue();   <span class="comment">//获取值</span></div><div class="line">					System.out.print( d+ <span class="string">"    "</span>);</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">				<span class="keyword">case</span> XSSFCell.CELL_TYPE_STRING:  <span class="comment">//如果是字符串类型的</span></div><div class="line">					String s=cell.getStringCellValue();</div><div class="line">					System.out.print( s+ <span class="string">"   "</span>);   </div><div class="line">				<span class="keyword">case</span> XSSFCell.CELL_TYPE_BLANK:   <span class="comment">//如果是空值</span></div><div class="line">					System.out.print(<span class="string">"      "</span>);</div><div class="line">				<span class="keyword">default</span>:</div><div class="line">					<span class="keyword">break</span>;</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			System.out.println();</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		workbook.close();  <span class="comment">//关闭</span></div><div class="line">		inputStream.close();</div><div class="line"></div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><blockquote>
+<ul>
+<li><p><a href="http://tool.oschina.net/apidocs/apidoc?api=apache-POI" target="_blank" rel="external">POI文档</a></p>
+</li>
+<li><p><a href="http://lsieun.blog.51cto.com/9210464/1836601" target="_blank" rel="external">http://lsieun.blog.51cto.com/9210464/1836601</a></p>
+</li>
+</ul>
+</blockquote>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Java-Web/">Java-Web</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/POI-Excel/">POI(Excel)</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2017/09/27/Excel表格的写入读取/" data-title="Excel表格的写入读取 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/03/21/SQL操作一/" title="SQL操作一">
+  <strong>上一篇：</strong><br/>
+  <span>
+  SQL操作一</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2017/09/26/JSP总结四-EL表达式/"  title="JSP总结四(EL表达式)">
+ <strong>下一篇：</strong><br/> 
+ <span>JSP总结四(EL表达式)
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Excel的读取和写入"><span class="toc-number">1.</span> <span class="toc-text">Excel的读取和写入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#准备"><span class="toc-number">1.1.</span> <span class="toc-text">准备</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.2.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工作簿"><span class="toc-number">1.3.</span> <span class="toc-text">工作簿</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#构造方法"><span class="toc-number">1.3.1.</span> <span class="toc-text">构造方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的方法"><span class="toc-number">1.3.2.</span> <span class="toc-text">常用的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#例子"><span class="toc-number">1.3.3.</span> <span class="toc-text">例子</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#读取文件的例子"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">读取文件的例子</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#写入文件的例子"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">写入文件的例子</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工作表-sheet"><span class="toc-number">1.4.</span> <span class="toc-text">工作表(sheet)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用方法"><span class="toc-number">1.4.1.</span> <span class="toc-text">常用方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#例子-1"><span class="toc-number">1.4.2.</span> <span class="toc-text">例子</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#合并单元格"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">合并单元格</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#创建一行"><span class="toc-number">1.4.2.2.</span> <span class="toc-text">创建一行</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#行"><span class="toc-number">1.5.</span> <span class="toc-text">行</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的方法-1"><span class="toc-number">1.5.1.</span> <span class="toc-text">常用的方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#列"><span class="toc-number">1.6.</span> <span class="toc-text">列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的单元格类型"><span class="toc-number">1.6.1.</span> <span class="toc-text">常用的单元格类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的方法-2"><span class="toc-number">1.6.2.</span> <span class="toc-text">常用的方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置单元格样式"><span class="toc-number">1.7.</span> <span class="toc-text">设置单元格样式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的方法-3"><span class="toc-number">1.7.1.</span> <span class="toc-text">常用的方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#单元格字体的设置"><span class="toc-number">1.8.</span> <span class="toc-text">单元格字体的设置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的方法-4"><span class="toc-number">1.8.1.</span> <span class="toc-text">常用的方法:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#写入文件"><span class="toc-number">1.9.</span> <span class="toc-text">写入文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#写入文件-1"><span class="toc-number">1.10.</span> <span class="toc-text">写入文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.11.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.12.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

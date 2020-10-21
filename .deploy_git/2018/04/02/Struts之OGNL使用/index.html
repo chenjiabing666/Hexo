@@ -1,0 +1,931 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Struts之OGNL使用 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="OGNL的使用OGNL简介
+OGNI是一种对象图导航语言(object graphics navigation language) ,这也是一种表达式语言，这个和EL表达式一样，但是EL表达式只能在JSTL标签库中使用，这个OGNL只能在struts标签库中使用。
+
+值栈（valueStack)
+值栈就是存储Action的信息，包括其中定义的成员变量和其他的一些自己的属性，比如error,fiel">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Struts之OGNL使用">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/04/02/Struts之OGNL使用/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="OGNL的使用OGNL简介
+OGNI是一种对象图导航语言(object graphics navigation language) ,这也是一种表达式语言，这个和EL表达式一样，但是EL表达式只能在JSTL标签库中使用，这个OGNL只能在struts标签库中使用。
+
+值栈（valueStack)
+值栈就是存储Action的信息，包括其中定义的成员变量和其他的一些自己的属性，比如error,fiel">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/valueStack.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:18:33.128Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Struts之OGNL使用">
+<meta name="twitter:description" content="OGNL的使用OGNL简介
+OGNI是一种对象图导航语言(object graphics navigation language) ,这也是一种表达式语言，这个和EL表达式一样，但是EL表达式只能在JSTL标签库中使用，这个OGNL只能在struts标签库中使用。
+
+值栈（valueStack)
+值栈就是存储Action的信息，包括其中定义的成员变量和其他的一些自己的属性，比如error,fiel">
+<meta name="twitter:image" content="http://ono60m7tl.bkt.clouddn.com/valueStack.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/04/02/Struts之OGNL使用/" title="Struts之OGNL使用" itemprop="url">Struts之OGNL使用</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-04-02T03:07:39.000Z" itemprop="datePublished"> 发表于 2018-04-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#OGNL的使用"><span class="toc-number">1.</span> <span class="toc-text">OGNL的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#OGNL简介"><span class="toc-number">1.1.</span> <span class="toc-text">OGNL简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#值栈（valueStack"><span class="toc-number">1.2.</span> <span class="toc-text">值栈（valueStack)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实验"><span class="toc-number">1.2.1.</span> <span class="toc-text">实验</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常量"><span class="toc-number">1.3.</span> <span class="toc-text">常量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#字符常量"><span class="toc-number">1.3.1.</span> <span class="toc-text">字符常量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数值常量"><span class="toc-number">1.3.2.</span> <span class="toc-text">数值常量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#布尔常量"><span class="toc-number">1.3.3.</span> <span class="toc-text">布尔常量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">1.3.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集合list"><span class="toc-number">1.4.</span> <span class="toc-text">集合list</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Map"><span class="toc-number">1.5.</span> <span class="toc-text">Map</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#访问action中的属性值"><span class="toc-number">1.6.</span> <span class="toc-text">访问action中的属性值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#操作符"><span class="toc-number">1.7.</span> <span class="toc-text">操作符</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#"><span class="toc-number">1.7.1.</span> <span class="toc-text">#</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#符号"><span class="toc-number">1.7.2.</span> <span class="toc-text">$符号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#符号-1"><span class="toc-number">1.7.3.</span> <span class="toc-text">% 符号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#大括号"><span class="toc-number">1.7.4.</span> <span class="toc-text">大括号 {}</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#in-not-in"><span class="toc-number">1.7.5.</span> <span class="toc-text">in ,not in</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#-1"><span class="toc-number">1.7.6.</span> <span class="toc-text">+</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集合的伪属性"><span class="toc-number">1.8.</span> <span class="toc-text">集合的伪属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#投影"><span class="toc-number">1.9.</span> <span class="toc-text">投影</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#选择"><span class="toc-number">1.10.</span> <span class="toc-text">选择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#N-语法"><span class="toc-number">1.11.</span> <span class="toc-text">[N]语法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实现"><span class="toc-number">1.11.1.</span> <span class="toc-text">实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#top-语法"><span class="toc-number">1.12.</span> <span class="toc-text">top 语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Struts2的命名对象"><span class="toc-number">1.13.</span> <span class="toc-text">Struts2的命名对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.14.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="OGNL的使用"><a href="#OGNL的使用" class="headerlink" title="OGNL的使用"></a>OGNL的使用</h1><h2 id="OGNL简介"><a href="#OGNL简介" class="headerlink" title="OGNL简介"></a>OGNL简介</h2><ul>
+<li>OGNI是一种对象图导航语言(object graphics navigation language) ,这也是一种表达式语言，这个和EL表达式一样，但是EL表达式只能在JSTL标签库中使用，这个OGNL只能在struts标签库中使用。</li>
+</ul>
+<h2 id="值栈（valueStack"><a href="#值栈（valueStack" class="headerlink" title="值栈（valueStack)"></a>值栈（valueStack)</h2><ul>
+<li><p>值栈就是存储Action的信息，包括其中定义的成员变量和其他的一些自己的属性，比如error,fieldError,如果想要让action中属性在值栈中显示或者获取，一定要为这些属性设置get,set方法</p>
+</li>
+<li><p>值栈是存储的action的栈，同时可以存储多个action，先执行的先进栈</p>
+</li>
+<li><p>值栈中的元素是根元素，访问值栈中的元素不需要使用<code>#</code>(#是访问非根元素的值，比如<code>#session.username</code>)</p>
+</li>
+<li><p>在jsp页面可以使用struts标签库<code>&lt;s:debug/&gt;</code>,查看值栈中的内容</p>
+</li>
+</ul>
+<h3 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h3><ul>
+<li><p>我们新建一个Action类，用表单传递数据请求action，最后action跳转到success.jsp页面，我们在success.jsp使用<code>&lt;s:debug&gt;</code>查看此时值栈中的数据</p>
+<ul>
+<li>其中的属性必须要有get，set方法</li>
+</ul>
+</li>
+<li><p>LoginAction</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//实现ModelDriven接口&lt;&gt;指定的泛型为JavaBean类</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginAction</span> <span class="keyword">extends</span> <span class="title">ActionSupport</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> User user;</div><div class="line">	<span class="keyword">private</span> String tips;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getTips</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> tips;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setTips</span><span class="params">(String tips)</span></span>&#123;</div><div class="line">		<span class="keyword">this</span>.tips=tips;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> User <span class="title">getUser</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> user;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUser</span><span class="params">(User user)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.user = user;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">execute</span><span class="params">()</span> </span>&#123;</div><div class="line">		System.out.println(<span class="string">"执行execute方法"</span>);</div><div class="line">		System.out.println(<span class="keyword">this</span>.getUser().getName()+<span class="string">"------"</span>+<span class="keyword">this</span>.getUser().getPassword());</div><div class="line">		<span class="keyword">return</span> SUCCESS;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>success.jsp页面</p>
+<ul>
+<li>其中要引用struts2的标签库</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">%@</span> <span class="attr">page</span> <span class="attr">language</span>=<span class="string">"java"</span> <span class="attr">contentType</span>=<span class="string">"text/html; charset=UTF-8"</span></span></div><div class="line">    <span class="attr">pageEncoding</span>=<span class="string">"UTF-8"</span>%&gt;</div><div class="line"><span class="tag">&lt;<span class="name">%@</span> <span class="attr">taglib</span> <span class="attr">prefix</span>=<span class="string">"s"</span> <span class="attr">uri</span>=<span class="string">"/struts-tags"</span> %&gt;</span></div><div class="line"><span class="meta">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"Content-Type"</span> <span class="attr">content</span>=<span class="string">"text/html; charset=UTF-8"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>Insert title here<span class="tag">&lt;/<span class="name">title</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">s:debug</span>&gt;</span><span class="tag">&lt;/<span class="name">s:debug</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>此时我们可以看到在值栈中有个user属性，并且有LoginAction</li>
+</ul>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/valueStack.png" alt="valueStack"></p>
+<h2 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h2><ul>
+<li>我们现在先接触一下<code>&lt;s:property value=&quot;&quot;&gt;</code>标签，struts2中的标签在后面再详细讲解，这个标签的意思是输出属性的值<ul>
+<li>这个标签中的value属性填写的是OGNL表达式，如果我们要输出一个常量，那么我们必须使用单引号</li>
+<li>引用struts2中的标签库<code>&lt;%@ taglib prefix=&quot;s&quot; uri=&quot;/struts-tags&quot; %&gt;</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="字符常量"><a href="#字符常量" class="headerlink" title="字符常量"></a>字符常量</h3><ul>
+<li><p>如果我们仍然使用上面的实例，但是我们要在success.jsp页面中使用OGNL使用显示表单传递过来的值，其中我们还输出自己的一个常量字符串</p>
+</li>
+<li><p>success.jsp</p>
+</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">%@</span> <span class="attr">page</span> <span class="attr">language</span>=<span class="string">"java"</span> <span class="attr">contentType</span>=<span class="string">"text/html; charset=UTF-8"</span></span></div><div class="line">    <span class="attr">pageEncoding</span>=<span class="string">"UTF-8"</span>%&gt;</div><div class="line"><span class="tag">&lt;<span class="name">%@</span> <span class="attr">taglib</span> <span class="attr">prefix</span>=<span class="string">"s"</span> <span class="attr">uri</span>=<span class="string">"/struts-tags"</span> %&gt;</span></div><div class="line"><span class="meta">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"Content-Type"</span> <span class="attr">content</span>=<span class="string">"text/html; charset=UTF-8"</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>Insert title here<span class="tag">&lt;/<span class="name">title</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="tag">&lt;<span class="name">h1</span>&gt;</span><span class="tag">&lt;<span class="name">s:property</span> <span class="attr">value</span>=<span class="string">"user.name"</span> <span class="attr">default</span>=<span class="string">"如果为null，输出这个字段"</span>/&gt;</span><span class="tag">&lt;/<span class="name">h1</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">h1</span>&gt;</span><span class="tag">&lt;<span class="name">s:property</span> <span class="attr">value</span>=<span class="string">"user.password"</span> <span class="attr">default</span>=<span class="string">"如果为null，输出这个字段"</span> /&gt;</span><span class="tag">&lt;/<span class="name">h1</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="tag">&lt;<span class="name">h1</span>&gt;</span>输出一个字符串常量: <span class="tag">&lt;<span class="name">s:property</span> <span class="attr">value</span>=<span class="string">"'jack'"</span>/&gt;</span><span class="tag">&lt;/<span class="name">h1</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">s:debug</span>&gt;</span><span class="tag">&lt;/<span class="name">s:debug</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="数值常量"><a href="#数值常量" class="headerlink" title="数值常量"></a>数值常量</h3><ul>
+<li><p>int  1,2,3</p>
+</li>
+<li><p>double   1.24d或者1.24</p>
+</li>
+<li><p>float  1.23f</p>
+</li>
+<li><p>long  122l 最后一个是字母l</p>
+</li>
+<li><p>BigDecimal  123b</p>
+</li>
+<li><p>BigInteger  123h</p>
+</li>
+<li><p>在其中直接输出即可:<code>&lt;s:property value=&quot;1&quot;/&gt;</code></p>
+</li>
+</ul>
+<h3 id="布尔常量"><a href="#布尔常量" class="headerlink" title="布尔常量"></a>布尔常量</h3><ul>
+<li>直接输出即可 <code>&lt;s:property value=&quot;true&quot;/&gt;</code></li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li>当需要输出一个字符串常量的时候，一定要使用单引号，否则就会默认的将其作为OGNL表达式，输出的就为空</li>
+</ul>
+<h2 id="集合list"><a href="#集合list" class="headerlink" title="集合list"></a>集合list</h2><ul>
+<li>OGNL中的list相当于数组，其中存放的可以是任意类型的数据</li>
+<li>读取的时候直接使用数组的形式读取即可，使用索引读取即可</li>
+<li>我们的创建形式是使用<code>&lt;s:set&gt;</code>标签，因此这个变量不是值栈中的，需要使用<code>#</code></li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;!-- 创建list --&gt;</div><div class="line">&lt;s:set var="list" value="&#123;1,2,3,'jack',true&#125;"&gt;&lt;/s:set&gt;</div><div class="line">&lt;s:property value="#list[0]"/&gt;&lt;br&gt;</div><div class="line">&lt;s:property value="#list[4]"/&gt;</div></pre></td></tr></table></figure>
+<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><ul>
+<li>使用<code>#{}</code>的形式创建，其中存放的是键值对(key-value)的形式</li>
+<li>读取的方式有两种<ul>
+<li>map[‘key’]</li>
+<li>map.key</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;s:set var="map" value="#&#123;'name':'jack','age':22&#125;"&gt;&lt;/s:set&gt;</div><div class="line">&lt;s:property value="#map['name']"/&gt;</div><div class="line">&lt;s:property value="#map.age"/&gt;</div></pre></td></tr></table></figure>
+<h2 id="访问action中的属性值"><a href="#访问action中的属性值" class="headerlink" title="访问action中的属性值"></a>访问action中的属性值</h2><ul>
+<li>action都是存放在值栈中，我们可以使用OGNL读取值栈中的数据</li>
+<li><p>使用上面的LoginAction类，我们通过表单提交到这个LoginAction中，跳转到success.jsp页面中，那么我们就可以在success.jsp页面中访问LoginAction属性的值(前提是属性必须有get，set方法)</p>
+</li>
+<li><p>LoginAction中的属性是一个User对象，那么我们既可以获取这个User对象，之后在获取User对象中的数据了，这个相当于链式操作，前提还是有get，set方法</p>
+</li>
+</ul>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;!-- 这里的user一定要和LoginAction中的成员变量User的对象字段相同 --&gt;</div><div class="line">User对象中的name属性：&lt;s:property value=<span class="string">"user.name"</span>/&gt;</div><div class="line">User对象中的age属性：&lt;s:property value=<span class="string">"user.age"</span>/&gt;</div></pre></td></tr></table></figure>
+<h2 id="操作符"><a href="#操作符" class="headerlink" title="操作符"></a>操作符</h2><h3 id=""><a href="#" class="headerlink" title="#"></a><code>#</code></h3><ul>
+<li><p>值栈中的的属性称为是根属性，<code>#</code>访问的是非根属性，就不是值栈中的值，比如#session.username　相当于调用<code>ActionContext.getContext.getSession.getAttribute(&quot;username&quot;)</code></p>
+</li>
+<li><p>创建Map</p>
+</li>
+<li><p>过滤和投影</p>
+</li>
+</ul>
+<h3 id="符号"><a href="#符号" class="headerlink" title="$符号"></a>$符号</h3><ul>
+<li>在国际化文件中使用OGNL表达式，例如年龄必须在${min}到${max}之间</li>
+<li>在Struts配置文件中使用OGNL表达式，例如两个Action之间进行跳转，并且附带参数</li>
+</ul>
+<h3 id="符号-1"><a href="#符号-1" class="headerlink" title="% 符号"></a>% 符号</h3><ul>
+<li>当标签的属性为字符串类型时，计算OGNL表达式的值。</li>
+</ul>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;s:url value=<span class="string">"#map.name"</span>/&gt;</div><div class="line">&lt;br&gt;</div><div class="line">&lt;s:url value=<span class="string">"%&#123;#map.name&#125;"</span>/&gt;</div></pre></td></tr></table></figure>
+<h3 id="大括号"><a href="#大括号" class="headerlink" title="大括号 {}"></a>大括号 {}</h3><ul>
+<li><p>用来创建一个Map，其中存放的是键值对</p>
+</li>
+<li><p>创建一个list集合</p>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;s:set var="map" value="#&#123;'name':'jack','age':22&#125;"&gt;&lt;/s:set&gt;</div><div class="line">&lt;s:property value="#map['name']"/&gt;</div></pre></td></tr></table></figure>
+<h3 id="in-not-in"><a href="#in-not-in" class="headerlink" title="in ,not in"></a>in ,not in</h3><ul>
+<li><p>判断某一个值是否存在一个集合中，返回的是布尔值</p>
+</li>
+<li><p>不过经过自己测试，只有数字类型的可以判断出来，字符串不能判断出来，如果哪位能够测出来，和我说说原因</p>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;!-- 创建一个集合list --&gt;</div><div class="line">	&lt;s:set var="list" value="&#123;1,2,3,'jack','Tom'&#125;"&gt;&lt;/s:set&gt;</div><div class="line">	&lt;s:property value="1 in #list"/&gt;&lt;br&gt;</div><div class="line">	&lt;s:property value="1 not in #list"/&gt;&lt;br&gt;</div><div class="line">	&lt;!-- 没有结果 --&gt;</div><div class="line">	&lt;s:property value=" 'jack' in #list"/&gt;&lt;br&gt;</div></pre></td></tr></table></figure>
+<h3 id="-1"><a href="#-1" class="headerlink" title="+"></a>+</h3><ul>
+<li>这个和java是一样的，如果两个整数相加就执行整数相加，如果字符串相加就拼接</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;s:property value=&quot;2+3&quot;/&gt;</div><div class="line">&lt;s:property value=&quot;&apos;ce&apos;+22&quot;/&gt;</div></pre></td></tr></table></figure>
+<h2 id="集合的伪属性"><a href="#集合的伪属性" class="headerlink" title="集合的伪属性"></a>集合的伪属性</h2><blockquote>
+<p>集合的伪属性是用来代替java集合API的方法的属性，比如迭代器的使用</p>
+</blockquote>
+<ul>
+<li><p>List</p>
+<ul>
+<li>list.iterator</li>
+<li>list.size</li>
+</ul>
+</li>
+<li><p>Set</p>
+<ul>
+<li>set.iterator</li>
+<li>set.isEmpty</li>
+</ul>
+</li>
+<li><p>Map</p>
+<ul>
+<li>map.keys （map.keySet）</li>
+<li>map.values  (map.values)</li>
+</ul>
+</li>
+<li><p>Iterator</p>
+<ul>
+<li>Iterator.next</li>
+<li>Iterator.hasNext</li>
+</ul>
+</li>
+<li><p>Enumeration</p>
+<ul>
+<li>enum.next</li>
+<li>enum.hasNext</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">&lt;%--创建列表 --%&gt;</div><div class="line">&lt;s:set var="list" value="&#123;1,'陈加兵'&#125;"&gt;&lt;/s:set&gt;</div><div class="line"></div><div class="line">&lt;%-- 创建Map --%&gt;</div><div class="line">&lt;s:set var="map" value="#&#123;'one':'陈加兵','tow':'郑元梅'&#125;"&gt;&lt;/s:set&gt;</div><div class="line"></div><div class="line">&lt;%-- 创建数组 --%&gt;</div><div class="line">&lt;s:set var="number" value="new String[]&#123;'aaa','bbb','ccc']"&gt;&lt;/s:set&gt;</div><div class="line"></div><div class="line"></div><div class="line">&lt;%--  获取list的迭代器对象 --%&gt;</div><div class="line">&lt;s:set var="iter" value="#list.iterator"&gt;&lt;/s:set&gt;</div><div class="line">list的大小:&lt;s:property value="#list.size"/&gt;</div><div class="line">&lt;s:if test="#iter.hasNext"&gt;</div><div class="line">	list中的第一个元素的值:&lt;s:property value="#iter.next"/&gt;</div><div class="line">&lt;/s:if&gt;</div><div class="line">&lt;hr&gt;</div><div class="line"></div><div class="line">&lt;%-- #map.keys返回的是set类型，然后使用迭代器输出即可 --%&gt;</div><div class="line">&lt;s:property value="#map.keys.iterator.next" default="NULL"/&gt;</div><div class="line">&lt;s:property value="#map.values"/&gt;</div></pre></td></tr></table></figure>
+<h2 id="投影"><a href="#投影" class="headerlink" title="投影"></a>投影</h2><ul>
+<li><p>在OGNL中，投影是对一个集合中对每一个元素调用相同的方法，或者抽取相同的属性，并将一个结果保存为一个新的集合。</p>
+</li>
+<li><p>下面的例子是将集合list中的元素转换成字符串</p>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;%--创建列表 --%&gt;</div><div class="line">&lt;s:set var="list" value="&#123;1,'陈加兵'&#125;"&gt;&lt;/s:set&gt;</div><div class="line">&lt;%-- 这个&#123;#&#125;首先会取list中的每一个元素然后赋值给tihs，接着调用toString方法转换为字符串 --%&gt;</div><div class="line">&lt;s:property value="#list.&#123;#this.toString()&#125;"/&gt;</div></pre></td></tr></table></figure>
+<h2 id="选择"><a href="#选择" class="headerlink" title="选择"></a>选择</h2><ul>
+<li>在OGNL中使用表达式从集合中选择某一些元素，并将这些元素保存到新的集合中</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;%--创建列表 --%&gt;</div><div class="line">&lt;s:set var="list" value="&#123;1,2,3&#125;"&gt;&lt;/s:set&gt;</div><div class="line"></div><div class="line">&lt;%-- 选取大于2的元素组成一个新的集合 --%&gt;</div><div class="line">&lt;s:property value="#list.&#123;?#this&gt;2&#125;"/&gt;</div></pre></td></tr></table></figure>
+<h2 id="N-语法"><a href="#N-语法" class="headerlink" title="[N]语法"></a>[N]语法</h2><ul>
+<li><p>我们知道一次请求值栈中可以存放两个或者多个action(只需要设置result跳转类型为chain即可完成在action之间的跳转)，那么我们一般取值栈中的值默认是获取栈顶的action，但是如果有多个action呢，此时我们需要获取其他action中的数据，这下就要用到<code>[N]</code>语法了</p>
+</li>
+<li><p><code>[N].propertyName</code>可以用来指定从值栈中的从上向下数位置N的action的属性值，N从事0开始的。</p>
+</li>
+</ul>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ul>
+<li>假设我们有两个Action，一个是SimpleAction，一个是LoginAction(上面的，有一个属性为user)，我们在在配置的时候，发出请求给SimpleAction，之后跳转到LoginAction(result的type类型为chain即可），之后跳转到success.jsp，那么此时的值栈中的action就有两个了，栈顶的是SimpleAction，第二个是LoginAction。<ul>
+<li>我们想要获取LoginAction属性user的值，在值栈中的位置是第二个，那么此时使用<code>[1].propertName</code></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">User对象中的name:&lt;s:property value=<span class="string">"[1].user.name"</span>/&gt;</div><div class="line">User对象中的age：&lt;s:property value=<span class="string">"[1].user.age"</span>/&gt;</div></pre></td></tr></table></figure>
+<h2 id="top-语法"><a href="#top-语法" class="headerlink" title="top 语法"></a>top 语法</h2><ul>
+<li>我们知道[N]语法中，如果想要访问栈顶的action属性使用<code>[0].propertyName</code>，我们也可以使用top，直接<code>top.propertyName</code>即可</li>
+</ul>
+<h2 id="Struts2的命名对象"><a href="#Struts2的命名对象" class="headerlink" title="Struts2的命名对象"></a>Struts2的命名对象</h2><ul>
+<li><p>这些对象都不是值栈中的数据，因此需要使用<code>#</code>来获取</p>
+</li>
+<li><p><code>parameters</code><br>用来访问请求参数，比如<code>#parameters.name</code>, <code># parameters [‘name’]</code>相当与<code>request.getParameters(“name”)</code></p>
+</li>
+<li><p><code>request</code><br>用来访问request的属性，比如<code>#request.name</code>或者<code># request [‘name’]</code>  相当于request,getAttrubute(“name”)</p>
+</li>
+<li><p><code>session</code><br>用来访问session属性，例如 <code>#session.name</code>或者<code>#session[‘name’]</code>相当于 session.getAttribute(“name”)</p>
+</li>
+<li><p><code>application</code><br>用来访问application属性，比如:<code>#application.name</code>相当于application.getAttribute(“name”)</p>
+</li>
+<li><p><code>attr</code><br>用来访问PageContext，如果PageContext不可用，则一次搜索request,session,application对象</p>
+</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&lt;%</div><div class="line">	//设置属性</div><div class="line">	request.setAttribute("login","true");</div><div class="line">	session.setAttribute("regist", "false");</div><div class="line">	application.setAttribute("auto", "true");</div><div class="line">%&gt;</div><div class="line"></div><div class="line">获取的请求参数中的name的值:&lt;s:property value="#parameters.name"/&gt;&lt;br&gt;</div><div class="line">获取request中的login属性:&lt;s:property value="#request.login"/&gt;&lt;br&gt;</div><div class="line">获取session中的regist属性:&lt;s:property value="#session.regist"/&gt;&lt;br&gt;</div><div class="line">获取application中的auto属性:&lt;s:property value="#application.auto"/&gt;</div><div class="line">&lt;s:debug&gt;&lt;/s:debug&gt;</div></pre></td></tr></table></figure>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Struts2/">Struts2</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Struts2/">Struts2</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/04/02/Struts之OGNL使用/" data-title="Struts之OGNL使用 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/04/12/Struts之标签库/" title="Struts之标签库">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Struts之标签库</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/04/02/Struts之配置拦截器/"  title="Struts之配置拦截器">
+ <strong>下一篇：</strong><br/> 
+ <span>Struts之配置拦截器
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#OGNL的使用"><span class="toc-number">1.</span> <span class="toc-text">OGNL的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#OGNL简介"><span class="toc-number">1.1.</span> <span class="toc-text">OGNL简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#值栈（valueStack"><span class="toc-number">1.2.</span> <span class="toc-text">值栈（valueStack)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实验"><span class="toc-number">1.2.1.</span> <span class="toc-text">实验</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常量"><span class="toc-number">1.3.</span> <span class="toc-text">常量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#字符常量"><span class="toc-number">1.3.1.</span> <span class="toc-text">字符常量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数值常量"><span class="toc-number">1.3.2.</span> <span class="toc-text">数值常量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#布尔常量"><span class="toc-number">1.3.3.</span> <span class="toc-text">布尔常量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">1.3.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集合list"><span class="toc-number">1.4.</span> <span class="toc-text">集合list</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Map"><span class="toc-number">1.5.</span> <span class="toc-text">Map</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#访问action中的属性值"><span class="toc-number">1.6.</span> <span class="toc-text">访问action中的属性值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#操作符"><span class="toc-number">1.7.</span> <span class="toc-text">操作符</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#"><span class="toc-number">1.7.1.</span> <span class="toc-text">#</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#符号"><span class="toc-number">1.7.2.</span> <span class="toc-text">$符号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#符号-1"><span class="toc-number">1.7.3.</span> <span class="toc-text">% 符号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#大括号"><span class="toc-number">1.7.4.</span> <span class="toc-text">大括号 {}</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#in-not-in"><span class="toc-number">1.7.5.</span> <span class="toc-text">in ,not in</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#-1"><span class="toc-number">1.7.6.</span> <span class="toc-text">+</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集合的伪属性"><span class="toc-number">1.8.</span> <span class="toc-text">集合的伪属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#投影"><span class="toc-number">1.9.</span> <span class="toc-text">投影</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#选择"><span class="toc-number">1.10.</span> <span class="toc-text">选择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#N-语法"><span class="toc-number">1.11.</span> <span class="toc-text">[N]语法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实现"><span class="toc-number">1.11.1.</span> <span class="toc-text">实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#top-语法"><span class="toc-number">1.12.</span> <span class="toc-text">top 语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Struts2的命名对象"><span class="toc-number">1.13.</span> <span class="toc-text">Struts2的命名对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.14.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

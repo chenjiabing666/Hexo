@@ -1,0 +1,745 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Mysql中的三类锁，你知道吗？ | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="导读
+正所谓有人(锁)的地方就有江湖(事务)，人在江湖飘，怎能一无所知？
+
+今天来细说一下Mysql中的三类锁，分别是全局锁、表级锁、行级锁。
+
+
+全局锁
+全局锁简单的说就是锁住整个数据库实例，命令是Flush tables with read lock。当你需要为整个数据库处于只读的状态的时候，可以使用这个命令。
+一旦使用全局锁，之后其他线程的以下语句会被阻塞：数据更新语句（数据的增删改）、数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql中的三类锁，你知道吗？">
+<meta property="og:url" content="http://chenjiabing666.github.io/2020/04/01/Mysql中的三类锁，你知道吗？/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="导读
+正所谓有人(锁)的地方就有江湖(事务)，人在江湖飘，怎能一无所知？
+
+今天来细说一下Mysql中的三类锁，分别是全局锁、表级锁、行级锁。
+
+
+全局锁
+全局锁简单的说就是锁住整个数据库实例，命令是Flush tables with read lock。当你需要为整个数据库处于只读的状态的时候，可以使用这个命令。
+一旦使用全局锁，之后其他线程的以下语句会被阻塞：数据更新语句（数据的增删改）、数据">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mysql%E4%B8%AD%E7%9A%84%E9%94%81/1.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mysql%E4%B8%AD%E7%9A%84%E9%94%81/2.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mysql%E4%B8%AD%E7%9A%84%E9%94%81/3.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mysql%E4%B8%AD%E7%9A%84%E9%94%81/4.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mysql%E4%B8%AD%E7%9A%84%E9%94%81/5.png">
+<meta property="og:updated_time" content="2020-04-01T02:34:41.438Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Mysql中的三类锁，你知道吗？">
+<meta name="twitter:description" content="导读
+正所谓有人(锁)的地方就有江湖(事务)，人在江湖飘，怎能一无所知？
+
+今天来细说一下Mysql中的三类锁，分别是全局锁、表级锁、行级锁。
+
+
+全局锁
+全局锁简单的说就是锁住整个数据库实例，命令是Flush tables with read lock。当你需要为整个数据库处于只读的状态的时候，可以使用这个命令。
+一旦使用全局锁，之后其他线程的以下语句会被阻塞：数据更新语句（数据的增删改）、数据">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mysql%E4%B8%AD%E7%9A%84%E9%94%81/1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/04/01/Mysql中的三类锁，你知道吗？/" title="Mysql中的三类锁，你知道吗？" itemprop="url">Mysql中的三类锁，你知道吗？</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2020-04-01T02:31:58.000Z" itemprop="datePublished"> 发表于 2020-04-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#导读"><span class="toc-number">1.</span> <span class="toc-text">导读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#全局锁"><span class="toc-number">2.</span> <span class="toc-text">全局锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么备份要加全局锁？"><span class="toc-number">2.1.</span> <span class="toc-text">为什么备份要加全局锁？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#全局锁有什么坏处？"><span class="toc-number">2.2.</span> <span class="toc-text">全局锁有什么坏处？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#全局备份比较好的解决方案"><span class="toc-number">2.3.</span> <span class="toc-text">全局备份比较好的解决方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#表级锁"><span class="toc-number">3.</span> <span class="toc-text">表级锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#如何加表锁"><span class="toc-number">3.1.</span> <span class="toc-text">如何加表锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MDL"><span class="toc-number">3.2.</span> <span class="toc-text">MDL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查询表级锁争用"><span class="toc-number">3.3.</span> <span class="toc-text">查询表级锁争用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#行级锁"><span class="toc-number">4.</span> <span class="toc-text">行级锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#排他锁"><span class="toc-number">4.1.</span> <span class="toc-text">排他锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#间隙锁"><span class="toc-number">4.2.</span> <span class="toc-text">间隙锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#共享锁"><span class="toc-number">4.3.</span> <span class="toc-text">共享锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分析行锁定"><span class="toc-number">4.4.</span> <span class="toc-text">分析行锁定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#死锁解决方案"><span class="toc-number">4.5.</span> <span class="toc-text">死锁解决方案</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h2 id="导读"><a href="#导读" class="headerlink" title="导读"></a>导读</h2><ul>
+<li><p>正所谓有人(锁)的地方就有江湖(事务)，人在江湖飘，怎能一无所知？</p>
+</li>
+<li><p>今天来细说一下Mysql中的三类锁，分别是全局锁、表级锁、行级锁。</p>
+</li>
+</ul>
+<h2 id="全局锁"><a href="#全局锁" class="headerlink" title="全局锁"></a>全局锁</h2><ul>
+<li>全局锁简单的说就是锁住整个数据库实例，命令是<code>Flush tables with read lock</code>。当你需要为整个数据库处于只读的状态的时候，可以使用这个命令。</li>
+<li>一旦使用全局锁，之后其他线程的以下语句会被阻塞：数据更新语句（数据的增删改）、数据定义语句（包括建表、修改表结构等）和更新类事务的提交语句。 </li>
+<li>全局锁的使用场景大部分都是用来<strong>数据库备份</strong>。</li>
+</ul>
+<h3 id="为什么备份要加全局锁？"><a href="#为什么备份要加全局锁？" class="headerlink" title="为什么备份要加全局锁？"></a>为什么备份要加全局锁？</h3><ul>
+<li>用户买东西，首先会从余额里扣除金额，然后在订单里添加商品。如果备份数据库，不加锁，并且备份顺序为先备份用余额，再备份订单商品，有可能备份了用户余额后，用户下订单买东西提交事务，然后再备份订单商品表， 此时订单商品已存在。最后备份出来的数据为。最后用户余额为买东西前的余额，没有减少，但是订单商品却多了。演示如下图：</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mysql%E4%B8%AD%E7%9A%84%E9%94%81/1.png" alt=""></p>
+<ul>
+<li>这种情况可能用户会觉得赚了，但是如果备份顺序反过来，先备份商品表再备份余额表，用户就会发现我付了钱，但是商品没有加，这中结果就会更加的严重。 </li>
+<li>因此保证备份数据的一致性很重要，必要的手段就是加锁。</li>
+</ul>
+<h3 id="全局锁有什么坏处？"><a href="#全局锁有什么坏处？" class="headerlink" title="全局锁有什么坏处？"></a>全局锁有什么坏处？</h3><ul>
+<li>全局锁是个啥？介绍完了读者心里已经有数了，让这个库只读？这是多么可怕的操作，简单列举几个危险之处：<ul>
+<li>如果在主库备份，备份期间不能执行任何更新操作，会导致整个业务停摆，高并发情况下更甚。</li>
+<li>如果你在从库上备份，那么备份期间从库不能执行主库同步过来的binlog，会导致主从延迟。</li>
+</ul>
+</li>
+</ul>
+<h3 id="全局备份比较好的解决方案"><a href="#全局备份比较好的解决方案" class="headerlink" title="全局备份比较好的解决方案"></a>全局备份比较好的解决方案</h3><ul>
+<li>全局锁远瞅不错，近瞅吓一跳，陈某在此不推荐使用。</li>
+<li>其实 官方自带的逻辑备份工具是mysqldump。当<strong>mysqldump</strong>使用参数<strong>–single-transaction</strong>的时候，导数据之前就会启动一个事务，来确保拿到一致性视图。而由于MVCC的支持，这个过程中数据是可以正常更新的。 </li>
+<li>一致性备份是好，但前提是存储引擎支持事务，这也是MyISAM被InnoDB取代的原因之一。</li>
+</ul>
+<h2 id="表级锁"><a href="#表级锁" class="headerlink" title="表级锁"></a>表级锁</h2><ul>
+<li>MySQL里面表级别的锁有两种：一种是表锁，一种是元数据锁（meta data lock，MDL)。 </li>
+<li>表锁一般是在数据库引擎不支持行锁的时候才会被用到的 。</li>
+<li>MDL会直到事务提交才释放，在做<strong>表结构变更</strong>的时候，你一定要小心不要导致锁住线上查询和更新 。</li>
+</ul>
+<h3 id="如何加表锁"><a href="#如何加表锁" class="headerlink" title="如何加表锁"></a>如何加表锁</h3><ul>
+<li>显式加表锁和解锁的语句很简单，如下：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">lock</span> <span class="keyword">tables</span> tb_name <span class="keyword">read</span>/write;</div><div class="line"></div><div class="line"><span class="keyword">unlock</span> <span class="keyword">tables</span>;</div></pre></td></tr></table></figure>
+<ul>
+<li>需要注意，lock tables语法除了会限制别的线程的读写外，也限定了本线程接下来的操作对象。 </li>
+<li>举个例子, 如果在某个线程A中执行<strong>lock tables t1 read, t2 write;</strong> 这个语句，则其他线程写t1、读写t2的语句都会被阻塞。同时，线程A在执行<strong>unlock tables</strong>之前，也只能执行读t1、读写t2的操作。连写t1都不允许，自然也不能访问其他表。 </li>
+</ul>
+<h3 id="MDL"><a href="#MDL" class="headerlink" title="MDL"></a>MDL</h3><ul>
+<li>MDL不需要显式使用，在访问一个表的时候会被自动加上。 </li>
+<li>当对一个表做增删改查操作的时候，加MDL读锁；当要对表做结构变更操作的时候，加MDL写锁。 </li>
+<li><strong>读锁</strong>之间不互斥，因此你可以有多个线程同时对一张表增删改查。 </li>
+<li>读写锁之间、写锁之间是互斥的，用来保证变更表结构操作的安全性。因此，如果有两个线程要同时给一个表加字段，其中一个要等另一个执行完才能开始执行。 </li>
+</ul>
+<h3 id="查询表级锁争用"><a href="#查询表级锁争用" class="headerlink" title="查询表级锁争用"></a>查询表级锁争用</h3><ul>
+<li>查询表级锁的争用可以通过以下参数分析获得：<ul>
+<li><code>Table_locks_immediate</code>：能够立即获得表级锁的次数 </li>
+<li><code>Table_locks_waited</code>： 不能立即获取表级锁而需要等待的次数 </li>
+</ul>
+</li>
+<li>查询语句如下：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">show</span> <span class="keyword">status</span> <span class="keyword">like</span> <span class="string">'table_locks_waited'</span></div></pre></td></tr></table></figure>
+<ul>
+<li>如果<code>Table_locks_waited</code>的值比较大，则说明存在着较严重的表级锁争用情况。 </li>
+</ul>
+<h2 id="行级锁"><a href="#行级锁" class="headerlink" title="行级锁"></a>行级锁</h2><ul>
+<li>MySQL的行锁是在引擎层由各个引擎自己实现的。但并不是所有的引擎都支持行锁，比如MyISAM引擎就不支持行锁。不支持行锁意味着并发控制只能使用表锁，对于这种引擎的表，同一张表上任何时刻只能有一个更新在执行，这就会影响到业务并发度。InnoDB是支持行锁的，这也是MyISAM被InnoDB替代的重要原因之一。 </li>
+<li><strong>InnoDB的行锁是针对索引加的锁，不是针对记录加的锁。并且该索引不能失效，否则都会从行锁升级为表锁</strong>。 </li>
+<li><strong>在InnoDB事务中，行锁是在需要的时候才加上的，但并不是不需要了就立刻释放，而是要等到事务结束时才释放。</strong> </li>
+<li>行级锁分为排它锁（写锁）、共享锁（读锁）、间隙锁。</li>
+</ul>
+<h3 id="排他锁"><a href="#排他锁" class="headerlink" title="排他锁"></a>排他锁</h3><ul>
+<li>排他锁，也称写锁，独占锁，当前写操作没有完成前，它会阻断其他写锁和读锁。 </li>
+<li>Mysql中的更新语句(update/delete/insert)会自动加上排它锁。</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mysql%E4%B8%AD%E7%9A%84%E9%94%81/2.png" alt=""></p>
+<ul>
+<li>如上图，事务B中的update语句被阻塞了，直到事务A提交才能执行更新操作。</li>
+<li>排他锁也可以手动添加，如下：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> <span class="keyword">id</span>=<span class="number">1</span> <span class="keyword">for</span> <span class="keyword">update</span>;</div></pre></td></tr></table></figure>
+<ul>
+<li>注意以下两点：<ul>
+<li>行锁是针对索引加锁的，上述例子中id是主键索引。</li>
+<li><strong>加了排他锁并不是其他的事务不能读取这行的数据，而是不能再在这行上面加锁了。</strong></li>
+</ul>
+</li>
+</ul>
+<h3 id="间隙锁"><a href="#间隙锁" class="headerlink" title="间隙锁"></a>间隙锁</h3><ul>
+<li>当我们用范围条件检索数据，并请求共享或排他锁时，InnoDB会给符合条件的已有数据记录的索引项加锁；对于键值在条件范围内但<strong>并不存在</strong>的记录，叫做”间隙(GAP)”。InnoDB也会对这个”间隙”加锁，这种锁机制就是所谓的间隙锁(Next-Key锁)。 </li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mysql%E4%B8%AD%E7%9A%84%E9%94%81/3.png" alt=""></p>
+<ul>
+<li>如上图，给id&gt;5中并不存在的数据加上了间隙锁，当插入id=6的数据时被阻塞了。</li>
+<li>这是一个坑：<strong>若执行的条件是范围过大，则InnoDB会将整个范围内所有的索引键值全部锁定，很容易对性能造成影响</strong> </li>
+</ul>
+<h3 id="共享锁"><a href="#共享锁" class="headerlink" title="共享锁"></a>共享锁</h3><ul>
+<li>共享锁，也称读锁，多用于判断数据是否存在，多个读操作可以同时进行而不会互相影响。当如果事务对读锁进行修改操作，很可能会造成死锁。如下图所示。 </li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mysql%E4%B8%AD%E7%9A%84%E9%94%81/4.png" alt=""></p>
+<h3 id="分析行锁定"><a href="#分析行锁定" class="headerlink" title="分析行锁定"></a>分析行锁定</h3><ul>
+<li>通过检查InnoDB_row_lock 状态变量分析系统上的行锁的争夺情况 。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">show</span> <span class="keyword">status</span> <span class="keyword">like</span> <span class="string">'innodb_row_lock%'</span></div></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mysql%E4%B8%AD%E7%9A%84%E9%94%81/5.png" alt=""></p>
+<ul>
+<li>innodb_row_lock_current_waits: 当前正在等待锁定的数量。</li>
+<li>innodb_row_lock_time: 从系统启动到现在锁定总时间长度；非常重要的参数</li>
+<li>innodb_row_lock_time_avg: 每次等待所花平均时间；非常重要的参数。</li>
+<li>innodb_row_lock_time_max: 从系统启动到现在等待最常的一次所花的时间； </li>
+<li>innodb_row_lock_waits: 系统启动后到现在总共等待的次数；非常重要的参数。直接决定优化的方向和策略。 </li>
+</ul>
+<h3 id="死锁解决方案"><a href="#死锁解决方案" class="headerlink" title="死锁解决方案"></a>死锁解决方案</h3><p>1、直接进入等待，直到超时。这个超时时间可以通过参数<strong>innodb_lock_wait_timeout</strong>来设置，默认50秒。注意超时时间不能设置太短，如果仅仅是短暂的等待，一旦设置时间很短，很快便解锁了，会出现误伤。</p>
+<p>2、发起死锁检测，发现死锁后，主动回滚死锁链条中的某一个事务，让其他事务得以继续执行。将参数<strong>innodb_deadlock_detect</strong>设置为on，表示开启这个逻辑，默认开启。 主动死锁检测在发生死锁的时候，是能够快速发现并进行处理的，但是它也是有额外负担的。 当并发很高的时候，检测死锁将会消耗大量的资源，因此控制并发也是很重要的一种策略。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/数据库干货篇/">数据库干货篇</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/SQL/">SQL</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2020/04/01/Mysql中的三类锁，你知道吗？/" data-title="Mysql中的三类锁，你知道吗？ | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/04/01/一条查询语句到底是如何执行的/" title="一条查询语句到底是如何执行的?">
+  <strong>上一篇：</strong><br/>
+  <span>
+  一条查询语句到底是如何执行的?</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/03/23/IDEA调试技巧/"  title="IDEA调试技巧">
+ <strong>下一篇：</strong><br/> 
+ <span>IDEA调试技巧
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#导读"><span class="toc-number">1.</span> <span class="toc-text">导读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#全局锁"><span class="toc-number">2.</span> <span class="toc-text">全局锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么备份要加全局锁？"><span class="toc-number">2.1.</span> <span class="toc-text">为什么备份要加全局锁？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#全局锁有什么坏处？"><span class="toc-number">2.2.</span> <span class="toc-text">全局锁有什么坏处？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#全局备份比较好的解决方案"><span class="toc-number">2.3.</span> <span class="toc-text">全局备份比较好的解决方案</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#表级锁"><span class="toc-number">3.</span> <span class="toc-text">表级锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#如何加表锁"><span class="toc-number">3.1.</span> <span class="toc-text">如何加表锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MDL"><span class="toc-number">3.2.</span> <span class="toc-text">MDL</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查询表级锁争用"><span class="toc-number">3.3.</span> <span class="toc-text">查询表级锁争用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#行级锁"><span class="toc-number">4.</span> <span class="toc-text">行级锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#排他锁"><span class="toc-number">4.1.</span> <span class="toc-text">排他锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#间隙锁"><span class="toc-number">4.2.</span> <span class="toc-text">间隙锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#共享锁"><span class="toc-number">4.3.</span> <span class="toc-text">共享锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分析行锁定"><span class="toc-number">4.4.</span> <span class="toc-text">分析行锁定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#死锁解决方案"><span class="toc-number">4.5.</span> <span class="toc-text">死锁解决方案</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Mybatis进阶/" title="Mybatis进阶">Mybatis进阶<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring-Boot-进阶/" title="Spring Boot 进阶">Spring Boot 进阶<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/开发工具/" title="开发工具">开发工具<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring-Boot/" title="Spring Boot">Spring Boot<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mybatis/" title="Mybatis">Mybatis<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/破解/" title="破解">破解<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

@@ -1,0 +1,855 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Shiro源码解析 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="FilterChainManager
+过滤器管理器，在ShiroFilterFactoryBean创建的时候会创建管理器，将配置好的过滤器添加到其中
+当发出请求的时候会其中找出和url匹配过滤器执行
+
+ShiroFilterFactoryBean
+实现了FactoryBean接口，创建了一个SpringShiroFilter对象，在getObject方法中会创建，创建的步骤如下：
+
+创建FIlte">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shiro源码解析">
+<meta property="og:url" content="http://chenjiabing666.github.io/2019/08/13/Shiro源码解析/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="FilterChainManager
+过滤器管理器，在ShiroFilterFactoryBean创建的时候会创建管理器，将配置好的过滤器添加到其中
+当发出请求的时候会其中找出和url匹配过滤器执行
+
+ShiroFilterFactoryBean
+实现了FactoryBean接口，创建了一个SpringShiroFilter对象，在getObject方法中会创建，创建的步骤如下：
+
+创建FIlte">
+<meta property="og:image" content="https://raw.githubusercontent.com/chenjiabing666/BlogImage/master/Shiro.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:10:31.333Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Shiro源码解析">
+<meta name="twitter:description" content="FilterChainManager
+过滤器管理器，在ShiroFilterFactoryBean创建的时候会创建管理器，将配置好的过滤器添加到其中
+当发出请求的时候会其中找出和url匹配过滤器执行
+
+ShiroFilterFactoryBean
+实现了FactoryBean接口，创建了一个SpringShiroFilter对象，在getObject方法中会创建，创建的步骤如下：
+
+创建FIlte">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chenjiabing666/BlogImage/master/Shiro.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/08/13/Shiro源码解析/" title="Shiro源码解析" itemprop="url">Shiro源码解析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2019-08-13T14:41:32.000Z" itemprop="datePublished"> 发表于 2019-08-13</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FilterChainManager"><span class="toc-number">1.</span> <span class="toc-text">FilterChainManager</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ShiroFilterFactoryBean"><span class="toc-number">2.</span> <span class="toc-text">ShiroFilterFactoryBean</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Shiro中的过滤器"><span class="toc-number">3.</span> <span class="toc-text">Shiro中的过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#OncePerRequestFilter"><span class="toc-number">3.1.</span> <span class="toc-text">OncePerRequestFilter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AdviceFilter"><span class="toc-number">3.2.</span> <span class="toc-text">AdviceFilter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PathMatchingFilter"><span class="toc-number">3.3.</span> <span class="toc-text">PathMatchingFilter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AccessControlFilter"><span class="toc-number">3.4.</span> <span class="toc-text">AccessControlFilter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AuthenticationFilter"><span class="toc-number">3.5.</span> <span class="toc-text">AuthenticationFilter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现的过滤器"><span class="toc-number">3.6.</span> <span class="toc-text">实现的过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#FormAuthenticationFilter"><span class="toc-number">3.6.1.</span> <span class="toc-text">FormAuthenticationFilter</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义过滤器"><span class="toc-number">3.7.</span> <span class="toc-text">自定义过滤器</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#过滤器创建"><span class="toc-number">4.</span> <span class="toc-text">过滤器创建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">4.1.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="FilterChainManager"><a href="#FilterChainManager" class="headerlink" title="FilterChainManager"></a>FilterChainManager</h1><ul>
+<li>过滤器管理器，在ShiroFilterFactoryBean创建的时候会创建管理器，将配置好的过滤器添加到其中</li>
+<li>当发出请求的时候会其中找出和url匹配过滤器执行</li>
+</ul>
+<h1 id="ShiroFilterFactoryBean"><a href="#ShiroFilterFactoryBean" class="headerlink" title="ShiroFilterFactoryBean"></a>ShiroFilterFactoryBean</h1><ul>
+<li><p>实现了FactoryBean接口，创建了一个<code>SpringShiroFilter</code>对象，在getObject方法中会创建，创建的步骤如下：</p>
+<ul>
+<li>创建FIlter管理器</li>
+<li>创建11个默认的过滤器，并且其中的uri会被设置全局配置的uri，具体逻辑在<code>org.apache.shiro.spring.web.ShiroFilterFactoryBean#applyGlobalPropertiesIfNecessary</code>方法</li>
+<li>将定义的Filter设置过滤器管理器中的filters属性中，并且调用<code>applyGlobalPropertiesIfNecessary</code>方法设置全局属性</li>
+<li>构建过滤器链（chain），保存在<code>filterChains</code>的属性中</li>
+</ul>
+</li>
+<li><p>实现了BeanPostProcessor接口，在<code>postProcessBeforeInitialization</code>方法中就是获取到ioc容器中的Filter类型的Bean将其设置到filters属性中</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">postProcessBeforeInitialization</span><span class="params">(Object bean, String beanName)</span> <span class="keyword">throws</span> BeansException </span>&#123;</div><div class="line">        <span class="keyword">if</span> (bean <span class="keyword">instanceof</span> Filter) &#123;</div><div class="line">            log.debug(<span class="string">"Found filter chain candidate filter '&#123;&#125;'"</span>, beanName);</div><div class="line">            Filter filter = (Filter) bean;</div><div class="line">            <span class="comment">//</span></div><div class="line">            applyGlobalPropertiesIfNecessary(filter);</div><div class="line">            <span class="comment">//放入到filters属性中</span></div><div class="line">            getFilters().put(beanName, filter);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            log.trace(<span class="string">"Ignoring non-Filter bean '&#123;&#125;'"</span>, beanName);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> bean;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h1 id="Shiro中的过滤器"><a href="#Shiro中的过滤器" class="headerlink" title="Shiro中的过滤器"></a>Shiro中的过滤器</h1><ul>
+<li>Shiro中的过滤器设计的很巧妙，每一个抽象的Filter都有不同的职责</li>
+<li>下面介绍的一些过滤器都是按照父类和子类从上向下介绍。</li>
+</ul>
+<h2 id="OncePerRequestFilter"><a href="#OncePerRequestFilter" class="headerlink" title="OncePerRequestFilter"></a>OncePerRequestFilter</h2><ul>
+<li>该类是相对于有作用的过滤器的顶层，所有的过滤器都继承这个抽象类，该类保证了每一次请求只执行一次过滤器，其中的过滤器的doFilter方法就在其中定义，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">doFilter</span><span class="params">(ServletRequest request, ServletResponse response, FilterChain filterChain)</span></span></div><div class="line">            <span class="keyword">throws</span> ServletException, IOException &#123;</div><div class="line">        String alreadyFilteredAttributeName = getAlreadyFilteredAttributeName();</div><div class="line">        <span class="keyword">if</span> ( request.getAttribute(alreadyFilteredAttributeName) != <span class="keyword">null</span> ) &#123;</div><div class="line">            log.trace(<span class="string">"Filter '&#123;&#125;' already executed.  Proceeding without invoking this filter."</span>, getName());</div><div class="line">            filterChain.doFilter(request, response);</div><div class="line">        &#125; <span class="keyword">else</span> <span class="comment">//noinspection deprecation</span></div><div class="line">            <span class="keyword">if</span> (<span class="comment">/* added in 1.2: */</span> !isEnabled(request, response) ||</div><div class="line">                <span class="comment">/* retain backwards compatibility: */</span> shouldNotFilter(request) ) &#123;</div><div class="line">            log.debug(<span class="string">"Filter '&#123;&#125;' is not enabled for the current request.  Proceeding without invoking this filter."</span>,</div><div class="line">                    getName());</div><div class="line">            filterChain.doFilter(request, response);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="comment">// Do invoke this filter...</span></div><div class="line">            log.trace(<span class="string">"Filter '&#123;&#125;' not yet executed.  Executing now."</span>, getName());</div><div class="line">            request.setAttribute(alreadyFilteredAttributeName, Boolean.TRUE);</div><div class="line"></div><div class="line">            <span class="keyword">try</span> &#123;</div><div class="line">                <span class="comment">//过滤器真正执行的逻辑方法</span></div><div class="line">                doFilterInternal(request, response, filterChain);</div><div class="line">            &#125; <span class="keyword">finally</span> &#123;</div><div class="line">                <span class="comment">// Once the request has finished, we're done and we don't</span></div><div class="line">                <span class="comment">// need to mark as 'already filtered' any more.</span></div><div class="line">                request.removeAttribute(alreadyFilteredAttributeName);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>在doFilter中有一个方法<code>doFilterInternal(request, response, filterChain)</code>，这个方法是执行过滤器的真正逻辑，被子类<code>AdviceFilter</code>实现</li>
+</ul>
+<h2 id="AdviceFilter"><a href="#AdviceFilter" class="headerlink" title="AdviceFilter"></a>AdviceFilter</h2><ul>
+<li>Advice很熟悉，这个抽象类能够实现像AOP一样的功能，其中定义了两个方法，分别是<code>preHandle</code>、<code>postHandle</code>，这两个方法能在过滤器执行前后做一些事情。</li>
+<li>其中一个重要的方法，是执行过滤器的主要方法，在其中完成AOP相应的功能，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doFilterInternal</span><span class="params">(ServletRequest request, ServletResponse response, FilterChain chain)</span></span></div><div class="line">            <span class="keyword">throws</span> ServletException, IOException &#123;</div><div class="line"></div><div class="line">        Exception exception = <span class="keyword">null</span>;</div><div class="line"></div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="comment">//在执行下一个过滤器前执行，如果返回的ttrue表示执行下一个过滤器，否则结束执行</span></div><div class="line">            <span class="keyword">boolean</span> continueChain = preHandle(request, response);</div><div class="line">            <span class="keyword">if</span> (log.isTraceEnabled()) &#123;</div><div class="line">                log.trace(<span class="string">"Invoked preHandle method.  Continuing chain?: ["</span> + continueChain + <span class="string">"]"</span>);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="keyword">if</span> (continueChain) &#123;</div><div class="line">                <span class="comment">//执行下一个过滤器</span></div><div class="line">                executeChain(request, response, chain);</div><div class="line">            &#125;</div><div class="line">            <span class="comment">//后置处理，过滤器执行完毕之后执行</span></div><div class="line">            postHandle(request, response);</div><div class="line">            <span class="keyword">if</span> (log.isTraceEnabled()) &#123;</div><div class="line">                log.trace(<span class="string">"Successfully invoked postHandle method"</span>);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            exception = e;</div><div class="line">        &#125; <span class="keyword">finally</span> &#123;</div><div class="line">            <span class="comment">//清除</span></div><div class="line">            cleanup(request, response, exception);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h2 id="PathMatchingFilter"><a href="#PathMatchingFilter" class="headerlink" title="PathMatchingFilter"></a>PathMatchingFilter</h2><ul>
+<li>用于请求的url匹配，如果请求的url匹配了，那么需要执行<code>onPreHandle</code>判断是否继续执行后面的过滤器</li>
+<li>url匹配的逻辑主要在preHandle方法中，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">preHandle</span><span class="params">(ServletRequest request, ServletResponse response)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (<span class="keyword">this</span>.appliedPaths == <span class="keyword">null</span> || <span class="keyword">this</span>.appliedPaths.isEmpty()) &#123;</div><div class="line">            <span class="keyword">if</span> (log.isTraceEnabled()) &#123;</div><div class="line">                log.trace(<span class="string">"appliedPaths property is null or empty.  This Filter will passthrough immediately."</span>);</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line">        </div><div class="line">        <span class="keyword">for</span> (String path : <span class="keyword">this</span>.appliedPaths.keySet()) &#123;</div><div class="line">            <span class="comment">// If the path does match, then pass on to the subclass implementation for specific checks</span></div><div class="line">            <span class="comment">//(first match 'wins'):</span></div><div class="line">            <span class="keyword">if</span> (pathsMatch(path, request)) &#123;</div><div class="line">                log.trace(<span class="string">"Current requestURI matches pattern '&#123;&#125;'.  Determining filter chain execution..."</span>, path);</div><div class="line">                Object config = <span class="keyword">this</span>.appliedPaths.get(path);</div><div class="line">                <span class="keyword">return</span> isFilterChainContinued(request, response, path, config);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">//no path matched, allow the request to go through:</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h2 id="AccessControlFilter"><a href="#AccessControlFilter" class="headerlink" title="AccessControlFilter"></a>AccessControlFilter</h2><ul>
+<li><p>用于控制访问资源的权限，该类继承上面的三个类，其中有如下几个重要的方法：</p>
+<ul>
+<li><code>protected abstract boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue)</code>：判断当前的访问是否有权限，如果有权限，那么正常继续执行，如果返回false，那么将会执行<code>onAccessDenied</code>方法</li>
+<li><code>protected abstract boolean onAccessDenied(ServletRequest request, ServletResponse response)</code>：isAccessAllowed返回false的时候将会执行，表示当前没有权限访问，需要执行相应的逻辑</li>
+<li><code>public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue)</code>：在过滤器继续执行之前执行的逻辑，其中默认就是调用了isAccessAllowed判断权限，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onPreHandle</span><span class="params">(ServletRequest request, ServletResponse response, Object mappedValue)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">    	<span class="comment">//逻辑或，如果第一条件为false，将会执行第二个方法，反之不执行</span></div><div class="line">        <span class="keyword">return</span> isAccessAllowed(request, response, mappedValue) || onAccessDenied(request, response, mappedValue);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="AuthenticationFilter"><a href="#AuthenticationFilter" class="headerlink" title="AuthenticationFilter"></a>AuthenticationFilter</h2><ul>
+<li>抽象类，实现了父类的isAccessAllowed方法，用于权限控制，只有当前的用户认证之后才返回true</li>
+<li>其中的几个重要的方法如下：<ul>
+<li><code>isAccessAllowed</code>：实现了父类的方法，只有用户认证之后才返回true</li>
+<li><code>issueSuccessRedirect</code>：重定向方法，默认重定向到配置的successUrl</li>
+</ul>
+</li>
+</ul>
+<h2 id="实现的过滤器"><a href="#实现的过滤器" class="headerlink" title="实现的过滤器"></a>实现的过滤器</h2><ul>
+<li>上面介绍的几个都是抽象类，在DefaultFilter中的11个过滤器都是实现了上面的抽象类</li>
+</ul>
+<h3 id="FormAuthenticationFilter"><a href="#FormAuthenticationFilter" class="headerlink" title="FormAuthenticationFilter"></a>FormAuthenticationFilter</h3><ul>
+<li>shiro默认配置的过滤器，名称是authc</li>
+<li>其中实现了登录的请求和认证的功能，我们可以不用重写登录的方法，而是配置一个url映射到该过滤器即可完成登录。</li>
+<li>默认的登录的用户名和密码的映射字段如下：<ul>
+<li>当然我们可以覆盖这个属性，只需要创建一个当前的过滤器，将其添加到IOC中即可，当然其中的beanName要是authc</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_USERNAME_PARAM = <span class="string">"username"</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String DEFAULT_PASSWORD_PARAM = <span class="string">"password"</span>;</div></pre></td></tr></table></figure>
+<ul>
+<li>其中实现的onAccessDenied方法有如下的两个功能：<ul>
+<li>如果和配置的loginUrlng 相同，那么表示是登录的功能（也不全然是，也可以是一个没有认证的重定向的url，这个在前后端分离的时候常用）</li>
+<li>重定向的功能，如果既不是登录的url也没有通过认证，那么将会重定向到配置的loginUrl</li>
+</ul>
+</li>
+</ul>
+<h2 id="自定义过滤器"><a href="#自定义过滤器" class="headerlink" title="自定义过滤器"></a>自定义过滤器</h2><ul>
+<li>在现在的项目中大多使用的是前后端分离，现在我们使用自定义一个过滤器实现登录。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 继承AccessControlFilter抽象类，实现权限控制的访问</div><div class="line"> */</div><div class="line"><span class="meta">@Slf</span>4j</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginFilter</span> <span class="keyword">extends</span> <span class="title">AccessControlFilter</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span>  String USERNAME=<span class="string">"userName"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String PASSWORD=<span class="string">"password"</span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 登录成功的url</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> String successUrl=<span class="string">"success"</span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 登录失败的url</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> String failUrl=<span class="string">"fail"</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LoginFilter</span><span class="params">(String successUrl, String failUrl)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.successUrl = successUrl;</div><div class="line">        <span class="keyword">this</span>.failUrl = failUrl;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 判断是否认证成功</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">isAccessAllowed</span><span class="params">(ServletRequest request, ServletResponse response, Object mappedValue)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        Subject subject = SecurityUtils.getSubject();</div><div class="line">        <span class="keyword">return</span> subject.isAuthenticated();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 创建UserNamePasswordToken</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">private</span>  UsernamePasswordToken <span class="title">createToken</span><span class="params">(ServletRequest request)</span></span>&#123;</div><div class="line">        String userName = WebUtils.getCleanParam(request, USERNAME);</div><div class="line">        String password = WebUtils.getCleanParam(request, PASSWORD);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> UsernamePasswordToken(userName,password);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 没有认证成功执行的方法</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">onAccessDenied</span><span class="params">(ServletRequest request, ServletResponse response)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        Subject subject=SecurityUtils.getSubject();</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="comment">//执行登录</span></div><div class="line">            subject.login(createToken(request));</div><div class="line">            Map&lt;String,String&gt; params=<span class="keyword">new</span> HashMap&lt;&gt;();</div><div class="line">            params.put(<span class="string">"token"</span>, subject.getSession().getId().toString());</div><div class="line">            <span class="comment">//此处需要将token传入重定向的url，因为重定向的url不是匿名访问的，配置的authc，并且还需要将token返回</span></div><div class="line">            <span class="comment">//如果走的是匿名的url的话，那么从Subject中获取的Session并不是认证成功的</span></div><div class="line">            WebUtils.issueRedirect(request, response, successUrl,params);</div><div class="line">        &#125;<span class="keyword">catch</span> (AuthenticationException ex)&#123;</div><div class="line">            log.info(<span class="string">"登录失败"</span>,ex);</div><div class="line">            <span class="comment">//登录失败，重定向到指定的url</span></div><div class="line">            WebUtils.issueRedirect(request, response, failUrl);</div><div class="line">        &#125;</div><div class="line">        <span class="comment">//不在执行下面的逻辑</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>配置过滤器</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">     * 创建登录的过滤器</div><div class="line">     */</div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="function"><span class="keyword">public</span> LoginFilter <span class="title">loginFilter</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> LoginFilter(<span class="string">"/user/success"</span>, <span class="string">"/user/unauthentic"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line"><span class="comment">//配置登录的url</span></div><div class="line">filterChainDefinitionMap.put(<span class="string">"/login"</span>, <span class="string">"loginFilter"</span>);</div><div class="line"></div><div class="line"><span class="comment">//成功的重定向的请求</span></div><div class="line"> 	<span class="comment">/**</span></div><div class="line">     * LoginFilter登录成功重定向的请求</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"success"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> PageResponse <span class="title">success</span><span class="params">(String token)</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> PageResponse(<span class="string">"登录成功"</span>,<span class="string">"0"</span>,token);</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">//失败的重定向</span></div><div class="line"> <span class="comment">/**</span></div><div class="line">     * 没有登录跳转到的uri</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/unauthentic"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> PageResponse <span class="title">unauthentic</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> PageResponse(<span class="string">"尚未登录"</span>,<span class="string">"401"</span>);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>配置好之后，就能直接通过login访问了</li>
+</ul>
+<h1 id="过滤器创建"><a href="#过滤器创建" class="headerlink" title="过滤器创建"></a>过滤器创建</h1><ul>
+<li><p>过滤器的来源：</p>
+<ul>
+<li>shiro容器中默认的11个过滤器，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">anon(AnonymousFilter.class),</div><div class="line">   authc(FormAuthenticationFilter.class),</div><div class="line">   authcBasic(BasicHttpAuthenticationFilter.class),</div><div class="line">   logout(LogoutFilter.class),</div><div class="line">   noSessionCreation(NoSessionCreationFilter.class),</div><div class="line">   perms(PermissionsAuthorizationFilter.class),</div><div class="line">   port(PortFilter.class),</div><div class="line">   rest(HttpMethodPermissionFilter.class),</div><div class="line">   roles(RolesAuthorizationFilter.class),</div><div class="line">   ssl(SslFilter.class),</div><div class="line">   user(UserFilter.class);</div></pre></td></tr></table></figure>
+<ul>
+<li>自定义的过滤器并且是注入IOC容器中的，这样在容器启动的时候会自动扫描到ShiroFilterFactoryBean中的filters中（后置处理器），如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">postProcessBeforeInitialization</span><span class="params">(Object bean, String beanName)</span> <span class="keyword">throws</span> BeansException </span>&#123;</div><div class="line">        <span class="keyword">if</span> (bean <span class="keyword">instanceof</span> Filter) &#123;</div><div class="line">            log.debug(<span class="string">"Found filter chain candidate filter '&#123;&#125;'"</span>, beanName);</div><div class="line">            Filter filter = (Filter) bean;</div><div class="line">            <span class="comment">//设置全局属性（如果自定义的过滤器中的三个url没有改变，那么将会启用全局配置的url，否则还是使用自定义设置的url）</span></div><div class="line">            applyGlobalPropertiesIfNecessary(filter);</div><div class="line">            getFilters().put(beanName, filter);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            log.trace(<span class="string">"Ignoring non-Filter bean '&#123;&#125;'"</span>, beanName);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> bean;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>什么是能够被Shiro执行的过滤器？</p>
+<ul>
+<li>在Shiro中并不是只要你配置了过滤器就能工作，必要的操作就是将其设置到ShiroFilterFactoryBean中的<code>filterChainDefinitionMap</code>的属性中</li>
+</ul>
+</li>
+<li><p>同一个url能否配置多个过滤器？</p>
+<ul>
+<li>肯定是能的，只需要在配置filterChainDefinitionMap的时候指定多个即可，使用逗号分隔，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">filterChainDefinitionMap.put(<span class="string">"/user/login"</span>, <span class="string">"anon,customFilter"</span>);</div></pre></td></tr></table></figure>
+</li>
+<li><p>假设对于请求的url能够匹配多个filterChainDefinitionMap，那么应该使用哪一个过滤器链？</p>
+<ul>
+<li>从源码中可以看到，在获取拦截器链的逻辑是只要第一个匹配了，那么就直接返回这个拦截器链，下面的就不执行了，因此是先在filterChainDefinitionMap中配置的先被使用，后面的会被忽略，源码如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//org.apache.shiro.web.filter.mgt.PathMatchingFilterChainResolver#getChain</span></div><div class="line"><span class="function"><span class="keyword">public</span> FilterChain <span class="title">getChain</span><span class="params">(ServletRequest request, ServletResponse response, FilterChain originalChain)</span> </span>&#123;</div><div class="line">    	<span class="comment">//获取管理器</span></div><div class="line">        FilterChainManager filterChainManager = getFilterChainManager();</div><div class="line">        <span class="keyword">if</span> (!filterChainManager.hasChains()) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">        &#125;</div><div class="line">		<span class="comment">//获取请求的url</span></div><div class="line">        String requestURI = getPathWithinApplication(request);</div><div class="line"></div><div class="line">        <span class="comment">//循环遍历所有配置在filterChainDefinitionMap中的过滤器的名字</span></div><div class="line">        <span class="keyword">for</span> (String pathPattern : filterChainManager.getChainNames()) &#123;</div><div class="line"></div><div class="line">            <span class="comment">//url匹配</span></div><div class="line">            <span class="keyword">if</span> (pathMatches(pathPattern, requestURI)) &#123;</div><div class="line">                <span class="keyword">if</span> (log.isTraceEnabled()) &#123;</div><div class="line">                    log.trace(<span class="string">"Matched path pattern ["</span> + pathPattern + <span class="string">"] for requestURI ["</span> + requestURI + <span class="string">"].  "</span> +</div><div class="line">                            <span class="string">"Utilizing corresponding filter chain..."</span>);</div><div class="line">                &#125;</div><div class="line">                <span class="comment">//如果匹配了直接返回过滤器链的代理对象</span></div><div class="line">                <span class="keyword">return</span> filterChainManager.proxy(originalChain, pathPattern);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li>创建过滤器的流程图如下：</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chenjiabing666/BlogImage/master/Shiro.png" alt=""></p>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/分布式/">分布式</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/分布式/">分布式</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2019/08/13/Shiro源码解析/" data-title="Shiro源码解析 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2019/08/17/Shiro/" title="Shiro">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Shiro</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2019/08/05/mybatis源码解析/"  title="mybatis源码解析">
+ <strong>下一篇：</strong><br/> 
+ <span>mybatis源码解析
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FilterChainManager"><span class="toc-number">1.</span> <span class="toc-text">FilterChainManager</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ShiroFilterFactoryBean"><span class="toc-number">2.</span> <span class="toc-text">ShiroFilterFactoryBean</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Shiro中的过滤器"><span class="toc-number">3.</span> <span class="toc-text">Shiro中的过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#OncePerRequestFilter"><span class="toc-number">3.1.</span> <span class="toc-text">OncePerRequestFilter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AdviceFilter"><span class="toc-number">3.2.</span> <span class="toc-text">AdviceFilter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PathMatchingFilter"><span class="toc-number">3.3.</span> <span class="toc-text">PathMatchingFilter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AccessControlFilter"><span class="toc-number">3.4.</span> <span class="toc-text">AccessControlFilter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AuthenticationFilter"><span class="toc-number">3.5.</span> <span class="toc-text">AuthenticationFilter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现的过滤器"><span class="toc-number">3.6.</span> <span class="toc-text">实现的过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#FormAuthenticationFilter"><span class="toc-number">3.6.1.</span> <span class="toc-text">FormAuthenticationFilter</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义过滤器"><span class="toc-number">3.7.</span> <span class="toc-text">自定义过滤器</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#过滤器创建"><span class="toc-number">4.</span> <span class="toc-text">过滤器创建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">4.1.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

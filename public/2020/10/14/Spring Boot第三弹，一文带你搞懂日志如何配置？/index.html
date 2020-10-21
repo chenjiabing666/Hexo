@@ -1,0 +1,613 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>一文带你搞懂日志如何配置？ | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="持续原创输出，点击上方蓝字关注我吧
+目录前言Spring Boot 版本日志级别日志框架有哪些？Spring Boot 日志框架代码中如何使用日志？如何定制日志级别？日志如何输出到文件中？如何定制日志格式？如何自定义日志配置？总结前言日志通常不会在需求阶段作为一个功能单独提出来，也不会在产品方案中看到它的细节。但是，这丝毫不影响它在任何一个系统中的重要的地位。今天就来介绍一下Spring Boot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一文带你搞懂日志如何配置？">
+<meta property="og:url" content="http://chenjiabing666.github.io/2020/10/14/Spring Boot第三弹，一文带你搞懂日志如何配置？/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="持续原创输出，点击上方蓝字关注我吧
+目录前言Spring Boot 版本日志级别日志框架有哪些？Spring Boot 日志框架代码中如何使用日志？如何定制日志级别？日志如何输出到文件中？如何定制日志格式？如何自定义日志配置？总结前言日志通常不会在需求阶段作为一个功能单独提出来，也不会在产品方案中看到它的细节。但是，这丝毫不影响它在任何一个系统中的重要的地位。今天就来介绍一下Spring Boot">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Spring%20Boot%20%E7%AC%AC%E4%B8%89%E5%BC%B9%EF%BC%8C%E6%97%A5%E5%BF%97%E6%A1%86%E6%9E%B6/2.jpg">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Spring%20Boot%20%E7%AC%AC%E4%B8%89%E5%BC%B9%EF%BC%8C%E6%97%A5%E5%BF%97%E6%A1%86%E6%9E%B6/1.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/myjszl_log.png">
+<meta property="og:updated_time" content="2020-10-21T09:03:14.847Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一文带你搞懂日志如何配置？">
+<meta name="twitter:description" content="持续原创输出，点击上方蓝字关注我吧
+目录前言Spring Boot 版本日志级别日志框架有哪些？Spring Boot 日志框架代码中如何使用日志？如何定制日志级别？日志如何输出到文件中？如何定制日志格式？如何自定义日志配置？总结前言日志通常不会在需求阶段作为一个功能单独提出来，也不会在产品方案中看到它的细节。但是，这丝毫不影响它在任何一个系统中的重要的地位。今天就来介绍一下Spring Boot">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Spring%20Boot%20%E7%AC%AC%E4%B8%89%E5%BC%B9%EF%BC%8C%E6%97%A5%E5%BF%97%E6%A1%86%E6%9E%B6/2.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/10/14/Spring Boot第三弹，一文带你搞懂日志如何配置？/" title="一文带你搞懂日志如何配置？" itemprop="url">一文带你搞懂日志如何配置？</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2020-10-14T02:03:42.000Z" itemprop="datePublished"> 发表于 2020-10-14</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">1.</span> <span class="toc-text">持续原创输出，点击上方蓝字关注我吧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">2.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">3.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">4.</span> <span class="toc-text">Spring Boot 版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">5.</span> <span class="toc-text">日志级别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">6.</span> <span class="toc-text">日志框架有哪些？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">7.</span> <span class="toc-text">Spring Boot 日志框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.1.</span> <span class="toc-text">代码中如何使用日志？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.2.</span> <span class="toc-text">如何定制日志级别？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.3.</span> <span class="toc-text">日志如何输出到文件中？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.4.</span> <span class="toc-text">如何定制日志格式？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">8.</span> <span class="toc-text">如何自定义日志配置？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">8.1.</span> <span class="toc-text">configuration节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">8.2.</span> <span class="toc-text">root节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">8.3.</span> <span class="toc-text">contextName节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">8.4.</span> <span class="toc-text">property节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">8.5.</span> <span class="toc-text">appender节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">8.6.</span> <span class="toc-text">logger节点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">9.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p><section id="nice" data-tool="mdnice编辑器" data-website="https://www.mdnice.com" style="padding: 0 10px; word-spacing: 0px; word-wrap: break-word; text-align: left; font-family: Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, 'PingFang SC', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; line-height: 1.6; letter-spacing: .034em; color: rgb(63, 63, 63); font-size: 16px; word-break: all;"><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">持续原创输出，点击上方蓝字关注我吧</span><span class="suffix"></span></h2></section></p>
+<figure data-tool="mdnice编辑器" style="margin: 0; margin-top: 10px; margin-bottom: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center;"><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/Spring%20Boot%20%E7%AC%AC%E4%B8%89%E5%BC%B9%EF%BC%8C%E6%97%A5%E5%BF%97%E6%A1%86%E6%9E%B6/2.jpg" alt="" style="display: block; margin: 0 auto; max-width: 100%; border-radius: 4px; margin-bottom: 25px;"></figure><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">目录</span><span class="suffix"></span></h2><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">前言</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">Spring Boot 版本</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">日志级别</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">日志框架有哪些？</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">Spring Boot 日志框架<br><ul style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: square;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">代码中如何使用日志？</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">如何定制日志级别？</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">日志如何输出到文件中？</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">如何定制日志格式？</section></li></ul><br></section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">如何自定义日志配置？</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">总结</section></li></ul><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">前言</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">日志通常不会在需求阶段作为一个功能单独提出来，也不会在产品方案中看到它的细节。但是，这丝毫不影响它在任何一个系统中的重要的地位。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">今天就来介绍一下Spring Boot中的日志如何配置。</p><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">Spring Boot 版本</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">本文基于的Spring Boot的版本是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">2.3.4.RELEASE</code>。</p><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">日志级别</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">几种常见的日志级别由低到高分为：<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">TRACE &lt; DEBUG &lt; INFO &lt; WARN &lt; ERROR &lt; FATAL</code>。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">如何理解这个日志级别呢？很简单，如果项目中的日志级别设置为<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">INFO</code>，那么比它更低级别的日志信息就看不到了，即是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">TRACE</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DEBUG</code>日志将会不显示。</p><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">日志框架有哪些？</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">常见的日志框架有<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">log4j</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">logback</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">log4j2</code>。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">log4j</code>这个日志框架显示是耳熟能详了，在Spring开发中是经常使用，但是据说log4j官方已经不再更新了，而且在性能上比<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">logback</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">log4j2</code>差了很多。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">logback</code>是由<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">log4j</code>创始人设计的另外一个开源日志框架，logback相比之于log4j性能提升了10以上，初始化内存加载也更小了。作为的Spring Boot默认的日志框架肯定是有着不小的优势。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">log4j2</code>晚于<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">logback</code>推出，官网介绍性能比<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">logback</code>高，但谁知道是不是王婆卖瓜自卖自夸，坊间流传，log4j2在很多思想理念上都是照抄logback，因此即便log4j2是Apache官方项目，Spring等许多框架项目没有将它纳入主流。<strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">此处完全是作者道听途说，不必当真，题外话而已</strong>。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">日志框架很多，究竟如何选择能够适应现在的项目开发，当然不是普通程序员考虑的，但是为了更高的追求，至少应该了解一下，哈哈。</p><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">Spring Boot 日志框架</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">Spring Boot默认的日志框架是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">logback</code>，既然Spring Boot能够将其纳入的默认的日志系统，肯定是有一定的考量的，因此实际开发过程中还是不要更换。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">原则上需要使用logback,需要添加以下依赖，但是既然是默认的日志框架，当然不用重新引入依赖了。</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">groupId</span>&gt;</span>org.springframework.boot<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">groupId</span>&gt;</span><br><span><span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">artifactId</span>&gt;</span>spring-boot-starter-logging<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">artifactId</span>&gt;</span><br><span></span></span></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">Spring Boot中默认的日志级别是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">INFO</code>，启动项目日志打印如下：<br><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/Spring%20Boot%20%E7%AC%AC%E4%B8%89%E5%BC%B9%EF%BC%8C%E6%97%A5%E5%BF%97%E6%A1%86%E6%9E%B6/1.png" alt="" style="display: block; margin: 0 auto; max-width: 100%; border-radius: 4px; margin-bottom: 25px;"></p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">从上图可以看出，输出的日志的默认元素如下：</p><br><ol data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: decimal;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">时间日期：精确到毫秒</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">日志级别：ERROR, WARN, INFO, DEBUG , TRACE</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">进程ID</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">分隔符：— 标识实际日志的开始</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">线程名：方括号括起来（可能会截断控制台输出）</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">Logger名：通常使用源代码的类名</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">日志内容</section></li></ol><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">代码中如何使用日志？</span><span class="suffix" style="display: none;"></span></h3><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">在业务中肯定需要追溯日志，那么如何在自己的业务中输出日志呢？其实常用的有两种方式，下面一一介绍。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">第一种其实也是很早之前常用的一种方式，只需要在代码添加如下：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">private</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">final</span> Logger logger= LoggerFactory.getLogger(DemoApplicationTests.class);<br><span></span></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">这种方式显然比较鸡肋，如果每个类中都添加一下岂不是很low。别着急，lombok为我们解决了这个难题。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">要想使用lombok，需要添加如下依赖：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;">        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">dependency</span>&gt;</span><br><span>            <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">groupId</span>&gt;</span>org.projectlombok<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">groupId</span>&gt;</span><br><span>            <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">artifactId</span>&gt;</span>lombok<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">artifactId</span>&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">dependency</span>&gt;</span><br><span></span></span></span></span></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">使用也是很简单，只需要在类上标注一个注解<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Slf4j</code>即可，如下：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Slf</span>4j<br><span><span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">DemoApplicationTests</span> </span>{<br><span>  <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Test</span><br><span>  <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">test</span><span class="hljs-params" style="line-height: 26px;">()</span></span>{<br><span>    log.debug(<span class="hljs-string" style="color: #d14; line-height: 26px;">“输出DEBUG日志…….”</span>);<br><span>  }<br><span>}<br><span></span></span></span></span></span></span></span></code></pre><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">如何定制日志级别？</span><span class="suffix" style="display: none;"></span></h3><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">Spring Boot中默认的日志级别是INFO，但是可以自己定制日志级别，如下：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;">logging.level.root=DEBUG<br></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">上面是将所有的日志的级别都改成了<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DEBUG</code>，Spring Boot还支持<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">package</code>级别的日志级别调整，格式为：<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">logging.level.xxx=xxx</code>，如下：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;">logging.level.com.example.demo=INFO<br></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">那么完整的配置如下：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;">logging.level.root=DEBUG<br>logging.level.com.example.demo=INFO<br></code></pre><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">日志如何输出到文件中？</span><span class="suffix" style="display: none;"></span></h3><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">Spring Boot中日志默认是输出到控制台的，但是在生产环境中显示不可行的，因此需要配置日志输出到日志文件中。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">其中有两个重要配置如下：</p><br><ol data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: decimal;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">logging.file.path</code>：指定日志文件的路径</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">logging.file.name</code>：日志的文件名，默认为<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">spring.log</code></section></li></ol><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">注意：官方文档说这两个属性不能同时配置，否则不生效，因此只需要配置一个即可。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">指定输出的文件为当前项目路径的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">logs</code>文件下，默认生成的日志文件为<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">spring.log</code>，如下：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;">logging.file.path=./logs<br></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">日志文件中还有一些其他的属性，比如日志文件的最大size，保留几天的日志等等，下面会介绍到。</strong></p><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">如何定制日志格式？</span><span class="suffix" style="display: none;"></span></h3><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">默认的日志格式在第一张图已经看到了，有时我们需要定制自己需要的日志输出格式，这样在排查日志的时候能够一目了然。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">定制日志格式有两个配置，分别是控制台的输出格式和文件中的日志输出格式，如下：</p><br><ol data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: decimal;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">logging.pattern.console</code>：控制台的输出格式</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">logging.pattern.file</code>：日志文件的输出格式</section></li></ol><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">例如配置如下：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;">logging.pattern.console=%d{yyyy/MM/dd-HH:mm:ss} [%thread] %-5level %logger- %msg%n<br>logging.pattern.file=%d{yyyy/MM/dd-HH:mm} [%thread] %-5level %logger- %msg%n<br></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">上面的配置编码的含义如下：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;">%d{HH:mm:ss.SSS}——日志输出时间<br><span><br><span>%thread——输出日志的进程名字，这在Web应用以及异步任务处理中很有用<br><span><br><span>%-<span class="hljs-number" style="color: #008080; line-height: 26px;">5l</span>evel——日志级别，并且使用<span class="hljs-number" style="color: #008080; line-height: 26px;">5</span>个字符靠左对齐<br><span><br><span>%logger- ——日志输出者的名字<br><span><br><span>%msg——日志消息<br><span><br><span>%n——平台的换行符<br><span></span></span></span></span></span></span></span></span></span></span></span></code></pre><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">如何自定义日志配置？</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">Spring Boot官方文档指出，根据不同的日志系统，可以按照如下的日志配置文件名就能够被正确加载，如下：</p><br><ol data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: decimal;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Logback</code></strong>：logback-spring.xml, logback-spring.groovy, logback.xml, logback.groovy</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Log4j</code></strong>：log4j-spring.properties, log4j-spring.xml, log4j.properties, log4j.xml</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Log4j2</code></strong>：log4j2-spring.xml, log4j2.xml</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">JDK (Java Util Logging)</code></strong>：logging.properties</section></li></ol><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">Spring Boot官方推荐优先使用带有-spring的文件名作为你的日志配置。因此只需要在<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">src/resources</code>文件夹下创建<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">logback-spring.xml</code>即可，配置文件内容如下：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">&lt;?xml version=”1.0” encoding=”UTF-8”?&gt;</span><br><span><span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">configuration</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">scan</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“true”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">scanPeriod</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“60 seconds”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">debug</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“false”</span>&gt;</span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!– 定义日志存放目录 –&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">property</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">name</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“logPath”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">value</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“logs”</span>/&gt;</span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–    日志输出的格式–&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">property</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">name</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“PATTERN”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">value</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“%d{yyyy-MM-dd HH:mm:ss.SSS} [%t-%L] %-5level %logger{36} %L %M - %msg%xEx%n”</span>/&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">contextName</span>&gt;</span>logback<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">contextName</span>&gt;</span><br><span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–输出到控制台 ConsoleAppender–&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">appender</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">name</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“consoleLog”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">class</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“ch.qos.logback.core.ConsoleAppender”</span>&gt;</span><br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–展示格式 layout–&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">layout</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">class</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“ch.qos.logback.classic.PatternLayout”</span>&gt;</span><br><span>            <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">pattern</span>&gt;</span>${PATTERN}<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">pattern</span>&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">layout</span>&gt;</span><br><span>            <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–过滤器，只有过滤到指定级别的日志信息才会输出，如果level为ERROR，那么控制台只会输出ERROR日志–&gt;</span><br><span><span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–        &lt;filter class=”ch.qos.logback.classic.filter.ThresholdFilter”&gt;–&gt;</span><br><span><span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–            &lt;level&gt;ERROR&lt;/level&gt;–&gt;</span><br><span><span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–        &lt;/filter&gt;–&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">appender</span>&gt;</span><br><span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–正常的日志文件，输出到文件中–&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">appender</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">name</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“fileDEBUGLog”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">class</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“ch.qos.logback.core.rolling.RollingFileAppender”</span>&gt;</span><br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–如果只是想要 Info 级别的日志，只是过滤 info 还是会输出 Error 日志，因为 Error 的级别高，<br><span>        所以我们使用下面的策略，可以避免输出 Error 的日志–&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">filter</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">class</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“ch.qos.logback.classic.filter.LevelFilter”</span>&gt;</span><br><span>            <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–过滤 Error–&gt;</span><br><span>            <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">level</span>&gt;</span>Error<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">level</span>&gt;</span><br><span>            <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–匹配到就禁止–&gt;</span><br><span>            <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">onMatch</span>&gt;</span>DENY<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">onMatch</span>&gt;</span><br><span>            <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–没有匹配到就允许–&gt;</span><br><span>            <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">onMismatch</span>&gt;</span>ACCEPT<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">onMismatch</span>&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">filter</span>&gt;</span><br><span><br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–日志名称，如果没有File 属性，那么只会使用FileNamePattern的文件路径规则<br><span>            如果同时有&lt;File&gt;和&lt;FileNamePattern&gt;，那么当天日志是&lt;File&gt;，明天会自动把今天<br><span>            的日志改名为今天的日期。即，&lt;File&gt; 的日志都是当天的。<br><span>        –&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">File</span>&gt;</span>${logPath}/log_demo.log<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">File</span>&gt;</span><br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–滚动策略，按照时间滚动 TimeBasedRollingPolicy–&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">rollingPolicy</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">class</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“ch.qos.logback.core.rolling.TimeBasedRollingPolicy”</span>&gt;</span><br><span>            <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间–&gt;</span><br><span>            <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">FileNamePattern</span>&gt;</span>${logPath}/log<em>demo</em>%d{yyyy-MM-dd}.log<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">FileNamePattern</span>&gt;</span><br><span>            <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–只保留最近90天的日志–&gt;</span><br><span>            <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">maxHistory</span>&gt;</span>90<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">maxHistory</span>&gt;</span><br><span>            <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–用来指定日志文件的上限大小，那么到了这个值，就会删除旧的日志–&gt;</span><br><span>            <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–&lt;totalSizeCap&gt;1GB&lt;/totalSizeCap&gt;–&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">rollingPolicy</span>&gt;</span><br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–日志输出编码格式化–&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">encoder</span>&gt;</span><br><span>            <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">charset</span>&gt;</span>UTF-8<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">charset</span>&gt;</span><br><span>            <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">pattern</span>&gt;</span>${PATTERN}<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">pattern</span>&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">encoder</span>&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">appender</span>&gt;</span><br><span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–输出ERROR日志到指定的文件中–&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">appender</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">name</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“fileErrorLog”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">class</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“ch.qos.logback.core.rolling.RollingFileAppender”</span>&gt;</span><br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–如果只是想要 Error 级别的日志，那么需要过滤一下，默认是 info 级别的，ThresholdFilter–&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">filter</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">class</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“ch.qos.logback.classic.filter.ThresholdFilter”</span>&gt;</span><br><span>            <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">level</span>&gt;</span>Error<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">level</span>&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">filter</span>&gt;</span><br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–日志名称，如果没有File 属性，那么只会使用FileNamePattern的文件路径规则<br><span>            如果同时有&lt;File&gt;和&lt;FileNamePattern&gt;，那么当天日志是&lt;File&gt;，明天会自动把今天<br><span>            的日志改名为今天的日期。即，&lt;File&gt; 的日志都是当天的。<br><span>        –&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">File</span>&gt;</span>${logPath}/error.log<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">File</span>&gt;</span><br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–滚动策略，按照时间滚动 TimeBasedRollingPolicy–&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">rollingPolicy</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">class</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“ch.qos.logback.core.rolling.TimeBasedRollingPolicy”</span>&gt;</span><br><span>            <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–文件路径,定义了日志的切分方式——把每一天的日志归档到一个文件中,以防止日志填满整个磁盘空间–&gt;</span><br><span>            <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">FileNamePattern</span>&gt;</span>${logPath}/error_%d{yyyy-MM-dd}.log<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">FileNamePattern</span>&gt;</span><br><span>            <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–只保留最近90天的日志–&gt;</span><br><span>            <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">maxHistory</span>&gt;</span>90<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">maxHistory</span>&gt;</span><br><span>            <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–用来指定日志文件的上限大小，那么到了这个值，就会删除旧的日志–&gt;</span><br><span>            <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–&lt;totalSizeCap&gt;1GB&lt;/totalSizeCap&gt;–&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">rollingPolicy</span>&gt;</span><br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–日志输出编码格式化–&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">encoder</span>&gt;</span><br><span>            <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">charset</span>&gt;</span>UTF-8<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">charset</span>&gt;</span><br><span>            <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">pattern</span>&gt;</span>${PATTERN}<span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">pattern</span>&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">encoder</span>&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">appender</span>&gt;</span><br><span><br><span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–指定最基础的日志输出级别–&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">root</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">level</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“DEBUG”</span>&gt;</span><br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–appender将会添加到这个loger–&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">appender-ref</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">ref</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“consoleLog”</span>/&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">appender-ref</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">ref</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“fileDEBUGLog”</span>/&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">appender-ref</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">ref</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“fileErrorLog”</span>/&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">root</span>&gt;</span><br><span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–    定义指定package的日志级别–&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">name</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“org.springframework”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">level</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“DEBUG”</span>&gt;</span><span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span>&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">name</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“org.mybatis”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">level</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“DEBUG”</span>&gt;</span><span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span>&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">name</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“java.sql.Connection”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">level</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“DEBUG”</span>&gt;</span><span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span>&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">name</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“java.sql.Statement”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">level</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“DEBUG”</span>&gt;</span><span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span>&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">name</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“java.sql.PreparedStatement”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">level</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“DEBUG”</span>&gt;</span><span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span>&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">name</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“io.lettuce.<em>“</em></span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">level</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“INFO”</span>&gt;</span><span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span>&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">name</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“io.netty.“</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">level</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“ERROR”</span>&gt;</span><span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span>&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">name</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“com.rabbitmq.<em>“</em></span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">level</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“DEBUG”</span>&gt;</span><span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span>&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">name</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“org.springframework.amqp.“</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">level</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“DEBUG”</span>&gt;</span><span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span>&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">name</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“org.springframework.scheduling.*”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">level</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“DEBUG”</span>&gt;</span><span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span>&gt;</span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!–定义com.xxx..xx..xx包下的日志信息不上传，直接输出到fileDEBUGLog和fileErrorLog这个两个appender中，日志级别为DEBUG–&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">name</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“com.xxx.xxx.xx”</span>  <span class="hljs-attr" style="color: #008080; line-height: 26px;">additivity</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“false”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">level</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“DEBUG”</span>&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">appender-ref</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">ref</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“fileDEBUGLog”</span>/&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">appender-ref</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">ref</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“fileErrorLog”</span>/&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">logger</span>&gt;</span><br><span><br><span><span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">configuration</span>&gt;</span><br><span><br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">当然，如果就不想用Spring Boot推荐的名字，想自己定制也行，只需要在配置文件中指定配置文件名即可，如下：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;">logging.config=classpath:logging-config.xml<br></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">懵逼了，一堆配置什么意思？别着急，下面一一介绍。</strong></p><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">configuration节点</span><span class="suffix" style="display: none;"></span></h3><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">这是一个根节点，其中的各个属性如下：</p><br><ol data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: decimal;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">scan</code>：当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">scanPeriod</code>：设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">debug</code>：当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。</section></li></ol><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">root节点</span><span class="suffix" style="display: none;"></span></h3><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">这是一个必须节点，用来指定基础的日志级别，只有一个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">level</code>属性，默认值是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DEBUG</code>。<br>该节点可以包含零个或者多个元素，子节点是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">appender-ref</code>，标记这个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">appender</code>将会添加到这个logger中。</p><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">contextName节点</span><span class="suffix" style="display: none;"></span></h3><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">标识一个上下文名称，默认为default，一般用不到</p><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">property节点</span><span class="suffix" style="display: none;"></span></h3><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">标记一个上下文变量，属性有name和value，定义变量之后可以使用<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">${}</code>来获取。</p><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">appender节点</span><span class="suffix" style="display: none;"></span></h3><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">用来格式化日志输出节点，有两个属性<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">name</code>和<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">class</code>，class用来指定哪种输出策略，常用就是<strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">控制台输出策略</strong>和<strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">文件输出策略</strong>。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">这个节点很重要，通常的日志文件需要定义三个appender，分别是控制台输出，常规日志文件输出，异常日志文件输出。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">该节点有几个重要的子节点，如下：</p><br><ol data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: decimal;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">filter</code>：日志输出拦截器，没有特殊定制一般使用系统自带的即可，但是如果要将日志分开，比如将ERROR级别的日志输出到一个文件中，将除了<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ERROR</code>级别的日志输出到另外一个文件中，此时就要拦截<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ERROR</code>级别的日志了。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">encoder</code>： 和pattern节点组合用于具体输出的日志格式和编码方式。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">file</code>: 节点用来指明日志文件的输出位置，可以是绝对路径也可以是相对路径</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">rollingPolicy</code>: 日志回滚策略，在这里我们用了TimeBasedRollingPolicy，基于时间的回滚策略,有以下子节点fileNamePattern，必要节点，可以用来设置指定时间的日志归档。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">maxHistory</code> : 可选节点，控制保留的归档文件的最大数量，超出数量就删除旧文件,，例如设置为30的话，则30天之后，旧的日志就会被删除</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">totalSizeCap</code>: 可选节点，用来指定日志文件的上限大小，例如设置为3GB的话，那么到了这个值，就会删除旧的日志</section></li></ol><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">logger节点</span><span class="suffix" style="display: none;"></span></h3><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">可选节点，用来具体指明包的日志输出级别，它将会覆盖root的输出级别。<br>该节点有几个重要的属性如下：</p><br><ol data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: decimal;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">name</code>：指定的包名</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">level</code>：可选，日志的级别</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">addtivity</code>：可选，默认为true，将此logger的信息向上级传递，将有root节点定义日志打印。如果设置为false，将不会上传，此时需要定义一个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">appender-ref</code>节点才会输出。</section></li></ol><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">总结</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">Spring Boot的日志选型以及如何自定义日志配置就介绍到这里，如果觉得有所收获，不妨点个关注，分享一波，将是对作者最大的鼓励！！！</p><br><figure data-tool="mdnice编辑器" style="margin: 0; margin-top: 10px; margin-bottom: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center;"><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/myjszl_log.png" alt="" style="display: block; margin: 0 auto; max-width: 100%; border-radius: 4px; margin-bottom: 25px;"></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Spring-Boot-进阶/">Spring Boot 进阶</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Spring-Boot/">Spring Boot</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2020/10/14/Spring Boot第三弹，一文带你搞懂日志如何配置？/" data-title="一文带你搞懂日志如何配置？ | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/10/14/Spring Boot第四弹，一文带你搞懂日志框架如何切换？/" title="一文带你搞懂日志框架如何切换？">
+  <strong>上一篇：</strong><br/>
+  <span>
+  一文带你搞懂日志框架如何切换？</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/10/14/Spring Boot 第二弹，配置文件怎么造？/"  title="Spring Boot 配置文件怎么造？">
+ <strong>下一篇：</strong><br/> 
+ <span>Spring Boot 配置文件怎么造？
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">1.</span> <span class="toc-text">持续原创输出，点击上方蓝字关注我吧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">2.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">3.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">4.</span> <span class="toc-text">Spring Boot 版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">5.</span> <span class="toc-text">日志级别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">6.</span> <span class="toc-text">日志框架有哪些？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">7.</span> <span class="toc-text">Spring Boot 日志框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.1.</span> <span class="toc-text">代码中如何使用日志？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.2.</span> <span class="toc-text">如何定制日志级别？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.3.</span> <span class="toc-text">日志如何输出到文件中？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.4.</span> <span class="toc-text">如何定制日志格式？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">8.</span> <span class="toc-text">如何自定义日志配置？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">8.1.</span> <span class="toc-text">configuration节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">8.2.</span> <span class="toc-text">root节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">8.3.</span> <span class="toc-text">contextName节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">8.4.</span> <span class="toc-text">property节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">8.5.</span> <span class="toc-text">appender节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">8.6.</span> <span class="toc-text">logger节点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">9.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Mybatis进阶/" title="Mybatis进阶">Mybatis进阶<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring-Boot-进阶/" title="Spring Boot 进阶">Spring Boot 进阶<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/开发工具/" title="开发工具">开发工具<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring-Boot/" title="Spring Boot">Spring Boot<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mybatis/" title="Mybatis">Mybatis<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/破解/" title="破解">破解<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

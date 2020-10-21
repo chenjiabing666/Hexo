@@ -1,0 +1,972 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Hystrix断路器、熔断器 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="Hystrix 断路器、熔断器服务雪崩
+在微服务架构中通常会有多个服务层调用，基础服务的故障可能会导致级联故障，进而造成整个系统不可用的情况，这种现象被称为服务雪崩效应。服务雪崩效应是一种因“服务提供者”的不可用导致“服务消费者”的不可用,并将不可用逐渐放大的过程。
+如果下图所示：A作为服务提供者，B为A的服务消费者，C和D是B的服务消费者。A不可用引起了B的不可用，并将不可用像滚雪球一样放大到C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hystrix断路器、熔断器">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/12/25/Hystrix断路器、熔断器/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="Hystrix 断路器、熔断器服务雪崩
+在微服务架构中通常会有多个服务层调用，基础服务的故障可能会导致级联故障，进而造成整个系统不可用的情况，这种现象被称为服务雪崩效应。服务雪崩效应是一种因“服务提供者”的不可用导致“服务消费者”的不可用,并将不可用逐渐放大的过程。
+如果下图所示：A作为服务提供者，B为A的服务消费者，C和D是B的服务消费者。A不可用引起了B的不可用，并将不可用像滚雪球一样放大到C">
+<meta property="og:image" content="http://www.itmind.net/assets/images/2017/springcloud/hystrix-1.png">
+<meta property="og:image" content="https://images2015.cnblogs.com/blog/978381/201705/978381-20170516093016728-916759277.png">
+<meta property="og:image" content="https://github.com/chenjiabing666/BlogImage/blob/master/hystrix1.png?raw=true">
+<meta property="og:image" content="https://github.com/chenjiabing666/BlogImage/blob/master/hystrix2.jpg?raw=true">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T05:56:34.456Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hystrix断路器、熔断器">
+<meta name="twitter:description" content="Hystrix 断路器、熔断器服务雪崩
+在微服务架构中通常会有多个服务层调用，基础服务的故障可能会导致级联故障，进而造成整个系统不可用的情况，这种现象被称为服务雪崩效应。服务雪崩效应是一种因“服务提供者”的不可用导致“服务消费者”的不可用,并将不可用逐渐放大的过程。
+如果下图所示：A作为服务提供者，B为A的服务消费者，C和D是B的服务消费者。A不可用引起了B的不可用，并将不可用像滚雪球一样放大到C">
+<meta name="twitter:image" content="http://www.itmind.net/assets/images/2017/springcloud/hystrix-1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/12/25/Hystrix断路器、熔断器/" title="Hystrix断路器、熔断器" itemprop="url">Hystrix断路器、熔断器</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-12-24T16:21:38.000Z" itemprop="datePublished"> 发表于 2018-12-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Hystrix-断路器、熔断器"><span class="toc-number">1.</span> <span class="toc-text">Hystrix 断路器、熔断器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#服务雪崩"><span class="toc-number">1.1.</span> <span class="toc-text">服务雪崩</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#是什么"><span class="toc-number">1.2.</span> <span class="toc-text">是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作用"><span class="toc-number">1.3.</span> <span class="toc-text">作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对象"><span class="toc-number">1.4.</span> <span class="toc-text">对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务降级"><span class="toc-number">1.5.</span> <span class="toc-text">服务降级</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简介"><span class="toc-number">1.5.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用场景"><span class="toc-number">1.5.2.</span> <span class="toc-text">使用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用效果"><span class="toc-number">1.5.3.</span> <span class="toc-text">使用效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用Feign达到服务降级"><span class="toc-number">1.5.4.</span> <span class="toc-text">使用Feign达到服务降级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用RestTemplate服务降级"><span class="toc-number">1.5.5.</span> <span class="toc-text">使用RestTemplate服务降级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一对一"><span class="toc-number">1.5.6.</span> <span class="toc-text">一对一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#默认的熔断"><span class="toc-number">1.5.7.</span> <span class="toc-text">默认的熔断</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#超时设置"><span class="toc-number">1.6.</span> <span class="toc-text">超时设置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ribbon-Hystrix"><span class="toc-number">1.6.1.</span> <span class="toc-text">ribbon+ Hystrix</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#直接在-HystrixCommand注解中配置"><span class="toc-number">1.6.1.1.</span> <span class="toc-text">直接在@HystrixCommand注解中配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#配置文件中配置"><span class="toc-number">1.6.1.2.</span> <span class="toc-text">配置文件中配置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Feign-Hystrix"><span class="toc-number">1.6.2.</span> <span class="toc-text">Feign+Hystrix</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务熔断"><span class="toc-number">1.7.</span> <span class="toc-text">服务熔断</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#熔断器的状态机"><span class="toc-number">1.7.1.</span> <span class="toc-text">熔断器的状态机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置参数"><span class="toc-number">1.7.2.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#直接在-HystrixCommand注解中配置熔断"><span class="toc-number">1.7.3.</span> <span class="toc-text">直接在@HystrixCommand注解中配置熔断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用配置文件实现"><span class="toc-number">1.7.4.</span> <span class="toc-text">使用配置文件实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#源码"><span class="toc-number">1.7.5.</span> <span class="toc-text">源码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hystrix-Dashboard-图形化监控"><span class="toc-number">1.8.</span> <span class="toc-text">Hystrix Dashboard  图形化监控</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hystrix-dashboard-服务端配置"><span class="toc-number">1.8.1.</span> <span class="toc-text">Hystrix-dashboard 服务端配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#被监控服务的创建"><span class="toc-number">1.8.2.</span> <span class="toc-text">被监控服务的创建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#详细指标"><span class="toc-number">1.8.3.</span> <span class="toc-text">详细指标</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">1.9.</span> <span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#熔断发生的场景"><span class="toc-number">1.9.1.</span> <span class="toc-text">熔断发生的场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#注意点"><span class="toc-number">1.9.2.</span> <span class="toc-text">注意点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.10.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.11.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Hystrix-断路器、熔断器"><a href="#Hystrix-断路器、熔断器" class="headerlink" title="Hystrix 断路器、熔断器"></a>Hystrix 断路器、熔断器</h1><h2 id="服务雪崩"><a href="#服务雪崩" class="headerlink" title="服务雪崩"></a>服务雪崩</h2><ul>
+<li><p>在微服务架构中通常会有多个服务层调用，基础服务的故障可能会导致级联故障，进而造成整个系统不可用的情况，这种现象被称为服务雪崩效应。服务雪崩效应是一种因“服务提供者”的不可用导致“服务消费者”的不可用,并将不可用逐渐放大的过程。</p>
+<p>如果下图所示：A作为服务提供者，B为A的服务消费者，C和D是B的服务消费者。A不可用引起了B的不可用，并将不可用像滚雪球一样放大到C和D时，雪崩效应就形成了。</p>
+</li>
+</ul>
+<p><img src="http://www.itmind.net/assets/images/2017/springcloud/hystrix-1.png" alt=""></p>
+<h2 id="是什么"><a href="#是什么" class="headerlink" title="是什么"></a>是什么</h2><ul>
+<li>Hystrix是一个用于处理分布式系统的延迟和容错的开源库，在分布式系统里，许多依赖不可避免的会调用失败，Hystrix能够保证在一个依赖出现问题的情况下，不会导致整个服务失败，避免级联故障，以提高分布式系统的弹性。</li>
+<li>断路器本身是一种开关装置，当某个服务单元发生故障之后，通过断路器的故障监控（类似熔断保险丝），向调用方返回一个符合预期，可处理的备选响应（FallBack），而不是长时间等待或者抛出调用方法无法处理的异常，这样就保证了调用方线程不会被长时间，不必要的占用，从而避免了故障在分布式系统中的蔓延，乃至雪崩</li>
+</ul>
+<h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><ul>
+<li>简单的说就是当程序出现异常的时候返回一个错误的状态告知其他的服务，而不是任由异常发展下去导致整个系统的瘫痪</li>
+</ul>
+<h2 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h2><ul>
+<li>服务提供者</li>
+</ul>
+<h2 id="服务降级"><a href="#服务降级" class="headerlink" title="服务降级"></a>服务降级</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><ul>
+<li>什么是服务降级？当服务器压力剧增的情况下，根据实际业务情况及流量，对一些服务和页面有策略的不处理或换种简单的方式处理，从而释放服务器资源以保证核心交易正常运作或高效运作。</li>
+<li>如果还是不理解，那么可以举个例子：假如目前有很多人想要给我付钱，但我的服务器除了正在运行支付的服务之外，还有一些其它的服务在运行，比如搜索、定时任务和详情等等。然而这些不重要的服务就占用了JVM的不少内存与CPU资源，为了能把钱都收下来（钱才是目标），我设计了一个动态开关，把这些不重要的服务直接在最外层拒掉，这样处理后的后端处理收钱的服务就有更多的资源来收钱了（收钱速度更快了），这就是一个简单的服务降级的使用场景。</li>
+</ul>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><ul>
+<li>服务降级主要用于什么场景呢？当整个微服务架构整体的负载超出了预设的上限阈值或即将到来的流量预计将会超过预设的阈值时，为了保证重要或基本的服务能正常运行，我们可以将一些 不重要或 不紧急 的服务或任务进行服务的 延迟使用 或 暂停使用。 </li>
+</ul>
+<h3 id="使用效果"><a href="#使用效果" class="headerlink" title="使用效果"></a>使用效果</h3><ul>
+<li><strong>在客户端结合Feign配置熔断处理，当没有服务提供者或者服务出现异常的时候就会调用熔断Hystrix定制的接口，返回特定的错误信息</strong></li>
+</ul>
+<h3 id="使用Feign达到服务降级"><a href="#使用Feign达到服务降级" class="headerlink" title="使用Feign达到服务降级"></a>使用Feign达到服务降级</h3><ul>
+<li><strong>服务降级是在客户端配置，与服务提供者无关</strong></li>
+<li>添加依赖如下：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- feign的依赖 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-openfeign<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="comment">&lt;!-- Hystrix的依赖 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-hystrix<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="comment">&lt;!-- eureka的客户端依赖 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line">      <span class="comment">&lt;!-- ribbon的依赖 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-ribbon<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>使用<code>@FeignClient</code>在<strong>公共模块上</strong>创建一个接口实现负载均衡，如下：<ul>
+<li><code>@FeignClient(name=&quot;DEPT-PROVIDER&quot;,fallbackFactory=DeptFallBack.class)</code><ul>
+<li><code>name</code>：指定服务提供者的实例名称</li>
+<li><code>fallbackFactory</code>：熔断处理的接口，在下面会定义</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> org.springframework.cloud.openfeign.FeignClient;</div><div class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.PathVariable;</div><div class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</div><div class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMethod;</div><div class="line"><span class="keyword">import</span> cn.tedu.provider.domain.Dept;</div><div class="line"><span class="comment">/**</span></div><div class="line"> * Hystrix和Feign结合实现服务的降级</div><div class="line"> * <span class="doctag">@FeignClient</span> 标注这个接口使用Feign实现负载均衡</div><div class="line"> * 	1、name指定了微服务提供者的实例名称</div><div class="line"> * 	2、fallbackFactory指定了熔断的接口，一旦出现异常就会调用这个接口的方法返回指定的熔断信息</div><div class="line"> */</div><div class="line"><span class="meta">@FeignClient</span>(name=<span class="string">"DEPT-PROVIDER"</span>,fallbackFactory=DeptFallBack.class)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DeptFeign</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 获取部门，使用Get方式请求</div><div class="line">	 * <span class="doctag">@param</span> id</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@RequestMapping</span>(value=<span class="string">"/dept/&#123;id&#125;"</span>,method=RequestMethod.GET)</div><div class="line">	<span class="function">Dept <span class="title">get</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span>Integer id)</span>;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 添加部门，使用POST请求的方式</div><div class="line">	 * <span class="doctag">@param</span> dept</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@RequestMapping</span>(value=<span class="string">"/dept"</span>,method=RequestMethod.POST)</div><div class="line">	<span class="function">Dept <span class="title">addDept</span><span class="params">(Dept dept)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>在<strong>公共模块</strong>创建熔断处理的接口，如下：<ul>
+<li><strong>这个类需要使用<code>FallbackFactory</code>，其中的泛型是Feign定义的接口</strong></li>
+<li><strong>一定要使用<code>@Component</code>这个注解将其注入到IOC容器中</strong></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</div><div class="line"><span class="keyword">import</span> cn.tedu.provider.domain.Dept;</div><div class="line"><span class="keyword">import</span> feign.hystrix.FallbackFactory;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> *  针对DeptFiegn接口的服务熔断的公共类，在其中可以对各个接口进行服务熔断响应进行定制</div><div class="line"> *  1、这个接口必须实现`feign.hystrix.FallbackFactory`</div><div class="line"> *  2、这个FallbackFactory中的泛型必须是`<span class="doctag">@FeignClient</span>`标注的接口（实现负载均衡）</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span>   <span class="comment">//一定要将其注入到容器中</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeptFallBack</span> <span class="keyword">implements</span> <span class="title">FallbackFactory</span>&lt;<span class="title">DeptFeign</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 实现其中的方法</div><div class="line">	 */</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> DeptFeign <span class="title">create</span><span class="params">(Throwable cause)</span> </span>&#123;</div><div class="line">		<span class="comment">//直接return这个接口的对象，并且实现其中的所有接口方法，下面的每一个接口返回的信息就将是服务熔断返回的消息</span></div><div class="line">		<span class="keyword">return</span> <span class="keyword">new</span> DeptFeign() &#123;</div><div class="line">			</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> Dept <span class="title">get</span><span class="params">(Integer id)</span> </span>&#123;   <span class="comment">//根据Id获取异常之后就会返回其中的信息</span></div><div class="line">				Dept dept=<span class="keyword">new</span> Dept();</div><div class="line">				dept.setDeptId(-<span class="number">1</span>);</div><div class="line">				dept.setDeptName(<span class="string">"服务熔断......"</span>);</div><div class="line">				<span class="keyword">return</span> dept;</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> Dept <span class="title">addDept</span><span class="params">(Dept dept)</span> </span>&#123;  <span class="comment">//添加异常返回这个信息</span></div><div class="line">				dept.setDeptId(-<span class="number">1</span>);</div><div class="line">				dept.setDeptName(<span class="string">"服务熔断......"</span>);</div><div class="line">				<span class="keyword">return</span> dept;</div><div class="line">			&#125;&#125;;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>在消费者端controller中调用Feign的接口即可，如果程序抛出异常或者没有服务提供者，那么将会调用定义好的熔断方法，返回对应的信息，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RestController</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeptController</span> </span>&#123;</div><div class="line">	<span class="meta">@Resource</span></div><div class="line">	<span class="keyword">private</span> DeptFeign deptFeign;  <span class="comment">//直接注入Feign接口，不过需要在主启动类上扫描该类所在的包或者父包</span></div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 根据部门Id获取部门</div><div class="line">	 * <span class="doctag">@param</span> id</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@GetMapping</span>(<span class="string">"/dept/&#123;id&#125;"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> Dept <span class="title">getDept</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Integer id) </span>&#123;</div><div class="line">		<span class="keyword">return</span> deptFeign.get(id);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 添加部门，json方式提交</div><div class="line">	 * <span class="doctag">@param</span> dept</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@PostMapping</span>(<span class="string">"/dept"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> Dept <span class="title">addDept</span><span class="params">(@RequestBody Dept dept)</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> deptFeign.addDept(dept);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>在消费者端开启feign对Hystrix的支持，如下：</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="attr">feign:</span></div><div class="line"><span class="attr">  hystrix:</span></div><div class="line"><span class="attr">    enabled:</span> <span class="literal">true</span></div></pre></td></tr></table></figure>
+<ul>
+<li>在消费者的启动类上添加注解，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@SpringBootApplication</span></div><div class="line"><span class="meta">@EnableEurekaClient</span>   <span class="comment">//开启eureka</span></div><div class="line"><span class="meta">@EnableCircuitBreaker</span>  <span class="comment">//开启熔断器</span></div><div class="line"><span class="meta">@EnableFeignClients</span>(basePackages= &#123;<span class="string">"cn.tedu.api.*"</span>&#125;)  <span class="comment">//由于是分模块开发，feignclient是定义在公共模块的，因此必须指定basePackages扫描@FeignClient所在的包</span></div><div class="line"><span class="meta">@ComponentScan</span>(basePackages= &#123;<span class="string">"cn.tedu.api.*"</span>,<span class="string">"cn.tedu.client.*"</span>&#125;) <span class="comment">//由于分模块开发，因此必须扫描Hystrix定义的fallbackFactory所在的包，同时也要扫描本模块所在的包，当然可以直接扫描cn.tedu.*这个包</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderClient9002Application</span> </span>&#123;</div></pre></td></tr></table></figure>
+<ul>
+<li>源码<ul>
+<li><a href="https://gitee.com/chenjiabing666/order-api.git" target="_blank" rel="external">order-api</a></li>
+<li><a href="https://gitee.com/chenjiabing666/order-client9002.git" target="_blank" rel="external">order-client</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="使用RestTemplate服务降级"><a href="#使用RestTemplate服务降级" class="headerlink" title="使用RestTemplate服务降级"></a>使用RestTemplate服务降级</h3><ul>
+<li>添加依赖，如下:</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- Hystrix的依赖 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-hystrix<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>启动类上开启熔断</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@SpringBootApplication</span></div><div class="line"><span class="meta">@EnableEurekaClient</span>   <span class="comment">//开启eureka</span></div><div class="line"><span class="meta">@EnableCircuitBreaker</span>  <span class="comment">//开启服务熔断</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderClient9001Application</span> </span>&#123;</div></pre></td></tr></table></figure>
+<h3 id="一对一"><a href="#一对一" class="headerlink" title="一对一"></a>一对一</h3><ul>
+<li>第一种的实现方式就是每一个方法都对应一个熔断的方法（复杂，很难拓展和管理）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RestController</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderController</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String URI_PRFIX=<span class="string">"http://zuul-server/api-order"</span>;  <span class="comment">//直接使用zuul网管连接订单的服务提供者</span></div><div class="line">	</div><div class="line">	<span class="meta">@Resource</span></div><div class="line">	<span class="keyword">private</span> RestTemplate restTemplate;</div><div class="line">	</div><div class="line">    <span class="comment">//使用@HystrixCommand这个注解，其中指定熔断后调用的方法</span></div><div class="line">	<span class="meta">@HystrixCommand</span>(fallbackMethod=<span class="string">"getOrderFallback"</span>)   </div><div class="line">	<span class="meta">@GetMapping</span>(<span class="string">"/order/&#123;id&#125;"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> Order <span class="title">getOrder</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span>Integer id) </span>&#123;</div><div class="line">		System.out.println(<span class="number">1</span>/<span class="number">0</span>);   <span class="comment">//特意出异常</span></div><div class="line">		<span class="keyword">return</span> restTemplate.getForObject(URI_PRFIX+<span class="string">"/order/"</span>+id, Order.class);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 	服务的熔断方法，只有当没有服务提供者提供服务或者程序出现异常的时候才会执行这个方法</div><div class="line">	 * 	注意：</div><div class="line">	 * 		1、返回的类型一定要相同或者是其子类</div><div class="line">	 * 		2、入参的参数和类型一定要相同</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> Order <span class="title">getOrderFallback</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span>Integer id) </span>&#123;</div><div class="line">		Order order=<span class="keyword">new</span> Order();</div><div class="line">		order.setOrderId(-<span class="number">1</span>);</div><div class="line">		order.setOrderNum(<span class="string">"太拥挤了，请稍后再试......"</span>);</div><div class="line">		<span class="keyword">return</span> order;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="默认的熔断"><a href="#默认的熔断" class="headerlink" title="默认的熔断"></a>默认的熔断</h3><ul>
+<li>上面是针对一对一的熔断，每个接口都要写一个熔断方法，但是我们也可以针对一个类写一个默认的熔断方法即可</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 使用<span class="doctag">@DefaultProperties</span>指定默认的熔断方法</div><div class="line"> * 	1、需要熔断机制的接口上只需要添加<span class="doctag">@HystrixCommand</span>注解即可</div><div class="line"> * <span class="doctag">@author</span> Administrator</div><div class="line"> *</div><div class="line"> */</div><div class="line"><span class="meta">@RestController</span></div><div class="line"><span class="meta">@DefaultProperties</span>(defaultFallback=<span class="string">"defaultFallBack"</span>)   </div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderController</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String URI_PRFIX=<span class="string">"http://zuul-server/api-order"</span>;  <span class="comment">//直接使用zuul网管连接订单的服务提供者</span></div><div class="line">	</div><div class="line">	<span class="meta">@Resource</span></div><div class="line">	<span class="keyword">private</span> RestTemplate restTemplate;</div><div class="line">	</div><div class="line">	<span class="meta">@HystrixCommand</span>   <span class="comment">//使用这个注解，其中指定熔断后调用的方法</span></div><div class="line">	<span class="meta">@GetMapping</span>(<span class="string">"/order/&#123;id&#125;"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> Order <span class="title">getOrder</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span>Integer id) </span>&#123;</div><div class="line">		System.out.println(<span class="number">1</span>/<span class="number">0</span>);</div><div class="line">		<span class="keyword">return</span> restTemplate.getForObject(URI_PRFIX+<span class="string">"/order/"</span>+id, Order.class);</div><div class="line">	&#125;</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 *  	默认的熔断方法</div><div class="line">	 *  	1、参数必须为空</div><div class="line">	 *  	2、返回的类型有特殊要求	</div><div class="line">	 *  		1、必须和出现熔断的方法的返回类型相同或者是其子类</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> Order <span class="title">defaultFallBack</span><span class="params">()</span> </span>&#123;</div><div class="line">		Order order=<span class="keyword">new</span> Order();</div><div class="line">		order.setOrderId(-<span class="number">1</span>);</div><div class="line">		order.setOrderNum(<span class="string">"太拥挤了，请稍后再试......"</span>);</div><div class="line">		<span class="keyword">return</span> order;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="超时设置"><a href="#超时设置" class="headerlink" title="超时设置"></a>超时设置</h2><h3 id="ribbon-Hystrix"><a href="#ribbon-Hystrix" class="headerlink" title="ribbon+ Hystrix"></a>ribbon+ Hystrix</h3><ul>
+<li>熔断超时时间默认是<strong>1秒</strong>，即是当请求的服务在一秒之内没有执行完成，那么将会直接熔断，调用熔断方法，返回熔断信息，如下：<ul>
+<li>请求这个接口将会直接熔断，因为这里等待的时间超过了设置的时间</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@HystrixCommand</span>  <span class="comment">//使用这个注解，其中指定熔断后调用的方法</span></div><div class="line"><span class="meta">@GetMapping</span>(<span class="string">"/order/&#123;id&#125;"</span>)</div><div class="line"><span class="function"><span class="keyword">public</span> Order <span class="title">getOrder</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span>Integer id) </span>&#123;</div><div class="line">	<span class="keyword">try</span> &#123;</div><div class="line">		Thread.sleep(<span class="number">2000</span>);</div><div class="line">	&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">		<span class="comment">// TODO Auto-generated catch block</span></div><div class="line">		e.printStackTrace();</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> restTemplate.getForObject(URI_PRFIX+<span class="string">"/order/"</span>+id, Order.class);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="直接在-HystrixCommand注解中配置"><a href="#直接在-HystrixCommand注解中配置" class="headerlink" title="直接在@HystrixCommand注解中配置"></a>直接在@HystrixCommand注解中配置</h4><ul>
+<li>我们可以通过配置改变这个默认的时间，如下：<ul>
+<li>直接在<code>@HystrixCommand</code>的注解中配置</li>
+<li>一些常用的常量配置都可以在<code>com.netflix.hystrix.HystrixCommandProperties</code>这个类中找到</li>
+<li><strong>单位毫秒</strong></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@HystrixCommand</span>(commandProperties=&#123;</div><div class="line">		<span class="meta">@HystrixProperty</span>(name=<span class="string">"execution.isolation.thread.timeoutInMilliseconds"</span>,value=<span class="string">"3000"</span>)</div><div class="line">	&#125;)   <span class="comment">//使用这个注解，其中指定熔断后调用的方法</span></div><div class="line">	<span class="meta">@GetMapping</span>(<span class="string">"/order/&#123;id&#125;"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> Order <span class="title">getOrder</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span>Integer id) </span>&#123;</div><div class="line"><span class="comment">//		System.out.println(1/0);</span></div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			Thread.sleep(<span class="number">2000</span>);</div><div class="line">		&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</div><div class="line">			<span class="comment">// TODO Auto-generated catch block</span></div><div class="line">			e.printStackTrace();</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> restTemplate.getForObject(URI_PRFIX+<span class="string">"/order/"</span>+id, Order.class);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<h4 id="配置文件中配置"><a href="#配置文件中配置" class="headerlink" title="配置文件中配置"></a>配置文件中配置</h4><ul>
+<li>直接在配置文件中配置，但是在需要熔断的方法上面一定要加上<code>@HystrixCommand</code>这个注解</li>
+<li>针对所有的方法设置超时时间，如下：</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="attr">hystrix:</span></div><div class="line"><span class="attr">  command:</span></div><div class="line"><span class="attr">    default:</span></div><div class="line"><span class="attr">      execution:</span></div><div class="line"><span class="attr">        isolation:</span></div><div class="line"><span class="attr">          thread:</span></div><div class="line"><span class="attr">            timeoutInMilliseconds:</span> <span class="number">3000</span></div></pre></td></tr></table></figure>
+<ul>
+<li>针对指定的方法设置超时时间，如下：<ul>
+<li><strong>也可以对指定的方法指定<code>commandKey</code>,只需要在@HystrixCommand这个注解中指定这个属性即可，默认是方法的名称</strong></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="attr">hystrix:</span></div><div class="line"><span class="attr">  command:</span></div><div class="line"><span class="attr">    getOrder:</span>  <span class="comment"># 方法名称</span></div><div class="line"><span class="attr">      execution:</span></div><div class="line"><span class="attr">        isolation:</span></div><div class="line"><span class="attr">          thread:</span></div><div class="line"><span class="attr">            timeoutInMilliseconds:</span> <span class="number">3000</span></div></pre></td></tr></table></figure>
+<h3 id="Feign-Hystrix"><a href="#Feign-Hystrix" class="headerlink" title="Feign+Hystrix"></a>Feign+Hystrix</h3><ul>
+<li>在使用Feign+Hystrix实现服务熔断的时候，虽然我们在配置文件中改变了hystrix的默认的熔断超时时间，但是并不作用，如下:</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="attr">hystrix:</span></div><div class="line"><span class="attr">  command:</span></div><div class="line"><span class="attr">    default:</span>  <span class="comment"># 方法名称</span></div><div class="line"><span class="attr">      execution:</span></div><div class="line"><span class="attr">        isolation:</span></div><div class="line"><span class="attr">          thread:</span></div><div class="line"><span class="attr">            timeoutInMilliseconds:</span> <span class="number">7000</span></div></pre></td></tr></table></figure>
+<ul>
+<li><strong>上面的配置并不起作用，因为<code>Feign</code>也是使用<code>ribbon</code>的，ribbon也是有超时时间的，默认也是一秒，因此我们要想上面的配置生效，必须指定ribbon的超时时间，并且Hystrix的超时时间应该比ribbon的时间长，因为ribbon还有重试机制，只有当重试也失效之后才应该熔断，完整的配置如下</strong>:</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="attr">ribbon:</span>   <span class="comment"># 设置ribbon的超时时间，这里使用Feign会和Hystrix的超时间相互干扰</span></div><div class="line"><span class="attr">  ReadTimeout:</span> <span class="number">5000</span></div><div class="line"><span class="attr">  ConnectTimeout:</span> <span class="number">3000</span></div><div class="line"><span class="attr">  OkToRetryOnAllOperations:</span> <span class="literal">true</span>  <span class="comment">#对所有操作都进行重试。</span></div><div class="line"><span class="attr">  MaxAutoRetriesNextServer:</span> <span class="number">2</span>     <span class="comment"># 切换实例的重试次数。 </span></div><div class="line"><span class="attr">  MaxAutoRetries:</span> <span class="number">1</span>               <span class="comment"># 对当前实例的重试次数。</span></div><div class="line"></div><div class="line"><span class="attr">hystrix:</span></div><div class="line"><span class="attr">  command:</span></div><div class="line"><span class="attr">    default:</span>  </div><div class="line"><span class="attr">      execution:</span></div><div class="line"><span class="attr">        isolation:</span></div><div class="line"><span class="attr">          thread:</span></div><div class="line"><span class="attr">            timeoutInMilliseconds:</span> <span class="number">7000</span></div></pre></td></tr></table></figure>
+<ul>
+<li><a href="https://blog.csdn.net/east123321/article/details/82385816" target="_blank" rel="external">https://blog.csdn.net/east123321/article/details/82385816</a></li>
+</ul>
+<h2 id="服务熔断"><a href="#服务熔断" class="headerlink" title="服务熔断"></a>服务熔断</h2><h3 id="熔断器的状态机"><a href="#熔断器的状态机" class="headerlink" title="熔断器的状态机"></a>熔断器的状态机</h3><ul>
+<li><img src="https://images2015.cnblogs.com/blog/978381/201705/978381-20170516093016728-916759277.png" alt=""></li>
+</ul>
+<ul>
+<li><code>Closed</code>：熔断器关闭状态，调用失败次数积累，到了阈值（或一定比例）则启动熔断机制；</li>
+<li><code>Open</code>：熔断器打开状态，此时对下游的调用都内部直接返回错误，不走网络，但设计了一个时钟选项，默认的时钟达到了一定时间（这个时间一般设置成平均故障处理时间，也就是MTTR），到了这个时间，进入半熔断状态；</li>
+<li><code>Half-Open</code>：半熔断状态，允许定量的服务请求，如果调用都成功（或一定比例）则认为恢复了，关闭熔断器，否则认为还没好，又回到熔断器打开状态； </li>
+</ul>
+<h3 id="配置参数"><a href="#配置参数" class="headerlink" title="配置参数"></a>配置参数</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>circuitBreaker.enabled</td>
+<td>是否开启熔断器</td>
+<td>默认true</td>
+</tr>
+<tr>
+<td>circuitBreaker.sleepWindowInMilliseconds</td>
+<td>熔断多少秒后去尝试请求</td>
+<td>当熔断器处于open的时候，并且达到了这个阈值，熔断器处于half-open状态，当再次有请求过来的时候就会尝试再次请求服务，而不是直接熔断服务，当此时访问服务正常的话，那么熔断器就会关闭。默认值5000毫秒</td>
+</tr>
+<tr>
+<td>circuitBreaker.requestVolumeThreshold</td>
+<td>在使用统计信息做出打开/关闭决策之前，必须在统计窗口中进行的请求数量</td>
+<td>默认20</td>
+</tr>
+<tr>
+<td>circuitBreaker.errorThresholdPercentage</td>
+<td>失败率达到多少百分比后熔断</td>
+<td>默认值50，即是请求失败率达到50%熔断器处于open状态</td>
+</tr>
+<tr>
+<td>commandKey</td>
+<td></td>
+<td>默认值：当前执行方法名</td>
+</tr>
+</tbody>
+</table>
+<h3 id="直接在-HystrixCommand注解中配置熔断"><a href="#直接在-HystrixCommand注解中配置熔断" class="headerlink" title="直接在@HystrixCommand注解中配置熔断"></a>直接在@HystrixCommand注解中配置熔断</h3><ul>
+<li>添加依赖</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;!-- Hystrix的依赖 --&gt;</div><div class="line">&lt;dependency&gt;</div><div class="line">	&lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</div><div class="line">	&lt;artifactId&gt;spring-cloud-starter-netflix-hystrix&lt;/artifactId&gt;</div><div class="line">&lt;/dependency&gt;</div></pre></td></tr></table></figure>
+<ul>
+<li>直接在消费者端使用即可，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 使用<span class="doctag">@DefaultProperties</span>指定默认的熔断方法</div><div class="line"> * 	1、需要熔断机制的接口上只需要添加<span class="doctag">@HystrixCommand</span>注解即可</div><div class="line"> * <span class="doctag">@author</span> Administrator</div><div class="line"> *</div><div class="line"> */</div><div class="line"><span class="meta">@RestController</span></div><div class="line"><span class="meta">@DefaultProperties</span>(defaultFallback=<span class="string">"defaultFallBack"</span>)   </div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderController</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String URI_PRFIX=<span class="string">"http://zuul-server/api-order"</span>;  <span class="comment">//直接使用zuul网管连接订单的服务提供者</span></div><div class="line">	</div><div class="line">	<span class="meta">@Resource</span></div><div class="line">	<span class="keyword">private</span> RestTemplate restTemplate;</div><div class="line">	</div><div class="line">	<span class="meta">@HystrixCommand</span>(commandProperties=&#123;</div><div class="line">			<span class="meta">@HystrixProperty</span>(name=<span class="string">"execution.isolation.thread.timeoutInMilliseconds"</span>,value=<span class="string">"3000"</span>),  <span class="comment">//设置超时时间</span></div><div class="line">			<span class="meta">@HystrixProperty</span>(name=<span class="string">"circuitBreaker.enabled"</span>,value=<span class="string">"true"</span>),  <span class="comment">// 开启熔断</span></div><div class="line">			<span class="meta">@HystrixProperty</span>(name=<span class="string">"circuitBreaker.requestVolumeThreshold"</span>,value=<span class="string">"10"</span>),  <span class="comment">//最小请求数</span></div><div class="line">			<span class="meta">@HystrixProperty</span>(name=<span class="string">"circuitBreaker.sleepWindowInMilliseconds"</span>,value=<span class="string">"10000"</span>),  <span class="comment">//请求重试时间，单位毫秒</span></div><div class="line">			<span class="meta">@HystrixProperty</span>(name=<span class="string">"circuitBreaker.errorThresholdPercentage"</span>,value=<span class="string">"60"</span>),   <span class="comment">//失败率</span></div><div class="line">	&#125;)   <span class="comment">//使用这个注解，其中指定熔断后调用的方法</span></div><div class="line">	<span class="meta">@GetMapping</span>(<span class="string">"/order/&#123;id&#125;"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> Order <span class="title">getOrder</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span>Integer id) </span>&#123;</div><div class="line">		<span class="keyword">if</span> (id==<span class="number">1</span>) &#123;   <span class="comment">//模拟异常</span></div><div class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException();</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> restTemplate.getForObject(URI_PRFIX+<span class="string">"/order/"</span>+id, Order.class);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 *  	默认的熔断方法</div><div class="line">	 *  	1、参数必须为空</div><div class="line">	 *  	2、返回的类型有特殊要求	</div><div class="line">	 *  		1、必须和出现熔断的方法的返回类型相同或者是其子类</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> Order <span class="title">defaultFallBack</span><span class="params">()</span> </span>&#123;</div><div class="line">		Order order=<span class="keyword">new</span> Order();</div><div class="line">		order.setOrderId(-<span class="number">1</span>);</div><div class="line">		order.setOrderNum(<span class="string">"太拥挤了，请稍后再试......"</span>);</div><div class="line">		<span class="keyword">return</span> order;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><strong>上面的配置完成之后，先请求传入id=1，达到失败率50%，那么熔断器就会开启，此时再传入id=1，那么本应该正常访问的，但是此时会被熔断，经过10000毫秒之后，再次访问传入id=2，请求成功之后，表示熔断机制关闭了</strong></li>
+</ul>
+<h3 id="使用配置文件实现"><a href="#使用配置文件实现" class="headerlink" title="使用配置文件实现"></a>使用配置文件实现</h3><ul>
+<li>在需要熔断的方法上面添加<code>@HystrixCommand</code>这个注解</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="attr">hystrix:</span></div><div class="line"><span class="attr">  command:</span></div><div class="line"><span class="attr">    default:</span>  <span class="comment"># 这里使用default，但是如果针对单个方法，可以使用方法名称</span></div><div class="line"><span class="attr">      execution:</span></div><div class="line"><span class="attr">        isolation:</span></div><div class="line"><span class="attr">          thread:</span></div><div class="line"><span class="attr">            timeoutInMilliseconds:</span> <span class="number">3000</span></div><div class="line"><span class="attr">      circuitBreaker:</span></div><div class="line"><span class="attr">        enabled:</span> <span class="literal">true</span></div><div class="line"><span class="attr">        requestVolumeThreshold:</span> <span class="number">10</span></div><div class="line"><span class="attr">        sleepWindowInMilliseconds:</span> <span class="number">10000</span></div><div class="line"><span class="attr">        errorThresholdPercentage:</span> <span class="number">60</span></div></pre></td></tr></table></figure>
+<h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><ul>
+<li><a href="https://gitee.com/chenjiabing666/order-client.git" target="_blank" rel="external">https://gitee.com/chenjiabing666/order-client.git</a></li>
+</ul>
+<h2 id="Hystrix-Dashboard-图形化监控"><a href="#Hystrix-Dashboard-图形化监控" class="headerlink" title="Hystrix Dashboard  图形化监控"></a>Hystrix Dashboard  图形化监控</h2><ul>
+<li>主要是用来监控服务提供者的情况（服务提供者必须实现了Hystrix的熔断机制才能被监控）</li>
+</ul>
+<h3 id="Hystrix-dashboard-服务端配置"><a href="#Hystrix-dashboard-服务端配置" class="headerlink" title="Hystrix-dashboard 服务端配置"></a>Hystrix-dashboard 服务端配置</h3><ul>
+<li>添加依赖：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">	<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-hystrix-dashboard<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line">         <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">             <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">             <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">         <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>添加eureka客户端的依赖，并且将其注册到eureka中</li>
+<li>在主启动类上添加对应的注解<code>@EnableHystrixDashboard</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@SpringBootApplication</span></div><div class="line"><span class="meta">@EnableHystrixDashboard</span>   <span class="comment">//开启Hystrix-dashboard</span></div><div class="line"><span class="meta">@EnableEurekaClient</span>     <span class="comment">//eureka的客户端</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HystrixDashboardApplication</span> </span>&#123;</div></pre></td></tr></table></figure>
+<ul>
+<li>配置如下：</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="attr">server:</span></div><div class="line"><span class="attr">  port:</span> <span class="number">3366</span></div><div class="line"><span class="attr">eureka:</span></div><div class="line"><span class="attr">  client:</span></div><div class="line"><span class="attr">    serviceUrl:</span></div><div class="line"><span class="attr">      defaultZone:</span> <span class="attr">http://localhost:7001/eureka</span>  <span class="comment"># eureka的暴露地址，直接注册</span></div><div class="line"><span class="attr">spring:</span></div><div class="line"><span class="attr">  application:</span></div><div class="line"><span class="attr">    name:</span> <span class="string">hystrix-dashborad</span>   <span class="comment">#应用的名称，在同一个eureka中必须不重复</span></div></pre></td></tr></table></figure>
+<ul>
+<li>启动服务访问地址：<code>http://localhost:3366/hystrix</code>，将会出现如下界面:</li>
+<li><img src="https://github.com/chenjiabing666/BlogImage/blob/master/hystrix1.png?raw=true" alt=""></li>
+</ul>
+<ul>
+<li>源码：<a href="https://gitee.com/chenjiabing666/hystrix-dashboard.git" target="_blank" rel="external">https://gitee.com/chenjiabing666/hystrix-dashboard.git</a></li>
+</ul>
+<h3 id="被监控服务的创建"><a href="#被监控服务的创建" class="headerlink" title="被监控服务的创建"></a>被监控服务的创建</h3><ul>
+<li>添加依赖：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- Hystrix的依赖 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-hystrix<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">          <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">          <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">      <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>配置如下：<ul>
+<li><strong>必须配置<code>endpoints</code>，否则将会连接补上</strong></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="attr">hystrix:</span></div><div class="line"><span class="attr">  command:</span></div><div class="line"><span class="attr">    default:</span>  <span class="comment"># 这里使用default，但是如果针对单个方法，可以使用方法名称</span></div><div class="line"><span class="attr">      execution:</span></div><div class="line"><span class="attr">        isolation:</span></div><div class="line"><span class="attr">          thread:</span></div><div class="line"><span class="attr">            timeoutInMilliseconds:</span> <span class="number">3000</span></div><div class="line"><span class="attr">      circuitBreaker:</span></div><div class="line"><span class="attr">        enabled:</span> <span class="literal">true</span></div><div class="line"><span class="attr">        requestVolumeThreshold:</span> <span class="number">10</span></div><div class="line"><span class="attr">        sleepWindowInMilliseconds:</span> <span class="number">10000</span></div><div class="line"><span class="attr">        errorThresholdPercentage:</span> <span class="number">60</span></div><div class="line">        </div><div class="line"><span class="attr">ribbon:</span>   <span class="comment"># 设置ribbon的超时时间，这里使用Feign会和Hystrix的超时间相互干扰</span></div><div class="line"><span class="attr">  ReadTimeout:</span> <span class="number">5000</span></div><div class="line"><span class="attr">  ConnectTimeout:</span> <span class="number">3000</span></div><div class="line"><span class="attr">  OkToRetryOnAllOperations:</span> <span class="literal">true</span>  <span class="comment">#对所有操作都进行重试。</span></div><div class="line"><span class="attr">  MaxAutoRetriesNextServer:</span> <span class="number">2</span>     <span class="comment"># 切换实例的重试次数。 </span></div><div class="line"><span class="attr">  MaxAutoRetries:</span> <span class="number">1</span>               <span class="comment"># 对当前实例的重试次数。</span></div><div class="line">  </div><div class="line"><span class="attr">management:</span>    <span class="comment"># 配置节点，一定要配置，否则将不能连接上</span></div><div class="line"><span class="attr">  endpoints:</span></div><div class="line"><span class="attr">    web:</span></div><div class="line"><span class="attr">      exposure:</span></div><div class="line"><span class="attr">        include:</span> <span class="string">hystrix.stream</span></div></pre></td></tr></table></figure>
+<ul>
+<li><strong>在主启动类上必须添加注解`@EnableCircuitBreaker</strong>`</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@SpringBootApplication</span></div><div class="line"><span class="meta">@EnableEurekaClient</span>   <span class="comment">//开启eureka</span></div><div class="line"><span class="meta">@EnableCircuitBreaker</span>   <span class="comment">//开启熔断</span></div><div class="line"><span class="meta">@EnableFeignClients</span>(basePackages= &#123;<span class="string">"cn.tedu.api.feign"</span>&#125;)  <span class="comment">//扫描FeignClient</span></div><div class="line"><span class="meta">@ComponentScan</span>(basePackages= &#123;<span class="string">"cn.tedu.*"</span>&#125;)   <span class="comment">//扫描Hystrix的fallbackFactory</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderClient9002Application</span> </span>&#123;</div></pre></td></tr></table></figure>
+<ul>
+<li><p>启动成功后在<code>hystrix-dashboard</code>添加如下地址即可被监控:</p>
+<ul>
+<li><code>http://localhost:9002/actuator/hystrix.stream</code></li>
+</ul>
+</li>
+<li><p>源码（<code>order-client9002</code>）：<a href="https://github.com/chenjiabing666/order-parent.git" target="_blank" rel="external">https://github.com/chenjiabing666/order-parent.git</a></p>
+</li>
+</ul>
+<h3 id="详细指标"><a href="#详细指标" class="headerlink" title="详细指标"></a>详细指标</h3><ul>
+<li><img src="https://github.com/chenjiabing666/BlogImage/blob/master/hystrix2.jpg?raw=true" alt=""></li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="熔断发生的场景"><a href="#熔断发生的场景" class="headerlink" title="熔断发生的场景"></a>熔断发生的场景</h3><ul>
+<li>达到配置的超时时间</li>
+<li>没有服务提供者提供服务</li>
+<li>服务提供者程序发生异常</li>
+</ul>
+<h3 id="注意点"><a href="#注意点" class="headerlink" title="注意点"></a>注意点</h3><ul>
+<li>Feign+Hystrix的方式配置Hystrix的超时时间一定还要配置Ribbon的超时时间</li>
+<li>Feign+Hystrix的熔断配置和Ribbon+Hystrix的配置方式基本相同</li>
+</ul>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ul>
+<li><a href="https://www.cnblogs.com/yawen/p/6655352.html" target="_blank" rel="external">https://www.cnblogs.com/yawen/p/6655352.html</a></li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/分布式/">分布式</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/分布式/">分布式</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/12/25/Hystrix断路器、熔断器/" data-title="Hystrix断路器、熔断器 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/12/25/spring-sleuth-服务追踪/" title="spring sleuth 服务追踪">
+  <strong>上一篇：</strong><br/>
+  <span>
+  spring sleuth 服务追踪</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/12/25/Feign负载均衡/"  title="Feign（负载均衡）">
+ <strong>下一篇：</strong><br/> 
+ <span>Feign（负载均衡）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Hystrix-断路器、熔断器"><span class="toc-number">1.</span> <span class="toc-text">Hystrix 断路器、熔断器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#服务雪崩"><span class="toc-number">1.1.</span> <span class="toc-text">服务雪崩</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#是什么"><span class="toc-number">1.2.</span> <span class="toc-text">是什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#作用"><span class="toc-number">1.3.</span> <span class="toc-text">作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对象"><span class="toc-number">1.4.</span> <span class="toc-text">对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务降级"><span class="toc-number">1.5.</span> <span class="toc-text">服务降级</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简介"><span class="toc-number">1.5.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用场景"><span class="toc-number">1.5.2.</span> <span class="toc-text">使用场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用效果"><span class="toc-number">1.5.3.</span> <span class="toc-text">使用效果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用Feign达到服务降级"><span class="toc-number">1.5.4.</span> <span class="toc-text">使用Feign达到服务降级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用RestTemplate服务降级"><span class="toc-number">1.5.5.</span> <span class="toc-text">使用RestTemplate服务降级</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一对一"><span class="toc-number">1.5.6.</span> <span class="toc-text">一对一</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#默认的熔断"><span class="toc-number">1.5.7.</span> <span class="toc-text">默认的熔断</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#超时设置"><span class="toc-number">1.6.</span> <span class="toc-text">超时设置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ribbon-Hystrix"><span class="toc-number">1.6.1.</span> <span class="toc-text">ribbon+ Hystrix</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#直接在-HystrixCommand注解中配置"><span class="toc-number">1.6.1.1.</span> <span class="toc-text">直接在@HystrixCommand注解中配置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#配置文件中配置"><span class="toc-number">1.6.1.2.</span> <span class="toc-text">配置文件中配置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Feign-Hystrix"><span class="toc-number">1.6.2.</span> <span class="toc-text">Feign+Hystrix</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务熔断"><span class="toc-number">1.7.</span> <span class="toc-text">服务熔断</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#熔断器的状态机"><span class="toc-number">1.7.1.</span> <span class="toc-text">熔断器的状态机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置参数"><span class="toc-number">1.7.2.</span> <span class="toc-text">配置参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#直接在-HystrixCommand注解中配置熔断"><span class="toc-number">1.7.3.</span> <span class="toc-text">直接在@HystrixCommand注解中配置熔断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用配置文件实现"><span class="toc-number">1.7.4.</span> <span class="toc-text">使用配置文件实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#源码"><span class="toc-number">1.7.5.</span> <span class="toc-text">源码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hystrix-Dashboard-图形化监控"><span class="toc-number">1.8.</span> <span class="toc-text">Hystrix Dashboard  图形化监控</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Hystrix-dashboard-服务端配置"><span class="toc-number">1.8.1.</span> <span class="toc-text">Hystrix-dashboard 服务端配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#被监控服务的创建"><span class="toc-number">1.8.2.</span> <span class="toc-text">被监控服务的创建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#详细指标"><span class="toc-number">1.8.3.</span> <span class="toc-text">详细指标</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">1.9.</span> <span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#熔断发生的场景"><span class="toc-number">1.9.1.</span> <span class="toc-text">熔断发生的场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#注意点"><span class="toc-number">1.9.2.</span> <span class="toc-text">注意点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.10.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.11.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

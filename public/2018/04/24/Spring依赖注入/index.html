@@ -1,0 +1,856 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Spring依赖注入 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="Spring依赖注入【了解】Spring管理对象的生命周期(只有在单例的模式有意义，这个是默认的)
+由spring管理的对象可以有生命周期方法，这些生命周期方法是开发人员自定义的，方法名自定义，无参数
+
+由spring管理的对象的类可以有初始化和销毁这两种生命周期方法，按需设计即可。
+
+因为是spring自己调用的，因此要设置为无参数，无返回值的方法。
+
+
+为单个bean指定生命周期方法
+实例：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring依赖注入">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/04/24/Spring依赖注入/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="Spring依赖注入【了解】Spring管理对象的生命周期(只有在单例的模式有意义，这个是默认的)
+由spring管理的对象可以有生命周期方法，这些生命周期方法是开发人员自定义的，方法名自定义，无参数
+
+由spring管理的对象的类可以有初始化和销毁这两种生命周期方法，按需设计即可。
+
+因为是spring自己调用的，因此要设置为无参数，无返回值的方法。
+
+
+为单个bean指定生命周期方法
+实例：">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:15:33.743Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring依赖注入">
+<meta name="twitter:description" content="Spring依赖注入【了解】Spring管理对象的生命周期(只有在单例的模式有意义，这个是默认的)
+由spring管理的对象可以有生命周期方法，这些生命周期方法是开发人员自定义的，方法名自定义，无参数
+
+由spring管理的对象的类可以有初始化和销毁这两种生命周期方法，按需设计即可。
+
+因为是spring自己调用的，因此要设置为无参数，无返回值的方法。
+
+
+为单个bean指定生命周期方法
+实例：">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/04/24/Spring依赖注入/" title="Spring依赖注入" itemprop="url">Spring依赖注入</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-04-24T03:12:24.000Z" itemprop="datePublished"> 发表于 2018-04-24</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Spring依赖注入"><span class="toc-number">1.</span> <span class="toc-text">Spring依赖注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#【了解】Spring管理对象的生命周期-只有在单例的模式有意义，这个是默认的"><span class="toc-number">1.1.</span> <span class="toc-text">【了解】Spring管理对象的生命周期(只有在单例的模式有意义，这个是默认的)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#为单个bean指定生命周期方法"><span class="toc-number">1.1.1.</span> <span class="toc-text">为单个bean指定生命周期方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为容器中所有的bean指定生命周期方法"><span class="toc-number">1.1.2.</span> <span class="toc-text">为容器中所有的bean指定生命周期方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#【重要】注入属性值"><span class="toc-number">1.2.</span> <span class="toc-text">【重要】注入属性值</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实现目标"><span class="toc-number">1.2.1.</span> <span class="toc-text">实现目标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Setter注入"><span class="toc-number">1.2.2.</span> <span class="toc-text">Setter注入</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#前提"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">前提</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#基本数据类型变量的注入"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">基本数据类型变量的注入</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#实现"><span class="toc-number">1.2.2.2.1.</span> <span class="toc-text">实现</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#引用类型的属性注入"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">引用类型的属性注入</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#实现-1"><span class="toc-number">1.2.2.3.1.</span> <span class="toc-text">实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#【了解】构造器注入-无参，有参"><span class="toc-number">1.2.3.</span> <span class="toc-text">【了解】构造器注入(无参，有参)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#前提-1"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">前提</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实现-2"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注入基本型"><span class="toc-number">1.3.</span> <span class="toc-text">注入基本型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注入非基本型-ref"><span class="toc-number">1.4.</span> <span class="toc-text">注入非基本型(ref)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注入集合"><span class="toc-number">1.5.</span> <span class="toc-text">注入集合</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实现-3"><span class="toc-number">1.5.1.</span> <span class="toc-text">实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#【重点了解Properties的注入】引用方式注入集合-lt-util-gt"><span class="toc-number">1.5.2.</span> <span class="toc-text">【重点了解Properties的注入】引用方式注入集合(<util:>)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#【了解】其他类型的注入"><span class="toc-number">1.6.</span> <span class="toc-text">【了解】其他类型的注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#为数组注入值"><span class="toc-number">1.6.1.</span> <span class="toc-text">为数组注入值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#注入空字符串"><span class="toc-number">1.6.2.</span> <span class="toc-text">注入空字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为引用类型的数据注入null值"><span class="toc-number">1.6.3.</span> <span class="toc-text">为引用类型的数据注入null值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#显示的确定数据类型"><span class="toc-number">1.6.4.</span> <span class="toc-text">显示的确定数据类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.7.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Spring依赖注入"><a href="#Spring依赖注入" class="headerlink" title="Spring依赖注入"></a>Spring依赖注入</h1><h2 id="【了解】Spring管理对象的生命周期-只有在单例的模式有意义，这个是默认的"><a href="#【了解】Spring管理对象的生命周期-只有在单例的模式有意义，这个是默认的" class="headerlink" title="【了解】Spring管理对象的生命周期(只有在单例的模式有意义，这个是默认的)"></a>【了解】Spring管理对象的生命周期(只有在单例的模式有意义，这个是默认的)</h2><ul>
+<li><p>由spring管理的对象可以有生命周期方法，这些生命周期方法是开发人员自定义的，方法名自定义，无参数</p>
+</li>
+<li><p>由spring管理的对象的类可以有初始化和销毁这两种生命周期方法，按需设计即可。</p>
+</li>
+<li><p><strong>因为是spring自己调用的，因此要设置为无参数，无返回值的方法。</strong></p>
+</li>
+</ul>
+<h3 id="为单个bean指定生命周期方法"><a href="#为单个bean指定生命周期方法" class="headerlink" title="为单个bean指定生命周期方法"></a>为单个bean指定生命周期方法</h3><ul>
+<li>实例：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="comment">//person类的初始化方法</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"初始化方法"</span>);</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destory</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"销毁方法"</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>在spring配置文件中配置</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--</span></div><div class="line">	init-method ： 定义初始化方法，直接写上方法名称即可</div><div class="line">	destroy-method： 定义销毁方法，直接写上方法名即可</div><div class="line"> --&gt;</div><div class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">""</span> <span class="attr">class</span>=<span class="string">"cn.tedu.spring.beans.Person"</span> <span class="attr">init-method</span>=<span class="string">"init"</span> <span class="attr">destroy-method</span>=<span class="string">"destory"</span>&gt;</span><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="为容器中所有的bean指定生命周期方法"><a href="#为容器中所有的bean指定生命周期方法" class="headerlink" title="为容器中所有的bean指定生命周期方法"></a>为容器中所有的bean指定生命周期方法</h3><ul>
+<li>可以在顶级<beans>节点中添加<code>default-init-method</code>指定初始化方法和添加<code>default-destroy-method</code>指定销毁方法</beans></li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">default-init-method</span>=<span class="string">"init"</span> <span class="attr">default-destroy-method</span>=<span class="string">"destroy"</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"person"</span> <span class="attr">class</span>=<span class="string">"cn.tedu.spring.bean.Person"</span>&gt;</span><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="【重要】注入属性值"><a href="#【重要】注入属性值" class="headerlink" title="【重要】注入属性值"></a>【重要】注入属性值</h2><h3 id="实现目标"><a href="#实现目标" class="headerlink" title="实现目标"></a>实现目标</h3><ul>
+<li>由spring管理的对象，其属性值可以为其中的某些属性注入值，是的最终获取对象时，属性就已经有值了</li>
+</ul>
+<h3 id="Setter注入"><a href="#Setter注入" class="headerlink" title="Setter注入"></a>Setter注入</h3><h4 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h4><ul>
+<li>必须为每一个属性添加<code>set</code>方法</li>
+</ul>
+<h4 id="基本数据类型变量的注入"><a href="#基本数据类型变量的注入" class="headerlink" title="基本数据类型变量的注入"></a>基本数据类型变量的注入</h4><h5 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h5><ul>
+<li>新建一个Person的实体类如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>在配置文件中配置bean</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"person"</span> <span class="attr">class</span>=<span class="string">"cn.tedu.spring.beans.Person"</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!-- 直接使用property配置参数</span></div><div class="line">			name：指定属性的字段，这个是set方法后面的单词首字母小写的值，比如SetUsername()，那么此时的name值为username</div><div class="line">			value： 指定属性的值</div><div class="line">			ref : 指定前面定义的bean的id，用于设置引用类型的参数值</div><div class="line">		 --&gt;</div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"陈加兵"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"age"</span> <span class="attr">value</span>=<span class="string">"22"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li><strong>注意</strong>： 在配置XML文件时，<property>节点中的name属性的值其实是Java代码中Set方法名称中除去set单词并且将首字母小写后的名称，例如Set方法的名称为<code>setAge</code>，那么其中的name属性的值就是<code>age</code>。所以这个name属性的值并不是java代码中的属性名称，只不过通常在java代码中，基于代码规范，这里的name属性值也是java代码中的属性名称。</property></li>
+</ul>
+<h4 id="引用类型的属性注入"><a href="#引用类型的属性注入" class="headerlink" title="引用类型的属性注入"></a>引用类型的属性注入</h4><ul>
+<li>引用类型即是在一个类中包含另外一个类的对象，即是一个类的成员变量是另外一个类的对象</li>
+</ul>
+<h5 id="实现-1"><a href="#实现-1" class="headerlink" title="实现"></a>实现</h5><ul>
+<li>新建一个Address类</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Address</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> String city;  <span class="comment">//城市</span></div><div class="line">	<span class="keyword">private</span> String pro ;  <span class="comment">//省份</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getCity</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> city;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCity</span><span class="params">(String city)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.city = city;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getPro</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> pro;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPro</span><span class="params">(String pro)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.pro = pro;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>新建一个Person类，其中包含了Address这个类的对象</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="keyword">private</span> Address address; <span class="comment">// Address的对象作为成员变量</span></div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> Address <span class="title">getAddress</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> address;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAddress</span><span class="params">(Address address)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.address = address;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>在配置文件中配置实例</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 创建一个Address的实例 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"address"</span> <span class="attr">class</span>=<span class="string">"cn.tedu.spring.beans.Address"</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"city"</span> <span class="attr">value</span>=<span class="string">"无锡"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"pro"</span> <span class="attr">value</span>=<span class="string">"江苏"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"person"</span> <span class="attr">class</span>=<span class="string">"cn.tedu.spring.beans.Person"</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"陈加兵"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"age"</span> <span class="attr">value</span>=<span class="string">"22"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- 这里的ref引用的是上面配置的Address的实例中的id值 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"address"</span> <span class="attr">ref</span>=<span class="string">"address"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="【了解】构造器注入-无参，有参"><a href="#【了解】构造器注入-无参，有参" class="headerlink" title="【了解】构造器注入(无参，有参)"></a>【了解】构造器注入(无参，有参)</h3><ul>
+<li>在前面已经讲过了无参构造注入，直接使用<code>&lt;bean id=&quot;&quot; class=&quot;&quot;&gt;</code>即可</li>
+</ul>
+<h4 id="前提-1"><a href="#前提-1" class="headerlink" title="前提"></a>前提</h4><ul>
+<li>有一个构造有参构造方法</li>
+</ul>
+<h4 id="实现-2"><a href="#实现-2" class="headerlink" title="实现"></a>实现</h4><ul>
+<li>创建一个Person类</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="comment">//构造方法</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">Person</span><span class="params">(String name, <span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>配置spring的配置文件</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"person"</span> <span class="attr">class</span>=<span class="string">"cn.tedu.spring.beans.Person"</span>&gt;</span></div><div class="line">	<span class="comment">&lt;!--</span></div><div class="line">		name: 这个相当于index，也是指定参数列表的属性，不过这里是直接使用参数列表中的变量名</div><div class="line">		value: 为参数设置的值</div><div class="line">		index: 构造方法的参数列表的索引，从0开始</div><div class="line">		ref:引用类型的值，这里的值应该是上面已经定义好的bean的id值</div><div class="line">	 --&gt;</div><div class="line">	<span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">index</span>=<span class="string">"0"</span> <span class="attr">value</span>=<span class="string">"陈加兵"</span>&gt;</span><span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">index</span>=<span class="string">"1"</span> <span class="attr">value</span>=<span class="string">"22"</span>&gt;</span><span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="注入基本型"><a href="#注入基本型" class="headerlink" title="注入基本型"></a>注入基本型</h2><ul>
+<li>在spring注入值时，如果值的类型是String或者java中的基本数据类型，都称之为基本型，而其他的都是”非基本型“的数据</li>
+</ul>
+<h2 id="注入非基本型-ref"><a href="#注入非基本型-ref" class="headerlink" title="注入非基本型(ref)"></a>注入非基本型(ref)</h2><ul>
+<li>前面所说的<code>引用类型的注入</code>就是基本型的注入，这里不再详细的讲述</li>
+</ul>
+<h2 id="注入集合"><a href="#注入集合" class="headerlink" title="注入集合"></a>注入集合</h2><ul>
+<li>集合类型有<code>List</code>，<code>Set</code>，<code>Map</code>，<code>Properties</code></li>
+</ul>
+<h3 id="实现-3"><a href="#实现-3" class="headerlink" title="实现"></a>实现</h3><ul>
+<li>创建一个Message类，其中定义了各种集合类型的成员属性，并且添加了<code>set</code>方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Message</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> List&lt;String&gt; cities;   <span class="comment">//城市 。List集合</span></div><div class="line">	<span class="keyword">private</span> Set&lt;String&gt; friend;   <span class="comment">//Set集合</span></div><div class="line">	<span class="keyword">private</span> Map&lt;Integer,String&gt; bookes;  <span class="comment">//Map集合</span></div><div class="line">	<span class="keyword">private</span> Properties properties;   <span class="comment">//Properties集合</span></div><div class="line">	<span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">getCities</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> cities;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCities</span><span class="params">(List&lt;String&gt; cities)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.cities = cities;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> Set&lt;String&gt; <span class="title">getFriend</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> friend;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFriend</span><span class="params">(Set&lt;String&gt; friend)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.friend = friend;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> Map&lt;Integer, String&gt; <span class="title">getBookes</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> bookes;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBookes</span><span class="params">(Map&lt;Integer, String&gt; bookes)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.bookes = bookes;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> Properties <span class="title">getProperties</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> properties;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setProperties</span><span class="params">(Properties properties)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.properties = properties;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>在spring的配置文件中配置注入</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"message"</span> <span class="attr">class</span>=<span class="string">"cn.tedu.spring.beans.Message"</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!-- List集合的注入 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"cities"</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">list</span>&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">value</span>&gt;</span>徐州<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">value</span>&gt;</span>无锡<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">value</span>&gt;</span>常州<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line">			<span class="tag">&lt;/<span class="name">list</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- Set集合的注入 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"friend"</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">set</span>&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">value</span>&gt;</span>Jack<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">value</span>&gt;</span>Tom<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">value</span>&gt;</span>陈加兵<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line">			<span class="tag">&lt;/<span class="name">set</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- Map集合的注入 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"bookes"</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">map</span>&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"1001"</span> <span class="attr">value</span>=<span class="string">"java编程基础"</span>&gt;</span><span class="tag">&lt;/<span class="name">entry</span>&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"1002"</span> <span class="attr">value</span>=<span class="string">"java编程思想"</span>&gt;</span><span class="tag">&lt;/<span class="name">entry</span>&gt;</span></div><div class="line">			<span class="tag">&lt;/<span class="name">map</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- properties的集合的注入 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"properties"</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">props</span>&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">"username"</span>&gt;</span>root<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">"password"</span>&gt;</span>root<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></div><div class="line">			<span class="tag">&lt;/<span class="name">props</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>测试方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="comment">// spring的配置文件</span></div><div class="line">		String conf = <span class="string">"applicationContext.xml"</span>;</div><div class="line">		<span class="comment">// 获取spring容器</span></div><div class="line">		AbstractApplicationContext context = <span class="keyword">new</span> ClassPathXmlApplicationContext(</div><div class="line">				conf);</div><div class="line">		Message message=(Message) context.getBean(<span class="string">"message"</span>);</div><div class="line">		List&lt;String&gt; cities=message.getCities();</div><div class="line">		Set&lt;String&gt; friends=message.getFriend();</div><div class="line">		Map&lt;Integer, String&gt; bookes=message.getBookes();</div><div class="line">		Properties properties=message.getProperties();</div><div class="line">		System.out.println(cities);</div><div class="line">		System.out.println(friends);</div><div class="line">		System.out.println(bookes);</div><div class="line">		System.out.println(properties);</div><div class="line">		context.close();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<h3 id="【重点了解Properties的注入】引用方式注入集合-lt-util-gt"><a href="#【重点了解Properties的注入】引用方式注入集合-lt-util-gt" class="headerlink" title="【重点了解Properties的注入】引用方式注入集合(&lt;util:&gt;)"></a>【重点了解Properties的注入】引用方式注入集合(<code>&lt;util:&gt;</code>)</h3><ul>
+<li>其中的<code>ref</code>指定的是配置集合的<code>id</code></li>
+<li><p>使用的还是上面的<code>Message</code>类</p>
+</li>
+<li><p>在<code>resource</code>中需要新建一个<code>jdbc.properties</code>，我们便可以在spring的配置文件中使用<code>&lt;util:properties id=&quot;&quot; location=&quot;classpath:jdbc.properties&quot;&gt;</code>自动的读取其中的值</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">root=root</div><div class="line">password=root</div><div class="line">url=jdbc:mysql://localhost:3306/hirbernate?useUnicode=true&amp;characterEncoding=UTF-8</div><div class="line">driver=com.mysql.jdbc.Driver</div></pre></td></tr></table></figure>
+<ul>
+<li>spring的配置文件中配置bean</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">util:list</span> <span class="attr">id</span>=<span class="string">"cities"</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">value</span>&gt;</span>徐州<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">value</span>&gt;</span>无锡<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">value</span>&gt;</span>常州<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">util:list</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">util:set</span> <span class="attr">id</span>=<span class="string">"friends"</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">value</span>&gt;</span>Jack<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">value</span>&gt;</span>Tom<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">value</span>&gt;</span>陈加兵<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">util:set</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">util:map</span> <span class="attr">id</span>=<span class="string">"bookes"</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"1001"</span> <span class="attr">value</span>=<span class="string">"java编程基础"</span>&gt;</span><span class="tag">&lt;/<span class="name">entry</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">"1002"</span> <span class="attr">value</span>=<span class="string">"java编程思想"</span>&gt;</span><span class="tag">&lt;/<span class="name">entry</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">util:map</span>&gt;</span></div><div class="line"></div><div class="line"><span class="comment">&lt;!-- 引入外部的Properties文件，location指定的就是位置 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">util:properties</span> <span class="attr">id</span>=<span class="string">"properties"</span> <span class="attr">location</span>=<span class="string">"classpath:jdbc.properties"</span>&gt;</span><span class="tag">&lt;/<span class="name">util:properties</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"message"</span> <span class="attr">class</span>=<span class="string">"cn.tedu.spring.beans.Message"</span>&gt;</span></div><div class="line">	<span class="comment">&lt;!-- List集合的注入 ref指定的上面定义的List的id --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"cities"</span> <span class="attr">ref</span>=<span class="string">"cities"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- Set集合的注入 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"friend"</span> <span class="attr">ref</span>=<span class="string">"friends"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- Map集合的注入 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"bookes"</span> <span class="attr">ref</span>=<span class="string">"bookes"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- properties的集合的注入 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"properties"</span> <span class="attr">ref</span>=<span class="string">"properties"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="【了解】其他类型的注入"><a href="#【了解】其他类型的注入" class="headerlink" title="【了解】其他类型的注入"></a>【了解】其他类型的注入</h2><h3 id="为数组注入值"><a href="#为数组注入值" class="headerlink" title="为数组注入值"></a>为数组注入值</h3><ul>
+<li>新添加一个数组的属性</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> String[] names;</div><div class="line"></div><div class="line">	<span class="keyword">public</span> String[] getNames() &#123;</div><div class="line">		<span class="keyword">return</span> names;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setNames</span><span class="params">(String[] names)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.names = names;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>spring配置文件</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;!-- 为数组赋值 --&gt;</div><div class="line">&lt;property name="names"&gt;</div><div class="line">	&lt;array&gt;</div><div class="line">		&lt;value&gt;Alex&lt;/value&gt;</div><div class="line">		&lt;value&gt;Billy&lt;/value&gt;</div><div class="line">	&lt;/array&gt;</div><div class="line">&lt;/property&gt;</div></pre></td></tr></table></figure>
+<ul>
+<li>甚至在配置XML时，<code>&lt;List&gt;</code>和<code>&lt;array&gt;</code>可以随意挑选使用，即为<code>List</code>类型的数据注入值时，既可以使用<code>&lt;List&gt;</code>节点，也可以使用<code>&lt;array&gt;</code>节点，反之为数组类型的数据值也是一样</li>
+</ul>
+<h3 id="注入空字符串"><a href="#注入空字符串" class="headerlink" title="注入空字符串"></a>注入空字符串</h3><ul>
+<li>设置的<code>value</code>直接为<code>&quot;&quot;</code></li>
+</ul>
+<h3 id="为引用类型的数据注入null值"><a href="#为引用类型的数据注入null值" class="headerlink" title="为引用类型的数据注入null值"></a>为引用类型的数据注入null值</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"xxx"</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">null</span>/&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="显示的确定数据类型"><a href="#显示的确定数据类型" class="headerlink" title="显示的确定数据类型"></a>显示的确定数据类型</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"xxx"</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">value</span> <span class="attr">type</span>=<span class="string">"数据类型"</span>&gt;</span>值<span class="tag">&lt;/<span class="name">value</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Spring/">Spring</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Spring/">Spring</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/04/24/Spring依赖注入/" data-title="Spring依赖注入 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/04/24/Spring表达式和自动装配/" title="Spring表达式和自动装配">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Spring表达式和自动装配</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/04/24/Spring入门/"  title="Spring入门">
+ <strong>下一篇：</strong><br/> 
+ <span>Spring入门
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Spring依赖注入"><span class="toc-number">1.</span> <span class="toc-text">Spring依赖注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#【了解】Spring管理对象的生命周期-只有在单例的模式有意义，这个是默认的"><span class="toc-number">1.1.</span> <span class="toc-text">【了解】Spring管理对象的生命周期(只有在单例的模式有意义，这个是默认的)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#为单个bean指定生命周期方法"><span class="toc-number">1.1.1.</span> <span class="toc-text">为单个bean指定生命周期方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为容器中所有的bean指定生命周期方法"><span class="toc-number">1.1.2.</span> <span class="toc-text">为容器中所有的bean指定生命周期方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#【重要】注入属性值"><span class="toc-number">1.2.</span> <span class="toc-text">【重要】注入属性值</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实现目标"><span class="toc-number">1.2.1.</span> <span class="toc-text">实现目标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Setter注入"><span class="toc-number">1.2.2.</span> <span class="toc-text">Setter注入</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#前提"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">前提</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#基本数据类型变量的注入"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">基本数据类型变量的注入</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#实现"><span class="toc-number">1.2.2.2.1.</span> <span class="toc-text">实现</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#引用类型的属性注入"><span class="toc-number">1.2.2.3.</span> <span class="toc-text">引用类型的属性注入</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#实现-1"><span class="toc-number">1.2.2.3.1.</span> <span class="toc-text">实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#【了解】构造器注入-无参，有参"><span class="toc-number">1.2.3.</span> <span class="toc-text">【了解】构造器注入(无参，有参)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#前提-1"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">前提</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实现-2"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注入基本型"><span class="toc-number">1.3.</span> <span class="toc-text">注入基本型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注入非基本型-ref"><span class="toc-number">1.4.</span> <span class="toc-text">注入非基本型(ref)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注入集合"><span class="toc-number">1.5.</span> <span class="toc-text">注入集合</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实现-3"><span class="toc-number">1.5.1.</span> <span class="toc-text">实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#【重点了解Properties的注入】引用方式注入集合-lt-util-gt"><span class="toc-number">1.5.2.</span> <span class="toc-text">【重点了解Properties的注入】引用方式注入集合(<util:>)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#【了解】其他类型的注入"><span class="toc-number">1.6.</span> <span class="toc-text">【了解】其他类型的注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#为数组注入值"><span class="toc-number">1.6.1.</span> <span class="toc-text">为数组注入值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#注入空字符串"><span class="toc-number">1.6.2.</span> <span class="toc-text">注入空字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为引用类型的数据注入null值"><span class="toc-number">1.6.3.</span> <span class="toc-text">为引用类型的数据注入null值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#显示的确定数据类型"><span class="toc-number">1.6.4.</span> <span class="toc-text">显示的确定数据类型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.7.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

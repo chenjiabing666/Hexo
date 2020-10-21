@@ -1,0 +1,605 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Spring Boot第十一弹，这类注解都不知道，还好意思说用过Spring Boot | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="持续原创输出，点击上方蓝字关注我
+目录前言Spring Boot 版本@ConditionalCondition接口ConditionContext接口如何自定义Condition？条件判断在什么时候执行？多个Condition的执行顺序Spring Boot中常用的一些注解总结前言不知道大家在使用Spring Boot开发的日常中有没有用过@Conditionalxxx注解，比如@Conditi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot第十一弹，这类注解都不知道，还好意思说用过Spring Boot">
+<meta property="og:url" content="http://chenjiabing666.github.io/2020/10/14/Spring Boot第十一弹，这类注解都不知道，还好意思说用过Spring Boot/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="持续原创输出，点击上方蓝字关注我
+目录前言Spring Boot 版本@ConditionalCondition接口ConditionContext接口如何自定义Condition？条件判断在什么时候执行？多个Condition的执行顺序Spring Boot中常用的一些注解总结前言不知道大家在使用Spring Boot开发的日常中有没有用过@Conditionalxxx注解，比如@Conditi">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/BlogImage/raw/master/Spring%20Boot%20%E7%AC%AC%E5%8D%81%E4%B8%80%E5%BC%B9%EF%BC%8C%E8%BF%99%E4%B8%AA%E6%B3%A8%E8%A7%A3%E9%83%BD%E4%B8%8D%E6%87%82%EF%BC%8C%E5%A5%BD%E6%84%8F%E6%80%9D%E8%AF%B4%E4%BC%9ASpring%20Boot%EF%BC%9F/2.jpeg">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/BlogImage/raw/master/Spring%20Boot%20%E7%AC%AC%E5%8D%81%E4%B8%80%E5%BC%B9%EF%BC%8C%E8%BF%99%E4%B8%AA%E6%B3%A8%E8%A7%A3%E9%83%BD%E4%B8%8D%E6%87%82%EF%BC%8C%E5%A5%BD%E6%84%8F%E6%80%9D%E8%AF%B4%E4%BC%9ASpring%20Boot%EF%BC%9F/1.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/BlogImage/raw/master/myjszl_log.png">
+<meta property="og:updated_time" content="2020-10-14T03:58:49.522Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Boot第十一弹，这类注解都不知道，还好意思说用过Spring Boot">
+<meta name="twitter:description" content="持续原创输出，点击上方蓝字关注我
+目录前言Spring Boot 版本@ConditionalCondition接口ConditionContext接口如何自定义Condition？条件判断在什么时候执行？多个Condition的执行顺序Spring Boot中常用的一些注解总结前言不知道大家在使用Spring Boot开发的日常中有没有用过@Conditionalxxx注解，比如@Conditi">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/BlogImage/raw/master/Spring%20Boot%20%E7%AC%AC%E5%8D%81%E4%B8%80%E5%BC%B9%EF%BC%8C%E8%BF%99%E4%B8%AA%E6%B3%A8%E8%A7%A3%E9%83%BD%E4%B8%8D%E6%87%82%EF%BC%8C%E5%A5%BD%E6%84%8F%E6%80%9D%E8%AF%B4%E4%BC%9ASpring%20Boot%EF%BC%9F/2.jpeg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/10/14/Spring Boot第十一弹，这类注解都不知道，还好意思说用过Spring Boot/" title="Spring Boot第十一弹，这类注解都不知道，还好意思说用过Spring Boot" itemprop="url">Spring Boot第十一弹，这类注解都不知道，还好意思说用过Spring Boot</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2020-10-14T02:11:42.000Z" itemprop="datePublished"> 发表于 2020-10-14</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">1.</span> <span class="toc-text">持续原创输出，点击上方蓝字关注我</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">2.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">3.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">4.</span> <span class="toc-text">Spring Boot 版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">5.</span> <span class="toc-text">@Conditional</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">6.</span> <span class="toc-text">Condition接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">6.1.</span> <span class="toc-text">ConditionContext接口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">7.</span> <span class="toc-text">如何自定义Condition？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">8.</span> <span class="toc-text">条件判断在什么时候执行？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">9.</span> <span class="toc-text">ConfigurationCondition接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">10.</span> <span class="toc-text">多个Condition的执行顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">11.</span> <span class="toc-text">Spring Boot中常用的一些注解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">12.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p><section id="nice" data-tool="mdnice编辑器" data-website="https://www.mdnice.com" style="padding: 0 10px; word-spacing: 0px; word-wrap: break-word; text-align: left; font-family: Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, 'PingFang SC', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; line-height: 1.6; letter-spacing: .034em; color: rgb(63, 63, 63); font-size: 16px; word-break: all;"><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">持续原创输出，点击上方蓝字关注我</span><span class="suffix"></span></h2></section></p>
+<figure data-tool="mdnice编辑器" style="margin: 0; margin-top: 10px; margin-bottom: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center;"><img src="https://gitee.com/chenjiabing666/BlogImage/raw/master/Spring%20Boot%20%E7%AC%AC%E5%8D%81%E4%B8%80%E5%BC%B9%EF%BC%8C%E8%BF%99%E4%B8%AA%E6%B3%A8%E8%A7%A3%E9%83%BD%E4%B8%8D%E6%87%82%EF%BC%8C%E5%A5%BD%E6%84%8F%E6%80%9D%E8%AF%B4%E4%BC%9ASpring%20Boot%EF%BC%9F/2.jpeg" alt="" style="display: block; margin: 0 auto; max-width: 100%; border-radius: 4px; margin-bottom: 25px;"></figure><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">目录</span><span class="suffix"></span></h2><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">前言</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">Spring Boot 版本</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">@Conditional</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">Condition接口<br><ul style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: square;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">ConditionContext接口</section></li></ul><br></section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">如何自定义Condition？</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">条件判断在什么时候执行？</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">多个Condition的执行顺序</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">Spring Boot中常用的一些注解</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">总结</section></li></ul><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">前言</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">不知道大家在使用Spring Boot开发的日常中有没有用过<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Conditionalxxx</code>注解，比如<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnMissingBean</code>。相信看过Spring Boot源码的朋友一定不陌生。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Conditionalxxx</code>这类注解表示某种判断条件成立时才会执行相关操作。掌握该类注解，有助于日常开发，框架的搭建。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">今天这篇文章就从前世今生介绍一下该类注解。</p><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">Spring Boot 版本</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">本文基于的Spring Boot的版本是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">2.3.4.RELEASE</code>。</p><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">@Conditional</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Conditional</code>注解是从<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Spring4.0</code>才有的，可以用在任何类型或者方法上面，通过<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Conditional</code>注解可以配置一些条件判断，当所有条件都满足的时候，被<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Conditional</code>标注的目标才会被<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Spring容器</code>处理。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Conditional</code>的使用很广，比如控制某个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Bean</code>是否需要注册，在Spring Boot中的变形很多，比如<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnMissingBean</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnBean</code>等等，如下：</p><br><figure data-tool="mdnice编辑器" style="margin: 0; margin-top: 10px; margin-bottom: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center;"><img src="https://gitee.com/chenjiabing666/BlogImage/raw/master/Spring%20Boot%20%E7%AC%AC%E5%8D%81%E4%B8%80%E5%BC%B9%EF%BC%8C%E8%BF%99%E4%B8%AA%E6%B3%A8%E8%A7%A3%E9%83%BD%E4%B8%8D%E6%87%82%EF%BC%8C%E5%A5%BD%E6%84%8F%E6%80%9D%E8%AF%B4%E4%BC%9ASpring%20Boot%EF%BC%9F/1.png" alt="" style="display: block; margin: 0 auto; max-width: 100%; border-radius: 4px; margin-bottom: 25px;"></figure><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">该注解的源码其实很简单，只有一个属性<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">value</code>，表示判断的条件（一个或者多个），是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">org.springframework.context.annotation.Condition</code>类型，源码如下：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Target</span>({ElementType.TYPE, ElementType.METHOD})<br><span><span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Retention</span>(RetentionPolicy.RUNTIME)<br><span><span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Documented</span><br><span><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@interface</span> Conditional {<br><span><br><span> <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">/<strong><br><span>  <em> All {<span class="hljs-doctag" style="color: #d14; line-height: 26px;">@link</span> Condition} classes that must {<span class="hljs-doctag" style="color: #d14; line-height: 26px;">@linkplain</span> Condition#matches match}<br><span>  </span></em> in order for the component to be registered.<br><span>  */</span><br><span> Class&lt;? extends Condition&gt;[] value();<br><span>}<br><span></span></span></span></span></strong></span></span></span></span></span></span></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Conditional</code>注解实现的原理很简单，就是通过<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">org.springframework.context.annotation.Condition</code>这个接口判断是否应该执行操作。</p><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">Condition接口</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Conditional</code>注解判断条件与否取决于<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">value</code>属性指定的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Condition</code>实现，其中有一个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">matches()</code>方法，返回<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">true</code>表示条件成立，反之不成立，接口如下：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@FunctionalInterface</span><br><span><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">interface</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Condition</span> </span>{<br><span> <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">boolean</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">matches</span><span class="hljs-params" style="line-height: 26px;">(ConditionContext context, AnnotatedTypeMetadata metadata)</span></span>;<br><span>}<br><span></span></span></span></span></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">matches</code>中的两个参数如下：</strong></p><br><ol data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: decimal;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">context</code>：条件上下文，<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ConditionContext</code>接口类型的，可以用来获取容器中上下文信息。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">metadata</code>：用来获取被<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Conditional</code>标注的对象上的所有注解信息</section></li></ol><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">ConditionContext接口</span><span class="suffix" style="display: none;"></span></h3><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">这个接口很重要，能够从中获取Spring上下文的很多信息，比如<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ConfigurableListableBeanFactory</code>，源码如下：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">interface</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">ConditionContext</span> </span>{<br><span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">/<br><span>     <em> 返回bean定义注册器，可以通过注册器获取bean定义的各种配置信息<br><span>     </span></em>/</span><br><span>    <span class="hljs-function" style="line-height: 26px;">BeanDefinitionRegistry <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">getRegistry</span><span class="hljs-params" style="line-height: 26px;">()</span></span>;<br><span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">/<strong><br><span>     <em> 返回ConfigurableListableBeanFactory类型的bean工厂，相当于一个ioc容器对象<br><span>     </span></em>/</span><br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Nullable</span><br><span>    <span class="hljs-function" style="line-height: 26px;">ConfigurableListableBeanFactory <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">getBeanFactory</span><span class="hljs-params" style="line-height: 26px;">()</span></span>;<br><span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">/</span></span></span></span></span></strong><br><span>     <em> 返回当前spring容器的环境配置信息对象<br><span>     </span></em>/</span><br><span>    <span class="hljs-function" style="line-height: 26px;">Environment <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">getEnvironment</span><span class="hljs-params" style="line-height: 26px;">()</span></span>;<br><span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">/<strong><br><span>     <em> 返回资源加载器<br><span>     </span></em>/</span><br><span>    <span class="hljs-function" style="line-height: 26px;">ResourceLoader <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">getResourceLoader</span><span class="hljs-params" style="line-height: 26px;">()</span></span>;<br><span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">/</span></span></span></span></strong><br><span>     <em> 返回类加载器<br><span>     </span></em>/</span><br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Nullable</span><br><span>    <span class="hljs-function" style="line-height: 26px;">ClassLoader <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">getClassLoader</span><span class="hljs-params" style="line-height: 26px;">()</span></span>;<br><span>}<br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">如何自定义Condition？</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">举个栗子：<strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">假设有这样一个需求，需要根据运行环境注入不同的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Bean</code>，<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Windows</code>环境和<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Linux</code>环境注入不同的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Bean</code>。</strong></p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">实现很简单，分别定义不同环境的判断条件，实现<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">org.springframework.context.annotation.Condition</code>即可。</p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">windows环境的判断条件源码如下</strong>：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">/<strong><br><span> <em> 操作系统的匹配条件，如果是windows系统，则返回true<br><span> </span></em>/</span><br><span><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">WindowsCondition</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">implements</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Condition</span> </span>{<br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">boolean</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">matches</span><span class="hljs-params" style="line-height: 26px;">(ConditionContext conditionContext, AnnotatedTypeMetadata metadata)</span> </span>{<br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//获取当前环境信息</span><br><span>        Environment environment = conditionContext.getEnvironment();<br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//获得当前系统名</span><br><span>        String property = environment.getProperty(<span class="hljs-string" style="color: #d14; line-height: 26px;">“os.name”</span>);<br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//包含Windows则说明是windows系统，返回true</span><br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span> (property.contains(<span class="hljs-string" style="color: #d14; line-height: 26px;">“Windows”</span>)){<br><span>            <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">true</span>;<br><span>        }<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">false</span>;<br><span><br><span>    }<br><span>}<br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></strong></span></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">Linux环境判断源码如下</strong>：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">/<br><span> <em> 操作系统的匹配条件，如果是windows系统，则返回true<br><span> </span></em>/</span><br><span><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">LinuxCondition</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">implements</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Condition</span> </span>{<br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">boolean</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">matches</span><span class="hljs-params" style="line-height: 26px;">(ConditionContext conditionContext, AnnotatedTypeMetadata metadata)</span> </span>{<br><span>        Environment environment = conditionContext.getEnvironment();<br><span><br><span>        String property = environment.getProperty(<span class="hljs-string" style="color: #d14; line-height: 26px;">“os.name”</span>);<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span> (property.contains(<span class="hljs-string" style="color: #d14; line-height: 26px;">“Linux”</span>)){<br><span>            <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">true</span>;<br><span>        }<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">false</span>;<br><span><br><span>    }<br><span>}<br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">配置类中结合<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Bean</code>注入不同的Bean，如下</strong>：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Configuration</span><br><span><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">CustomConfig</span> </span>{<br><span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">/<strong><br><span>     <em> 在Windows环境下注入的Bean为winP<br><span>     </span></em> <span class="hljs-doctag" style="color: #d14; line-height: 26px;">@return</span><br><span>     */</span><br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Bean</span>(<span class="hljs-string" style="color: #d14; line-height: 26px;">“winP”</span>)<br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Conditional</span>(value = {WindowsCondition.class})<br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> Person <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">personWin</span><span class="hljs-params" style="line-height: 26px;">()</span></span>{<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span> Person();<br><span>    }<br><span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">/</span></span></span></span></span></span></span></span></span></strong><br><span>     <em> 在Linux环境下注入的Bean为LinuxP<br><span>     </span></em> <span class="hljs-doctag" style="color: #d14; line-height: 26px;">@return</span><br><span>     <em>/</em></span><br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Bean</span>(<span class="hljs-string" style="color: #d14; line-height: 26px;">“LinuxP”</span>)<br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Conditional</span>(value = {LinuxCondition.class})<br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> Person <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">personLinux</span><span class="hljs-params" style="line-height: 26px;">()</span></span>{<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span> Person();<br><span>    }<br><span></span></span></span></span></span></span></span></span></span></span></span></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">简单的测试一下，如下</strong>：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@SpringBootTest</span><br><span><span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">SpringbootInterceptApplicationTests</span> </span>{<br><span><br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Autowired</span>(required = <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">false</span>)<br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Qualifier</span>(value = <span class="hljs-string" style="color: #d14; line-height: 26px;">“winP”</span>)<br><span>    <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">private</span> Person winP;<br><span><br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Autowired</span>(required = <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">false</span>)<br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Qualifier</span>(value = <span class="hljs-string" style="color: #d14; line-height: 26px;">“LinuxP”</span>)<br><span>    <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">private</span> Person linP;<br><span><br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Test</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">contextLoads</span><span class="hljs-params" style="line-height: 26px;">()</span> </span>{<br><span>        System.out.println(winP);<br><span>        System.out.println(linP);<br><span>    }<br><span>}<br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">Windows环境下执行单元测试，输出如下</strong>：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;">com.example.springbootintercept.domain.Person@<span class="hljs-number" style="color: #008080; line-height: 26px;">885e7f</span>f<br><span><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span><br><span></span></span></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">很显然，判断生效了，Windows环境下只注入了<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">WINP</code>。</p><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">条件判断在什么时候执行？</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">条件判断的执行分为两个阶段，如下：</p><br><ol data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: decimal;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><p style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">配置类解析阶段(<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ConfigurationPhase.PARSE_CONFIGURATION</code>)</strong>：在这个阶段会得到一批配置类的信息和一些需要注册的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Bean</code>。</p><br></section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><p style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">Bean注册阶段(<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ConfigurationPhase.REGISTER_BEAN</code>)</strong>：将配置类解析阶段得到的配置类和需要注册的Bean注入到容器中。</p><br></section></li></ol><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">默认都是配置解析阶段，其实也就够用了，但是在Spring Boot中使用了<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ConfigurationCondition</code>，这个接口可以自定义执行阶段，比如<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnMissingBean</code>都是在Bean注册阶段执行，因为需要从容器中判断Bean。</p><br><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"><br><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">这个两个阶段有什么不同呢？</strong>：其实很简单的，配置类解析阶段只是将需要加载配置类和一些Bean（被<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Conditional</code>注解过滤掉之后）收集起来，而Bean注册阶段是将的收集来的Bean和配置类注入到容器中，<strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">如果在配置类解析阶段执行<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Condition</code>接口的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">matches()</code>接口去判断某些Bean是否存在IOC容器中，这个显然是不行的，因为这些Bean还未注册到容器中</strong>。</p><br></blockquote><br><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"><br><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">什么是配置类，有哪些？</strong>：类上被<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Component</code>、 <code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ComponentScan</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Import</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ImportResource</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Configuration</code>标注的以及类中方法有<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Bean</code>的方法。如何判断配置类，在源码中有单独的方法：<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">org.springframework.context.annotation.ConfigurationClassUtils#isConfigurationCandidate</code>。</p><br></blockquote><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">ConfigurationCondition接口</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">这个接口相比于<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Condition</code>接口就多了一个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">getConfigurationPhase()</code>方法，可以自定义执行阶段。源码如下：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">interface</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">ConfigurationCondition</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">extends</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Condition</span> </span>{<br><span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">/**<br><span>      条件判断的阶段，是在解析配置类的时候过滤还是在创建bean的时候过滤<br><span>     <em>/</em></span><br><span>    <span class="hljs-function" style="line-height: 26px;">ConfigurationPhase <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">getConfigurationPhase</span><span class="hljs-params" style="line-height: 26px;">()</span></span>;<br><span><br><span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">/**<br><span>      表示阶段的枚举：2个值<br><span>     <em>/</em></span><br><span>    <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">enum</span> ConfigurationPhase {<br><span><br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">/**<br><span>          配置类解析阶段，如果条件为false，配置类将不会被解析<br><span>         <em>/</em></span><br><span>        PARSE_CONFIGURATION,<br><span><br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">/**<br><span>          bean注册阶段，如果为false，bean将不会被注册<br><span>         */</span><br><span>        REGISTER_BEAN<br><span>    }<br><span>}<br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">这个接口在需要指定执行阶段的时候可以实现，比如需要根据某个Bean是否在IOC容器中来注入指定的Bean，则需要指定执行阶段为<strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">Bean的注册阶段</strong>（<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ConfigurationPhase.REGISTER_BEAN</code>）。</p><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">多个Condition的执行顺序</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Conditional</code>中的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Condition</code>判断条件可以指定多个，默认是按照先后顺序执行，如下：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Condition1</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">implements</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Condition</span> </span>{<br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">boolean</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">matches</span><span class="hljs-params" style="line-height: 26px;">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>{<br><span>        System.out.println(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">this</span>.getClass().getName());<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">true</span>;<br><span>    }<br><span>}<br><span><br><span><span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Condition2</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">implements</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Condition</span> </span>{<br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">boolean</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">matches</span><span class="hljs-params" style="line-height: 26px;">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>{<br><span>        System.out.println(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">this</span>.getClass().getName());<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">true</span>;<br><span>    }<br><span>}<br><span><br><span><span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Condition3</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">implements</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Condition</span> </span>{<br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">boolean</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">matches</span><span class="hljs-params" style="line-height: 26px;">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>{<br><span>        System.out.println(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">this</span>.getClass().getName());<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">true</span>;<br><span>    }<br><span>}<br><span><br><span><span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Configuration</span><br><span><span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Conditional</span>({Condition1.class, Condition2.class, Condition3.class})<br><span><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">MainConfig5</span> </span>{<br><span>}<br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">上述例子会依次按照<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Condition1</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Condition2</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Condition3</code>执行。</strong></p><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">默认按照先后顺序执行，但是当我们需要指定顺序呢？很简单，有如下三种方式：</p><br><ol data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: decimal;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">实现<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">PriorityOrdered</code>接口，指定优先级</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">实现<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Ordered</code>接口接口，指定优先级</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">使用<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Order</code>注解来指定优先级</section></li></ol><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">例子如下：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Order</span>(<span class="hljs-number" style="color: #008080; line-height: 26px;">1</span>)<br><span><span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Condition1</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">implements</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Condition</span> </span>{<br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">boolean</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">matches</span><span class="hljs-params" style="line-height: 26px;">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>{<br><span>        System.out.println(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">this</span>.getClass().getName());<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">true</span>;<br><span>    }<br><span>}<br><span><br><span><span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Condition2</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">implements</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Condition</span>, <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Ordered</span> </span>{<br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">boolean</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">matches</span><span class="hljs-params" style="line-height: 26px;">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>{<br><span>        System.out.println(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">this</span>.getClass().getName());<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">true</span>;<br><span>    }<br><span><br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">int</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">getOrder</span><span class="hljs-params" style="line-height: 26px;">()</span> </span>{<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> <span class="hljs-number" style="color: #008080; line-height: 26px;">0</span>;<br><span>    }<br><span>}<br><span><br><span><span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Condition3</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">implements</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">Condition</span>, <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">PriorityOrdered</span> </span>{<br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">boolean</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">matches</span><span class="hljs-params" style="line-height: 26px;">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>{<br><span>        System.out.println(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">this</span>.getClass().getName());<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">true</span>;<br><span>    }<br><span><br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">int</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">getOrder</span><span class="hljs-params" style="line-height: 26px;">()</span> </span>{<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> <span class="hljs-number" style="color: #008080; line-height: 26px;">1000</span>;<br><span>    }<br><span>}<br><span><br><span><span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Configuration</span><br><span><span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Conditional</span>({Condition1.class, Condition2.class, Condition3.class})<br><span><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">MainConfig6</span> </span>{<br><span>}<br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">根据排序的规则，<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">PriorityOrdered</code>的会排在前面，然后会再按照<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">order</code>升序，最后可以顺序是：<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Condtion3-&gt;Condtion2-&gt;Condtion1</code></p><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">Spring Boot中常用的一些注解</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">Spring Boot中大量使用了这些注解，常见的注解如下：</p><br><ol data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: decimal;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnBean</code>：当容器中有指定Bean的条件下进行实例化。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnMissingBean</code>：当容器里没有指定Bean的条件下进行实例化。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnClass</code>：当classpath类路径下有指定类的条件下进行实例化。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnMissingClass</code>：当类路径下没有指定类的条件下进行实例化。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnWebApplication</code>：当项目是一个Web项目时进行实例化。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnNotWebApplication</code>：当项目不是一个Web项目时进行实例化。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnProperty</code>：当指定的属性有指定的值时进行实例化。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnExpression</code>：基于SpEL表达式的条件判断。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnJava</code>：当JVM版本为指定的版本范围时触发实例化。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnResource</code>：当类路径下有指定的资源时触发实例化。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnJndi</code>：在JNDI存在的条件下触发实例化。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnSingleCandidate</code>：当指定的Bean在容器中只有一个，或者有多个但是指定了首选的Bean时触发实例化。</section></li></ol><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">比如在<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">WEB</code>模块的自动配置类<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">WebMvcAutoConfiguration</code>下有这样一段代码：</p><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;">    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Bean</span><br><span>  <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@ConditionalOnMissingBean</span><br><span>  <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> InternalResourceViewResolver <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">defaultViewResolver</span><span class="hljs-params" style="line-height: 26px;">()</span> </span>{<br><span>   InternalResourceViewResolver resolver = <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span> InternalResourceViewResolver();<br><span>   resolver.setPrefix(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">this</span>.mvcProperties.getView().getPrefix());<br><span>   resolver.setSuffix(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">this</span>.mvcProperties.getView().getSuffix());<br><span>   <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> resolver;<br><span>  }<br><span></span></span></span></span></span></span></span></span></code></pre><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">常见的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Bean</code>和<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnMissingBean</code>注解结合使用，意思是当容器中没有<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">InternalResourceViewResolver</code>这种类型的Bean才会注入。这样写有什么好处呢？好处很明显，可以让开发者自定义需要的视图解析器，如果没有自定义，则使用默认的，这就是Spring Boot为自定义配置提供的便利。</p><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">总结</span><span class="suffix"></span></h2><br><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Conditional</code>注解在Spring Boot中演变的注解很多，需要着重了解，特别是后期框架整合的时候会大量涉及。</p><br><figure data-tool="mdnice编辑器" style="margin: 0; margin-top: 10px; margin-bottom: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center;"><img src="https://gitee.com/chenjiabing666/BlogImage/raw/master/myjszl_log.png" alt="" style="display: block; margin: 0 auto; max-width: 100%; border-radius: 4px; margin-bottom: 25px;"></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Spring-Boot-进阶/">Spring Boot 进阶</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Spring-Boot/">Spring Boot</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2020/10/14/Spring Boot第十一弹，这类注解都不知道，还好意思说用过Spring Boot/" data-title="Spring Boot第十一弹，这类注解都不知道，还好意思说用过Spring Boot | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2020/10/14/Spring Boot 第十弹，优质资源分享 ! Spring Boot 入门到放弃！！！/"  title="Spring Boot 第十弹，优质资源分享 ! Spring Boot 入门到放弃！！！">
+ <strong>下一篇：</strong><br/> 
+ <span>Spring Boot 第十弹，优质资源分享 ! Spring Boot 入门到放弃！！！
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">1.</span> <span class="toc-text">持续原创输出，点击上方蓝字关注我</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">2.</span> <span class="toc-text">目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">3.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">4.</span> <span class="toc-text">Spring Boot 版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">5.</span> <span class="toc-text">@Conditional</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">6.</span> <span class="toc-text">Condition接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">6.1.</span> <span class="toc-text">ConditionContext接口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">7.</span> <span class="toc-text">如何自定义Condition？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">8.</span> <span class="toc-text">条件判断在什么时候执行？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">9.</span> <span class="toc-text">ConfigurationCondition接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">10.</span> <span class="toc-text">多个Condition的执行顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">11.</span> <span class="toc-text">Spring Boot中常用的一些注解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">12.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Mybatis进阶/" title="Mybatis进阶">Mybatis进阶<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring-Boot-进阶/" title="Spring Boot 进阶">Spring Boot 进阶<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/开发工具/" title="开发工具">开发工具<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spring-Boot/" title="Spring Boot">Spring Boot<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mybatis/" title="Mybatis">Mybatis<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/破解/" title="破解">破解<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

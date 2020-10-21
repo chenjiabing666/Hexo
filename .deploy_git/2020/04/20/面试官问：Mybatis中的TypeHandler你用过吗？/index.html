@@ -1,0 +1,622 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>面试官问：Mybatis中的TypeHandler你用过吗？ | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="持续原创输出，点击上方蓝字关注我吧
+
+目录
+前言环境配置什么是TypeHandler？如何自定义？如何将其添加到Mybatis中？XML文件中如何指定TypeHandler？源码中如何执行TypeHandler？入参如何转换？结果如何转换？总结总结前言相信大家用Mybatis这个框架至少一年以上了吧，有没有思考过这样一个问题：数据库有自己的数据类型，Java有自己的数据类型，那么Mybatis是如">
+<meta property="og:type" content="article">
+<meta property="og:title" content="面试官问：Mybatis中的TypeHandler你用过吗？">
+<meta property="og:url" content="http://chenjiabing666.github.io/2020/04/20/面试官问：Mybatis中的TypeHandler你用过吗？/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="持续原创输出，点击上方蓝字关注我吧
+
+目录
+前言环境配置什么是TypeHandler？如何自定义？如何将其添加到Mybatis中？XML文件中如何指定TypeHandler？源码中如何执行TypeHandler？入参如何转换？结果如何转换？总结总结前言相信大家用Mybatis这个框架至少一年以上了吧，有没有思考过这样一个问题：数据库有自己的数据类型，Java有自己的数据类型，那么Mybatis是如">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mybatis%E4%B8%AD%E7%9A%84TypeHandler/3.jpeg">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mybatis%E4%B8%AD%E7%9A%84TypeHandler/1.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mybatis%E4%B8%AD%E7%9A%84TypeHandler/2.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg">
+<meta property="og:updated_time" content="2020-10-14T03:39:05.768Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="面试官问：Mybatis中的TypeHandler你用过吗？">
+<meta name="twitter:description" content="持续原创输出，点击上方蓝字关注我吧
+
+目录
+前言环境配置什么是TypeHandler？如何自定义？如何将其添加到Mybatis中？XML文件中如何指定TypeHandler？源码中如何执行TypeHandler？入参如何转换？结果如何转换？总结总结前言相信大家用Mybatis这个框架至少一年以上了吧，有没有思考过这样一个问题：数据库有自己的数据类型，Java有自己的数据类型，那么Mybatis是如">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mybatis%E4%B8%AD%E7%9A%84TypeHandler/3.jpeg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/04/20/面试官问：Mybatis中的TypeHandler你用过吗？/" title="面试官问：Mybatis中的TypeHandler你用过吗？" itemprop="url">面试官问：Mybatis中的TypeHandler你用过吗？</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2020-04-20T09:08:42.000Z" itemprop="datePublished"> 发表于 2020-04-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">1.</span> <span class="toc-text">持续原创输出，点击上方蓝字关注我吧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">1.1.</span> <span class="toc-text">目录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">2.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">3.</span> <span class="toc-text">环境配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">4.</span> <span class="toc-text">什么是TypeHandler？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">5.</span> <span class="toc-text">如何自定义并使用TypeHandler？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">5.1.</span> <span class="toc-text">如何自定义？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">5.2.</span> <span class="toc-text">如何将其添加到Mybatis中？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">5.3.</span> <span class="toc-text">XML文件中如何指定TypeHandler？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">6.</span> <span class="toc-text">源码中如何执行TypeHandler？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">6.1.</span> <span class="toc-text">入参如何转换？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">6.2.</span> <span class="toc-text">结果如何转换？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">6.3.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p><section id="nice" data-tool="mdnice编辑器" data-website="https://www.mdnice.com" style="padding: 0 10px; word-spacing: 0px; word-wrap: break-word; text-align: left; font-family: Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, 'PingFang SC', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; line-height: 1.6; letter-spacing: .034em; color: rgb(63, 63, 63); font-size: 16px; word-break: all;"><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">持续原创输出，点击上方蓝字关注我吧</span><span class="suffix"></span></h2></section></p>
+<p><figure data-tool="mdnice编辑器" style="margin: 0; margin-top: 10px; margin-bottom: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center;"><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mybatis%E4%B8%AD%E7%9A%84TypeHandler/3.jpeg" alt="" style="display: block; margin: 0 auto; max-width: 100%; border-radius: 4px; margin-bottom: 25px;"></figure></p>
+<p></p><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">目录</span><span class="suffix" style="display: none;"></span></h3><p></p>
+<ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">前言</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">环境配置</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">什么是TypeHandler？<br><ul style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: square;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">如何自定义？</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">如何将其添加到Mybatis中？</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">XML文件中如何指定TypeHandler？</section></li></ul><br></section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">源码中如何执行TypeHandler？<br><ul style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: square;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">入参如何转换？</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">结果如何转换？</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">总结</section></li></ul><br></section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">总结</section></li></ul><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">前言</span><span class="suffix"></span></h2><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><p style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">相信大家用Mybatis这个框架至少一年以上了吧，有没有思考过这样一个问题：数据库有自己的数据类型，Java有自己的数据类型，那么Mybatis是如何把数据库中的类型和Java的数据类型对应的呢？</p><br></section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><p style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">本篇文章就来讲讲Mybatis中的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">黑匣子TypeHandler(类型处理器)</code>，说它是黑匣子一点都不为过，总是在默默的奉献着，但是不为人知。</p><br></section></li></ul><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">环境配置</span><span class="suffix"></span></h2><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">本篇文章讲的一切内容都是基于<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Mybatis3.5</code>和<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">SpringBoot-2.3.3.RELEASE</code>。</section></li></ul><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">什么是TypeHandler？</span><span class="suffix"></span></h2><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><p style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">顾名思义，类型处理器，将入参和结果转换为所需要的类型，Mybatis中对于内置了许多类型处理器，实际开发中已经足够使用了，如下图：<br><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mybatis%E4%B8%AD%E7%9A%84TypeHandler/1.png" alt="" style="display: block; margin: 0 auto; max-width: 100%; border-radius: 4px; margin-bottom: 25px;"><br><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/Mybatis%E4%B8%AD%E7%9A%84TypeHandler/2.png" alt="" style="display: block; margin: 0 auto; max-width: 100%; border-radius: 4px; margin-bottom: 25px;"></p><br></section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><p style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">类型处理器这个接口其实很简单，总共四个方法，一个方法将入参的Java类型的数据转换为JDBC类型，三个方法将返回结果转换为Java类型。源码如下：</p><br></section></li></ul><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">interface</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">TypeHandler</span>&lt;<span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">T</span>&gt; </span>{<br><span>  <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//设置参数，java类型转换为jdbc类型</span><br><span>  <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">setParameter</span><span class="hljs-params" style="line-height: 26px;">(PreparedStatement ps, <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">int</span> i, T parameter, JdbcType jdbcType)</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span> SQLException</span>;<br><span>  <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//将查询的结果转换为java类型</span><br><span>  <span class="hljs-function" style="line-height: 26px;">T <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">getResult</span><span class="hljs-params" style="line-height: 26px;">(ResultSet rs, String columnName)</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span> SQLException</span>;<br><span><br><span>  <span class="hljs-function" style="line-height: 26px;">T <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">getResult</span><span class="hljs-params" style="line-height: 26px;">(ResultSet rs, <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">int</span> columnIndex)</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span> SQLException</span>;<br><span><br><span>  <span class="hljs-function" style="line-height: 26px;">T <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">getResult</span><span class="hljs-params" style="line-height: 26px;">(CallableStatement cs, <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">int</span> columnIndex)</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span> SQLException</span>;<br><span>}<br><span></span></span></span></span></span></span></span></span></span></span></code></pre><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">如何自定义并使用TypeHandler？</span><span class="suffix"></span></h2><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">实际应用开发中的难免会有一些需求要自定义一个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">TypeHandler</code>，比如这样一个需求：前端传来的年龄是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">男</code>,<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">女</code>，但是数据库定义的字段却是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">int</code>类型（<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">1男2女</code>）。此时可以自定义一个年龄的类型处理器，进行转换。</section></li></ul><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">如何自定义？</span><span class="suffix" style="display: none;"></span></h3><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">自定义的方式有两种，一种是实现<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">TypeHandler</code>这个接口，另一个就是继承<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">BaseTypeHandler</code>这个便捷的抽象类。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">下面直接继承<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">BaseTypeHandler</code>这个抽象类，定义一个年龄的类型处理器，如下：</section></li></ul><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@MappedJdbcTypes</span>(JdbcType.INTEGER)<br><span><span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@MappedTypes</span>(String.class)<br><span><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">class</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">GenderTypeHandler</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">extends</span> <span class="hljs-title" style="color: #458; font-weight: bold; line-height: 26px;">BaseTypeHandler</span> </span>{<br><span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//设置参数，这里将Java的String类型转换为JDBC的Integer类型</span><br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">setNonNullParameter</span><span class="hljs-params" style="line-height: 26px;">(PreparedStatement ps, <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">int</span> i, Object parameter, JdbcType jdbcType)</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span> SQLException </span>{<br><span>        ps.setInt(i, StringUtils.equals(parameter.toString(),<span class="hljs-string" style="color: #d14; line-height: 26px;">“男”</span>)?<span class="hljs-number" style="color: #008080; line-height: 26px;">1</span>:<span class="hljs-number" style="color: #008080; line-height: 26px;">2</span>);<br><span>    }<br><span><br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//以下三个参数都是将查询的结果转换</span><br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> Object <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">getNullableResult</span><span class="hljs-params" style="line-height: 26px;">(ResultSet rs, String columnName)</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span> SQLException </span>{<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> rs.getInt(columnName)==<span class="hljs-number" style="color: #008080; line-height: 26px;">1</span>?<span class="hljs-string" style="color: #d14; line-height: 26px;">“男”</span>:<span class="hljs-string" style="color: #d14; line-height: 26px;">“女”</span>;<br><span>    }<br><span><br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> Object <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">getNullableResult</span><span class="hljs-params" style="line-height: 26px;">(ResultSet rs, <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">int</span> columnIndex)</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span> SQLException </span>{<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> rs.getInt(columnIndex)==<span class="hljs-number" style="color: #008080; line-height: 26px;">1</span>?<span class="hljs-string" style="color: #d14; line-height: 26px;">“男”</span>:<span class="hljs-string" style="color: #d14; line-height: 26px;">“女”</span>;<br><span>    }<br><span><br><span>    <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> Object <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">getNullableResult</span><span class="hljs-params" style="line-height: 26px;">(CallableStatement cs, <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">int</span> columnIndex)</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span> SQLException </span>{<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> cs.getInt(columnIndex)==<span class="hljs-number" style="color: #008080; line-height: 26px;">1</span>?<span class="hljs-string" style="color: #d14; line-height: 26px;">“男”</span>:<span class="hljs-string" style="color: #d14; line-height: 26px;">“女”</span>;<br><span>    }<br><span>}<br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">这里涉及到两个注解，如下：<br><ul style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: square;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@MappedTypes</code>：指定与其关联的 <code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Java</code> 类型列表。 如果在 <code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">javaType</code> 属性中也同时指定，则注解上的配置将被忽略。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@MappedJdbcTypes</code>：指定与其关联的 <code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">JDBC</code> 类型列表。 如果在 <code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">jdbcType</code> 属性中也同时指定，则注解上的配置将被忽略。</section></li></ul><br></section></li></ul><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">如何将其添加到Mybatis中？</span><span class="suffix" style="display: none;"></span></h3><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">Mybatis在与SpringBoot整合之后一切都变得很简单了，其实这里有两种配置方式，下面将会一一介绍。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">第一种</strong>：只需要在配置文件<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">application.properties</code>中添加一行配置即可，如下：</section></li></ul><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;">## 设置自定义的Typehandler所在的包，启动的时候会自动扫描配置到Mybatis中<br><span>mybatis.type-handlers-<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">package</span>=cn.cb.demo.typehandler<br><span></span></span></code></pre><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">第二种</strong>：其实任何框架与Springboot整合之后，只要配置文件中能够配置的，在配置类中都可以配置（<strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">除非有特殊定制，否则不要轻易覆盖自动配置</strong>）。如下：</section></li></ul><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Bean</span>(<span class="hljs-string" style="color: #d14; line-height: 26px;">“sqlSessionFactory”</span>)<br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> SqlSessionFactory <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">sqlSessionFactory</span><span class="hljs-params" style="line-height: 26px;">(DataSource dataSource)</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span> Exception </span>{<br><span>        SqlSessionFactoryBean sqlSessionFactoryBean = <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span> SqlSessionFactoryBean();<br><span>        sqlSessionFactoryBean.setDataSource(dataSource);<br><span>        sqlSessionFactoryBean.setMapperLocations(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span> PathMatchingResourcePatternResolver().getResources(MAPPER_LOCATOIN));<br><span>        org.apache.ibatis.session.Configuration configuration = <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span> org.apache.ibatis.session.Configuration();<br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">// 自动将数据库中的下划线转换为驼峰格式</span><br><span>        configuration.setMapUnderscoreToCamelCase(<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">true</span>);<br><span>        configuration.setDefaultFetchSize(<span class="hljs-number" style="color: #008080; line-height: 26px;">100</span>);<br><span>        configuration.setDefaultStatementTimeout(<span class="hljs-number" style="color: #008080; line-height: 26px;">30</span>);<br><span>        sqlSessionFactoryBean.setConfiguration(configuration);<br><span>        <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//将typehandler注册到mybatis</span><br><span>        GenderTypeHandler genderTypeHandler = <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span> GenderTypeHandler();<br><span>        TypeHandler[] typeHandlers=<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span> TypeHandler[]{genderTypeHandler};<br><span>        sqlSessionFactoryBean.setTypeHandlers(typeHandlers);<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> sqlSessionFactoryBean.getObject();<br><span>    }<br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">第二种方式的思想其实就是重写自动配置类<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">MybatisAutoConfiguration</code>中的方法。<strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">注意：除非自己有特殊定制，否则不要轻易重写自动配置类中的方法</strong>。</section></li></ul><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">XML文件中如何指定TypeHandler？</span><span class="suffix" style="display: none;"></span></h3><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">上面的两个步骤分别是自定义和注入到Mybatis中，那么如何在<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">XML</code>文件中使用呢？</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">使用其实很简单，分为两种，一种是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">更新</code>，一种<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">查询</code>，下面将会一一介绍。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">更新</strong>：删除自不必说了，这里讲的是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">update</code>和<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">insert</code>两种，只需要在<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">#{}</code>中指定的属性<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">typeHandler</code>为自定义的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">全类名</code>即可，代码如下：</section></li></ul><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">insert</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">id</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“insertUser”</span>&gt;</span><br><span>        insert into user_info(user_id,his_id,name,gender,password,create_time)<br><span>        values(#{userId,jdbcType=VARCHAR},#{hisId,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},<br><span>        #{gender,jdbcType=INTEGER,typeHandler=cn.cb.demo.typehandler.GenderTypeHandler},#{password,jdbcType=VARCHAR},now())<br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">insert</span>&gt;</span><br><span></span></span></span></span></span></code></pre><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">查询</strong>：查询的时候类型处理会将JDBC类型的转化为Java类型，因此也是需要指定<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">typeHandler</code>，需要在<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">resultMap</code>中指定<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">typeHandler</code>这个属性，值为<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">全类名</code>，如下：</section></li></ul><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">resultMap</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">id</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“userResultMap”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">type</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“cn.cb.demo.domain.UserInfo”</span>&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">id</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">column</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“id”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">property</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“id”</span>/&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">result</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">column</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“user_id”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">property</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“userId”</span>/&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">result</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">column</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“his_id”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">property</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“hisId”</span>/&gt;</span><br><span>            <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">&lt;!– 指定typeHandler属性为全类名–&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">result</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">column</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“gender”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">property</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“gender”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">typeHandler</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“cn.cb.demo.typehandler.GenderTypeHandler”</span>/&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">result</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">column</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“name”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">property</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“name”</span>/&gt;</span><br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">result</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">column</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“password”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">property</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“password”</span>/&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">resultMap</span>&gt;</span><br><span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">select</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">id</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“selectList”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">resultMap</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“userResultMap”</span>&gt;</span><br><span>        select * from user_info where status=1<br><span>        and user_id in<br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">foreach</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">collection</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“userIds”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">item</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“item”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">open</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“(“</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">separator</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“,”</span> <span class="hljs-attr" style="color: #008080; line-height: 26px;">close</span>=<span class="hljs-string" style="color: #d14; line-height: 26px;">“)”</span> &gt;</span><br><span>            #{item}<br><span>        <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">foreach</span>&gt;</span><br><span>    <span class="hljs-tag" style="color: #000080; font-weight: normal; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #000080; font-weight: normal; line-height: 26px;">select</span>&gt;</span><br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">源码中如何执行TypeHandler？</span><span class="suffix"></span></h2><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">既然会使用<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">TypeHandler</code>了，那么肯定要知道其中的执行原理了，在Mybatis中类型处理器是如何在<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">JDBC</code>类型和<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Java</code>类型进行转换的，下面的将从源码角度详细介绍。</section></li></ul><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">入参如何转换？</span><span class="suffix" style="display: none;"></span></h3><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">这个肯定是发生在设置参数的过程中，详细的代码在<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">PreparedStatementHandler</code>中的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">parameterize()</code>方法中，这个方法就是设置参数的方法。源码如下：</section></li></ul><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"> <span class="hljs-meta" style="color: #999; font-weight: bold; line-height: 26px;">@Override</span><br><span>  <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">parameterize</span><span class="hljs-params" style="line-height: 26px;">(Statement statement)</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span> SQLException </span>{<br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//实际调用的是DefaultParameterHandler</span><br><span>    parameterHandler.setParameters((PreparedStatement) statement);<br><span>  }<br><span></span></span></span></span></span></code></pre><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">实际执行的是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DefaultParameterHandler</code>中的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">setParameters</code>方法，如下：</section></li></ul><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">void</span> <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">setParameters</span><span class="hljs-params" style="line-height: 26px;">(PreparedStatement ps)</span> </span>{<br><span>    ErrorContext.instance().activity(<span class="hljs-string" style="color: #d14; line-height: 26px;">“setting parameters”</span>).object(mappedStatement.getParameterMap().getId());<br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//获取参数映射</span><br><span>    List&lt;ParameterMapping&gt; parameterMappings = boundSql.getParameterMappings();<br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//遍历参数映射，一一设置</span><br><span>    <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span> (parameterMappings != <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span>) {<br><span>      <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">for</span> (<span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">int</span> i = <span class="hljs-number" style="color: #008080; line-height: 26px;">0</span>; i &lt; parameterMappings.size(); i++) {<br><span>        ParameterMapping parameterMapping = parameterMappings.get(i);<br><span>        <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span> (parameterMapping.getMode() != ParameterMode.OUT) {<br><span>          Object value;<br><span>          String propertyName = parameterMapping.getProperty();<br><span>          <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span> (boundSql.hasAdditionalParameter(propertyName)) { <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">// issue #448 ask first for additional params</span><br><span>            value = boundSql.getAdditionalParameter(propertyName);<br><span>          } <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">else</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span> (parameterObject == <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span>) {<br><span>            value = <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span>;<br><span>          } <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">else</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span> (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {<br><span>            value = parameterObject;<br><span>          } <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">else</span> {<br><span>            MetaObject metaObject = configuration.newMetaObject(parameterObject);<br><span>            value = metaObject.getValue(propertyName);<br><span>          }<br><span>          <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//获取类型处理器，如果不存在，使用默认的</span><br><span>          TypeHandler typeHandler = parameterMapping.getTypeHandler();<br><span>          <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//JdbcType</span><br><span>          JdbcType jdbcType = parameterMapping.getJdbcType();<br><span>          <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span> (value == <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span> &amp;&amp; jdbcType == <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span>) {<br><span>            jdbcType = configuration.getJdbcTypeForNull();<br><span>          }<br><span>          <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">try</span> {<br><span>            <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//调用类型处理器中的方法设置参数，将Java类型转换为JDBC类型</span><br><span>            typeHandler.setParameter(ps, i + <span class="hljs-number" style="color: #008080; line-height: 26px;">1</span>, value, jdbcType);<br><span>          } <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">catch</span> (TypeException e) {<br><span>            <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throw</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span> TypeException(<span class="hljs-string" style="color: #d14; line-height: 26px;">“Could not set parameters for mapping: “</span> + parameterMapping + <span class="hljs-string" style="color: #d14; line-height: 26px;">“. Cause: “</span> + e, e);<br><span>          } <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">catch</span> (SQLException e) {<br><span>            <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throw</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">new</span> TypeException(<span class="hljs-string" style="color: #d14; line-height: 26px;">“Could not set parameters for mapping: “</span> + parameterMapping + <span class="hljs-string" style="color: #d14; line-height: 26px;">“. Cause: “</span> + e, e);<br><span>          }<br><span>        }<br><span>      }<br><span>    }<br><span>  }<br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">从上面的源码中可以知道这行代码<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">typeHandler.setParameter(ps, i + 1, value, jdbcType);</code>就是调用类型处理器中的设置参数的方法，将<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Java</code>类型转换为<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">JDBC</code>类型。</section></li></ul><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">结果如何转换？</span><span class="suffix" style="display: none;"></span></h3><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">这一过程肯定是发生在执行查询语句的过程中，之前也是介绍过Mybatis的六大剑客，其中的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ResultSetHandler</code>这个组件就是对查询的结果进行处理的，那么肯定是发生在这一组件中的某个方法。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">在<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">PreparedStatementHandler</code>执行查询结束之后，调用的是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ResultSetHandler</code>中的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">handleResultSets()</code>方法，对结果进行处理，如下：</section></li></ul><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">public</span> &lt;E&gt; <span class="hljs-function" style="line-height: 26px;">List&lt;E&gt; <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">query</span><span class="hljs-params" style="line-height: 26px;">(Statement statement, ResultHandler resultHandler)</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span> SQLException </span>{<br><span>    PreparedStatement ps = (PreparedStatement) statement;<br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//执行SQL</span><br><span>    ps.execute();<br><span>    <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//处理结果</span><br><span>    <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> resultSetHandler.handleResultSets(ps);<br><span>  }<br><span></span></span></span></span></span></span></span></code></pre><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">最终的在<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DefaultResultHandler</code>中的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">getPropertyMappingValue()</code>方法中调用了<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">TypeHandler</code>中的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">getResult()</code>方法，如下：</section></li></ul><br><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://my-wechat.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #f8f8f8; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: #333; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #f8f8f8; border-radius: 5px;"><span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">private</span> Object <span class="hljs-title" style="color: #900; font-weight: bold; line-height: 26px;">getPropertyMappingValue</span><span class="hljs-params" style="line-height: 26px;">(ResultSet rs, MetaObject metaResultObject, ResultMapping propertyMapping, ResultLoaderMap lazyLoader, String columnPrefix)</span><br><span>      <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">throws</span> SQLException </span>{<br><span>    <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span> (propertyMapping.getNestedQueryId() != <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span>) {<br><span>      <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> getNestedQueryMappingValue(rs, metaResultObject, propertyMapping, lazyLoader, columnPrefix);<br><span>    } <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">else</span> <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">if</span> (propertyMapping.getResultSet() != <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">null</span>) {<br><span>      addPendingChildRelation(rs, metaResultObject, propertyMapping);   <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">// TODO is that OK?</span><br><span>      <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> DEFERRED;<br><span>    } <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">else</span> {<br><span>      <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">final</span> TypeHandler&lt;?&gt; typeHandler = propertyMapping.getTypeHandler();<br><span>      <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">final</span> String column = prependPrefix(propertyMapping.getColumn(), columnPrefix);<br><span>      <span class="hljs-comment" style="color: #998; font-style: italic; line-height: 26px;">//执行typeHandler中的方法获取结果并且转换为对应的Java类型</span><br><span>      <span class="hljs-keyword" style="color: #333; font-weight: bold; line-height: 26px;">return</span> typeHandler.getResult(rs, column);<br><span>    }<br><span>  }<br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre><br><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">总结</span><span class="suffix" style="display: none;"></span></h3><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">上述只是简要的介绍了类型处理器如何在Mybatis中执行的，可能其中有些概念东西如果不清楚的，可以看一下作者前面的文章，如下：<br><ul style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: square;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><a href="https://mp.weixin.qq.com/s/lnJx0h_4Kk6fKuhptN1cdg" style="word-wrap: break-word; font-weight: bold; color: #48b378; text-decoration: none; border-bottom: 1px solid #48b378;" target="_blank" rel="external">Mybatis源码解析之六剑客</a></section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><a href="https://mp.weixin.qq.com/s/B9e-4y_jokLHtDnS0o6-7g" style="word-wrap: break-word; font-weight: bold; color: #48b378; text-decoration: none; border-bottom: 1px solid #48b378;" target="_blank" rel="external">Mybatis源码如何阅读，教你一招！！！</a></section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><a href="https://mp.weixin.qq.com/s/sqRM4BWNv84qbd2Dh-2y4g" style="word-wrap: break-word; font-weight: bold; color: #48b378; text-decoration: none; border-bottom: 1px solid #48b378;" target="_blank" rel="external">Mybatis如何执行Select语句，你知道吗？</a></section></li></ul><br></section></li></ul><br><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">总结</span><span class="suffix"></span></h2><br><ul data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: disc;"><br><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">本文详细的介绍了TypeHandler在Mybatis中的应用、自定义使用以及从源码角度分析了类型处理器的执行流程，如果觉得作者写的不错，有所收获的话，不妨点点关注，分享一波。<br><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" alt="" style="display: block; margin: 0 auto; max-width: 100%; border-radius: 4px; margin-bottom: 25px;"></section></li></ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Mybatis进阶/">Mybatis进阶</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Mybatis/">Mybatis</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2020/04/20/面试官问：Mybatis中的TypeHandler你用过吗？/" data-title="面试官问：Mybatis中的TypeHandler你用过吗？ | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/04/20/面试官：讲一讲Mybatis插件的原理及如何实现？/" title="面试官：讲一讲Mybatis插件的原理及如何实现？">
+  <strong>上一篇：</strong><br/>
+  <span>
+  面试官：讲一讲Mybatis插件的原理及如何实现？</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/04/20/Mybatis的Mapper中的方法为什么不能重载/"  title="Mybatis的Mapper中的方法为什么不能重载？">
+ <strong>下一篇：</strong><br/> 
+ <span>Mybatis的Mapper中的方法为什么不能重载？
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">1.</span> <span class="toc-text">持续原创输出，点击上方蓝字关注我吧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">1.1.</span> <span class="toc-text">目录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">2.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">3.</span> <span class="toc-text">环境配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">4.</span> <span class="toc-text">什么是TypeHandler？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">5.</span> <span class="toc-text">如何自定义并使用TypeHandler？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">5.1.</span> <span class="toc-text">如何自定义？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">5.2.</span> <span class="toc-text">如何将其添加到Mybatis中？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">5.3.</span> <span class="toc-text">XML文件中如何指定TypeHandler？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">6.</span> <span class="toc-text">源码中如何执行TypeHandler？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">6.1.</span> <span class="toc-text">入参如何转换？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">6.2.</span> <span class="toc-text">结果如何转换？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">6.3.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Mybatis进阶/" title="Mybatis进阶">Mybatis进阶<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring-Boot-进阶/" title="Spring Boot 进阶">Spring Boot 进阶<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/开发工具/" title="开发工具">开发工具<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring-Boot/" title="Spring Boot">Spring Boot<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mybatis/" title="Mybatis">Mybatis<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/破解/" title="破解">破解<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

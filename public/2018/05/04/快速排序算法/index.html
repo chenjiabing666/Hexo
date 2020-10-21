@@ -1,0 +1,743 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>快速排序算法 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="快速排序算法思想(从小到大排序)
+快速排序是使用分治法来完成的
+基本思想就是先从其中选取一个基准值，然后从数组的两端开始移动查找，在右边移动查找到比基准值小的数据停止移动，此时在左边查找到比基准值大的数据也停止查找，交换这两个查找到的数据，交换完成之后两端继续移动查找，如果左边找到比基准值大的，右边找到比基准值小的数据，再次交换。直到查找到同一个数据上(相遇)或者”擦肩而过”。那么将基准值与相遇的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="快速排序算法">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/05/04/快速排序算法/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="快速排序算法思想(从小到大排序)
+快速排序是使用分治法来完成的
+基本思想就是先从其中选取一个基准值，然后从数组的两端开始移动查找，在右边移动查找到比基准值小的数据停止移动，此时在左边查找到比基准值大的数据也停止查找，交换这两个查找到的数据，交换完成之后两端继续移动查找，如果左边找到比基准值大的，右边找到比基准值小的数据，再次交换。直到查找到同一个数据上(相遇)或者”擦肩而过”。那么将基准值与相遇的">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:22:56.750Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="快速排序算法">
+<meta name="twitter:description" content="快速排序算法思想(从小到大排序)
+快速排序是使用分治法来完成的
+基本思想就是先从其中选取一个基准值，然后从数组的两端开始移动查找，在右边移动查找到比基准值小的数据停止移动，此时在左边查找到比基准值大的数据也停止查找，交换这两个查找到的数据，交换完成之后两端继续移动查找，如果左边找到比基准值大的，右边找到比基准值小的数据，再次交换。直到查找到同一个数据上(相遇)或者”擦肩而过”。那么将基准值与相遇的">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/05/04/快速排序算法/" title="快速排序算法" itemprop="url">快速排序算法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-05-04T09:55:26.000Z" itemprop="datePublished"> 发表于 2018-05-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#快速排序算法"><span class="toc-number">1.</span> <span class="toc-text">快速排序算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想-从小到大排序"><span class="toc-number">1.1.</span> <span class="toc-text">思想(从小到大排序)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#选取数组的第一个数为基准值"><span class="toc-number">1.2.</span> <span class="toc-text">选取数组的第一个数为基准值</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#另外一种方式"><span class="toc-number">1.2.1.</span> <span class="toc-text">另外一种方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么从最右边开始查找"><span class="toc-number">1.2.2.</span> <span class="toc-text">为什么从最右边开始查找</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.3.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.4.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="快速排序算法"><a href="#快速排序算法" class="headerlink" title="快速排序算法"></a>快速排序算法</h1><h2 id="思想-从小到大排序"><a href="#思想-从小到大排序" class="headerlink" title="思想(从小到大排序)"></a>思想(从小到大排序)</h2><ul>
+<li>快速排序是使用<code>分治法</code>来完成的</li>
+<li>基本思想就是先从其中选取一个<code>基准值</code>，然后从数组的两端开始移动查找，在<code>右边</code>移动查找到比<code>基准值</code>小的数据停止移动，此时在<code>左边</code>查找到比<code>基准值</code>大的数据也停止查找，<code>交换</code>这两个查找到的数据，交换完成之后两端继续移动查找，如果左边找到比基准值大的，右边找到比基准值小的数据，再次交换。直到查找到同一个数据上(相遇)或者”擦肩而过”。那么将<code>基准值</code>与<code>相遇的那个值</code>交换，此时就能够保证在基准值左边的都是比基准值小的，在其右边的都是比其大的数，此时一轮查找结束。接下来这个基准值将一个数组分成了<code>两半</code>，左边的是小的，右边是大的，那么我们再分别对左边和右边的数据进行相同的操作，直至不可拆分成新的子序列为止。</li>
+<li>快速排序的最坏运行时间是<code>O(n2)</code>，但期望的运行时间是<code>O(nlgn)</code>。</li>
+</ul>
+<h2 id="选取数组的第一个数为基准值"><a href="#选取数组的第一个数为基准值" class="headerlink" title="选取数组的第一个数为基准值"></a>选取数组的第一个数为基准值</h2><ul>
+<li>我们选取数组的<code>第一个元素</code>作为基准值</li>
+<li>此时先从数组的最右边开始查找，如果找到比基准值小的停止查找，再从最左边开始查找，直至找到比基准值大的，那么两边就交换，交换完成之后，最右边再次开始查找，找到就等待左边找到数交换，直至双方相遇。那么把相遇的那个点的数据和基准值交换即可，那么现在在基准值左边的都是小的，在右边的都是大的，此时的基准值将数组分成了两个子序列，再对子序列进行重复的操作，直到不可拆分成子序列。</li>
+</ul>
+<ul>
+<li>实现的代码</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">quickSort</span><span class="params">(<span class="keyword">int</span>[] arr,<span class="keyword">int</span> low,<span class="keyword">int</span> high)</span></span>&#123;</div><div class="line">	        </div><div class="line">	        <span class="comment">//递归结束的条件，如果此时的子序列只有一个元素就是low=high，就不用排序了</span></div><div class="line">	        <span class="keyword">if</span>(low&gt;=high)&#123;</div><div class="line">	            <span class="keyword">return</span>;</div><div class="line">	        &#125;</div><div class="line">	        </div><div class="line">	        <span class="keyword">int</span> i=low;   <span class="comment">//i从最左边开始查找</span></div><div class="line">	        <span class="keyword">int</span> j=high;   <span class="comment">//i从最右边开始查找</span></div><div class="line">	        <span class="keyword">int</span> temp = arr[low]; <span class="comment">//设置基准值为第一个元素，temp</span></div><div class="line">	        </div><div class="line">	        <span class="comment">//如果此时的i和j没有相遇，一直进行下去</span></div><div class="line">	        <span class="keyword">while</span> (i&lt;j) &#123;</div><div class="line">	        	<span class="comment">//先从右边开始查找，如果没有找到比基准值小的并且没有相遇，那么继续向右查找</span></div><div class="line">	            <span class="keyword">while</span> (temp&lt;=arr[j]&amp;&amp;i&lt;j) &#123;</div><div class="line">	                j--;   <span class="comment">//向左移动</span></div><div class="line">	            &#125;</div><div class="line">	            </div><div class="line">	            <span class="comment">//再从左边开始查找，如果没有找到比基准值大的并且没有相遇，那么继续向左查找</span></div><div class="line">	            <span class="keyword">while</span> (temp&gt;=arr[i]&amp;&amp;i&lt;j) &#123;</div><div class="line">	                i++;   <span class="comment">// 向右移动</span></div><div class="line">	            &#125;</div><div class="line">	           </div><div class="line">	           <span class="comment">//代码能够运行到这里，那么表示已经找到了右面小于基准值的，左面大于基准值的，那么就可以交换数据了</span></div><div class="line">	           <span class="comment">//这里的i&lt;j用于控制在最后相遇的时候还要交换数据，不必交换了，可以省去一次的交换</span></div><div class="line">	          <span class="keyword">if</span> (i&lt;j) &#123;</div><div class="line">	        	  	<span class="comment">//交换数据</span></div><div class="line">	        	   	<span class="keyword">int</span> t = arr[j];</div><div class="line">	                arr[j] = arr[i];</div><div class="line">	                arr[i] = t;</div><div class="line">	          &#125;</div><div class="line">	             </div><div class="line"></div><div class="line">	        &#125;</div><div class="line">	        </div><div class="line">	        <span class="comment">//最后将基准为与i和j相等位置的数字交换</span></div><div class="line">	         arr[low] = arr[i];  <span class="comment">//第一个元素设置为i和j相遇的那个值</span></div><div class="line">	         arr[i] = temp;   <span class="comment">//相遇的那个地方设置为基准值</span></div><div class="line">	         </div><div class="line">	        <span class="comment">//递归调用左半数组，以基准值为中心切割</span></div><div class="line">	        quickSort(arr, low, j-<span class="number">1</span>);</div><div class="line">	        <span class="comment">//递归调用右半数组</span></div><div class="line">	        quickSort(arr, j+<span class="number">1</span>, high);</div><div class="line">	    &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>测试</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span>[] array=&#123; <span class="number">9</span>,<span class="number">7</span>,<span class="number">4</span>,<span class="number">67</span>,<span class="number">45</span>,<span class="number">2</span>,<span class="number">24</span>,<span class="number">33</span>,<span class="number">22</span>,<span class="number">45</span>,<span class="number">88</span>,<span class="number">12</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">25</span>&#125;;</div><div class="line">quickSort(array, <span class="number">0</span>, array.length-<span class="number">1</span>);</div><div class="line"></div><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; array.length; i++) &#123;</div><div class="line">	System.out.print(array[i]+<span class="string">"\t"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="另外一种方式"><a href="#另外一种方式" class="headerlink" title="另外一种方式"></a>另外一种方式</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">partition</span><span class="params">(<span class="keyword">int</span>[] array,<span class="keyword">int</span> low,<span class="keyword">int</span> high)</span></span>&#123;</div><div class="line">		  <span class="keyword">int</span> i=low;</div><div class="line">		  <span class="keyword">int</span> j=high;</div><div class="line">		  <span class="keyword">int</span> temp=array[low];  <span class="comment">//选取第一个为基准数</span></div><div class="line">		  <span class="comment">//如果此时的还没有相遇，表示没有结束</span></div><div class="line">		  <span class="keyword">while</span>(i&lt;j)&#123;</div><div class="line">			  <span class="comment">//因为基准数是最左面的，因此从最右面开始查找</span></div><div class="line">			  <span class="comment">//当当前的值比基准值大，并且i和j不相等，即是没有相遇</span></div><div class="line">			  <span class="keyword">while</span>(temp&lt;array[j]&amp;&amp;i&lt;j)&#123;</div><div class="line">				  j--;   <span class="comment">//向左移动，继续查找</span></div><div class="line">			  &#125;</div><div class="line">			  </div><div class="line">			  <span class="comment">//从左面开始查找，如果查找到的数据array[i]小于基准值并且i和j没有相遇，那么继续向右移动查找</span></div><div class="line">			  <span class="keyword">while</span>(array[i]&lt;temp&amp;&amp;i&lt;j)&#123;</div><div class="line">				  i++;  <span class="comment">//继续向右移动查找</span></div><div class="line">			  &#125;</div><div class="line">			  </div><div class="line">			<span class="comment">//代码能够运行到这里，那么表示已经找到了右面小于基准值的，左面大于基准值的，那么就可以交换数据了</span></div><div class="line">	          <span class="keyword">if</span> (i&lt;j) &#123;</div><div class="line">	        	   	<span class="keyword">int</span> t = array[j];</div><div class="line">	                array[j] = array[i];</div><div class="line">	                array[i] = t;</div><div class="line">	          &#125;</div><div class="line">		  &#125;</div><div class="line">		  </div><div class="line">		  low=i;</div><div class="line">		  high=j;</div><div class="line">		  </div><div class="line">		  <span class="keyword">return</span> j ;   <span class="comment">//返回当前的基准值在数组中的索引，用于分割子序列</span></div><div class="line">	 &#125;</div><div class="line"></div><div class="line">	 </div><div class="line">	 <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">quickSort1</span><span class="params">(<span class="keyword">int</span>[] arrary,<span class="keyword">int</span> low,<span class="keyword">int</span> high)</span></span>&#123;</div><div class="line">		 <span class="comment">//停止条件，如果low&gt;high表示相遇，那么停止递归</span></div><div class="line">		 <span class="keyword">if</span>(low&gt;high)&#123;</div><div class="line">			 <span class="keyword">return</span>;</div><div class="line">		 &#125;</div><div class="line">		 <span class="keyword">int</span> index=partition(arrary, low, high);  <span class="comment">//获取基准值的位置</span></div><div class="line">		 quickSort1(arrary, low, index-<span class="number">1</span>);   <span class="comment">//左边的</span></div><div class="line">		 quickSort1(arrary,index+<span class="number">1</span>,high);  <span class="comment">//右边的</span></div><div class="line">		 </div><div class="line">	 &#125;</div></pre></td></tr></table></figure>
+<h3 id="为什么从最右边开始查找"><a href="#为什么从最右边开始查找" class="headerlink" title="为什么从最右边开始查找"></a>为什么从最右边开始查找</h3><ul>
+<li>如果从<code>最左边</code>开始查找，那么有可能某一次查找到了比基准值大的数，停止查找，等待最右边查找到比基准值小的数，但是此时最右边一直在查找，直到和其相遇都没有查找到比基准值小的数据，那么此时的的基准值就需要和这个比它还大的值交换，那么出现的结果就是此时的数组的第一个数是比基准值大的，违背了左边都是比基准值小的，右边都是比基准值大的。</li>
+<li>如果从最右边开始查找，即使当某一个时刻查找到了比基准值小的数据，停止查找，等待左边查找到比基准值大的数据。但是左边没有找到，直至相遇，那么此时相遇的这个数任然是比基准值小的，因此和基准值交换是没有问题的</li>
+</ul>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p><a href="https://blog.csdn.net/as02446418/article/details/47395867" target="_blank" rel="external">https://blog.csdn.net/as02446418/article/details/47395867</a></p>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/数据结构与算法/">数据结构与算法</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/数据结构与算法/">数据结构与算法</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/05/04/快速排序算法/" data-title="快速排序算法 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/05/04/Mybatis之增删改查/" title="Mybatis之增删改查">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Mybatis之增删改查</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/05/04/冒泡排序算法/"  title="冒泡排序算法">
+ <strong>下一篇：</strong><br/> 
+ <span>冒泡排序算法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#快速排序算法"><span class="toc-number">1.</span> <span class="toc-text">快速排序算法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#思想-从小到大排序"><span class="toc-number">1.1.</span> <span class="toc-text">思想(从小到大排序)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#选取数组的第一个数为基准值"><span class="toc-number">1.2.</span> <span class="toc-text">选取数组的第一个数为基准值</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#另外一种方式"><span class="toc-number">1.2.1.</span> <span class="toc-text">另外一种方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么从最右边开始查找"><span class="toc-number">1.2.2.</span> <span class="toc-text">为什么从最右边开始查找</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.3.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.4.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

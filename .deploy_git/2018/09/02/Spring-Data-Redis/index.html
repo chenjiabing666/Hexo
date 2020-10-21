@@ -1,0 +1,819 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Spring-Data-Redis | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="Spring-Data-Redis添加依赖
+需要spring的版本为4.xxx
+
+12345678910111213&amp;lt;dependency&amp;gt;	&amp;lt;groupId&amp;gt;redis.clients&amp;lt;/groupId&amp;gt;	&amp;lt;artifactId&amp;gt;jedis&amp;lt;/artifactId&amp;gt;	&amp;lt;version&amp;gt;2.9.0&amp;lt;/version&amp;gt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring-Data-Redis">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/09/02/Spring-Data-Redis/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="Spring-Data-Redis添加依赖
+需要spring的版本为4.xxx
+
+12345678910111213&amp;lt;dependency&amp;gt;	&amp;lt;groupId&amp;gt;redis.clients&amp;lt;/groupId&amp;gt;	&amp;lt;artifactId&amp;gt;jedis&amp;lt;/artifactId&amp;gt;	&amp;lt;version&amp;gt;2.9.0&amp;lt;/version&amp;gt">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:10:54.100Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring-Data-Redis">
+<meta name="twitter:description" content="Spring-Data-Redis添加依赖
+需要spring的版本为4.xxx
+
+12345678910111213&amp;lt;dependency&amp;gt;	&amp;lt;groupId&amp;gt;redis.clients&amp;lt;/groupId&amp;gt;	&amp;lt;artifactId&amp;gt;jedis&amp;lt;/artifactId&amp;gt;	&amp;lt;version&amp;gt;2.9.0&amp;lt;/version&amp;gt">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/09/02/Spring-Data-Redis/" title="Spring-Data-Redis" itemprop="url">Spring-Data-Redis</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-09-02T11:44:03.000Z" itemprop="datePublished"> 发表于 2018-09-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Spring-Data-Redis"><span class="toc-number">1.</span> <span class="toc-text">Spring-Data-Redis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#添加依赖"><span class="toc-number">1.1.</span> <span class="toc-text">添加依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置RedisTemplate"><span class="toc-number">1.2.</span> <span class="toc-text">配置RedisTemplate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#序列化问题"><span class="toc-number">1.3.</span> <span class="toc-text">序列化问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RedisTemplate"><span class="toc-number">1.4.</span> <span class="toc-text">RedisTemplate</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的类"><span class="toc-number">1.4.1.</span> <span class="toc-text">常用的类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#spring中处理Redis的事务"><span class="toc-number">1.5.</span> <span class="toc-text">spring中处理Redis的事务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工具类"><span class="toc-number">1.6.</span> <span class="toc-text">工具类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文档"><span class="toc-number">1.7.</span> <span class="toc-text">文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.8.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Spring-Data-Redis"><a href="#Spring-Data-Redis" class="headerlink" title="Spring-Data-Redis"></a>Spring-Data-Redis</h1><h2 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h2><ul>
+<li>需要spring的版本为<code>4.xxx</code></li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>redis.clients<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jedis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>2.9.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">type</span>&gt;</span>jar<span class="tag">&lt;/<span class="name">type</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">scope</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.data<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>1.8.9.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="配置RedisTemplate"><a href="#配置RedisTemplate" class="headerlink" title="配置RedisTemplate"></a>配置RedisTemplate</h2><ul>
+<li>在<code>/src/main/resource</code>文件夹下新建一个<code>redis.properties</code>文件，其中设置redis的配置信息</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">hostName=39.105.123.197  </div><div class="line">port=6379</div><div class="line">timeout=15000</div><div class="line">usePool=true</div><div class="line">maxIdle=80</div><div class="line">minIdle=80</div><div class="line">maxWaitMillis=500</div><div class="line">minEvictableIdleTimeMillis=300000</div><div class="line">numTestsPerEvictionRun=3</div><div class="line">timeBetweenEvictionRunsMillis=60000</div><div class="line">testOnBorrow=true</div><div class="line">testOnReturn=false</div><div class="line">testOnCreate=false</div></pre></td></tr></table></figure>
+<ul>
+<li>在<code>src/main/resource</code>文件夹下新建一个文件<code>spring-redis.xml</code><ul>
+<li>创建连接池<code>JedisPoolConfig</code></li>
+<li>创建连接工厂<code>JedisConnectionFactory</code></li>
+<li>配置<code>RedisTemplate</code>，用于操作Redis数据库</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 加载redis.properties,其中定义了数据库的配置信息 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">util:properties</span> <span class="attr">id</span>=<span class="string">"redisConfig"</span> <span class="attr">location</span>=<span class="string">"classpath:redis.properties"</span> /&gt;</span></div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- 配置Redis的连接池 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"jedisPoolConfig"</span> <span class="attr">class</span>=<span class="string">"redis.clients.jedis.JedisPoolConfig"</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!-- 配置最大空闲连接数，当空闲连接超过该值时就挨个关闭多余的连接，但不能小于minldle --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxIdle"</span> <span class="attr">value</span>=<span class="string">"#&#123;redisConfig.maxIdle&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 配置最小空闲连接数 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"minIdle"</span> <span class="attr">value</span>=<span class="string">"#&#123;redisConfig.minIdle&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 验证连接是否有效 --&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 设置获取连接的时候测试连接是否可用，默认为false --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"testOnBorrow"</span> <span class="attr">value</span>=<span class="string">"#&#123;redisConfig.testOnBorrow&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!-- 新建连接的时候测试连接是否可用，默认为false --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"testOnCreate"</span> <span class="attr">value</span>=<span class="string">"#&#123;redisConfig.testOnCreate&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!-- 将连接释放回连接池的时候测试连接 默认为false --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"testOnReturn"</span> <span class="attr">value</span>=<span class="string">"#&#123;redisConfig.testOnReturn&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!-- 设置等待获取连接池连接的时间，一旦超过这个时间，抛出异常 单位毫秒 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"maxWaitMillis"</span> <span class="attr">value</span>=<span class="string">"#&#123;redisConfig.maxWaitMillis&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 连接空闲多久从池中去除，单位为毫秒 &lt;=0表示禁用 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"minEvictableIdleTimeMillis"</span> <span class="attr">value</span>=<span class="string">"#&#123;redisConfig.minEvictableIdleTimeMillis&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 设置每次测试多少空闲连接 &lt;=0表示禁用 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"numTestsPerEvictionRun"</span> <span class="attr">value</span>=<span class="string">"#&#123;redisConfig.numTestsPerEvictionRun&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 设置定时测试时间，单位毫秒 &lt;=0表示禁用 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"timeBetweenEvictionRunsMillis"</span> <span class="attr">value</span>=<span class="string">"#&#123;redisConfig.timeBetweenEvictionRunsMillis&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"jedisConnFactory"</span></span></div><div class="line">		<span class="attr">class</span>=<span class="string">"org.springframework.data.redis.connection.jedis.JedisConnectionFactory"</span>&gt;</div><div class="line">		<span class="comment">&lt;!-- 设置是否使用连接池，默认为true --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"usePool"</span> <span class="attr">value</span>=<span class="string">"#&#123;redisConfig.usePool&#125;"</span> /&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 设置连接池，使用上面配置好的连接池jedisPoolConfig --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"poolConfig"</span> <span class="attr">ref</span>=<span class="string">"jedisPoolConfig"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 设置远程的IP地址 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hostName"</span> <span class="attr">value</span>=<span class="string">"#&#123;redisConfig.hostName&#125;"</span> /&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 设置端口号，默认为6379 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"port"</span> <span class="attr">value</span>=<span class="string">"#&#123;redisConfig.port&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 设置获取连接的超时时间 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"timeout"</span> <span class="attr">value</span>=<span class="string">"#&#123;redisConfig.timeout&#125;"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- 配置 StringRedisSerializer序列化 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"stringRedisSerializer"</span></span></div><div class="line">		<span class="attr">class</span>=<span class="string">"org.springframework.data.redis.serializer.StringRedisSerializer"</span> /&gt;</div><div class="line"></div><div class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"jdkSerializationRedisSerializer"</span></span></div><div class="line">		<span class="attr">class</span>=<span class="string">"org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"</span> /&gt;</div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- 配置RedisTemplate，其中封装了操作Redis的各种方法 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"redisTemplate"</span> <span class="attr">class</span>=<span class="string">"org.springframework.data.redis.core.RedisTemplate"</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 配置Jedis的连接工厂，引用上面 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"connectionFactory"</span> <span class="attr">ref</span>=<span class="string">"jedisConnFactory"</span> /&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 配置key的序列化 一般都会使用stringRedisSerializer，默认使用的是JdkSerializationRedisSerializer --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"keySerializer"</span> <span class="attr">ref</span>=<span class="string">"stringRedisSerializer"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		</div><div class="line">		<span class="comment">&lt;!-- 配置JdkSerializationRedisSerializer序列化 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"valueSerializer"</span> <span class="attr">ref</span>=<span class="string">"jdkSerializationRedisSerializer"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		</div><div class="line">		<span class="comment">&lt;!-- 配置hashkey的序列化，就是field --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hashKeySerializer"</span> <span class="attr">ref</span>=<span class="string">"stringRedisSerializer"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		</div><div class="line">		<span class="comment">&lt;!-- 配置hashvalue的值的序列化 --&gt;</span>		</div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hashValueSerializer"</span> <span class="attr">ref</span>=<span class="string">"jdkSerializationRedisSerializer"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">        <span class="comment">&lt;!-- 开始redis事务，使用mulit和exec即可实现事务的操作和回滚 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"enableTransactionSupport"</span> <span class="attr">value</span>=<span class="string">"true"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="序列化问题"><a href="#序列化问题" class="headerlink" title="序列化问题"></a>序列化问题</h2><ul>
+<li>Spring Data Redis提供了对<code>Key-Value</code>的序列号，在使用<code>RedisTemplate</code>对象是默认使用<code>JdkSerializationRedisSerializer</code>实现。还提供了其它的序列化实现如：<code>Jackson2JsonRedisSerializer</code>，<code>JacksonJsonRedisSerializer</code>，<code>GenericToStringSerializer</code>，<code>StringRedisSerializer</code>，<code>OxmSerializer</code>。</li>
+<li>各种序列化的方式有各种的优点，需要自己权衡使用</li>
+<li>上面我们使用的是<code>JdkSerializationRedisSerializer</code>，但是我们的<code>key</code>使用的是<code>StringRedisSerializer</code></li>
+<li><strong>实体类需要实现序列化接口</strong></li>
+</ul>
+<h2 id="RedisTemplate"><a href="#RedisTemplate" class="headerlink" title="RedisTemplate"></a>RedisTemplate</h2><ul>
+<li>这个封装了redis中的所有命令，只需要我们调用即可</li>
+<li><a href="https://docs.spring.io/spring-data/redis/docs/current/api/org/springframework/data/redis/core/RedisTemplate.html" target="_blank" rel="external">API文档</a></li>
+</ul>
+<h3 id="常用的类"><a href="#常用的类" class="headerlink" title="常用的类"></a>常用的类</h3><table>
+<thead>
+<tr>
+<th>Key类型操作</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ValueOperations</td>
+<td>Redis String/Value 操作</td>
+</tr>
+<tr>
+<td>ListOperations</td>
+<td>Redis List 操作</td>
+</tr>
+<tr>
+<td>SetOperations</td>
+<td>Redis Set 操作</td>
+</tr>
+<tr>
+<td>ZSetOperations</td>
+<td>Redis Sort Set 操作</td>
+</tr>
+<tr>
+<td>HashOperations</td>
+<td>Redis Hash 操作</td>
+</tr>
+<tr>
+<td>Value约束操作</td>
+<td></td>
+</tr>
+<tr>
+<td>BoundValueOperations</td>
+<td>Redis String/Value key 约束</td>
+</tr>
+<tr>
+<td>BoundListOperations</td>
+<td>Redis List key 约束</td>
+</tr>
+<tr>
+<td>BoundSetOperations</td>
+<td>Redis Set key 约束</td>
+</tr>
+<tr>
+<td>BoundZSetOperations</td>
+<td>Redis Sort Set key 约束</td>
+</tr>
+<tr>
+<td>BoundHashOperations</td>
+<td>Redis Hash key 约束</td>
+</tr>
+</tbody>
+</table>
+<h2 id="spring中处理Redis的事务"><a href="#spring中处理Redis的事务" class="headerlink" title="spring中处理Redis的事务"></a>spring中处理Redis的事务</h2><p>1、spring的事务管理器一定要使用注解方式的，不能使用aop方式的</p>
+<p>2、需要在spring-data-redis中开启redis事务，只需要添加如下一条语句即可</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;!-- 开始redis事务，使用mulit和exec即可实现事务的操作和回滚 --&gt;</div><div class="line">&lt;property name="enableTransactionSupport" value="true"&gt;&lt;/property&gt;</div></pre></td></tr></table></figure>
+<p>3、在spring中使用<code>RedisTemplate.multi</code>和<code>exec</code>方法即可完成事务的控制</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">addUser</span><span class="params">(User user)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">		userMapper.insertSelective(user);</div><div class="line">		System.out.println(user.getId());</div><div class="line">		template.opsForValue().set(<span class="string">"user:"</span>+user.getId(), user);</div><div class="line">		System.out.println(<span class="number">10</span>/<span class="number">0</span>);</div><div class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<p>4、参考文章：<a href="https://blog.csdn.net/qq_34021712/article/details/75949756" target="_blank" rel="external">https://blog.csdn.net/qq_34021712/article/details/75949756</a></p>
+<h2 id="工具类"><a href="#工具类" class="headerlink" title="工具类"></a>工具类</h2><ul>
+<li>通过项目中的使用，自己总结了redis的工具类，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div><div class="line">272</div><div class="line">273</div><div class="line">274</div><div class="line">275</div><div class="line">276</div><div class="line">277</div><div class="line">278</div><div class="line">279</div><div class="line">280</div><div class="line">281</div><div class="line">282</div><div class="line">283</div><div class="line">284</div><div class="line">285</div><div class="line">286</div><div class="line">287</div><div class="line">288</div><div class="line">289</div><div class="line">290</div><div class="line">291</div><div class="line">292</div><div class="line">293</div><div class="line">294</div><div class="line">295</div><div class="line">296</div><div class="line">297</div><div class="line">298</div><div class="line">299</div><div class="line">300</div><div class="line">301</div><div class="line">302</div><div class="line">303</div><div class="line">304</div><div class="line">305</div><div class="line">306</div><div class="line">307</div><div class="line">308</div><div class="line">309</div><div class="line">310</div><div class="line">311</div><div class="line">312</div><div class="line">313</div><div class="line">314</div><div class="line">315</div><div class="line">316</div><div class="line">317</div><div class="line">318</div><div class="line">319</div><div class="line">320</div><div class="line">321</div><div class="line">322</div><div class="line">323</div><div class="line">324</div><div class="line">325</div><div class="line">326</div><div class="line">327</div><div class="line">328</div><div class="line">329</div><div class="line">330</div><div class="line">331</div><div class="line">332</div><div class="line">333</div><div class="line">334</div><div class="line">335</div><div class="line">336</div><div class="line">337</div><div class="line">338</div><div class="line">339</div><div class="line">340</div><div class="line">341</div><div class="line">342</div><div class="line">343</div><div class="line">344</div><div class="line">345</div><div class="line">346</div><div class="line">347</div><div class="line">348</div><div class="line">349</div><div class="line">350</div><div class="line">351</div><div class="line">352</div><div class="line">353</div><div class="line">354</div><div class="line">355</div><div class="line">356</div><div class="line">357</div><div class="line">358</div><div class="line">359</div><div class="line">360</div><div class="line">361</div><div class="line">362</div><div class="line">363</div><div class="line">364</div><div class="line">365</div><div class="line">366</div><div class="line">367</div><div class="line">368</div><div class="line">369</div><div class="line">370</div><div class="line">371</div><div class="line">372</div><div class="line">373</div><div class="line">374</div><div class="line">375</div><div class="line">376</div><div class="line">377</div><div class="line">378</div><div class="line">379</div><div class="line">380</div><div class="line">381</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.ArrayList;</div><div class="line"><span class="keyword">import</span> java.util.Collection;</div><div class="line"><span class="keyword">import</span> java.util.Collections;</div><div class="line"><span class="keyword">import</span> java.util.HashMap;</div><div class="line"><span class="keyword">import</span> java.util.HashSet;</div><div class="line"><span class="keyword">import</span> java.util.List;</div><div class="line"><span class="keyword">import</span> java.util.Map;</div><div class="line"><span class="keyword">import</span> java.util.Set;</div><div class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</div><div class="line"></div><div class="line"><span class="keyword">import</span> javax.annotation.Resource;</div><div class="line"></div><div class="line"><span class="keyword">import</span> org.apache.xmlbeans.impl.xb.xsdschema.Public;</div><div class="line"><span class="keyword">import</span> org.springframework.data.redis.core.RedisTemplate;</div><div class="line"><span class="keyword">import</span> org.springframework.data.redis.core.ZSetOperations.TypedTuple;</div><div class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;</div><div class="line"><span class="keyword">import</span> com.techwells.teammission.domain.User;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * redis的工具类</div><div class="line"> * <span class="doctag">@author</span> chenjiabing</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisUtils</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span>  RedisTemplate&lt;String, Object&gt; template;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">final</span> RedisTemplate&lt;String, Object&gt; <span class="title">getTemplate</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> template;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">setTemplate</span><span class="params">(RedisTemplate&lt;String, Object&gt; template)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.template = template;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 向redis中添加对象,string类型的对象</div><div class="line">	 * <span class="doctag">@param</span> object   需要存储的对象</div><div class="line">	 * <span class="doctag">@param</span> key  存储的键</div><div class="line">	 * <span class="doctag">@throws</span> Exception  出现异常信息</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span>  <span class="keyword">void</span> <span class="title">addStringObject</span><span class="params">(String key,Object object)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		template.opsForValue().set(key,object);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 添加指定的key到Redis中</div><div class="line">	 * <span class="doctag">@param</span> key 指定的Ke</div><div class="line">	 * <span class="doctag">@param</span> object  数据</div><div class="line">	 * <span class="doctag">@param</span> timeout  过期时间</div><div class="line">	 * <span class="doctag">@param</span> unit    时间单位</div><div class="line">	 * <span class="doctag">@throws</span> Exception</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addStringObject</span><span class="params">(String key,Object object,Long timeout,TimeUnit unit)</span> <span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		<span class="keyword">this</span>.addStringObject(key, object);</div><div class="line">		template.expire(key, timeout, unit);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 根据键值从redis中获取对象 string类型的对象</div><div class="line">	 * <span class="doctag">@param</span> key  key</div><div class="line">	 * <span class="doctag">@return</span>   返回对象</div><div class="line">	 * <span class="doctag">@throws</span> Exception 抛出的异常</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span>  Object <span class="title">getStringObject</span><span class="params">(String key)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		Object object=template.opsForValue().get(key);</div><div class="line">		<span class="keyword">return</span> object;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 根据key删除指定的值</div><div class="line">	 * <span class="doctag">@param</span> key  key</div><div class="line">	 * <span class="doctag">@throws</span> Exception 异常信息</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteObject</span><span class="params">(String key)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		template.delete(key);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 批量删除对象</div><div class="line">	 * <span class="doctag">@param</span> keys key的集合</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteObjectBatch</span><span class="params">(Collection&lt;String&gt; keys)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		template.delete(keys);</div><div class="line">	&#125;</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 根据key更新值</div><div class="line">	 * <span class="doctag">@param</span> key  key</div><div class="line">	 * <span class="doctag">@param</span> object  value</div><div class="line">	 * <span class="doctag">@throws</span> Exception  异常信息</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">modifyStringObject</span><span class="params">(String key,Object object)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		<span class="keyword">this</span>.addStringObject(key, object);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 添加数据在Hash中</div><div class="line">	 * <span class="doctag">@param</span> key  key</div><div class="line">	 * <span class="doctag">@param</span> field  指定的域</div><div class="line">	 * <span class="doctag">@param</span> object  数据</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addHashObject</span><span class="params">(String key,String field,Object object)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		template.opsForHash().put(key, field, object);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 向hash中添加数据，并且设置过期的时间</div><div class="line">	 * <span class="doctag">@param</span> key  key</div><div class="line">	 * <span class="doctag">@param</span> field  域</div><div class="line">	 * <span class="doctag">@param</span> object  数据</div><div class="line">	 * <span class="doctag">@param</span> timeout  过期时间</div><div class="line">	 * <span class="doctag">@param</span> unit    单位</div><div class="line">	 * <span class="doctag">@throws</span> Exception</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addHashObject</span><span class="params">(String key,String field,Object object,Long timeout,TimeUnit unit)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		<span class="keyword">this</span>.addHashObject(key, field, object);</div><div class="line">		<span class="keyword">this</span>.setExpireTimeForKey(key, timeout, unit);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 批量添加数据到指定的hash中</div><div class="line">	 * <span class="doctag">@param</span> key  key</div><div class="line">	 * <span class="doctag">@param</span> map  需要添加的数据  Map&lt;field,value&gt;</div><div class="line">	 * <span class="doctag">@param</span> expireTime  过期时间，单位秒,如果为null，默认永远不过期</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addHashObjectBatch</span><span class="params">(String key,Map&lt;Object, Object&gt; map,Long expireTime,TimeUnit unit)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		template.opsForHash().putAll(key,map);</div><div class="line">		<span class="keyword">if</span> (expireTime!=<span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">this</span>.setExpireTimeForKey(key, expireTime,unit);  <span class="comment">//设置过期时间</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 为指定的key设置过期时间</div><div class="line">	 * <span class="doctag">@param</span> key  key</div><div class="line">	 * <span class="doctag">@param</span> timeout  过期时间</div><div class="line">	 * <span class="doctag">@param</span> unit   指定时间的单位</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setExpireTimeForKey</span><span class="params">(String key,Long timeout,TimeUnit unit)</span></span>&#123;</div><div class="line">		template.expire(key, timeout, unit);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 删除指定的key</div><div class="line">	 * <span class="doctag">@param</span> key</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteKey</span><span class="params">(String key)</span></span>&#123;</div><div class="line">		template.delete(key);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 根据key，field从hash中获取数据</div><div class="line">	 * <span class="doctag">@param</span> key</div><div class="line">	 * <span class="doctag">@param</span> field</div><div class="line">	 * <span class="doctag">@return</span>  Object对象</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> Object <span class="title">getHashObject</span><span class="params">(String key,String field)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		<span class="keyword">return</span> template.opsForHash().get(key, field);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 修改指定key，field中的数据</div><div class="line">	 * <span class="doctag">@param</span> key  </div><div class="line">	 * <span class="doctag">@param</span> field</div><div class="line">	 * <span class="doctag">@param</span> object</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">modifyHashObject</span><span class="params">(String key,String field,Object object)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		<span class="keyword">this</span>.addHashObject(key, field, object);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 删除指定的key和field中的数据</div><div class="line">	 * <span class="doctag">@param</span> key</div><div class="line">	 * <span class="doctag">@param</span> field</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteHashObject</span><span class="params">(String key,String field)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		<span class="keyword">this</span>.deleteHashObjectBatch(key, <span class="keyword">new</span> Object[]&#123;field&#125;);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 根据key和fields批量获取其中的数据</div><div class="line">	 * <span class="doctag">@param</span> key  key</div><div class="line">	 * <span class="doctag">@param</span> fields  &#123;<span class="doctag">@link</span> Collection&lt;Object&gt; &#125;</div><div class="line">	 * <span class="doctag">@throws</span> Exception</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getHashObjectBatch</span><span class="params">(String key,Collection&lt;Object&gt; fields)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		template.opsForHash().multiGet(key, fields);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 批量删除指定key和fields的数据</div><div class="line">	 * <span class="doctag">@param</span> key  key</div><div class="line">	 * <span class="doctag">@param</span> fields  需要删除的域</div><div class="line">	 * <span class="doctag">@throws</span> Exception</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteHashObjectBatch</span><span class="params">(String key,Object[] fields)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		template.opsForHash().delete(key,fields);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 添加数据到ZSet中</div><div class="line">	 * <span class="doctag">@param</span> key    指定的key</div><div class="line">	 * <span class="doctag">@param</span> value  指定的value</div><div class="line">	 * <span class="doctag">@param</span> score  指定的score</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addZSetObject</span><span class="params">(String key,String value,<span class="keyword">double</span> score)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		template.opsForZSet().add(key, value, score);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 批量添加数据到Zset中</div><div class="line">	 * <span class="doctag">@param</span> key  指定的key</div><div class="line">	 * <span class="doctag">@param</span> typedTuple  &#123;<span class="doctag">@link</span> TypedTuple&#125;</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addZSetObjectBatch</span><span class="params">(String key,Set&lt;TypedTuple&lt;Object&gt;&gt; typedTuple)</span></span>&#123;</div><div class="line">		template.opsForZSet().add(key, typedTuple);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 根据key获取start--end之间的数据</div><div class="line">	 * <span class="doctag">@param</span> key  指定key</div><div class="line">	 * <span class="doctag">@param</span> start 开始索引，从0开始</div><div class="line">	 * <span class="doctag">@param</span> end  结束索引</div><div class="line">	 * <span class="doctag">@return</span>  &#123;<span class="doctag">@link</span> Set&lt;Object&gt;&#125;</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> Set&lt;Object&gt; <span class="title">getZSetObject</span><span class="params">(String key,Long start,Long end)</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> template.opsForZSet().range(key, start, end);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 根据Score的范围获取数据</div><div class="line">	 * <span class="doctag">@param</span> key  指定的key值</div><div class="line">	 * <span class="doctag">@param</span> min  score的最小值</div><div class="line">	 * <span class="doctag">@param</span> max score的最大值</div><div class="line">	 * <span class="doctag">@return</span>  &#123;<span class="doctag">@link</span> Set&lt;Object&gt;&#125;</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> Set&lt;Object&gt; <span class="title">getZSetObjectRangeByScore</span><span class="params">(String key,Long min,Long max)</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> template.opsForZSet().rangeByScore(key, min, max);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 根据Score的范围获取数据,分页获取</div><div class="line">	 * <span class="doctag">@param</span> key  指定的key</div><div class="line">	 * <span class="doctag">@param</span> min  最小值</div><div class="line">	 * <span class="doctag">@param</span> max  最大值</div><div class="line">	 * <span class="doctag">@param</span> offset  偏移量</div><div class="line">	 * <span class="doctag">@param</span> count  数量</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> Set&lt;Object&gt; <span class="title">getZSetObjectRangeByScore</span><span class="params">(String key,Long min,Long max,Long offset,Long count)</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> template.opsForZSet().rangeByScore(key, min, max, offset, count);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 向List中添加元素，从表头添加</div><div class="line">	 * <span class="doctag">@param</span> key</div><div class="line">	 * <span class="doctag">@param</span> value</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addLeftListObject</span><span class="params">(String key,Object value)</span></span>&#123;</div><div class="line">		template.opsForList().leftPush(key, value);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 向List中添加元素，从表尾添加</div><div class="line">	 * <span class="doctag">@param</span> key</div><div class="line">	 * <span class="doctag">@param</span> value</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addRightListObject</span><span class="params">(String key,Object value)</span></span>&#123;</div><div class="line">		template.opsForList().rightPush(key, value);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 向List中添加元素，从表头添加</div><div class="line">	 * <span class="doctag">@param</span> key</div><div class="line">	 * <span class="doctag">@param</span> value</div><div class="line">	 * <span class="doctag">@param</span> timeOut  过期时间</div><div class="line">	 * <span class="doctag">@param</span> unit  单位</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addLeftListObject</span><span class="params">(String key,Object value,Long timeOut,TimeUnit unit)</span></span>&#123;</div><div class="line">		template.opsForList().leftPush(key, value);</div><div class="line">		<span class="keyword">this</span>.setExpireTimeForKey(key, timeOut, unit);   <span class="comment">//设置过期时间</span></div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 批量从表头添加数据</div><div class="line">	 * <span class="doctag">@param</span> key</div><div class="line">	 * <span class="doctag">@param</span> timeout ： 过期时间  如果为null表示永久不过期</div><div class="line">	 * <span class="doctag">@param</span> timeUnit : 时间单位</div><div class="line">	 * <span class="doctag">@param</span> values  &#123;<span class="doctag">@link</span> Collection&lt;Object&gt;&#125;</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addLeftListObjectBatch</span><span class="params">(String key,Collection&lt;Object&gt; values,Long timeout,TimeUnit unit)</span></span>&#123;</div><div class="line">		template.opsForList().leftPushAll(key, values);</div><div class="line">		<span class="keyword">if</span> (timeout!=<span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">this</span>.setExpireTimeForKey(key, timeout, unit);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 批量从表尾添加数据</div><div class="line">	 * <span class="doctag">@param</span> key</div><div class="line">	 * <span class="doctag">@param</span> values &#123;<span class="doctag">@link</span> Collection&lt;Object&gt;&#125;</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addRigthListObjectBatch</span><span class="params">(String key,Collection&lt;Object&gt; values,Long timeout,TimeUnit unit)</span></span>&#123;</div><div class="line">		template.opsForList().rightPushAll(key, values);</div><div class="line">		<span class="keyword">if</span> (timeout!=<span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">this</span>.setExpireTimeForKey(key, timeout, unit);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 获取指定范围内的数据</div><div class="line">	 * <span class="doctag">@param</span> key  </div><div class="line">	 * <span class="doctag">@param</span> i  开始的索引 从0开始</div><div class="line">	 * <span class="doctag">@param</span> j   结束的索引，-1 表示结尾</div><div class="line">	 * <span class="doctag">@return</span>   &#123;<span class="doctag">@link</span> List&lt;Object&gt;&#125;</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> List&lt;Object&gt; <span class="title">getRangeListObject</span><span class="params">(String key,<span class="keyword">int</span> i,<span class="keyword">int</span> j)</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> template.opsForList().range(key, i, j);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 根据实体类的key和指定的查询参数、方法名称获取指定的key</div><div class="line">	 * <span class="doctag">@param</span> domainKey  实体类指定的key</div><div class="line">	 * <span class="doctag">@param</span> params  参数 Map&lt;String,Object&gt;</div><div class="line">	 * <span class="doctag">@param</span> functionName : 方法的名称</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getRedisKey</span><span class="params">(String domainKey,String functionName,PagingTool pagingTool)</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		StringBuilder builder=<span class="keyword">new</span> StringBuilder();</div><div class="line">		Map&lt;String,Object&gt; params=pagingTool.getParams();</div><div class="line">		builder.append(domainKey+<span class="string">"_"</span>+functionName+<span class="string">"_"</span>+pagingTool.getStartNum()+<span class="string">"_"</span>+pagingTool.getPageSize()+<span class="string">"_"</span>);</div><div class="line">		<span class="keyword">for</span> (String key : params.keySet()) &#123;</div><div class="line">			builder.append(key+<span class="string">"="</span>+params.get(key)+<span class="string">"_"</span>);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> builder.toString();</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 将Collection&lt;?extend Object&gt;的集合转换成Collection&lt;Object&gt;</div><div class="line">	 * <span class="doctag">@param</span> list 需要转换的集合</div><div class="line">	 * <span class="doctag">@return</span>   Collection&lt;Object&gt;</div><div class="line">	 * <span class="doctag">@throws</span> Exception</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Collection&lt;Object&gt; <span class="title">convertToCollection</span><span class="params">(Collection&lt;? extends Object&gt; list)</span> <span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		List&lt;Object&gt; arrayList=<span class="keyword">new</span> ArrayList&lt;Object&gt;(list.size());</div><div class="line">		<span class="keyword">for</span> (Object object : list) &#123;</div><div class="line">			arrayList.add(object);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> arrayList;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 将指定的List集合中的元素逆向</div><div class="line">	 * <span class="doctag">@param</span> objects  List&lt;? extends Object&gt;</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">reverse</span><span class="params">(List&lt;? extends Object&gt; objects)</span></span>&#123;</div><div class="line">		Collections.reverse(objects);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 删除所有的键值</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">delteAllKeys</span><span class="params">()</span></span>&#123;</div><div class="line">		Set&lt;String&gt; keys=template.keys(<span class="string">"*"</span>);  <span class="comment">//获取所有的key</span></div><div class="line">		template.delete(keys);   <span class="comment">//删除所有的键值</span></div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h2><ul>
+<li><a href="https://docs.spring.io/spring-data/redis/docs/current/api/org/springframework/data/redis/core/RedisTemplate.html" target="_blank" rel="external">RedisTemplate API</a></li>
+<li><a href="https://www.cnblogs.com/EasonJim/p/7803067.html" target="_blank" rel="external">优质博文</a></li>
+<li><a href="https://blog.csdn.net/u010690828/article/details/77141083" target="_blank" rel="external">https://blog.csdn.net/u010690828/article/details/77141083</a></li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Redis/">Redis</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Redis/">Redis</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/09/02/Spring-Data-Redis/" data-title="Spring-Data-Redis | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/09/02/Bean加载过程/" title="spring的Bean加载过程">
+  <strong>上一篇：</strong><br/>
+  <span>
+  spring的Bean加载过程</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/09/02/spring-data-elasticsearch/"  title="spring-data-elasticsearch">
+ <strong>下一篇：</strong><br/> 
+ <span>spring-data-elasticsearch
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Spring-Data-Redis"><span class="toc-number">1.</span> <span class="toc-text">Spring-Data-Redis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#添加依赖"><span class="toc-number">1.1.</span> <span class="toc-text">添加依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置RedisTemplate"><span class="toc-number">1.2.</span> <span class="toc-text">配置RedisTemplate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#序列化问题"><span class="toc-number">1.3.</span> <span class="toc-text">序列化问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RedisTemplate"><span class="toc-number">1.4.</span> <span class="toc-text">RedisTemplate</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的类"><span class="toc-number">1.4.1.</span> <span class="toc-text">常用的类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#spring中处理Redis的事务"><span class="toc-number">1.5.</span> <span class="toc-text">spring中处理Redis的事务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#工具类"><span class="toc-number">1.6.</span> <span class="toc-text">工具类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文档"><span class="toc-number">1.7.</span> <span class="toc-text">文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.8.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

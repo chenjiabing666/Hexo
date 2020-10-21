@@ -1,0 +1,707 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Spring解决循环依赖 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="导读
+前几天发表的文章SpringBoot多数据源动态切换和SpringBoot整合多数据源的巨坑中，提到了一个坑就是动态数据源添加@Primary接口就会造成循环依赖异常，如下图：
+
+
+
+这个就是典型的构造器依赖，详情请看上面两篇文章，这里不再详细赘述了。本篇文章将会从源码深入解析Spring是如何解决循环依赖的？为什么不能解决构造器的循环依赖？
+
+什么是循环依赖
+简单的说就是A依赖B，B依赖C">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring解决循环依赖">
+<meta property="og:url" content="http://chenjiabing666.github.io/2019/07/17/Spring解决循环依赖/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="导读
+前几天发表的文章SpringBoot多数据源动态切换和SpringBoot整合多数据源的巨坑中，提到了一个坑就是动态数据源添加@Primary接口就会造成循环依赖异常，如下图：
+
+
+
+这个就是典型的构造器依赖，详情请看上面两篇文章，这里不再详细赘述了。本篇文章将会从源码深入解析Spring是如何解决循环依赖的？为什么不能解决构造器的循环依赖？
+
+什么是循环依赖
+简单的说就是A依赖B，B依赖C">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/circleex.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/15282870029143.jpg">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/spring-fix-cirdependence.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/cirdependece.PNG">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-20T04:52:47.816Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring解决循环依赖">
+<meta name="twitter:description" content="导读
+前几天发表的文章SpringBoot多数据源动态切换和SpringBoot整合多数据源的巨坑中，提到了一个坑就是动态数据源添加@Primary接口就会造成循环依赖异常，如下图：
+
+
+
+这个就是典型的构造器依赖，详情请看上面两篇文章，这里不再详细赘述了。本篇文章将会从源码深入解析Spring是如何解决循环依赖的？为什么不能解决构造器的循环依赖？
+
+什么是循环依赖
+简单的说就是A依赖B，B依赖C">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/circleex.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/07/17/Spring解决循环依赖/" title="Spring解决循环依赖" itemprop="url">Spring解决循环依赖</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2019-07-16T17:13:29.000Z" itemprop="datePublished"> 发表于 2019-07-17</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#导读"><span class="toc-number">1.</span> <span class="toc-text">导读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是循环依赖"><span class="toc-number">2.</span> <span class="toc-text">什么是循环依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#思路"><span class="toc-number">3.</span> <span class="toc-text">思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三级缓存"><span class="toc-number">4.</span> <span class="toc-text">三级缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开撸"><span class="toc-number">5.</span> <span class="toc-text">开撸</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#扩展"><span class="toc-number">6.</span> <span class="toc-text">扩展</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">8.</span> <span class="toc-text">笔者有话说</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="导读"><a href="#导读" class="headerlink" title="导读"></a>导读</h2><ul>
+<li>前几天发表的文章<a href="https://chenjiabing666.github.io/2020/03/12/SpringBoot%E6%95%B4%E5%90%88%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%EF%BC%8C%E4%BD%A0%E4%BC%9A%E4%BA%86%E5%90%97%EF%BC%9F/">SpringBoot多数据源动态切换</a>和<a href="https://chenjiabing666.github.io/2020/03/18/SpringBoot%E6%95%B4%E5%90%88%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E7%9A%84%E5%B7%A8%E5%9D%91/">SpringBoot整合多数据源的巨坑</a>中，提到了一个坑就是动态数据源添加@Primary接口就会造成循环依赖异常，如下图：</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/circleex.png" alt="微信所有码猿技术专栏"></p>
+<ul>
+<li>这个就是典型的构造器依赖，详情请看上面两篇文章，这里不再详细赘述了。本篇文章将会从源码深入解析Spring是如何解决循环依赖的？为什么不能解决构造器的循环依赖？</li>
+</ul>
+<h2 id="什么是循环依赖"><a href="#什么是循环依赖" class="headerlink" title="什么是循环依赖"></a>什么是循环依赖</h2><ul>
+<li>简单的说就是A依赖B，B依赖C，C依赖A这样就构成了循环依赖。</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/15282870029143.jpg" alt="微信搜索码猿技术专栏"></p>
+<ul>
+<li>循环依赖分为构造器依赖和属性依赖，众所周知的是Spring能够解决属性的循环依赖（set注入）。下文将从源码角度分析Spring是如何解决属性的循环依赖。</li>
+</ul>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><ul>
+<li>如何解决循环依赖，Spring主要的思路就是依据三级缓存，在实例化A时调用doGetBean，发现A依赖的B的实例，此时调用doGetBean去实例B，实例化的B的时候发现又依赖A，如果不解决这个循环依赖的话此时的doGetBean将会无限循环下去，导致内存溢出，程序奔溃。spring引用了一个早期对象，并且把这个”早期引用”并将其注入到容器中，让B先完成实例化，此时A就获取B的引用，完成实例化。</li>
+</ul>
+<h2 id="三级缓存"><a href="#三级缓存" class="headerlink" title="三级缓存"></a>三级缓存</h2><ul>
+<li>Spring能够轻松的解决属性的循环依赖正式用到了三级缓存，在AbstractBeanFactory中有详细的注释。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**一级缓存，用于存放完全初始化好的 bean，从该缓存中取出的 bean 可以直接使用*/</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, Object&gt; singletonObjects = <span class="keyword">new</span> ConcurrentHashMap&lt;&gt;(<span class="number">256</span>);</div><div class="line"></div><div class="line"><span class="comment">/**三级缓存 存放 bean 工厂对象，用于解决循环依赖*/</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories = <span class="keyword">new</span> HashMap&lt;&gt;(<span class="number">16</span>);</div><div class="line"></div><div class="line"><span class="comment">/**二级缓存 存放原始的 bean 对象（尚未填充属性），用于解决循环依赖*/</span></div><div class="line"><span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, Object&gt; earlySingletonObjects = <span class="keyword">new</span> HashMap&lt;&gt;(<span class="number">16</span>);</div></pre></td></tr></table></figure>
+<ul>
+<li>一级缓存：singletonObjects，存放完全实例化属性赋值完成的Bean，直接可以使用。</li>
+<li>二级缓存：earlySingletonObjects，存放早期Bean的引用，尚未属性装配的Bean</li>
+<li>三级缓存：singletonFactories，三级缓存，存放实例化完成的Bean工厂。</li>
+</ul>
+<h2 id="开撸"><a href="#开撸" class="headerlink" title="开撸"></a>开撸</h2><ul>
+<li>先上一张流程图看看Spring是如何解决循环依赖的</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/spring-fix-cirdependence.png" alt="微信搜索码猿技术专栏"></p>
+<ul>
+<li>上图标记蓝色的部分都是涉及到三级缓存的操作，下面我们一个一个方法解析</li>
+</ul>
+<p>【1】 getSingleton(beanName)：源码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">		<span class="comment">//查询缓存</span></div><div class="line">		Object sharedInstance = getSingleton(beanName);</div><div class="line">		<span class="comment">//缓存中存在并且args是null</span></div><div class="line">		<span class="keyword">if</span> (sharedInstance != <span class="keyword">null</span> &amp;&amp; args == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="comment">//.......省略部分代码</span></div><div class="line">            </div><div class="line">     		<span class="comment">//直接获取Bean实例</span></div><div class="line">			bean = getObjectForBeanInstance(sharedInstance, name, beanName, <span class="keyword">null</span>);</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">	<span class="comment">//getSingleton源码，DefaultSingletonBeanRegistry#getSingleton</span></div><div class="line"><span class="function"><span class="keyword">protected</span> Object <span class="title">getSingleton</span><span class="params">(String beanName, <span class="keyword">boolean</span> allowEarlyReference)</span> </span>&#123;</div><div class="line">    	<span class="comment">//先从一级缓存中获取已经实例化属性赋值完成的Bean</span></div><div class="line">		Object singletonObject = <span class="keyword">this</span>.singletonObjects.get(beanName);</div><div class="line">    	<span class="comment">//一级缓存不存在，并且Bean正处于创建的过程中</span></div><div class="line">		<span class="keyword">if</span> (singletonObject == <span class="keyword">null</span> &amp;&amp; isSingletonCurrentlyInCreation(beanName)) &#123;</div><div class="line">			<span class="keyword">synchronized</span> (<span class="keyword">this</span>.singletonObjects) &#123;</div><div class="line">                <span class="comment">//从二级缓存中查询，获取Bean的早期引用，实例化完成但是未赋值完成的Bean</span></div><div class="line">				singletonObject = <span class="keyword">this</span>.earlySingletonObjects.get(beanName);</div><div class="line">                <span class="comment">//二级缓存中不存在，并且允许创建早期引用（二级缓存中添加）</span></div><div class="line">				<span class="keyword">if</span> (singletonObject == <span class="keyword">null</span> &amp;&amp; allowEarlyReference) &#123;</div><div class="line">                    <span class="comment">//从三级缓存中查询，实例化完成，属性未装配完成</span></div><div class="line">					ObjectFactory&lt;?&gt; singletonFactory = <span class="keyword">this</span>.singletonFactories.get(beanName);</div><div class="line">					<span class="keyword">if</span> (singletonFactory != <span class="keyword">null</span>) &#123;</div><div class="line">						singletonObject = singletonFactory.getObject();</div><div class="line">                        	<span class="comment">//二级缓存中添加</span></div><div class="line">						<span class="keyword">this</span>.earlySingletonObjects.put(beanName, singletonObject);</div><div class="line">                        <span class="comment">//从三级缓存中移除</span></div><div class="line">						<span class="keyword">this</span>.singletonFactories.remove(beanName);</div><div class="line">					&#125;</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> singletonObject;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>从源码可以得知，doGetBean最初是查询缓存，一二三级缓存全部查询，如果三级缓存存在则将Bean早期引用存放在二级缓存中并移除三级缓存。（升级为二级缓存）</li>
+</ul>
+<p>【2】addSingletonFactory：源码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">		<span class="comment">//中间省略部分代码。。。。。</span></div><div class="line">		<span class="comment">//创建Bean的源码，在AbstractAutowireCapableBeanFactory#doCreateBean方法中</span></div><div class="line">		<span class="keyword">if</span> (instanceWrapper == <span class="keyword">null</span>) &#123;</div><div class="line">            <span class="comment">//实例化Bean</span></div><div class="line">			instanceWrapper = createBeanInstance(beanName, mbd, args);</div><div class="line">		&#125;</div><div class="line">		<span class="comment">//允许提前暴露</span></div><div class="line">		<span class="keyword">if</span> (earlySingletonExposure) &#123;</div><div class="line">            <span class="comment">//添加到三级缓存中</span></div><div class="line">			addSingletonFactory(beanName, () -&gt; getEarlyBeanReference(beanName, mbd, bean));</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">            <span class="comment">//属性装配，属性赋值的时候，如果有发现属性引用了另外一个Bean，则调用getBean方法</span></div><div class="line">			populateBean(beanName, mbd, instanceWrapper);</div><div class="line">            <span class="comment">//初始化Bean，调用init-method，afterproperties方法等操作</span></div><div class="line">			exposedObject = initializeBean(beanName, exposedObject, mbd);</div><div class="line">		&#125;</div><div class="line">		&#125;</div><div class="line"></div><div class="line"><span class="comment">//添加到三级缓存的源码，在DefaultSingletonBeanRegistry#addSingletonFactory</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">addSingletonFactory</span><span class="params">(String beanName, ObjectFactory&lt;?&gt; singletonFactory)</span> </span>&#123;</div><div class="line">		<span class="keyword">synchronized</span> (<span class="keyword">this</span>.singletonObjects) &#123;</div><div class="line">            <span class="comment">//一级缓存中不存在</span></div><div class="line">			<span class="keyword">if</span> (!<span class="keyword">this</span>.singletonObjects.containsKey(beanName)) &#123;</div><div class="line">                <span class="comment">//放入三级缓存</span></div><div class="line">				<span class="keyword">this</span>.singletonFactories.put(beanName, singletonFactory);</div><div class="line">                <span class="comment">//从二级缓存中移除，</span></div><div class="line">				<span class="keyword">this</span>.earlySingletonObjects.remove(beanName);</div><div class="line">				<span class="keyword">this</span>.registeredSingletons.add(beanName);</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>从源码得知，Bean在实例化完成之后会直接将未装配的Bean工厂存放在<strong>三级缓存</strong>中，并且<strong>移除二级缓存</strong></li>
+</ul>
+<p>【3】addSingleton：源码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//获取单例对象的方法，DefaultSingletonBeanRegistry#getSingleton</span></div><div class="line"><span class="comment">//调用createBean实例化Bean</span></div><div class="line">singletonObject = singletonFactory.getObject();</div><div class="line"></div><div class="line"><span class="comment">//。。。。中间省略部分代码	</span></div><div class="line"></div><div class="line"><span class="comment">//doCreateBean之后才调用，实例化，属性赋值完成的Bean装入一级缓存，可以直接使用的Bean</span></div><div class="line">addSingleton(beanName, singletonObject);</div><div class="line"></div><div class="line"><span class="comment">//addSingleton源码，在DefaultSingletonBeanRegistry#addSingleton方法中</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">addSingleton</span><span class="params">(String beanName, Object singletonObject)</span> </span>&#123;</div><div class="line">		<span class="keyword">synchronized</span> (<span class="keyword">this</span>.singletonObjects) &#123;</div><div class="line">            <span class="comment">//一级缓存中添加</span></div><div class="line">			<span class="keyword">this</span>.singletonObjects.put(beanName, singletonObject);</div><div class="line">            <span class="comment">//移除三级缓存</span></div><div class="line">			<span class="keyword">this</span>.singletonFactories.remove(beanName);</div><div class="line">            <span class="comment">//移除二级缓存</span></div><div class="line">			<span class="keyword">this</span>.earlySingletonObjects.remove(beanName);</div><div class="line">			<span class="keyword">this</span>.registeredSingletons.add(beanName);</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>总之一句话，Bean添加到一级缓存，移除二三级缓存。</li>
+</ul>
+<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><p> 【1】为什么Spring不能解决构造器的循环依赖？</p>
+<ul>
+<li>从流程图应该不难看出来，在Bean调用构造器实例化之前，一二三级缓存并没有Bean的任何相关信息，在实例化之后才放入三级缓存中，因此当getBean的时候缓存并没有命中，这样就抛出了循环依赖的异常了。</li>
+</ul>
+<p>【2】为什么多实例Bean不能解决循环依赖？</p>
+<ul>
+<li>多实例Bean是每次创建都会调用doGetBean方法，根本没有使用一二三级缓存，肯定不能解决循环依赖。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>根据以上的分析，大概清楚了Spring是如何解决循环依赖的。假设A依赖B，B依赖A（注意：这里是set属性依赖）分以下步骤执行：</li>
+</ul>
+<ol>
+<li>A依次执行<strong>doGetBean</strong>、查询缓存、<strong>createBean</strong>创建实例，实例化完成放入三级缓存singletonFactories中，接着执行<strong>populateBean</strong>方法装配属性，但是发现有一个属性是B的对象。</li>
+<li>因此再次调用doGetBean方法创建B的实例，依次执行doGetBean、查询缓存、createBean创建实例，实例化完成之后放入三级缓存singletonFactories中，执行populateBean装配属性，但是此时发现有一个属性是A对象。</li>
+<li>因此再次调用doGetBean创建A的实例，但是执行到getSingleton查询缓存的时候，从三级缓存中查询到了A的实例(早期引用，未完成属性装配)，此时直接返回A，不用执行后续的流程创建A了，那么B就完成了属性装配，此时是一个完整的对象放入到一级缓存singletonObjects中。</li>
+<li>B创建完成了，则A自然完成了属性装配，也创建完成放入了一级缓存singletonObjects中。</li>
+</ol>
+<ul>
+<li>Spring三级缓存的应用完美的解决了循环依赖的问题，下面是循环依赖的解决流程图。</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/cirdependece.PNG" alt="微信搜索码猿技术专栏"></p>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Spring/">Spring</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Spring/">Spring</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2019/07/17/Spring解决循环依赖/" data-title="Spring解决循环依赖 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/03/18/SpringBoot整合多数据源的巨坑/" title="SpringBoot整合多数据源的巨坑">
+  <strong>上一篇：</strong><br/>
+  <span>
+  SpringBoot整合多数据源的巨坑</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/04/16/设计模式之适配器模式/"  title="设计模式之适配器模式">
+ <strong>下一篇：</strong><br/> 
+ <span>设计模式之适配器模式
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#导读"><span class="toc-number">1.</span> <span class="toc-text">导读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是循环依赖"><span class="toc-number">2.</span> <span class="toc-text">什么是循环依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#思路"><span class="toc-number">3.</span> <span class="toc-text">思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三级缓存"><span class="toc-number">4.</span> <span class="toc-text">三级缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开撸"><span class="toc-number">5.</span> <span class="toc-text">开撸</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#扩展"><span class="toc-number">6.</span> <span class="toc-text">扩展</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">8.</span> <span class="toc-text">笔者有话说</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Mybatis进阶/" title="Mybatis进阶">Mybatis进阶<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring-Boot-进阶/" title="Spring Boot 进阶">Spring Boot 进阶<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/开发工具/" title="开发工具">开发工具<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring-Boot/" title="Spring Boot">Spring Boot<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mybatis/" title="Mybatis">Mybatis<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/破解/" title="破解">破解<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

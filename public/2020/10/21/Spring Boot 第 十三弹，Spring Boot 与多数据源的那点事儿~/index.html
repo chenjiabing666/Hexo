@@ -1,0 +1,750 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Spring Boot 第十三弹，Spring Boot 与多数据源的那点事儿~ | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="前言
+大约在19年的这个时候，老同事公司在做医疗系统，需要和HIS系统对接一些信息，比如患者、医护、医嘱、科室等信息。但是起初并不知道如何与HIS无缝对接，于是向我取经。
+最终经过讨论采用了视图对接的方式，大致就是HIS系统提供视图，他们进行对接。
+写这篇文章的目的
+这篇文章将会涉及到Spring Boot 与Mybatis、数据库整合，类似于整合Mybatis与数据库的文章其实网上很多，作者此前">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot 第十三弹，Spring Boot 与多数据源的那点事儿~">
+<meta property="og:url" content="http://chenjiabing666.github.io/2020/10/21/Spring Boot 第 十三弹，Spring Boot 与多数据源的那点事儿~/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="前言
+大约在19年的这个时候，老同事公司在做医疗系统，需要和HIS系统对接一些信息，比如患者、医护、医嘱、科室等信息。但是起初并不知道如何与HIS无缝对接，于是向我取经。
+最终经过讨论采用了视图对接的方式，大致就是HIS系统提供视图，他们进行对接。
+写这篇文章的目的
+这篇文章将会涉及到Spring Boot 与Mybatis、数据库整合，类似于整合Mybatis与数据库的文章其实网上很多，作者此前">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/BlogImage/raw/master/Spring%20Boot%E7%AC%AC%E5%8D%81%E4%B8%89%E5%BC%B9%EF%BC%8C%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E6%95%B4%E5%90%88/1.jpg">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/BlogImage/raw/master/myjszl_log.png">
+<meta property="og:updated_time" content="2020-10-21T08:22:26.425Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Boot 第十三弹，Spring Boot 与多数据源的那点事儿~">
+<meta name="twitter:description" content="前言
+大约在19年的这个时候，老同事公司在做医疗系统，需要和HIS系统对接一些信息，比如患者、医护、医嘱、科室等信息。但是起初并不知道如何与HIS无缝对接，于是向我取经。
+最终经过讨论采用了视图对接的方式，大致就是HIS系统提供视图，他们进行对接。
+写这篇文章的目的
+这篇文章将会涉及到Spring Boot 与Mybatis、数据库整合，类似于整合Mybatis与数据库的文章其实网上很多，作者此前">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/BlogImage/raw/master/Spring%20Boot%E7%AC%AC%E5%8D%81%E4%B8%89%E5%BC%B9%EF%BC%8C%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E6%95%B4%E5%90%88/1.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/10/21/Spring Boot 第 十三弹，Spring Boot 与多数据源的那点事儿~/" title="Spring Boot 第十三弹，Spring Boot 与多数据源的那点事儿~" itemprop="url">Spring Boot 第十三弹，Spring Boot 与多数据源的那点事儿~</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2020-10-21T08:18:42.000Z" itemprop="datePublished"> 发表于 2020-10-21</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">2.</span> <span class="toc-text">写这篇文章的目的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">3.</span> <span class="toc-text">什么是多数据源？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">4.</span> <span class="toc-text">何时用到多数据源？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">5.</span> <span class="toc-text">整合单一的数据源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">6.</span> <span class="toc-text">整合Mybatis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">7.</span> <span class="toc-text">多数据源如何整合？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.1.</span> <span class="toc-text">什么是动态数据源？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.2.</span> <span class="toc-text">数据源切换如何保证线程隔离？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.3.</span> <span class="toc-text">如何构造一个动态数据源？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.4.</span> <span class="toc-text">定义一个注解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.5.</span> <span class="toc-text">如何与Mybatis整合？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.6.</span> <span class="toc-text">演示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p><section id="nice" data-tool="mdnice编辑器" data-website="https://www.mdnice.com" style="padding: 0 10px; word-spacing: 0px; word-wrap: break-word; text-align: left; font-family: Optima-Regular, Optima, PingFangSC-light, PingFangTC-light, 'PingFang SC', Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; line-height: 1.6; letter-spacing: .034em; color: rgb(63, 63, 63); font-size: 16px; word-break: all;"><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">前言</span><span class="suffix"></span></h2></section></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">大约在19年的这个时候，老同事公司在做医疗系统，需要和<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">HIS</code>系统对接一些信息，比如患者、医护、医嘱、科室等信息。但是起初并不知道如何与HIS无缝对接，于是向我取经。</p><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">最终经过讨论采用了<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">视图对接</code>的方式，大致就是HIS系统提供视图，他们进行对接。</p><p></p>
+<p></p><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">写这篇文章的目的</span><span class="suffix"></span></h2><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">这篇文章将会涉及到Spring Boot 与Mybatis、数据库整合，类似于整合Mybatis与数据库的文章其实网上很多，作者此前也写过一篇文章详细的介绍了一些整合的套路：<a href="https://mp.weixin.qq.com/s/USXciK7mWB2-sud3-g19PA" style="word-wrap: break-word; font-weight: bold; color: #48b378; text-decoration: none; border-bottom: 1px solid #48b378;" target="_blank" rel="external">Spring Boot 整合多点套路，少走点弯路~</a>，有兴趣的可以看看。</p><p></p>
+<p></p><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">什么是多数据源？</span><span class="suffix"></span></h2><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">最常见的单一应用中最多涉及到一个数据库，即是一个数据源（<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Datasource</code>）。那么顾名思义，多数据源就是在一个单一应用中涉及到了两个及以上的数据库了。</p><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">其实在配置数据源的时候就已经很明确这个定义了，如以下代码：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;">    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Bean</span>(name = <span class="hljs-string" style="color: #c41a16; line-height: 26px;">“dataSource”</span>)<br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> DataSource <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">dataSource</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">()</span> </span>{<br><span>        DruidDataSource druidDataSource = <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">new</span> DruidDataSource();<br><span>        druidDataSource.setUrl(url);<br><span>        druidDataSource.setUsername(username);<br><span>        druidDataSource.setDriverClassName(driverClassName);<br><span>        druidDataSource.setPassword(password);<br><span>        <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">return</span> druidDataSource;<br><span>    }<br><span></span></span></span></span></span></span></span></span></span></code></pre></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">url</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">username</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">password</code>这三个属性已经唯一确定了一个数据库了，<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DataSource</code>则是依赖这三个创建出来的。则多数据源即是配置多个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DataSource</code>（暂且这么理解）。</p><br><p></p>
+<p></p><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">何时用到多数据源？</span><span class="suffix"></span></h2><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">正如前言介绍到的一个场景，相信大多数做过医疗系统的都会和<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">HIS</code>打交道，为了简化护士以及医生的操作流程，必须要将必要的信息从<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">HIS</code>系统对接过来，据我了解的大致有两种方案如下：</p><p></p>
+<p><ol data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: decimal;"></ol></p>
+<p><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">HIS</code>提供视图，比如医护视图、患者视图等，而此时其他系统只需要定时的从<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">HIS</code>视图中读取数据同步到自己数据库中即可。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">HIS</code>提供接口，无论是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">webService</code>还是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">HTTP</code>形式都是可行的，此时其他系统只需要按照要求调接口即可。</section></li></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);">很明显第一种方案涉及到了至少两个数据库了，一个是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">HIS</code>数据库，一个自己系统的数据库，在单一应用中必然需要用到<strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">多数据源的切换</strong>才能达到目的。</p><br><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">当然多数据源的使用场景还是有很多的，以上只是简单的一个场景。</p><p></p>
+<p></p><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">整合单一的数据源</span><span class="suffix"></span></h2><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">本文使用阿里的数据库连接池<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">druid</code>，添加依赖如下：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"><span class="hljs-comment" style="color: #007400; line-height: 26px;">&lt;!–druid连接池–&gt;</span><br><span><span class="hljs-tag" style="color: #aa0d91; line-height: 26px;">&lt;<span class="hljs-name" style="color: #aa0d91; line-height: 26px;">dependency</span>&gt;</span><br><span>   <span class="hljs-tag" style="color: #aa0d91; line-height: 26px;">&lt;<span class="hljs-name" style="color: #aa0d91; line-height: 26px;">groupId</span>&gt;</span>com.alibaba<span class="hljs-tag" style="color: #aa0d91; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #aa0d91; line-height: 26px;">groupId</span>&gt;</span><br><span>   <span class="hljs-tag" style="color: #aa0d91; line-height: 26px;">&lt;<span class="hljs-name" style="color: #aa0d91; line-height: 26px;">artifactId</span>&gt;</span>druid-spring-boot-starter<span class="hljs-tag" style="color: #aa0d91; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #aa0d91; line-height: 26px;">artifactId</span>&gt;</span><br><span>   <span class="hljs-tag" style="color: #aa0d91; line-height: 26px;">&lt;<span class="hljs-name" style="color: #aa0d91; line-height: 26px;">version</span>&gt;</span>1.1.9<span class="hljs-tag" style="color: #aa0d91; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #aa0d91; line-height: 26px;">version</span>&gt;</span><br><span><span class="hljs-tag" style="color: #aa0d91; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #aa0d91; line-height: 26px;">dependency</span>&gt;</span><br><span></span></span></span></span></span></span></code></pre></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">阿里的数据库连接池非常强大，比如<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">数据监控</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">数据库加密</code>等等内容，本文仅仅演示与Spring Boot整合的过程，一些其他的功能后续可以自己研究添加。</p><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">Druid连接池的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">starter</code>的自动配置类是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DruidDataSourceAutoConfigure</code>，类上标注如下一行注解：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"><span class="hljs-meta" style="color: #643820; line-height: 26px;">@EnableConfigurationProperties</span>({DruidStatProperties<span class="hljs-class" style="line-height: 26px;">.<span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">class</span>, <span class="hljs-title" style="color: #5c2699; line-height: 26px;">DataSourceProperties</span>.<span class="hljs-title" style="color: #5c2699; line-height: 26px;">class</span>})<br><span></span></span></code></pre></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@EnableConfigurationProperties</code>这个注解使得配置文件中的配置生效并且映射到指定类的属性。</p><br><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DruidStatProperties</code>中指定的前缀是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">spring.datasource.druid</code>，这个配置主要是用来设置连接池的一些参数。</p><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DataSourceProperties</code>中指定的前缀是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">spring.datasource</code>，这个主要是用来设置数据库的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">url</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">username</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">password</code>等信息。</p><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">因此我们只需要在全局配置文件中指定<strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">数据库的一些配置</strong>以及<strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">连接池的一些配置</strong>信息即可，前缀分别是<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">spring.datasource.druid</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">spring.datasource</code>，以下是个人随便配置的(<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">application.properties</code>)：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;">spring.datasource.url=jdbc\:mysql\://120.26.101.xxx\:3306/xxx?useUnicode\=true&amp;characterEncoding\=UTF-8&amp;zeroDateTimeBehavior\=convertToNull&amp;useSSL\=false&amp;allowMultiQueries\=true&amp;serverTimezone=Asia/Shanghai<br>spring.datasource.username=root<br>spring.datasource.password=xxxx<br>spring.datasource.type=com.alibaba.druid.pool.DruidDataSource<br>spring.datasource.driver-class-name=com.mysql.jdbc.Driver</code></pre></p>
+<p>#初始化连接大小<br>spring.datasource.druid.initial-size=0</p>
+<p>#连接池最大使用连接数量<br>spring.datasource.druid.max-active=20</p>
+<p>#连接池最小空闲<br>spring.datasource.druid.min-idle=0</p>
+<p>#获取连接最大等待时间<br>spring.datasource.druid.max-wait=6000<br>spring.datasource.druid.validation-query=SELECT 1</p>
+<p>#spring.datasource.druid.validation-query-timeout=6000<br>spring.datasource.druid.test-on-borrow=false<br>spring.datasource.druid.test-on-return=false<br>spring.datasource.druid.test-while-idle=true</p>
+<p>#配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒<br>spring.datasource.druid.time-between-eviction-runs-millis=60000</p>
+<p>#置一个连接在池中最小生存的时间，单位是毫秒<br>spring.datasource.druid.min-evictable-idle-time-millis=25200000</p>
+<p>#spring.datasource.druid.max-evictable-idle-time-millis=</p>
+<p>#打开removeAbandoned功能,多少时间内必须关闭连接<br>spring.datasource.druid.removeAbandoned=true</p>
+<p>#1800秒，也就是30分钟<br>spring.datasource.druid.remove-abandoned-timeout=1800</p>
+<p>#&lt;!– 1800秒，也就是30分钟 –&gt;<br>spring.datasource.druid.log-abandoned=true<br>spring.datasource.druid.filters=mergeStat<br></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);">在全局配置文件<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">application.properties</code>文件中配置以上的信息即可注入一个数据源到Spring Boot中。其实这仅仅是一种方式，下面介绍另外一种方式。</p><br><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">在自动配置类中<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DruidDataSourceAutoConfigure</code>中有如下一段代码：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;">  <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Bean</span>(initMethod = <span class="hljs-string" style="color: #c41a16; line-height: 26px;">“init”</span>)<br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@ConditionalOnMissingBean</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> DataSource <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">dataSource</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">()</span> </span>{<br><span>        LOGGER.info(<span class="hljs-string" style="color: #c41a16; line-height: 26px;">“Init DruidDataSource”</span>);<br><span>        <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">return</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">new</span> DruidDataSourceWrapper();<br><span>    }<br><span></span></span></span></span></span></span></code></pre></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnMissingBean</code>和<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Bean</code>这两个注解的结合，意味着我们可以覆盖，只需要提前在<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">IOC</code>中注入一个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DataSource</code>类型的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Bean</code>即可。</p><br><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">因此我们在自定义的配置类中定义如下配置即可：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"><span class="hljs-comment" style="color: #007400; line-height: 26px;">/<em>*<br><span>     </span></em> <span class="hljs-doctag" style="font-weight: bold; line-height: 26px;">@Bean</span>：向IOC容器中注入一个Bean<br><span>     <em> <span class="hljs-doctag" style="font-weight: bold; line-height: 26px;">@ConfigurationProperties</span>：使得配置文件中以spring.datasource为前缀的属性映射到Bean的属性中<br><span>     </span></em> <span class="hljs-doctag" style="font-weight: bold; line-height: 26px;">@return</span><br><span>     */</span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@ConfigurationProperties</span>(prefix = <span class="hljs-string" style="color: #c41a16; line-height: 26px;">“spring.datasource”</span>)<br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Bean</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> DataSource <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">dataSource</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">()</span></span>{<br><span>        <span class="hljs-comment" style="color: #007400; line-height: 26px;">//做一些其他的自定义配置，比如密码加密等……</span><br><span>        <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">return</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">new</span> DruidDataSource();<br><span>    }<br><span></span></span></span></span></span></span></span></span></span></code></pre></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);">以上介绍了两种数据源的配置方式，第一种比较简单，第二种适合扩展，按需选择。</p><br><p></p>
+<p></p><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">整合Mybatis</span><span class="suffix"></span></h2><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">Spring Boot 整合Mybatis其实很简单，简单的几步就搞定，首先添加依赖：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"><span class="hljs-tag" style="color: #aa0d91; line-height: 26px;">&lt;<span class="hljs-name" style="color: #aa0d91; line-height: 26px;">dependency</span>&gt;</span><br><span>     <span class="hljs-tag" style="color: #aa0d91; line-height: 26px;">&lt;<span class="hljs-name" style="color: #aa0d91; line-height: 26px;">groupId</span>&gt;</span>org.mybatis.spring.boot<span class="hljs-tag" style="color: #aa0d91; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #aa0d91; line-height: 26px;">groupId</span>&gt;</span><br><span>     <span class="hljs-tag" style="color: #aa0d91; line-height: 26px;">&lt;<span class="hljs-name" style="color: #aa0d91; line-height: 26px;">artifactId</span>&gt;</span>mybatis-spring-boot-starter<span class="hljs-tag" style="color: #aa0d91; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #aa0d91; line-height: 26px;">artifactId</span>&gt;</span><br><span>     <span class="hljs-tag" style="color: #aa0d91; line-height: 26px;">&lt;<span class="hljs-name" style="color: #aa0d91; line-height: 26px;">version</span>&gt;</span>2.0.0<span class="hljs-tag" style="color: #aa0d91; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #aa0d91; line-height: 26px;">version</span>&gt;</span><br><span><span class="hljs-tag" style="color: #aa0d91; line-height: 26px;">&lt;/<span class="hljs-name" style="color: #aa0d91; line-height: 26px;">dependency</span>&gt;</span><br><span></span></span></span></span></span></code></pre></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">第二步找到自动配置类<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">MybatisAutoConfiguration</code>，有如下一行代码：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"><span class="hljs-meta" style="color: #643820; line-height: 26px;">@EnableConfigurationProperties</span>(MybatisProperties<span class="hljs-class" style="line-height: 26px;">.<span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">class</span>)<br><span></span></span></code></pre></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);">老套路了，全局配置文件中配置前缀为<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">mybatis</code>的配置将会映射到该类中的属性。</p><br><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">可配置的东西很多，比如<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">XML文件的位置</code>、<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">类型处理器</code>等等，如下简单的配置：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: -webkit-box; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;">mybatis.type-handlers-package=com.demo.typehandler<br>mybatis.configuration.map-underscore-to-camel-case=true<br></code></pre></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">如果需要通过包扫描的方式注入Mapper，则需要在配置类上加入一个注解：<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@MapperScan</code>，其中的value属性指定需要扫描的包。</p><p></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);">直接在全局配置文件配置各种属性是一种比较简单的方式，其实的任何组件的整合都有不少于两种的配置方式，下面来介绍下配置类如何配置。</p><br><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">MybatisAutoConfiguration</code>自动配置类有如下一断代码：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;">  <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Bean</span><br><span>  <span class="hljs-meta" style="color: #643820; line-height: 26px;">@ConditionalOnMissingBean</span><br><span>  <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> SqlSessionFactory <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">sqlSessionFactory</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">(DataSource dataSource)</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">throws</span> Exception </span>{}<br><span></span></span></span></code></pre></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnMissingBean</code>和<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@Bean</code>真是老搭档了，意味着我们又可以覆盖，只需要在IOC容器中注入<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">SqlSessionFactory（Mybatis六剑客之一生产者）</code>。</p><br><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">在自定义配置类中注入即可，如下：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"> <span class="hljs-comment" style="color: #007400; line-height: 26px;">/<strong><br><span>     <em> 注入SqlSessionFactory<br><span>     </span></em>/</span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Bean</span>(<span class="hljs-string" style="color: #c41a16; line-height: 26px;">“sqlSessionFactory1”</span>)<br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> SqlSessionFactory <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">sqlSessionFactory</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">(DataSource dataSource)</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">throws</span> Exception </span>{<br><span>        SqlSessionFactoryBean sqlSessionFactoryBean = <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">new</span> SqlSessionFactoryBean();<br><span>        sqlSessionFactoryBean.setDataSource(dataSource);<br><span>        sqlSessionFactoryBean.setMapperLocations(<span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">new</span> PathMatchingResourcePatternResolver().getResources(<span class="hljs-string" style="color: #c41a16; line-height: 26px;">“classpath*:/mapper/</span></span></span></span></span></span></strong>/*.xml”</span>));<br><span>        org.apache.ibatis.session.Configuration configuration = <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">new</span> org.apache.ibatis.session.Configuration();<br><span>        <span class="hljs-comment" style="color: #007400; line-height: 26px;">// 自动将数据库中的下划线转换为驼峰格式</span><br><span>        configuration.setMapUnderscoreToCamelCase(<span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">true</span>);<br><span>        configuration.setDefaultFetchSize(<span class="hljs-number" style="color: #1c00cf; line-height: 26px;">100</span>);<br><span>        configuration.setDefaultStatementTimeout(<span class="hljs-number" style="color: #1c00cf; line-height: 26px;">30</span>);<br><span>        sqlSessionFactoryBean.setConfiguration(configuration);<br><span>        <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">return</span> sqlSessionFactoryBean.getObject();<br><span>    }<br><span></span></span></span></span></span></span></span></span></span></code></pre></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);">以上介绍了配置Mybatis的两种方式，其实在大多数场景中使用第一种已经够用了，至于为什么介绍第二种呢？当然是为了多数据源的整合而做准备了。</p><br><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">在<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">MybatisAutoConfiguration</code>中有一行很重要的代码，如下：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"><span class="hljs-meta" style="color: #643820; line-height: 26px;">@ConditionalOnSingleCandidate</span>(DataSource<span class="hljs-class" style="line-height: 26px;">.<span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">class</span>)<br><span></span></span></code></pre></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@ConditionalOnSingleCandidate</code>这个注解的意思是当IOC容器中只有一个候选Bean的实例才会生效。</p><br><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">这行代码标注在Mybatis的自动配置类中有何含义呢？下面介绍，哈哈哈~<br><img src="https://gitee.com/chenjiabing666/BlogImage/raw/master/Spring%20Boot%E7%AC%AC%E5%8D%81%E4%B8%89%E5%BC%B9%EF%BC%8C%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E6%95%B4%E5%90%88/1.jpg" alt="" style="display: block; margin: 0 auto; max-width: 100%; border-radius: 4px; margin-bottom: 25px;"></p><p></p>
+<p></p><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">多数据源如何整合？</span><span class="suffix"></span></h2><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">上文留下的问题：为什么的Mybatis自动配置上标注如下一行代码：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"><span class="hljs-meta" style="color: #643820; line-height: 26px;">@ConditionalOnSingleCandidate</span>(DataSource<span class="hljs-class" style="line-height: 26px;">.<span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">class</span>)<br><span></span></span></code></pre></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);">以上这行代码的言外之意：当IOC容器中只有一个数据源DataSource，这个自动配置类才会生效。</p><br><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">哦？照这样搞，多数据源是不能用Mybatis吗？</strong></p><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">可能大家会有一个误解，认为多数据源就是多个的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DataSource</code>并存的，当然这样说也不是不正确。</p><p></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);">多数据源的情况下并不是多个数据源并存的，Spring提供了<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">AbstractRoutingDataSource</code>这样一个抽象类，使得能够在多数据源的情况下任意切换，相当于一个<strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">动态路由</strong>的作用，作者称之为<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">动态数据源</code>。因此Mybatis只需要配置这个动态数据源即可。</p><br><p></p>
+<p></p><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">什么是动态数据源？</span><span class="suffix" style="display: none;"></span></h3><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">动态数据源简单的说就是能够自由切换的数据源，类似于一个动态路由的感觉，Spring 提供了一个抽象类<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">AbstractRoutingDataSource</code>，这个抽象类中哟一个属性，如下：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">private</span> Map&lt;Object, Object&gt; targetDataSources;<br><span></span></code></pre></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">targetDataSources</code>是一个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">Map</code>结构，所有需要切换的数据源都存放在其中，根据指定的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">KEY</code>进行切换。当然还有一个默认的数据源。</p><br><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">AbstractRoutingDataSource</code>这个抽象类中有一个抽象方法需要子类实现，如下：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"><span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">protected</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">abstract</span> Object <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">determineCurrentLookupKey</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">()</span></span>;<br><span></span></code></pre></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);"><code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">determineCurrentLookupKey()</code>这个方法的返回值决定了需要切换的数据源的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">KEY</code>，就是根据这个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">KEY</code>从<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">targetDataSources</code>取值（数据源）。</p><br><p></p>
+<p></p><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">数据源切换如何保证线程隔离？</span><span class="suffix" style="display: none;"></span></h3><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">数据源属于一个公共的资源，在多线程的情况下如何保证线程隔离呢？不能我这边切换了影响其他线程的执行。</p><p></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);">说到线程隔离，自然会想到<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ThreadLocal</code>了，将切换数据源的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">KEY</code>（用于从<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">targetDataSources</code>中取值）存储在<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ThreadLocal</code>中，执行结束之后清除即可。</p><br><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">单独封装了一个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DataSourceHolder</code>，内部使用<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ThreadLocal</code>隔离线程，代码如下：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"><span class="hljs-comment" style="color: #007400; line-height: 26px;">/<em>*<br><span> </span></em> 使用ThreadLocal存储切换数据源后的KEY<br><span> */</span><br><span><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> <span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">class</span> <span class="hljs-title" style="color: #5c2699; line-height: 26px;">DataSourceHolder</span> </span>{<br><span><br><span>    <span class="hljs-comment" style="color: #007400; line-height: 26px;">//线程  本地环境</span><br><span>    <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">private</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">static</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">final</span> ThreadLocal&lt;String&gt; dataSources = <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">new</span> InheritableThreadLocal();<br><span><br><span>    <span class="hljs-comment" style="color: #007400; line-height: 26px;">//设置数据源</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">static</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">void</span> <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">setDataSource</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">(String datasource)</span> </span>{<br><span>        dataSources.set(datasource);<br><span>    }<br><span><br><span>    <span class="hljs-comment" style="color: #007400; line-height: 26px;">//获取数据源</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">static</span> String <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">getDataSource</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">()</span> </span>{<br><span>        <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">return</span> dataSources.get();<br><span>    }<br><span><br><span>    <span class="hljs-comment" style="color: #007400; line-height: 26px;">//清除数据源</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">static</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">void</span> <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">clearDataSource</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">()</span> </span>{<br><span>        dataSources.remove();<br><span>    }<br><span>}<br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre></p>
+<p></p><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">如何构造一个动态数据源？</span><span class="suffix" style="display: none;"></span></h3><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">上文说过只需继承一个抽象类<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">AbstractRoutingDataSource</code>，重写其中的一个方法<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">determineCurrentLookupKey()</code>即可。代码如下：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"><span class="hljs-comment" style="color: #007400; line-height: 26px;">/<strong><br><span> <em> 动态数据源，继承AbstractRoutingDataSource<br><span> </span></em>/</span><br><span><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> <span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">class</span> <span class="hljs-title" style="color: #5c2699; line-height: 26px;">DynamicDataSource</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">extends</span> <span class="hljs-title" style="color: #5c2699; line-height: 26px;">AbstractRoutingDataSource</span> </span>{<br><span><br><span>    <span class="hljs-comment" style="color: #007400; line-height: 26px;">/</span></span></span></span></strong><br><span>     <em> 返回需要使用的数据源的key，将会按照这个KEY从Map获取对应的数据源（切换）<br><span>     </span></em> <span class="hljs-doctag" style="font-weight: bold; line-height: 26px;">@return</span><br><span>     <em>/</em></span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Override</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">protected</span> Object <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">determineCurrentLookupKey</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">()</span> </span>{<br><span>        <span class="hljs-comment" style="color: #007400; line-height: 26px;">//从ThreadLocal中取出KEY</span><br><span>        <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">return</span> DataSourceHolder.getDataSource();<br><span>    }<br><span><br><span>    <span class="hljs-comment" style="color: #007400; line-height: 26px;">/**<br><span>      构造方法填充Map，构建多数据源<br><span>     */</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">DynamicDataSource</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">(DataSource defaultTargetDataSource, Map&lt;Object, Object&gt; targetDataSources)</span> </span>{<br><span>        <span class="hljs-comment" style="color: #007400; line-height: 26px;">//默认的数据源，可以作为主数据源</span><br><span>        <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">super</span>.setDefaultTargetDataSource(defaultTargetDataSource);<br><span>        <span class="hljs-comment" style="color: #007400; line-height: 26px;">//目标数据源</span><br><span>        <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">super</span>.setTargetDataSources(targetDataSources);<br><span>        <span class="hljs-comment" style="color: #007400; line-height: 26px;">//执行afterPropertiesSet方法，完成属性的设置</span><br><span>        <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">super</span>.afterPropertiesSet();<br><span>    }<br><span>}<br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">上述代码很简单，分析如下：</p><p></p>
+<p><ol data-tool="mdnice编辑器" style="margin-top: 8px; margin-bottom: 8px; padding-left: 25px; color: black; list-style-type: decimal;"></ol></p>
+<p><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">一个多参的构造方法，指定了默认的数据源和目标数据源。</section></li><li><section style="margin-top: 5px; margin-bottom: 5px; line-height: 26px; text-align: left; color: rgb(1,1,1); font-weight: 500;">重写<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">determineCurrentLookupKey()</code>方法，返回数据源对应的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">KEY</code>，这里是直接从<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ThreadLocal</code>中取值，就是上文封装的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DataSourceHolder</code>。</section></li></p>
+<p></p><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">定义一个注解</span><span class="suffix" style="display: none;"></span></h3><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">为了操作方便且低耦合，不能每次需要切换的数据源的时候都要手动调一下接口吧，可以定义一个切换数据源的注解，如下：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"><span class="hljs-comment" style="color: #007400; line-height: 26px;">/<strong><br><span> <em> 切换数据源的注解<br><span> </span></em>/</span><br><span><span class="hljs-meta" style="color: #643820; line-height: 26px;">@Target</span>(value = ElementType.METHOD)<br><span><span class="hljs-meta" style="color: #643820; line-height: 26px;">@Retention</span>(value = RetentionPolicy.RUNTIME)<br><span><span class="hljs-meta" style="color: #643820; line-height: 26px;">@Documented</span><br><span><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> <span class="hljs-meta" style="color: #643820; line-height: 26px;">@interface</span> SwitchSource {<br><span><br><span>    <span class="hljs-comment" style="color: #007400; line-height: 26px;">/</span></span></span></span></span></span></span></strong><br><span>     <em> 默认切换的数据源KEY<br><span>     </span></em>/</span><br><span>    String DEFAULT_NAME = <span class="hljs-string" style="color: #c41a16; line-height: 26px;">“hisDataSource”</span>;<br><span><br><span>    <span class="hljs-comment" style="color: #007400; line-height: 26px;">/<em>*<br><span>     </span></em> 需要切换到数据的KEY<br><span>     */</span><br><span>    <span class="hljs-function" style="line-height: 26px;">String <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">value</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">()</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">default</span> DEFAULT_NAME</span>;<br><span>}<br><span></span></span></span></span></span></span></span></span></code></pre></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">注解中只有一个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">value</code>属性，指定了需要切换数据源的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">KEY</code>。</p><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">有注解还不行，当然还要有切面，代码如下：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"><span class="hljs-meta" style="color: #643820; line-height: 26px;">@Aspect</span><br><span><span class="hljs-comment" style="color: #007400; line-height: 26px;">//优先级设置到最高</span><br><span><span class="hljs-meta" style="color: #643820; line-height: 26px;">@Order</span>(Ordered.HIGHEST_PRECEDENCE)<br><span><span class="hljs-meta" style="color: #643820; line-height: 26px;">@Component</span><br><span><span class="hljs-meta" style="color: #643820; line-height: 26px;">@Slf</span>4j<br><span><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> <span class="hljs-class" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">class</span> <span class="hljs-title" style="color: #5c2699; line-height: 26px;">DataSourceAspect</span> </span>{<br><span><br><span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Pointcut</span>(<span class="hljs-string" style="color: #c41a16; line-height: 26px;">“@annotation(SwitchSource)”</span>)<br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">void</span> <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">pointcut</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">()</span> </span>{<br><span>    }<br><span><br><span>    <span class="hljs-comment" style="color: #007400; line-height: 26px;">/<strong><br><span>     <em> 在方法执行之前切换到指定的数据源<br><span>     </span></em> <span class="hljs-doctag" style="font-weight: bold; line-height: 26px;">@param</span> joinPoint<br><span>     <em>/</em></span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Before</span>(value = <span class="hljs-string" style="color: #c41a16; line-height: 26px;">“pointcut()”</span>)<br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">void</span> <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">beforeOpt</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">(JoinPoint joinPoint)</span> </span>{<br><span>        <span class="hljs-comment" style="color: #007400; line-height: 26px;">/因为是对注解进行切面，所以这边无需做过多判定，直接获取注解的值，进行环绕，将数据源设置成远方，然后结束后，清楚当前线程数据源*/</span><br><span>        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();<br><span>        SwitchSource switchSource = method.getAnnotation(SwitchSource<span class="hljs-class" style="line-height: 26px;">.<span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">class</span>)</span>;<br><span>        log.info(<span class="hljs-string" style="color: #c41a16; line-height: 26px;">“[Switch DataSource]:”</span> + switchSource.value());<br><span>        DataSourceHolder.setDataSource(switchSource.value());<br><span>    }<br><span><br><span>    <span class="hljs-comment" style="color: #007400; line-height: 26px;">/</span></span></span></span></span></span></span></span></span></span></span></span></strong><br><span>     <em> 方法执行之后清除掉ThreadLocal中存储的KEY，这样动态数据源会使用默认的数据源<br><span>     </span></em>/</span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@After</span>(value = <span class="hljs-string" style="color: #c41a16; line-height: 26px;">“pointcut()”</span>)<br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">void</span> <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">afterOpt</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">()</span> </span>{<br><span>        DataSourceHolder.clearDataSource();<br><span>        log.info(<span class="hljs-string" style="color: #c41a16; line-height: 26px;">“[Switch Default DataSource]”</span>);<br><span>    }<br><span>}<br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">这个<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ASPECT</code>很容易理解，<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">beforeOpt()</code>在方法之前执行，取值<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@SwitchSource</code>中value属性设置到<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ThreadLocal</code>中;<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">afterOpt()</code>方法在方法执行之后执行，清除掉<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">ThreadLocal</code>中的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">KEY</code>，保证了如果不切换数据源，则用默认的数据源。</p><p></p>
+<p></p><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">如何与Mybatis整合？</span><span class="suffix" style="display: none;"></span></h3><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">单一数据源与Mybatis整合上文已经详细讲解了，数据源<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DataSource</code>作为参数构建了<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">SqlSessionFactory</code>，同样的思想，只需要把这个数据源换成动态数据源即可。注入的代码如下：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"><span class="hljs-comment" style="color: #007400; line-height: 26px;">/<em>*<br><span>     </span></em> 创建动态数据源的SqlSessionFactory，传入的是动态数据源<br><span>     <em> <span class="hljs-doctag" style="font-weight: bold; line-height: 26px;">@Primary</span>这个注解很重要，如果项目中存在多个SqlSessionFactory，这个注解一定要加上<br><span>     </span></em>/</span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Primary</span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Bean</span>(<span class="hljs-string" style="color: #c41a16; line-height: 26px;">“sqlSessionFactory2”</span>)<br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> SqlSessionFactory <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">sqlSessionFactoryBean</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">(DynamicDataSource dynamicDataSource)</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">throws</span> Exception </span>{<br><span>        SqlSessionFactoryBean sqlSessionFactoryBean = <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">new</span> SqlSessionFactoryBean();<br><span>        sqlSessionFactoryBean.setDataSource(dynamicDataSource);<br><span>        org.apache.ibatis.session.Configuration configuration = <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">new</span> org.apache.ibatis.session.Configuration();<br><span>        configuration.setMapUnderscoreToCamelCase(<span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">true</span>);<br><span>        configuration.setDefaultFetchSize(<span class="hljs-number" style="color: #1c00cf; line-height: 26px;">100</span>);<br><span>        configuration.setDefaultStatementTimeout(<span class="hljs-number" style="color: #1c00cf; line-height: 26px;">30</span>);<br><span>        sqlSessionFactoryBean.setConfiguration(configuration);<br><span>        <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">return</span> sqlSessionFactoryBean.getObject();<br><span>    }<br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);">与Mybatis整合很简单，只需要把数据源替换成自定义的动态数据源<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DynamicDataSource</code>。</p><br><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">那么动态数据源如何注入到IOC容器中呢？看上文自定义的<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DynamicDataSource</code>构造方法，肯定需要两个数据源了，因此必须先注入两个或者多个数据源到IOC容器中，如下：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"> <span class="hljs-comment" style="color: #007400; line-height: 26px;">/<strong><br><span>     <em> <span class="hljs-doctag" style="font-weight: bold; line-height: 26px;">@Bean</span>：向IOC容器中注入一个Bean<br><span>     </span></em> <span class="hljs-doctag" style="font-weight: bold; line-height: 26px;">@ConfigurationProperties</span>：使得配置文件中以spring.datasource为前缀的属性映射到Bean的属性中<br><span>     */</span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@ConfigurationProperties</span>(prefix = <span class="hljs-string" style="color: #c41a16; line-height: 26px;">“spring.datasource”</span>)<br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Bean</span>(<span class="hljs-string" style="color: #c41a16; line-height: 26px;">“dataSource”</span>)<br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> DataSource <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">dataSource</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">()</span></span>{<br><span>        <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">return</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">new</span> DruidDataSource();<br><span>    }<br><span><br><span>    <span class="hljs-comment" style="color: #007400; line-height: 26px;">/</span></span></span></span></span></span></span></span></span></strong><br><span>     <em> 向IOC容器中注入另外一个数据源<br><span>     </span></em> 全局配置文件中前缀是spring.datasource.his<br><span>     */</span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Bean</span>(name = SwitchSource.DEFAULT_NAME)<br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@ConfigurationProperties</span>(prefix = <span class="hljs-string" style="color: #c41a16; line-height: 26px;">“spring.datasource.his”</span>)<br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> DataSource <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">hisDataSource</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">()</span> </span>{<br><span>        <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">return</span> DataSourceBuilder.create().build();<br><span>    }<br><span></span></span></span></span></span></span></span></span></code></pre></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);">以上构建的两个数据源，一个是<strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">默认的数据源</strong>，一个是需要<strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">切换到的数据源（<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">targetDataSources</code>）</strong>，这样就组成了动态数据源了。数据源的一些信息，比如<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">url</code>，<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">username</code>需要自己在全局配置文件中根据指定的前缀配置即可，代码不再贴出。</p><br><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">动态数据源的注入代码如下：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;"><span class="hljs-comment" style="color: #007400; line-height: 26px;">/<em>*<br><span>     </span></em> 创建动态数据源的SqlSessionFactory，传入的是动态数据源<br><span>     <em> <span class="hljs-doctag" style="font-weight: bold; line-height: 26px;">@Primary</span>这个注解很重要，如果项目中存在多个SqlSessionFactory，这个注解一定要加上<br><span>     </span></em>/</span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Primary</span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Bean</span>(<span class="hljs-string" style="color: #c41a16; line-height: 26px;">“sqlSessionFactory2”</span>)<br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> SqlSessionFactory <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">sqlSessionFactoryBean</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">(DynamicDataSource dynamicDataSource)</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">throws</span> Exception </span>{<br><span>        SqlSessionFactoryBean sqlSessionFactoryBean = <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">new</span> SqlSessionFactoryBean();<br><span>        sqlSessionFactoryBean.setDataSource(dynamicDataSource);<br><span>        org.apache.ibatis.session.Configuration configuration = <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">new</span> org.apache.ibatis.session.Configuration();<br><span>        configuration.setMapUnderscoreToCamelCase(<span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">true</span>);<br><span>        configuration.setDefaultFetchSize(<span class="hljs-number" style="color: #1c00cf; line-height: 26px;">100</span>);<br><span>        configuration.setDefaultStatementTimeout(<span class="hljs-number" style="color: #1c00cf; line-height: 26px;">30</span>);<br><span>        sqlSessionFactoryBean.setConfiguration(configuration);<br><span>        <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">return</span> sqlSessionFactoryBean.getObject();<br><span>    }<br><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);">这里还有一个问题：IOC中存在多个数据源了，那么事务管理器怎么办呢？它也懵逼了，到底选择哪个数据源呢？因此事务管理器肯定还是要重新配置的。</p><br><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">事务管理器此时管理的数据源将是动态数据源<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">DynamicDataSource</code>，配置如下：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;">   <span class="hljs-comment" style="color: #007400; line-height: 26px;">/<em>*<br><span>     </span></em> 重写事务管理器，管理动态数据源<br><span>     */</span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Primary</span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Bean</span>(value = <span class="hljs-string" style="color: #c41a16; line-height: 26px;">“transactionManager2”</span>)<br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> PlatformTransactionManager <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">annotationDrivenTransactionManager</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">(DynamicDataSource dataSource)</span> </span>{<br><span>        <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">return</span> <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">new</span> DataSourceTransactionManager(dataSource);<br><span>    }<br><span></span></span></span></span></span></span></span></code></pre></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">至此，Mybatis与多数据源的整合就完成了。</p><p></p>
+<p></p><h3 data-tool="mdnice编辑器" style="margin-bottom: 15px; padding: 0px; font-weight: bold; color: black; font-size: 20px; margin-top: 1.2em;"><span style="background-image: url(https://my-wechat.mdnice.com/koala-3.png); background-size: 100% 100%; background-repeat: no-repeat; display: inline-block; width: 16px; height: 15px; line-height: 15px; margin-bottom: -1px;"></span><span class="prefix" style="display: none;"></span><span class="content" style="font-size: 17px; font-weight: bold; display: inline-block; margin-left: 8px; color: #48b378;">演示</span><span class="suffix" style="display: none;"></span></h3><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">使用也是很简单，在需要切换数据源的方法上方标注<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">@SwitchSource</code>切换到指定的数据源即可，如下：</p><p></p>
+<p><pre class="custom" data-tool="mdnice编辑器" style="margin-top: 10px; margin-bottom: 10px; border-radius: 5px; box-shadow: rgba(0, 0, 0, 0.55) 0px 2px 10px;"><span style="display: block; background: url(https://files.mdnice.com/point.png); height: 30px; width: 100%; background-size: 40px; background-repeat: no-repeat; background-color: #fff; margin-bottom: -7px; border-radius: 5px; background-position: 10px 10px;"></span><code class="hljs" style="overflow-x: auto; padding: 16px; color: black; display: block; font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; font-size: 12px; -webkit-overflow-scrolling: touch; padding-top: 15px; background: #fff; border-radius: 5px;">    <span class="hljs-comment" style="color: #007400; line-height: 26px;">//不开启事务</span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Transactional</span>(propagation = Propagation.NOT_SUPPORTED)<br><span>    <span class="hljs-comment" style="color: #007400; line-height: 26px;">//切换到HIS的数据源</span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@SwitchSource</span><br><span>    <span class="hljs-meta" style="color: #643820; line-height: 26px;">@Override</span><br><span>    <span class="hljs-function" style="line-height: 26px;"><span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">public</span> List&lt;DeptInfo&gt; <span class="hljs-title" style="color: #1c00cf; line-height: 26px;">list</span><span class="hljs-params" style="color: #5c2699; line-height: 26px;">()</span> </span>{<br><span>        <span class="hljs-keyword" style="color: #aa0d91; line-height: 26px;">return</span> hisDeptInfoMapper.listDept();<br><span>    }<br><span></span></span></span></span></span></span></span></span></code></pre></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">这样只要执行到这方法将会切换到<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">HIS</code>的数据源，方法执行结束之后将会清除，执行默认的数据源。</p><p></p>
+<p></p><h2 data-tool="mdnice编辑器" style="padding: 0px; font-weight: bold; color: black; font-size: 22px; display: block; text-align: center; background-image: url(https://my-wechat.mdnice.com/koala-2.png); background-position: center center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 50px; margin-top: 1em; margin-bottom: 10px;"><span class="prefix" style="display: none;"></span><span class="content" style="text-align: center; display: inline-block; height: 38px; line-height: 42px; color: #48b378; background-position: left center; background-repeat: no-repeat; background-attachment: initial; background-origin: initial; background-clip: initial; background-size: 63px; margin-top: 38px; font-size: 18px; margin-bottom: 10px;">总结</span><span class="suffix"></span></h2><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">本篇文章讲了Spring Boot与单数据源、Mybatis、多数据源之间的整合，希望这篇文章能够帮助读者理解多数据源的整合，虽说用的不多，但是在有些领域仍然是比较重要的。</p><p></p>
+<p></p><p data-tool="mdnice编辑器" style="font-size: 16px; padding-bottom: 8px; margin: 0; padding-top: 1em; color: rgb(74,74,74); line-height: 1.75em;">原创不易，点点赞分享一波，谢谢支持~</p><p></p>
+<p><blockquote class="multiquote-1" data-tool="mdnice编辑器" style="border: none; font-size: 0.9em; overflow: auto; overflow-scrolling: touch; background: rgba(0, 0, 0, 0.05); color: #6a737d; padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 10px; margin-bottom: 20px; margin-top: 20px; padding: 15px 20px; line-height: 27px; background-color: #FBF9FD; border-left: 3px solid #35b378; display: block;"></blockquote></p>
+<p></p><p style="padding-bottom: 8px; padding-top: 1em; margin: 0px; line-height: 26px; padding: 0px; font-size: 15px; color: rgb(89,89,89);"><strong style="font-weight: bold; line-height: 1.75em; color: rgb(74,74,74);">源码已经上传，需要源码的朋友公众号回复关键词<code style="font-size: 14px; word-wrap: break-word; padding: 2px 4px; border-radius: 4px; margin: 0 2px; background-color: rgba(27,31,35,.05); font-family: Operator Mono, Consolas, Monaco, Menlo, monospace; word-break: break-all; color: #28ca71;">多数据源</code>。</strong></p><br><p></p>
+<figure data-tool="mdnice编辑器" style="margin: 0; margin-top: 10px; margin-bottom: 10px; display: flex; flex-direction: column; justify-content: center; align-items: center;"><img src="https://gitee.com/chenjiabing666/BlogImage/raw/master/myjszl_log.png" alt="" style="display: block; margin: 0 auto; max-width: 100%; border-radius: 4px; margin-bottom: 25px;"></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Spring-Boot-进阶/">Spring Boot 进阶</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Spring-Boot/">Spring Boot</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2020/10/21/Spring Boot 第 十三弹，Spring Boot 与多数据源的那点事儿~/" data-title="Spring Boot 第十三弹，Spring Boot 与多数据源的那点事儿~ | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2020/10/15/Spring Boot 第 十二弹，Spring Boot整合多点套路，少走点弯路！！！/"  title="Spring Boot 第 十二弹，Spring Boot整合多点套路，少走点弯路！！！">
+ <strong>下一篇：</strong><br/> 
+ <span>Spring Boot 第 十二弹，Spring Boot整合多点套路，少走点弯路！！！
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">2.</span> <span class="toc-text">写这篇文章的目的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">3.</span> <span class="toc-text">什么是多数据源？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">4.</span> <span class="toc-text">何时用到多数据源？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">5.</span> <span class="toc-text">整合单一的数据源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">6.</span> <span class="toc-text">整合Mybatis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">7.</span> <span class="toc-text">多数据源如何整合？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.1.</span> <span class="toc-text">什么是动态数据源？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.2.</span> <span class="toc-text">数据源切换如何保证线程隔离？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.3.</span> <span class="toc-text">如何构造一个动态数据源？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.4.</span> <span class="toc-text">定义一个注解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.5.</span> <span class="toc-text">如何与Mybatis整合？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undefined"><span class="toc-number">7.6.</span> <span class="toc-text">演示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#undefined"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Mybatis进阶/" title="Mybatis进阶">Mybatis进阶<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring-Boot-进阶/" title="Spring Boot 进阶">Spring Boot 进阶<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/开发工具/" title="开发工具">开发工具<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spring-Boot/" title="Spring Boot">Spring Boot<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mybatis/" title="Mybatis">Mybatis<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/破解/" title="破解">破解<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

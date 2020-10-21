@@ -1,0 +1,917 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>es各种查询 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="请求体查询简单查询 【不推荐】空查询1、GET /lib/user/_search  ： 查询lib索引下的user类型的全部数据
+2、GET /lib/_search ：查询lib索引下的全部类型的数据
+3、GET /_search ：查询全部索引下的数据
+精确值查找
+当进行精确值查找时， 我们会使用过滤器（filters）。过滤器很重要，因为它们执行速度非常快，不会计算相关度（直接跳过了整个评">
+<meta property="og:type" content="article">
+<meta property="og:title" content="es各种查询">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/09/02/es各种查询/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="请求体查询简单查询 【不推荐】空查询1、GET /lib/user/_search  ： 查询lib索引下的user类型的全部数据
+2、GET /lib/_search ：查询lib索引下的全部类型的数据
+3、GET /_search ：查询全部索引下的数据
+精确值查找
+当进行精确值查找时， 我们会使用过滤器（filters）。过滤器很重要，因为它们执行速度非常快，不会计算相关度（直接跳过了整个评">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T05:53:39.491Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="es各种查询">
+<meta name="twitter:description" content="请求体查询简单查询 【不推荐】空查询1、GET /lib/user/_search  ： 查询lib索引下的user类型的全部数据
+2、GET /lib/_search ：查询lib索引下的全部类型的数据
+3、GET /_search ：查询全部索引下的数据
+精确值查找
+当进行精确值查找时， 我们会使用过滤器（filters）。过滤器很重要，因为它们执行速度非常快，不会计算相关度（直接跳过了整个评">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/09/02/es各种查询/" title="es各种查询" itemprop="url">es各种查询</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-09-02T11:36:38.000Z" itemprop="datePublished"> 发表于 2018-09-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#请求体查询"><span class="toc-number">1.</span> <span class="toc-text">请求体查询</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#简单查询-【不推荐】"><span class="toc-number">1.1.</span> <span class="toc-text">简单查询 【不推荐】</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#空查询"><span class="toc-number">1.2.</span> <span class="toc-text">空查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#精确值查找"><span class="toc-number">1.3.</span> <span class="toc-text">精确值查找</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#term查询"><span class="toc-number">1.3.1.</span> <span class="toc-text">term查询</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">实例</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#查询数值"><span class="toc-number">1.3.1.1.1.</span> <span class="toc-text">查询数值</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#查询文本"><span class="toc-number">1.3.1.1.2.</span> <span class="toc-text">查询文本</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#解决"><span class="toc-number">1.3.1.1.2.1.</span> <span class="toc-text">解决</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#terms"><span class="toc-number">1.3.2.</span> <span class="toc-text">terms</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#指定文档数量-from-size"><span class="toc-number">1.4.</span> <span class="toc-text">指定文档数量  (from ,size)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#返回指定的字段-source"><span class="toc-number">1.5.</span> <span class="toc-text">返回指定的字段  _source</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#返回版本号"><span class="toc-number">1.6.</span> <span class="toc-text">返回版本号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#match查询"><span class="toc-number">1.7.</span> <span class="toc-text">match查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#match-all"><span class="toc-number">1.8.</span> <span class="toc-text">match_all</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#match-phrase"><span class="toc-number">1.9.</span> <span class="toc-text">match_phrase</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#排序"><span class="toc-number">1.10.</span> <span class="toc-text">排序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#range"><span class="toc-number">1.11.</span> <span class="toc-text">range</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#日期查询"><span class="toc-number">1.11.1.</span> <span class="toc-text">日期查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数字"><span class="toc-number">1.11.2.</span> <span class="toc-text">数字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#字符串范围"><span class="toc-number">1.11.3.</span> <span class="toc-text">字符串范围</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#wildcard查询"><span class="toc-number">1.12.</span> <span class="toc-text">wildcard查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#模糊查询-fuzzy"><span class="toc-number">1.13.</span> <span class="toc-text">模糊查询 fuzzy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#高亮查询"><span class="toc-number">1.14.</span> <span class="toc-text">高亮查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#null值的查询"><span class="toc-number">1.15.</span> <span class="toc-text">null值的查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#filter查询"><span class="toc-number">1.16.</span> <span class="toc-text">filter查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简单的过滤查询"><span class="toc-number">1.16.1.</span> <span class="toc-text">简单的过滤查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bool过滤查询"><span class="toc-number">1.16.2.</span> <span class="toc-text">bool过滤查询</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例-1"><span class="toc-number">1.16.2.1.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#嵌套bool过滤查询"><span class="toc-number">1.16.3.</span> <span class="toc-text">嵌套bool过滤查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#范围过滤"><span class="toc-number">1.16.4.</span> <span class="toc-text">范围过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#非空的过滤查询"><span class="toc-number">1.16.5.</span> <span class="toc-text">非空的过滤查询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#聚合查询"><span class="toc-number">1.17.</span> <span class="toc-text">聚合查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.18.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="请求体查询"><a href="#请求体查询" class="headerlink" title="请求体查询"></a>请求体查询</h1><h2 id="简单查询-【不推荐】"><a href="#简单查询-【不推荐】" class="headerlink" title="简单查询 【不推荐】"></a>简单查询 【不推荐】</h2><h2 id="空查询"><a href="#空查询" class="headerlink" title="空查询"></a>空查询</h2><p>1、<code>GET /lib/user/_search</code>  ： 查询lib索引下的user类型的全部数据</p>
+<p>2、<code>GET /lib/_search</code> ：查询lib索引下的全部类型的数据</p>
+<p>3、<code>GET /_search</code> ：查询全部索引下的数据</p>
+<h2 id="精确值查找"><a href="#精确值查找" class="headerlink" title="精确值查找"></a>精确值查找</h2><ul>
+<li>当进行精确值查找时， 我们会使用<strong>过滤器（filters）</strong>。过滤器很重要，因为它们<strong>执行速度非常快</strong>，不会计算相关度（直接跳过了整个评分阶段）而且很容易被缓存。我们会在本章后面的 <a href="https://www.elastic.co/guide/cn/elasticsearch/guide/current/filter-caching.html" target="_blank" rel="external">过滤器缓存</a> 中讨论过滤器的性能优势，不过现在只要记住：请尽可能多的使用过滤式查询。</li>
+</ul>
+<h3 id="term查询"><a href="#term查询" class="headerlink" title="term查询"></a>term查询</h3><ul>
+<li>elasticsearch对这个搜索的词语不做分词，用于精确匹配，比如Id，数值类型的查询。</li>
+<li>可以用它处理数字（numbers）、布尔值（Booleans）、日期（dates）以及文本（text）。</li>
+</ul>
+<h4 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h4><ul>
+<li>批量插入数据<ul>
+<li><strong>没有手动插入映射，因此<code>ＥｌａｓｔｉｃＳｅａｒｃｈ</code>会为我们自动创建映射，这就意味着只要是文本就会为我们使用分词器分词。</strong></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">POST /my_store/products/_bulk</div><div class="line">&#123; <span class="string">"index"</span>: &#123; <span class="string">"_id"</span>: <span class="number">1</span> &#125;&#125;</div><div class="line">&#123; <span class="string">"price"</span> : <span class="number">10</span>, <span class="string">"productID"</span> : <span class="string">"XHDK-A-1293-#fJ3"</span> &#125;</div><div class="line">&#123; <span class="string">"index"</span>: &#123; <span class="string">"_id"</span>: <span class="number">2</span> &#125;&#125;</div><div class="line">&#123; <span class="string">"price"</span> : <span class="number">20</span>, <span class="string">"productID"</span> : <span class="string">"KDKE-B-9947-#kL5"</span> &#125;</div><div class="line">&#123; <span class="string">"index"</span>: &#123; <span class="string">"_id"</span>: <span class="number">3</span> &#125;&#125;</div><div class="line">&#123; <span class="string">"price"</span> : <span class="number">30</span>, <span class="string">"productID"</span> : <span class="string">"JODL-X-1937-#pV7"</span> &#125;</div><div class="line">&#123; <span class="string">"index"</span>: &#123; <span class="string">"_id"</span>: <span class="number">4</span> &#125;&#125;</div><div class="line">&#123; <span class="string">"price"</span> : <span class="number">30</span>, <span class="string">"productID"</span> : <span class="string">"QQPX-R-3956-#aD8"</span> &#125;</div></pre></td></tr></table></figure>
+<h5 id="查询数值"><a href="#查询数值" class="headerlink" title="查询数值"></a>查询数值</h5><ul>
+<li>使用<code>constant_score</code>查询以非评分模式来执行 <code>term</code> 查询并以一作为统一评分，这样返回的结果的评分全部是1</li>
+<li>使用<code>constant_score</code>将term转化为过滤器查询</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">GET /my_store/products/_search</div><div class="line">&#123;</div><div class="line">    <span class="string">"query"</span> : &#123;</div><div class="line">        <span class="string">"constant_score"</span> : &#123; </div><div class="line">            <span class="string">"filter"</span> : &#123;</div><div class="line">                <span class="string">"term"</span> : &#123; </div><div class="line">                    <span class="string">"price"</span> : <span class="number">20</span></div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//结果如下</span></div><div class="line">&#123;</div><div class="line">  <span class="string">"took"</span>: <span class="number">1</span>,</div><div class="line">  <span class="string">"timed_out"</span>: <span class="keyword">false</span>,</div><div class="line">  <span class="string">"_shards"</span>: &#123;</div><div class="line">    <span class="string">"total"</span>: <span class="number">5</span>,</div><div class="line">    <span class="string">"successful"</span>: <span class="number">5</span>,</div><div class="line">    <span class="string">"skipped"</span>: <span class="number">0</span>,</div><div class="line">    <span class="string">"failed"</span>: <span class="number">0</span></div><div class="line">  &#125;,</div><div class="line">  <span class="string">"hits"</span>: &#123;</div><div class="line">    <span class="string">"total"</span>: <span class="number">1</span>,</div><div class="line">    <span class="string">"max_score"</span>: <span class="number">1</span>,</div><div class="line">    <span class="string">"hits"</span>: [</div><div class="line">      &#123;</div><div class="line">        <span class="string">"_index"</span>: <span class="string">"my_store"</span>,</div><div class="line">        <span class="string">"_type"</span>: <span class="string">"products"</span>,</div><div class="line">        <span class="string">"_id"</span>: <span class="string">"2"</span>,</div><div class="line">        <span class="string">"_score"</span>: <span class="number">1</span>,</div><div class="line">        <span class="string">"_source"</span>: &#123;</div><div class="line">          <span class="string">"price"</span>: <span class="number">20</span>,</div><div class="line">          <span class="string">"productID"</span>: <span class="string">"KDKE-B-9947-#kL5"</span></div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    ]</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h5 id="查询文本"><a href="#查询文本" class="headerlink" title="查询文本"></a>查询文本</h5><ul>
+<li>文本怎样分词<ul>
+<li>大写字母转换为小写字母</li>
+<li>复数变成单数</li>
+<li>去掉特殊字符</li>
+</ul>
+</li>
+<li><strong>由于term是精确查询，但是在查询文本的时候，很有可能这个文本已经进行了分词，但是term查询的时候搜索的词不分词，因此可能两个文本明明是一样的，但是却匹配不上。</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">GET /my_store/products/_search</div><div class="line">&#123;</div><div class="line">    <span class="string">"query"</span> : &#123;</div><div class="line">        <span class="string">"constant_score"</span> : &#123;</div><div class="line">            <span class="string">"filter"</span> : &#123;</div><div class="line">                <span class="string">"term"</span> : &#123;</div><div class="line">                    <span class="string">"productID"</span> : <span class="string">"XHDK-A-1293-#fJ3"</span>   <span class="comment">//虽然和插入的数据一样，但是却查询不到</span></div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>从上面的结果可以看到，由于term查询默认是不对搜索的词进行分词的，但是在查询的文本是分词的，因此这里肯定是查询不到的，我们可以使用分词分析器看看这个<code>productID</code>如何实现分词的，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line">GET /my_store/_analyze</div><div class="line">&#123;</div><div class="line">  <span class="string">"field"</span>: <span class="string">"productID"</span>,    <span class="comment">//指定分词的域</span></div><div class="line">  <span class="string">"text"</span>: <span class="string">"XHDK-A-1293-fJ3-the"</span>    <span class="comment">//文本内容</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">//结果如下：</span></div><div class="line">&#123;</div><div class="line">  <span class="string">"tokens"</span>: [</div><div class="line">    &#123;</div><div class="line">      <span class="string">"token"</span>: <span class="string">"xhdk"</span>,</div><div class="line">      <span class="string">"start_offset"</span>: <span class="number">0</span>,</div><div class="line">      <span class="string">"end_offset"</span>: <span class="number">4</span>,</div><div class="line">      <span class="string">"type"</span>: <span class="string">"&lt;ALPHANUM&gt;"</span>,</div><div class="line">      <span class="string">"position"</span>: <span class="number">0</span></div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      <span class="string">"token"</span>: <span class="string">"a"</span>,</div><div class="line">      <span class="string">"start_offset"</span>: <span class="number">5</span>,</div><div class="line">      <span class="string">"end_offset"</span>: <span class="number">6</span>,</div><div class="line">      <span class="string">"type"</span>: <span class="string">"&lt;ALPHANUM&gt;"</span>,</div><div class="line">      <span class="string">"position"</span>: <span class="number">1</span></div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      <span class="string">"token"</span>: <span class="string">"1293"</span>,</div><div class="line">      <span class="string">"start_offset"</span>: <span class="number">7</span>,</div><div class="line">      <span class="string">"end_offset"</span>: <span class="number">11</span>,</div><div class="line">      <span class="string">"type"</span>: <span class="string">"&lt;NUM&gt;"</span>,</div><div class="line">      <span class="string">"position"</span>: <span class="number">2</span></div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      <span class="string">"token"</span>: <span class="string">"fj3"</span>,</div><div class="line">      <span class="string">"start_offset"</span>: <span class="number">12</span>,</div><div class="line">      <span class="string">"end_offset"</span>: <span class="number">15</span>,</div><div class="line">      <span class="string">"type"</span>: <span class="string">"&lt;ALPHANUM&gt;"</span>,</div><div class="line">      <span class="string">"position"</span>: <span class="number">3</span></div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      <span class="string">"token"</span>: <span class="string">"the"</span>,</div><div class="line">      <span class="string">"start_offset"</span>: <span class="number">16</span>,</div><div class="line">      <span class="string">"end_offset"</span>: <span class="number">19</span>,</div><div class="line">      <span class="string">"type"</span>: <span class="string">"&lt;ALPHANUM&gt;"</span>,</div><div class="line">      <span class="string">"position"</span>: <span class="number">4</span></div><div class="line">    &#125;</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>从上面的结果可知:<ul>
+<li>在分词的过程中自动去掉了特殊字符，比如<code>-</code>和<code>&amp;</code></li>
+<li>大写字母全部转为小写</li>
+</ul>
+</li>
+</ul>
+<h6 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h6><ul>
+<li>如果需要使用term精确匹配查询文本，那么这个文本就不能使用分词器分词，因此需要手动创建索引的映射（mapping），如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">DELETE my_store   <span class="comment">//先删除索引</span></div><div class="line"></div><div class="line">PUT /my_store    <span class="comment">//手动指定映射</span></div><div class="line">&#123;</div><div class="line">    <span class="string">"mappings"</span> : &#123;</div><div class="line">        <span class="string">"products"</span> : &#123;</div><div class="line">            <span class="string">"properties"</span> : &#123;</div><div class="line">                <span class="string">"productID"</span> : &#123;</div><div class="line">                    <span class="string">"type"</span> : <span class="string">"string"</span>,</div><div class="line">                    <span class="string">"index"</span> : <span class="string">"not_analyzed"</span>    <span class="comment">//不分词</span></div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>此时如果再查询，那么就会精确匹配到这个信息了。</li>
+</ul>
+<h3 id="terms"><a href="#terms" class="headerlink" title="terms"></a>terms</h3><ul>
+<li>对于多个关键字的查询，假设我们需要查询price在10,20,30中的其中一个即可，那么需要使用terms指定多组值</li>
+<li>精确查询，不会使用分词器</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">GET /my_store/products/_search</div><div class="line">&#123;</div><div class="line">    <span class="string">"query"</span>:&#123;</div><div class="line">      <span class="string">"terms"</span>:&#123;</div><div class="line">        <span class="string">"price"</span>:[<span class="number">20</span>,<span class="number">10</span>,<span class="number">30</span>]</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="指定文档数量-from-size"><a href="#指定文档数量-from-size" class="headerlink" title="指定文档数量  (from ,size)"></a>指定文档数量  (from ,size)</h2><ul>
+<li>假设我们需要对前两个文档进行查询，那么可以使用<code>from</code>和<code>size</code>指定文档的数量，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">GET /my_store/products/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"from"</span>:<span class="number">0</span>,    <span class="comment">//从第一文档开始</span></div><div class="line">  <span class="string">"size"</span>:<span class="number">2</span>,     <span class="comment">//查询两个文档</span></div><div class="line">    <span class="string">"query"</span>:&#123;</div><div class="line">      <span class="string">"terms"</span>:&#123;</div><div class="line">        <span class="string">"price"</span>:[<span class="number">20</span>,<span class="number">10</span>,<span class="number">30</span>]</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="返回指定的字段-source"><a href="#返回指定的字段-source" class="headerlink" title="返回指定的字段  _source"></a>返回指定的字段  _source</h2><ul>
+<li>在使用查询的时候默认返回的是全部的字段，那么我们可以使用<code>_source</code>指定返回的字段</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"_source"</span>:[<span class="string">"address"</span>,<span class="string">"age"</span>], </div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"match_phrase"</span>: &#123;</div><div class="line">      <span class="string">"address"</span>: <span class="string">"huibei,wuhan"</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>同时我们也可以排除不返回哪些字段，使用<code>exclude</code>即可</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"_source"</span>:&#123;</div><div class="line">    <span class="string">"exclude"</span>: [<span class="string">"address"</span>,<span class="string">"age"</span>],   <span class="comment">//排除字段</span></div><div class="line">    <span class="string">"include"</span>: [<span class="string">"name"</span>,<span class="string">"date"</span>]   <span class="comment">//包含的字段</span></div><div class="line">  &#125;,</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"match_phrase"</span>: &#123;</div><div class="line">      <span class="string">"address"</span>: <span class="string">"huibei,wuhan"</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="返回版本号"><a href="#返回版本号" class="headerlink" title="返回版本号"></a>返回版本号</h2><ul>
+<li>默认的查询返回版本号，我们可以在查询体中加上<code>version:true</code>即可</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">GET /my_store/products/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"version"</span>:<span class="keyword">true</span>, </div><div class="line">  <span class="string">"from"</span>:<span class="number">0</span>,</div><div class="line">  <span class="string">"size"</span>:<span class="number">2</span>,</div><div class="line">    <span class="string">"query"</span>:&#123;</div><div class="line">      <span class="string">"terms"</span>:&#123;</div><div class="line">        <span class="string">"price"</span>:[<span class="number">20</span>,<span class="number">10</span>,<span class="number">30</span>]</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="match查询"><a href="#match查询" class="headerlink" title="match查询"></a>match查询</h2><ul>
+<li>match查询和term查询相反，知道分词器的存在，会对搜索的词语进行分词。</li>
+<li>上面使用match查询<code>productId</code>的时候，因为terms不知道分词器的存在，因此查询不到，但是我们使用match查询可以匹配到，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">GET /my_store/products/_search</div><div class="line">&#123;</div><div class="line">    <span class="string">"query"</span> : &#123;</div><div class="line">                <span class="string">"match"</span> : &#123;</div><div class="line">                    <span class="string">"productID"</span> : <span class="string">"XHDK-A-1293-#fJ3"</span></div><div class="line">            &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>比如说我们要查找姓名是<code>zhaoliu</code>或者<code>zhaoming</code>的，那么只需要使用match即可</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">GET /my_store/products/_search</div><div class="line">&#123;</div><div class="line">    <span class="string">"query"</span> : &#123;</div><div class="line">                <span class="string">"match"</span> : &#123;</div><div class="line">                    <span class="string">"name"</span> : <span class="string">"zhaoliu zhaoming"</span>  <span class="comment">//会对这个短语进行分词，分出两个，之后去查询</span></div><div class="line">            &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="match-all"><a href="#match-all" class="headerlink" title="match_all"></a>match_all</h2><ul>
+<li>查询所有</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">GET /my_store/products/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"match_all"</span>: &#123;</div><div class="line">  </div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="match-phrase"><a href="#match-phrase" class="headerlink" title="match_phrase"></a>match_phrase</h2><ul>
+<li>短语匹配查询</li>
+<li>类似 <code>match</code> 查询， <code>match_phrase</code> 查询首先将查询字符串解析成一个词项列表，然后对这些词项进行搜索，但只保留那些包含 <em>全部</em> 搜索词项，且 <em>位置</em> 与搜索词项相同的文档。 比如对于 <code>quick fox</code> 的短语搜索可能不会匹配到任何文档，因为没有文档包含的 <code>quick</code> 词之后紧跟着 <code>fox</code> 。</li>
+<li>位置顺序必须一致</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"match_phrase"</span>: &#123;</div><div class="line">      <span class="string">"address"</span>: <span class="string">"huibei,wuhan"</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>获取你会觉得短语匹配太严格了，那么可以使用slop这个关键字指定相隔的步长，<a href="https://www.elastic.co/guide/cn/elasticsearch/guide/current/slop.html" target="_blank" rel="external">https://www.elastic.co/guide/cn/elasticsearch/guide/current/slop.html</a></li>
+</ul>
+<h2 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h2><ul>
+<li>使用<code>sort</code>可以进行排序</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"_source"</span>:&#123;</div><div class="line">    <span class="string">"exclude"</span>: [<span class="string">"address"</span>,<span class="string">"name"</span>],</div><div class="line">    <span class="string">"include"</span>: [<span class="string">"age"</span>,<span class="string">"date"</span>]</div><div class="line">  &#125;,</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"match_phrase"</span>: &#123;</div><div class="line">      <span class="string">"address"</span>: <span class="string">"huibei,wuhan"</span></div><div class="line">    &#125;</div><div class="line">  &#125;,</div><div class="line">  <span class="string">"sort"</span>: [    <span class="comment">//指定排序</span></div><div class="line">    &#123;</div><div class="line">      <span class="string">"age"</span>: &#123;      <span class="comment">//对字段age进行排序</span></div><div class="line">        <span class="string">"order"</span>: <span class="string">"desc"</span></div><div class="line">      &#125;,</div><div class="line">      <span class="string">"address"</span>: &#123;     <span class="comment">//address排序</span></div><div class="line">        <span class="string">"order"</span>: <span class="string">"asc"</span></div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="range"><a href="#range" class="headerlink" title="range"></a>range</h2><ul>
+<li><p><a href="https://www.elastic.co/guide/cn/elasticsearch/guide/current/_ranges.html" target="_blank" rel="external">https://www.elastic.co/guide/cn/elasticsearch/guide/current/_ranges.html</a></p>
+</li>
+<li><p><code>gt</code>: <code>&gt;</code> 大于（greater than）</p>
+</li>
+<li><code>lt</code>: <code>&lt;</code> 小于（less than）</li>
+<li><code>gte</code>: <code>&gt;=</code> 大于或等于（greater than or equal to）</li>
+<li><code>lte</code>: <code>&lt;=</code> 小于或等于（less than or equal to）</li>
+</ul>
+<h3 id="日期查询"><a href="#日期查询" class="headerlink" title="日期查询"></a>日期查询</h3><ul>
+<li>可以查询日期的范围，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div></pre></td><td class="code"><pre><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">  <span class="string">"range"</span>: &#123;</div><div class="line">    <span class="string">"date"</span>: &#123;</div><div class="line">      <span class="string">"gt"</span>: <span class="string">"2010-11-11"</span>,    <span class="comment">//大于</span></div><div class="line">      <span class="string">"lt"</span>: <span class="string">"2012-12-31"</span>    <span class="comment">//小于</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">  <span class="string">"range"</span>: &#123;</div><div class="line">    <span class="string">"date"</span>: &#123;</div><div class="line">      <span class="string">"gt"</span>:<span class="string">"now"</span>       <span class="comment">//查询大于现在时间的文档</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">  <span class="string">"range"</span>: &#123;</div><div class="line">    <span class="string">"date"</span>: &#123;</div><div class="line">      <span class="string">"gt"</span>:<span class="string">"now-1h"</span>    <span class="comment">//查询距离现在一小时之内的文档，直接使用now减去一小时即可</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">  <span class="string">"range"</span>: &#123;</div><div class="line">    <span class="string">"date"</span>: &#123;</div><div class="line">      <span class="string">"gt"</span>: <span class="string">"2010-11-11 00:00:00"</span>,    <span class="comment">//指定时分秒查询</span></div><div class="line">      <span class="string">"lt"</span>: <span class="string">"2012-12-31 00:00:00"</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>时间格式参考如下：<a href="https://www.elastic.co/guide/en/elasticsearch/reference/5.6/mapping-date-format.html" target="_blank" rel="external">https://www.elastic.co/guide/en/elasticsearch/reference/5.6/mapping-date-format.html</a></li>
+</ul>
+<h3 id="数字"><a href="#数字" class="headerlink" title="数字"></a>数字</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">  <span class="string">"range"</span>: &#123;</div><div class="line">    <span class="string">"price"</span>: &#123;</div><div class="line">      <span class="string">"gt"</span>: <span class="number">10</span>,    <span class="comment">//数值范围查找</span></div><div class="line">      <span class="string">"lt"</span>: <span class="number">20</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="字符串范围"><a href="#字符串范围" class="headerlink" title="字符串范围"></a>字符串范围</h3><ul>
+<li><code>range</code> 查询同样可以处理字符串字段， 字符串范围可采用 <em>字典顺序（lexicographically）</em> 或字母顺序（alphabetically）。例如，下面这些字符串是采用字典序（lexicographically）排序的：<ul>
+<li>5, 50, 6, B, C, a, ab, abb, abc, b</li>
+<li>在倒排索引中的词项就是采取字典顺序（lexicographically）排列的，这也是字符串范围可以使用这个顺序来确定的原因。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="string">"range"</span> : &#123;</div><div class="line">    <span class="string">"title"</span> : &#123;</div><div class="line">        <span class="string">"gte"</span> : <span class="string">"a"</span>,</div><div class="line">        <span class="string">"lt"</span> :  <span class="string">"b"</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="wildcard查询"><a href="#wildcard查询" class="headerlink" title="wildcard查询"></a>wildcard查询</h2><ul>
+<li>允许使用通配符*和？进行查询</li>
+<li><code>*</code>: 代表一个或者多个字符</li>
+<li><code>?</code>：代表任意一个字符</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">GET team/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"wildcard"</span>: &#123;</div><div class="line">      <span class="string">"name"</span>:<span class="string">"chen*"</span>   </div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">GET team/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"wildcard"</span>: &#123;</div><div class="line">      <span class="string">"name"</span>:<span class="string">"chen?iabing"</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="模糊查询-fuzzy"><a href="#模糊查询-fuzzy" class="headerlink" title="模糊查询 fuzzy"></a>模糊查询 fuzzy</h2><ul>
+<li>假设我们需要查询<code>chenjiabing</code>这个名字，那么使用模糊查询的话，如果其中有个字符写错了，也是能够查询到的</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">GET team/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"fuzzy"</span>: &#123;</div><div class="line">      <span class="string">"name"</span>:<span class="string">"chejiabing"</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="高亮查询"><a href="#高亮查询" class="headerlink" title="高亮查询"></a>高亮查询</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">GET team/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"fuzzy"</span>: &#123;</div><div class="line">      <span class="string">"name"</span>:<span class="string">"chejiabing"</span></div><div class="line">    &#125;</div><div class="line">  &#125;,</div><div class="line">  <span class="string">"highlight"</span>: &#123;</div><div class="line">    <span class="string">"pre_tags"</span>: [<span class="string">"&lt;span style='color:red'&gt;"</span>],   <span class="comment">//指定包裹的标签前半部分，默认的是&lt;em&gt;</span></div><div class="line">    <span class="string">"post_tags"</span>: [<span class="string">"&lt;/span&gt;"</span>],                    <span class="comment">//指定后半部分</span></div><div class="line">    <span class="string">"fields"</span>: &#123;</div><div class="line">      <span class="string">"name"</span>: &#123;&#125;                               <span class="comment">//name字段高量</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="null值的查询"><a href="#null值的查询" class="headerlink" title="null值的查询"></a>null值的查询</h2><ul>
+<li><code>exists</code>这个语句用来查询存在值的信息，如果和must结合表示查询不为null的数据，如果must_not集合表示查询为<code>null</code>的数据，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//查询password=null的数据</span></div><div class="line">GET ea/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"bool"</span>: &#123;</div><div class="line">      <span class="string">"must_not"</span>:&#123;</div><div class="line">        <span class="string">"exists"</span>:&#123;</div><div class="line">          <span class="string">"field"</span>:<span class="string">"password"</span></div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">//查询password!=null的数据</span></div><div class="line">GET ea/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"bool"</span>: &#123;</div><div class="line">      <span class="string">"must"</span>:&#123;</div><div class="line">        <span class="string">"exists"</span>:&#123;</div><div class="line">          <span class="string">"field"</span>:<span class="string">"password"</span></div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="filter查询"><a href="#filter查询" class="headerlink" title="filter查询"></a>filter查询</h2><ul>
+<li>缓存，不返回相关性，速度比query快</li>
+</ul>
+<h3 id="简单的过滤查询"><a href="#简单的过滤查询" class="headerlink" title="简单的过滤查询"></a>简单的过滤查询</h3><ul>
+<li>使用<code>post_filter</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"post_filter"</span>: &#123;</div><div class="line">    <span class="string">"term"</span>: &#123;</div><div class="line">      <span class="string">"age"</span>:<span class="number">22</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="bool过滤查询"><a href="#bool过滤查询" class="headerlink" title="bool过滤查询"></a>bool过滤查询</h3><ul>
+<li>语法如下：<ul>
+<li><code>must</code> ：所有的语句都 <em>必须（must）</em> 匹配，与 <code>AND</code> 等价。</li>
+<li><code>must_not</code> ：所有的语句都 <em>不能（must not）</em> 匹配，与 <code>NOT</code> 等价。</li>
+<li><code>should</code>：至少有一个语句要匹配，与 <code>OR</code> 等价。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">   <span class="string">"bool"</span> : &#123;</div><div class="line">      <span class="string">"must"</span> :     [],</div><div class="line">      <span class="string">"should"</span> :   [],</div><div class="line">      <span class="string">"must_not"</span> : [],</div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>其中的每一个部分都是可选的</li>
+</ul>
+<h4 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a>实例</h4><ul>
+<li>must中的内容查询是并列的，相当于sql中的and，所有的条件都满足才可以</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"bool"</span>: &#123;</div><div class="line">      <span class="string">"must"</span>: [</div><div class="line">        &#123;<span class="string">"term"</span>: &#123;<span class="string">"age"</span>:<span class="number">22</span>&#125;&#125;,</div><div class="line">        &#123;<span class="string">"match"</span>:&#123;<span class="string">"address"</span>: <span class="string">"湖北"</span>&#125;&#125;</div><div class="line">      ]</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"post_filter"</span>: &#123;</div><div class="line">    <span class="string">"bool"</span>: &#123;</div><div class="line">       <span class="string">"should"</span>: [</div><div class="line">        &#123;<span class="string">"term"</span>:&#123;<span class="string">"name"</span>:<span class="string">"郑元梅"</span>&#125;&#125;,</div><div class="line">        &#123;<span class="string">"term"</span>:&#123;<span class="string">"age"</span>:<span class="number">33</span>&#125;&#125;</div><div class="line">      ],</div><div class="line">      <span class="string">"must_not"</span>: [</div><div class="line">        &#123;<span class="string">"term"</span>:&#123;<span class="string">"age"</span>:<span class="number">22</span>&#125;&#125;</div><div class="line">      ]</div><div class="line">     </div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="嵌套bool过滤查询"><a href="#嵌套bool过滤查询" class="headerlink" title="嵌套bool过滤查询"></a>嵌套bool过滤查询</h3><ul>
+<li>我们需要执行sql语句如下：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> <span class="keyword">name</span>=<span class="string">"郑元梅"</span> <span class="keyword">or</span> age=<span class="number">33</span> <span class="keyword">or</span>(age=<span class="number">22</span> <span class="keyword">and</span> price=<span class="number">33</span>);</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"bool"</span>: &#123;</div><div class="line">       <span class="string">"should"</span>: [</div><div class="line">        &#123;<span class="string">"term"</span>:&#123;<span class="string">"name"</span>:<span class="string">"郑元梅"</span>&#125;&#125;,</div><div class="line">        &#123;<span class="string">"term"</span>:&#123;<span class="string">"age"</span>:<span class="number">33</span>&#125;&#125;,</div><div class="line">        &#123;</div><div class="line">          <span class="string">"bool"</span>: &#123;</div><div class="line">            <span class="string">"must"</span>: [</div><div class="line">              &#123;<span class="string">"term"</span>:&#123;<span class="string">"age"</span>:<span class="number">22</span>&#125;,</div><div class="line">              	&#123;<span class="string">"term"</span>:&#123;<span class="string">"price"</span>:<span class="number">33</span>&#125;&#125;</div><div class="line">              &#125;</div><div class="line">            ]</div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line">      ]</div><div class="line">     </div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="范围过滤"><a href="#范围过滤" class="headerlink" title="范围过滤"></a>范围过滤</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"post_filter"</span>: &#123;</div><div class="line">    <span class="string">"range"</span>: &#123;</div><div class="line">      <span class="string">"age"</span>: &#123;</div><div class="line">        <span class="string">"gte"</span>: <span class="number">20</span>,</div><div class="line">        <span class="string">"lte"</span>: <span class="number">21</span></div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="非空的过滤查询"><a href="#非空的过滤查询" class="headerlink" title="非空的过滤查询"></a>非空的过滤查询</h3><ul>
+<li><code>select * from user where address is not null</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"bool"</span>: &#123;</div><div class="line">      <span class="string">"filter"</span>: &#123;</div><div class="line">        <span class="string">"exists"</span>: &#123;</div><div class="line">          <span class="string">"field"</span>: <span class="string">"address"</span></div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="聚合查询"><a href="#聚合查询" class="headerlink" title="聚合查询"></a>聚合查询</h2><ul>
+<li>在sql中有许多的聚合函数，那么在Elasticsearch中页存在这些聚合函数，比如sum，avg，count等等</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"size"</span>: <span class="number">0</span>,     <span class="comment">//在使用聚合的时候，默认还会返回全部的文档结果，如果不需要，可以使用size限制</span></div><div class="line">  <span class="string">"aggs"</span>: &#123;</div><div class="line">    <span class="string">"sum_age"</span>: &#123;           <span class="comment">//sum_age  指定返回字段的名称</span></div><div class="line">      <span class="string">"sum"</span>: &#123;            <span class="comment">//sum是指定的聚合函数的名称</span></div><div class="line">        <span class="string">"field"</span>: <span class="string">"age"</span>    <span class="comment">//这里指定聚合的字段</span></div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"size"</span>: <span class="number">0</span>,</div><div class="line">  <span class="string">"aggs"</span>: &#123;</div><div class="line">    <span class="string">"avg_age"</span>: &#123;</div><div class="line">      <span class="string">"avg"</span>: &#123;</div><div class="line">        <span class="string">"field"</span>: <span class="string">"age"</span></div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"size"</span>: <span class="number">0</span>,</div><div class="line">  <span class="string">"aggs"</span>: &#123;</div><div class="line">    <span class="string">"max_age"</span>: &#123;</div><div class="line">      <span class="string">"max"</span>: &#123;</div><div class="line">        <span class="string">"field"</span>: <span class="string">"age"</span></div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"size"</span>: <span class="number">0</span>,</div><div class="line">  <span class="string">"aggs"</span>: &#123;</div><div class="line">    <span class="string">"min_age"</span>: &#123;</div><div class="line">      <span class="string">"min"</span>: &#123;</div><div class="line">        <span class="string">"field"</span>: <span class="string">"age"</span></div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"size"</span>: <span class="number">0</span>,</div><div class="line">  <span class="string">"aggs"</span>: &#123;</div><div class="line">    <span class="string">"cardinality_age"</span>: &#123;       </div><div class="line">      <span class="string">"cardinality"</span>: &#123;        <span class="comment">//查询某个字段的基数，就是对应的字段有多少个不同的值</span></div><div class="line">        <span class="string">"field"</span>: <span class="string">"age"</span></div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>分组（group），使用的是<code>terms</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"size"</span>: <span class="number">0</span>,</div><div class="line">  <span class="string">"aggs"</span>: &#123;</div><div class="line">    <span class="string">"age_group"</span>: &#123;</div><div class="line">      <span class="string">"terms"</span>: &#123;</div><div class="line">        <span class="string">"field"</span>: <span class="string">"date"</span>    <span class="comment">//按照日期进行分组</span></div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">//结果如下：</span></div><div class="line"></div><div class="line">&#123;</div><div class="line">  <span class="string">"took"</span>: <span class="number">6</span>,</div><div class="line">  <span class="string">"timed_out"</span>: <span class="keyword">false</span>,</div><div class="line">  <span class="string">"_shards"</span>: &#123;</div><div class="line">    <span class="string">"total"</span>: <span class="number">5</span>,</div><div class="line">    <span class="string">"successful"</span>: <span class="number">5</span>,</div><div class="line">    <span class="string">"skipped"</span>: <span class="number">0</span>,</div><div class="line">    <span class="string">"failed"</span>: <span class="number">0</span></div><div class="line">  &#125;,</div><div class="line">  <span class="string">"hits"</span>: &#123;</div><div class="line">    <span class="string">"total"</span>: <span class="number">6</span>,</div><div class="line">    <span class="string">"max_score"</span>: <span class="number">0</span>,</div><div class="line">    <span class="string">"hits"</span>: []</div><div class="line">  &#125;,</div><div class="line">  <span class="string">"aggregations"</span>: &#123;</div><div class="line">    <span class="string">"age_group"</span>: &#123;</div><div class="line">      <span class="string">"doc_count_error_upper_bound"</span>: <span class="number">0</span>,</div><div class="line">      <span class="string">"sum_other_doc_count"</span>: <span class="number">0</span>,</div><div class="line">      <span class="string">"buckets"</span>: [</div><div class="line">        &#123;</div><div class="line">          <span class="string">"key"</span>: <span class="number">1352635200000</span>,</div><div class="line">          <span class="string">"key_as_string"</span>: <span class="string">"2012-11-11 12:00:00"</span>,</div><div class="line">          <span class="string">"doc_count"</span>: <span class="number">5</span>     <span class="comment">//分组的数量	</span></div><div class="line">        &#125;,</div><div class="line">        &#123;</div><div class="line">          <span class="string">"key"</span>: <span class="number">1352592000000</span>,</div><div class="line">          <span class="string">"key_as_string"</span>: <span class="string">"2012-11-11 00:00:00"</span>,</div><div class="line">          <span class="string">"doc_count"</span>: <span class="number">1</span></div><div class="line">        &#125;</div><div class="line">      ]</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>对年龄是22岁的用户按照date进行分组，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"size"</span>: <span class="number">0</span>,</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"term"</span>: &#123;</div><div class="line">      <span class="string">"age"</span>: <span class="string">"22"</span></div><div class="line">    &#125;</div><div class="line">  &#125;, </div><div class="line">  <span class="string">"aggs"</span>: &#123;</div><div class="line">    <span class="string">"age_group"</span>: &#123;</div><div class="line">      <span class="string">"terms"</span>: &#123;</div><div class="line">        <span class="string">"field"</span>: <span class="string">"date"</span></div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>对年龄是22岁的用户按照date进行分组，并且计算每组的平均年龄</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> *,<span class="keyword">avg</span>(age) <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">group</span> <span class="keyword">by</span> <span class="built_in">date</span>;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"term"</span>: &#123;</div><div class="line">      <span class="string">"age"</span>: <span class="string">"22"</span></div><div class="line">    &#125;</div><div class="line">  &#125;, </div><div class="line">  <span class="string">"aggs"</span>: &#123;</div><div class="line">    <span class="string">"age_group"</span>: &#123;</div><div class="line">      <span class="string">"terms"</span>: &#123;</div><div class="line">        <span class="string">"field"</span>: <span class="string">"date"</span></div><div class="line">      &#125;,</div><div class="line">      <span class="string">"aggs"</span>: &#123;      <span class="comment">//直接在分组的聚合中，再次使用聚合求age的均值</span></div><div class="line">        <span class="string">"age_avg"</span>: &#123;</div><div class="line">          <span class="string">"avg"</span>: &#123;</div><div class="line">            <span class="string">"field"</span>: <span class="string">"age"</span></div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>对年龄是22岁的用户按照date进行分组，并且计算每组的平均年龄，最后按照平均年龄进行排序</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"term"</span>: &#123;</div><div class="line">      <span class="string">"age"</span>: <span class="string">"22"</span></div><div class="line">    &#125;</div><div class="line">  &#125;, </div><div class="line">  <span class="string">"aggs"</span>: &#123;</div><div class="line">    <span class="string">"age_group"</span>: &#123;</div><div class="line">      <span class="string">"terms"</span>: &#123;</div><div class="line">        <span class="string">"field"</span>: <span class="string">"date"</span>,</div><div class="line">        <span class="string">"order"</span>: &#123;</div><div class="line">          <span class="string">"age_avg"</span>: <span class="string">"asc"</span>    <span class="comment">//按照聚合查询的平均年龄进行升序排序</span></div><div class="line">        &#125;</div><div class="line">      &#125;,</div><div class="line">      <span class="string">"aggs"</span>: &#123;</div><div class="line">        <span class="string">"age_avg"</span>: &#123;</div><div class="line">          <span class="string">"avg"</span>: &#123;</div><div class="line">            <span class="string">"field"</span>: <span class="string">"age"</span></div><div class="line">          &#125;</div><div class="line">        &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Elasticsearch/">Elasticsearch</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Elasticsearch/">Elasticsearch</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/09/02/es各种查询/" data-title="es各种查询 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/09/02/中文分词器的使用/" title="中文分词器的使用">
+  <strong>上一篇：</strong><br/>
+  <span>
+  中文分词器的使用</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/09/02/es中的mapping/"  title="es中的mapping">
+ <strong>下一篇：</strong><br/> 
+ <span>es中的mapping
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#请求体查询"><span class="toc-number">1.</span> <span class="toc-text">请求体查询</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#简单查询-【不推荐】"><span class="toc-number">1.1.</span> <span class="toc-text">简单查询 【不推荐】</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#空查询"><span class="toc-number">1.2.</span> <span class="toc-text">空查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#精确值查找"><span class="toc-number">1.3.</span> <span class="toc-text">精确值查找</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#term查询"><span class="toc-number">1.3.1.</span> <span class="toc-text">term查询</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">实例</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#查询数值"><span class="toc-number">1.3.1.1.1.</span> <span class="toc-text">查询数值</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#查询文本"><span class="toc-number">1.3.1.1.2.</span> <span class="toc-text">查询文本</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#解决"><span class="toc-number">1.3.1.1.2.1.</span> <span class="toc-text">解决</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#terms"><span class="toc-number">1.3.2.</span> <span class="toc-text">terms</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#指定文档数量-from-size"><span class="toc-number">1.4.</span> <span class="toc-text">指定文档数量  (from ,size)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#返回指定的字段-source"><span class="toc-number">1.5.</span> <span class="toc-text">返回指定的字段  _source</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#返回版本号"><span class="toc-number">1.6.</span> <span class="toc-text">返回版本号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#match查询"><span class="toc-number">1.7.</span> <span class="toc-text">match查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#match-all"><span class="toc-number">1.8.</span> <span class="toc-text">match_all</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#match-phrase"><span class="toc-number">1.9.</span> <span class="toc-text">match_phrase</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#排序"><span class="toc-number">1.10.</span> <span class="toc-text">排序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#range"><span class="toc-number">1.11.</span> <span class="toc-text">range</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#日期查询"><span class="toc-number">1.11.1.</span> <span class="toc-text">日期查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数字"><span class="toc-number">1.11.2.</span> <span class="toc-text">数字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#字符串范围"><span class="toc-number">1.11.3.</span> <span class="toc-text">字符串范围</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#wildcard查询"><span class="toc-number">1.12.</span> <span class="toc-text">wildcard查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#模糊查询-fuzzy"><span class="toc-number">1.13.</span> <span class="toc-text">模糊查询 fuzzy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#高亮查询"><span class="toc-number">1.14.</span> <span class="toc-text">高亮查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#null值的查询"><span class="toc-number">1.15.</span> <span class="toc-text">null值的查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#filter查询"><span class="toc-number">1.16.</span> <span class="toc-text">filter查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#简单的过滤查询"><span class="toc-number">1.16.1.</span> <span class="toc-text">简单的过滤查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bool过滤查询"><span class="toc-number">1.16.2.</span> <span class="toc-text">bool过滤查询</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例-1"><span class="toc-number">1.16.2.1.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#嵌套bool过滤查询"><span class="toc-number">1.16.3.</span> <span class="toc-text">嵌套bool过滤查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#范围过滤"><span class="toc-number">1.16.4.</span> <span class="toc-text">范围过滤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#非空的过滤查询"><span class="toc-number">1.16.5.</span> <span class="toc-text">非空的过滤查询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#聚合查询"><span class="toc-number">1.17.</span> <span class="toc-text">聚合查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.18.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

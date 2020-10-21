@@ -1,0 +1,878 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>StringUtils的源码解析 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="StringUtils
+spring封装的字符串工具类
+
+源码解析
+isEmpty(Object str)  ：判断当前字符串为空，如果为空返回true
+如果字符串为空或者是个空字符串，那么返回true
+
+
+
+123public static boolean isEmpty(Object str) &amp;#123;		return (str == null || &quot;&quot;.equals(str));	&amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="StringUtils的源码解析">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/08/04/StringUtils的源码解析/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="StringUtils
+spring封装的字符串工具类
+
+源码解析
+isEmpty(Object str)  ：判断当前字符串为空，如果为空返回true
+如果字符串为空或者是个空字符串，那么返回true
+
+
+
+123public static boolean isEmpty(Object str) &amp;#123;		return (str == null || &quot;&quot;.equals(str));	&amp;#">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:17:48.520Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="StringUtils的源码解析">
+<meta name="twitter:description" content="StringUtils
+spring封装的字符串工具类
+
+源码解析
+isEmpty(Object str)  ：判断当前字符串为空，如果为空返回true
+如果字符串为空或者是个空字符串，那么返回true
+
+
+
+123public static boolean isEmpty(Object str) &amp;#123;		return (str == null || &quot;&quot;.equals(str));	&amp;#">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/08/04/StringUtils的源码解析/" title="StringUtils的源码解析" itemprop="url">StringUtils的源码解析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-08-04T15:47:46.000Z" itemprop="datePublished"> 发表于 2018-08-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#StringUtils"><span class="toc-number">1.</span> <span class="toc-text">StringUtils</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#源码解析"><span class="toc-number">1.1.</span> <span class="toc-text">源码解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.2.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="StringUtils"><a href="#StringUtils" class="headerlink" title="StringUtils"></a>StringUtils</h1><ul>
+<li>spring封装的字符串工具类</li>
+</ul>
+<h2 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h2><ol>
+<li><code>isEmpty(Object str)</code>  ：判断当前字符串为空，如果为空返回true<ol>
+<li>如果字符串为空或者是个空字符串，那么返回true</li>
+</ol>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">(Object str)</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> (str == <span class="keyword">null</span> || <span class="string">""</span>.equals(str));</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>hasLength(CharSequence str)</code> ： 如果字符串的长度大于0，返回true</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">hasLength</span><span class="params">(CharSequence str)</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> (str != <span class="keyword">null</span> &amp;&amp; str.length() &gt; <span class="number">0</span>);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>hasText(String str)</code> ： 判断字符串str是否存在文本内容(不包含空字符)</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">	 * StringUtils.hasText(null) = false</div><div class="line">	 * StringUtils.hasText("") = false</div><div class="line">	 * StringUtils.hasText(" ") = false</div><div class="line">	 * StringUtils.hasText("12345") = true</div><div class="line">	 * StringUtils.hasText(" 12345 ") = true</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">hasText</span><span class="params">(String str)</span> </span>&#123;</div><div class="line">    	<span class="comment">//不为空并且包含指定的str返回true</span></div><div class="line">		<span class="keyword">return</span> (hasLength(str) &amp;&amp; containsText(str));</div><div class="line">	&#125;</div><div class="line"></div><div class="line"><span class="comment">//判断当前字符串str是否存在文本内容</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">containsText</span><span class="params">(CharSequence str)</span> </span>&#123;</div><div class="line">		<span class="keyword">int</span> strLen = str.length();   <span class="comment">//长度</span></div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; strLen; i++) &#123;</div><div class="line">            <span class="comment">//如果不是空白字符，说明其中有文本内容，返回true即可</span></div><div class="line">			<span class="keyword">if</span> (!Character.isWhitespace(str.charAt(i))) &#123;</div><div class="line">				<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static boolean containsWhitespace(String str)</code> ： 判断当前字符串str是否包含空白字符</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">containsWhitespace</span><span class="params">(String str)</span> </span>&#123;</div><div class="line">    	<span class="comment">//如果长度为0直接返回false</span></div><div class="line">		<span class="keyword">if</span> (!hasLength(str)) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">int</span> strLen = str.length();</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; strLen; i++) &#123;</div><div class="line">            <span class="comment">//遍历字符串，查看是否存在空白字符，存在即返回true</span></div><div class="line">			<span class="keyword">if</span> (Character.isWhitespace(str.charAt(i))) &#123;</div><div class="line">				<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String trimWhitespace(String str)</code> ： 去除字符串str中的空白字符</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">trimWhitespace</span><span class="params">(String str)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (!hasLength(str)) &#123;</div><div class="line">			<span class="keyword">return</span> str;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		StringBuilder sb = <span class="keyword">new</span> StringBuilder(str);</div><div class="line">    	<span class="comment">//去除字符串前面的空白字符</span></div><div class="line">		<span class="keyword">while</span> (sb.length() &gt; <span class="number">0</span> &amp;&amp; Character.isWhitespace(sb.charAt(<span class="number">0</span>))) &#123;</div><div class="line">			sb.deleteCharAt(<span class="number">0</span>);</div><div class="line">		&#125;</div><div class="line">    	<span class="comment">//去除字符串末尾的空白字符</span></div><div class="line">		<span class="keyword">while</span> (sb.length() &gt; <span class="number">0</span> &amp;&amp; Character.isWhitespace(sb.charAt(sb.length() - <span class="number">1</span>))) &#123;</div><div class="line">			sb.deleteCharAt(sb.length() - <span class="number">1</span>);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> sb.toString();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String trimAllWhitespace(String str)</code> ：去除字符串中所有的空白字符</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">trimAllWhitespace</span><span class="params">(String str)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (!hasLength(str)) &#123;</div><div class="line">			<span class="keyword">return</span> str;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">int</span> len = str.length();</div><div class="line">    	<span class="comment">//使用stringBuilder存储非空白字符</span></div><div class="line">		StringBuilder sb = <span class="keyword">new</span> StringBuilder(str.length());</div><div class="line">    	<span class="comment">//遍历字符串，如果不是空白字符，那么直接添加到sb中</span></div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</div><div class="line">			<span class="keyword">char</span> c = str.charAt(i);</div><div class="line">			<span class="keyword">if</span> (!Character.isWhitespace(c)) &#123;</div><div class="line">				sb.append(c);</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> sb.toString();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String trimLeadingWhitespace(String str)</code> ：去除字符串前面的空白字符</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">trimLeadingWhitespace</span><span class="params">(String str)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (!hasLength(str)) &#123;</div><div class="line">			<span class="keyword">return</span> str;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		StringBuilder sb = <span class="keyword">new</span> StringBuilder(str);</div><div class="line">    	<span class="comment">//只是去除前面的空白字符</span></div><div class="line">		<span class="keyword">while</span> (sb.length() &gt; <span class="number">0</span> &amp;&amp; Character.isWhitespace(sb.charAt(<span class="number">0</span>))) &#123;</div><div class="line">			sb.deleteCharAt(<span class="number">0</span>);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> sb.toString();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String trimTrailingWhitespace(String str)</code> ：去除末尾的空白字符</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">trimTrailingWhitespace</span><span class="params">(String str)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (!hasLength(str)) &#123;</div><div class="line">			<span class="keyword">return</span> str;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		StringBuilder sb = <span class="keyword">new</span> StringBuilder(str);</div><div class="line">    	<span class="comment">//去除末尾的</span></div><div class="line">		<span class="keyword">while</span> (sb.length() &gt; <span class="number">0</span> &amp;&amp; Character.isWhitespace(sb.charAt(sb.length() - <span class="number">1</span>))) &#123;</div><div class="line">			sb.deleteCharAt(sb.length() - <span class="number">1</span>);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> sb.toString();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String trimLeadingCharacter(String str, char leadingCharacter)</code> ：去除字符串str前面的指定字符leadingCharacter</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">trimLeadingCharacter</span><span class="params">(String str, <span class="keyword">char</span> leadingCharacter)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (!hasLength(str)) &#123;</div><div class="line">			<span class="keyword">return</span> str;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		StringBuilder sb = <span class="keyword">new</span> StringBuilder(str);</div><div class="line">		<span class="keyword">while</span> (sb.length() &gt; <span class="number">0</span> &amp;&amp; sb.charAt(<span class="number">0</span>) == leadingCharacter) &#123;</div><div class="line">			sb.deleteCharAt(<span class="number">0</span>);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> sb.toString();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String trimTrailingCharacter(String str, char trailingCharacter)</code> ：去除字符串尾部的指定字符 trailingCharacter</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">trimTrailingCharacter</span><span class="params">(String str, <span class="keyword">char</span> trailingCharacter)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (!hasLength(str)) &#123;</div><div class="line">			<span class="keyword">return</span> str;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		StringBuilder sb = <span class="keyword">new</span> StringBuilder(str);</div><div class="line">		<span class="keyword">while</span> (sb.length() &gt; <span class="number">0</span> &amp;&amp; sb.charAt(sb.length() - <span class="number">1</span>) == trailingCharacter) &#123;</div><div class="line">			sb.deleteCharAt(sb.length() - <span class="number">1</span>);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> sb.toString();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static boolean startsWithIgnoreCase(String str, String prefix)</code> ： 测试字符串str是否是以prefix开头的，忽略大小写</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">startsWithIgnoreCase</span><span class="params">(String str, String prefix)</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> (str != <span class="keyword">null</span> &amp;&amp; prefix != <span class="keyword">null</span> &amp;&amp; str.length() &gt;= prefix.length() &amp;&amp;</div><div class="line">				str.regionMatches(<span class="keyword">true</span>, <span class="number">0</span>, prefix, <span class="number">0</span>, prefix.length()));</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static boolean endsWithIgnoreCase(String str, String suffix)</code>：测试字符串str是否是以suffix结尾的，忽略大小写</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">endsWithIgnoreCase</span><span class="params">(String str, String suffix)</span> </span>&#123;</div><div class="line">	<span class="keyword">return</span> (str != <span class="keyword">null</span> &amp;&amp; suffix != <span class="keyword">null</span> &amp;&amp; str.length() &gt;= suffix.length() &amp;&amp;</div><div class="line">			str.regionMatches(<span class="keyword">true</span>, str.length() - suffix.length(), suffix, <span class="number">0</span>, suffix.length()));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static boolean substringMatch(CharSequence str, int index, CharSequence substring)</code> ： 判断字符串str从index开始到结尾，是否与给定的substring相同</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">substringMatch</span><span class="params">(CharSequence str, <span class="keyword">int</span> index, CharSequence substring)</span> </span>&#123;</div><div class="line">    	<span class="comment">//如果开始的索引加上匹配的子串大小大于原本的字符串的大小，表明不匹配，返回false</span></div><div class="line">		<span class="keyword">if</span> (index + substring.length() &gt; str.length()) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125;</div><div class="line">    	<span class="comment">//逐个字符比较，一旦遇到不同的，直接返回false即可</span></div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; substring.length(); i++) &#123;</div><div class="line">			<span class="keyword">if</span> (str.charAt(index + i) != substring.charAt(i)) &#123;</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static int countOccurrencesOf(String str, String sub)</code> ： 返回子串sub在str中出现的次数</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">countOccurrencesOf</span><span class="params">(String str, String sub)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (!hasLength(str) || !hasLength(sub)) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">int</span> count = <span class="number">0</span>;  <span class="comment">//数量</span></div><div class="line">  		<span class="keyword">int</span> pos = <span class="number">0</span>;   <span class="comment">//索引，从0开始统计</span></div><div class="line">		<span class="keyword">int</span> idx;</div><div class="line">   		<span class="comment">// str.indexOf(sub, pos) : 返回子串sub在str中从pos索引开始的下标</span></div><div class="line">		<span class="keyword">while</span> ((idx = str.indexOf(sub, pos)) != -<span class="number">1</span>) &#123;</div><div class="line">			++count;</div><div class="line">			pos = idx + sub.length();  </div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> count;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">replace</span><span class="params">(String inString, String oldPattern, String newPattern)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (!hasLength(inString) || !hasLength(oldPattern) || newPattern == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">return</span> inString;</div><div class="line">		&#125;</div><div class="line">    	<span class="comment">//index</span></div><div class="line">		<span class="keyword">int</span> index = inString.indexOf(oldPattern);</div><div class="line">		<span class="keyword">if</span> (index == -<span class="number">1</span>) &#123;</div><div class="line">			<span class="comment">// no occurrence -&gt; can return input as-is</span></div><div class="line">			<span class="keyword">return</span> inString;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">int</span> capacity = inString.length();</div><div class="line">		<span class="keyword">if</span> (newPattern.length() &gt; oldPattern.length()) &#123;</div><div class="line">			capacity += <span class="number">16</span>;</div><div class="line">		&#125;</div><div class="line">		StringBuilder sb = <span class="keyword">new</span> StringBuilder(capacity);</div><div class="line"></div><div class="line">		<span class="keyword">int</span> pos = <span class="number">0</span>;  <span class="comment">// our position in the old string</span></div><div class="line">		<span class="keyword">int</span> patLen = oldPattern.length();</div><div class="line">		<span class="keyword">while</span> (index &gt;= <span class="number">0</span>) &#123;</div><div class="line">			sb.append(inString.substring(pos, index));</div><div class="line">			sb.append(newPattern);</div><div class="line">			pos = index + patLen;</div><div class="line">			index = inString.indexOf(oldPattern, pos);</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="comment">// append any characters to the right of a match</span></div><div class="line">		sb.append(inString.substring(pos));</div><div class="line">		<span class="keyword">return</span> sb.toString();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>public static String replace(String inString, String oldPattern, String newPattern)</code> ：将字符串inString中的oldPattern全部替换成newPattern</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">replace</span><span class="params">(String inString, String oldPattern, String newPattern)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (!hasLength(inString) || !hasLength(oldPattern) || newPattern == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">return</span> inString;</div><div class="line">		&#125;</div><div class="line">		StringBuilder sb = <span class="keyword">new</span> StringBuilder();</div><div class="line">		<span class="keyword">int</span> pos = <span class="number">0</span>; <span class="comment">// our position in the old string</span></div><div class="line">		<span class="keyword">int</span> index = inString.indexOf(oldPattern);   <span class="comment">//获取oldpattern在instring中的开始索引</span></div><div class="line">		<span class="comment">// the index of an occurrence we've found, or -1</span></div><div class="line">		<span class="keyword">int</span> patLen = oldPattern.length(); </div><div class="line">    	<span class="comment">//遍历字符串，替换</span></div><div class="line">		<span class="keyword">while</span> (index &gt;= <span class="number">0</span>) &#123;</div><div class="line">			sb.append(inString.substring(pos, index));</div><div class="line">			sb.append(newPattern);</div><div class="line">			pos = index + patLen;</div><div class="line">			index = inString.indexOf(oldPattern, pos);</div><div class="line">		&#125;</div><div class="line">		sb.append(inString.substring(pos));</div><div class="line">		<span class="comment">// remember to append any characters to the right of a match</span></div><div class="line">		<span class="keyword">return</span> sb.toString();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String delete(String inString, String pattern)</code> ： 删除字符串inString中指定的pattern内容</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">delete</span><span class="params">(String inString, String pattern)</span> </span>&#123;</div><div class="line">    	<span class="comment">//使用空字符替换删除的pattern</span></div><div class="line">		<span class="keyword">return</span> replace(inString, pattern, <span class="string">""</span>);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String deleteAny(String inString, String charsToDelete)</code> ：删除字符串inString中指定的charsToDelete所有字符</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">deleteAny</span><span class="params">(String inString, String charsToDelete)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (!hasLength(inString) || !hasLength(charsToDelete)) &#123;</div><div class="line">			<span class="keyword">return</span> inString;</div><div class="line">		&#125;</div><div class="line">		StringBuilder sb = <span class="keyword">new</span> StringBuilder();</div><div class="line">    	<span class="comment">//遍历字符串</span></div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; inString.length(); i++) &#123;</div><div class="line">			<span class="keyword">char</span> c = inString.charAt(i);   <span class="comment">//获取当前的字符</span></div><div class="line">            <span class="comment">//如果当前的字符不在需要删除的charsToDelete中，那么添加到sb中</span></div><div class="line">			<span class="keyword">if</span> (charsToDelete.indexOf(c) == -<span class="number">1</span>) &#123;</div><div class="line">				sb.append(c);</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> sb.toString();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String quote(String str)</code> ：将字符串用单引号括起来</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">quote</span><span class="params">(String str)</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> (str != <span class="keyword">null</span> ? <span class="string">"'"</span> + str + <span class="string">"'"</span> : <span class="keyword">null</span>);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String uncapitalize(String str)</code> ：首字母小写</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">uncapitalize</span><span class="params">(String str)</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> changeFirstCharacterCase(str, <span class="keyword">false</span>);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">changeFirstCharacterCase</span><span class="params">(String str, <span class="keyword">boolean</span> capitalize)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (str == <span class="keyword">null</span> || str.length() == <span class="number">0</span>) &#123;</div><div class="line">			<span class="keyword">return</span> str;</div><div class="line">		&#125;</div><div class="line">		StringBuilder sb = <span class="keyword">new</span> StringBuilder(str.length());</div><div class="line">		<span class="keyword">if</span> (capitalize) &#123;</div><div class="line">			sb.append(Character.toUpperCase(str.charAt(<span class="number">0</span>)));</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span> &#123;</div><div class="line">			sb.append(Character.toLowerCase(str.charAt(<span class="number">0</span>)));</div><div class="line">		&#125;</div><div class="line">		sb.append(str.substring(<span class="number">1</span>));</div><div class="line">		<span class="keyword">return</span> sb.toString();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String capitalize(String str)</code> ： 首字母大写</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">capitalize</span><span class="params">(String str)</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> changeFirstCharacterCase(str, <span class="keyword">true</span>);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String getFilename(String path)</code> ： 取出给定的路径path中的文件名，比如<code>/tmp/file.txt</code>，那么取出的文件名为file.txt</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getFilename</span><span class="params">(String path)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (path == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">int</span> separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);</div><div class="line">		<span class="keyword">return</span> (separatorIndex != -<span class="number">1</span> ? path.substring(separatorIndex + <span class="number">1</span>) : path);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String getFilenameExtension(String path)</code> ：获取给定路径的文件扩展名，比如<code>/tmp/file.txt</code>，那么返回的扩展名为txt</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getFilenameExtension</span><span class="params">(String path)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (path == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">int</span> extIndex = path.lastIndexOf(EXTENSION_SEPARATOR);   <span class="comment">//获取最后一个.的索引</span></div><div class="line">		<span class="keyword">if</span> (extIndex == -<span class="number">1</span>) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">int</span> folderIndex = path.lastIndexOf(FOLDER_SEPARATOR);  <span class="comment">//获取最后一个/的索引</span></div><div class="line">		<span class="keyword">if</span> (folderIndex &gt; extIndex) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> path.substring(extIndex + <span class="number">1</span>);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String stripFilenameExtension(String path)</code>：去掉给定路径的文件扩展名，比如：<code>&quot;mypath/myfile.txt&quot; -&gt; &quot;mypath/myfile&quot;.</code></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">	 * Strip the filename extension from the given path,</div><div class="line">	 * e.g. "mypath/myfile.txt" -&gt; "mypath/myfile".</div><div class="line">	 * <span class="doctag">@param</span> path the file path (may be &#123;<span class="doctag">@code</span> null&#125;)</div><div class="line">	 * <span class="doctag">@return</span> the path with stripped filename extension,</div><div class="line">	 * or &#123;<span class="doctag">@code</span> null&#125; if none</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">stripFilenameExtension</span><span class="params">(String path)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (path == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">int</span> extIndex = path.lastIndexOf(EXTENSION_SEPARATOR);</div><div class="line">		<span class="keyword">if</span> (extIndex == -<span class="number">1</span>) &#123;</div><div class="line">			<span class="keyword">return</span> path;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">int</span> folderIndex = path.lastIndexOf(FOLDER_SEPARATOR);</div><div class="line">		<span class="keyword">if</span> (folderIndex &gt; extIndex) &#123;</div><div class="line">			<span class="keyword">return</span> path;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> path.substring(<span class="number">0</span>, extIndex);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String[] delimitedListToStringArray(String str, String delimiter)</code> ：已指定的分隔符将字符串str分割成一个字符串数组，比如<code>String[] strs=StringUtils.delimitedListToStringArray(&quot;chenjia,bing&quot;, &quot;,&quot;);</code></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> String[] delimitedListToStringArray(String str, String delimiter) &#123;</div><div class="line">		<span class="keyword">return</span> delimitedListToStringArray(str, delimiter, <span class="keyword">null</span>);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String[] delimitedListToStringArray(String str, String delimiter, String charsToDelete)</code> ： 不但使用分割符将字符串分割成数组，并且还去掉了字符串中的指定的字符，比如：<code>String[] strs=StringUtils.delimitedListToStringArray(&quot;chenjia,bing&quot;, &quot;,&quot;,&quot;n&quot;);</code></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> String[] delimitedListToStringArray(String str, String delimiter, String charsToDelete) &#123;</div><div class="line">		<span class="keyword">if</span> (str == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">new</span> String[<span class="number">0</span>];</div><div class="line">		&#125;</div><div class="line">    	<span class="comment">//没有分隔符直接返回原来字符串</span></div><div class="line">		<span class="keyword">if</span> (delimiter == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">new</span> String[] &#123;str&#125;;</div><div class="line">		&#125;</div><div class="line">		List&lt;String&gt; result = <span class="keyword">new</span> ArrayList&lt;String&gt;();</div><div class="line">    	<span class="comment">//如果分隔符为空，那么每一个字符都要分割</span></div><div class="line">		<span class="keyword">if</span> (<span class="string">""</span>.equals(delimiter)) &#123;</div><div class="line">			<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; str.length(); i++) &#123;</div><div class="line">                <span class="comment">//删除指定的字符，并且添加到restult中</span></div><div class="line">				result.add(deleteAny(str.substring(i, i + <span class="number">1</span>), charsToDelete));</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span> &#123;  <span class="comment">//分割符不为空，并且不是空字符串</span></div><div class="line">			<span class="keyword">int</span> pos = <span class="number">0</span>;  </div><div class="line">			<span class="keyword">int</span> delPos;   <span class="comment">//定义需要进行删除的字符串的最后一个index</span></div><div class="line">            <span class="comment">//str.indexOf(delimiter, pos) : 从pos位置开始，获取分割符的索引，此时的 [pos,delpos]就是一个分割的字符串，那么我们需要对其删除指定的字符</span></div><div class="line">			<span class="keyword">while</span> ((delPos = str.indexOf(delimiter, pos)) != -<span class="number">1</span>) &#123;</div><div class="line">                <span class="comment">//删除一个子串中的指定字符，并且添加到result中</span></div><div class="line">				result.add(deleteAny(str.substring(pos, delPos), charsToDelete));</div><div class="line">				pos = delPos + delimiter.length();  <span class="comment">//pos后移，移到下一个需要分割的字符串，也就是剩下的字符串</span></div><div class="line">			&#125;</div><div class="line">			<span class="keyword">if</span> (str.length() &gt; <span class="number">0</span> &amp;&amp; pos &lt;= str.length()) &#123;</div><div class="line">				<span class="comment">// Add rest of String, but not in case of empty input.</span></div><div class="line">				result.add(deleteAny(str.substring(pos), charsToDelete));</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> toStringArray(result);   <span class="comment">//将List转换成字符串数组</span></div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String[] toStringArray(Collection&lt;String&gt; collection)</code> ： 将指定的String类型的集合转换成String[]</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> String[] toStringArray(Collection&lt;String&gt; collection) &#123;</div><div class="line">		<span class="keyword">if</span> (collection == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">		&#125;</div><div class="line">    	<span class="comment">//调用Collection中的toArray(T[] a)方法,需要指定数组的容量</span></div><div class="line">		<span class="keyword">return</span> collection.toArray(<span class="keyword">new</span> String[collection.size()]);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String[] sortStringArray(String[] array)</code> ：对String[] 数组进行排序</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> String[] sortStringArray(String[] array) &#123;</div><div class="line">    	<span class="comment">//判断数组是否为空，这里的 org.springframework.util.ObjectUtils，也是一个工具类</span></div><div class="line">		<span class="keyword">if</span> (ObjectUtils.isEmpty(array)) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">new</span> String[<span class="number">0</span>];</div><div class="line">		&#125;</div><div class="line">		Arrays.sort(array);   <span class="comment">//使用Arrays的排序，升序</span></div><div class="line">		<span class="keyword">return</span> array;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String[] trimArrayElements(String[] array)</code> ： 将给定的字符串数组中的每一个字符串都去掉前后空格</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> String[] trimArrayElements(String[] array) &#123;</div><div class="line">		<span class="keyword">if</span> (ObjectUtils.isEmpty(array)) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">new</span> String[<span class="number">0</span>];</div><div class="line">		&#125;</div><div class="line">    	<span class="comment">//创建一个新数组保存</span></div><div class="line">		String[] result = <span class="keyword">new</span> String[array.length];</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; array.length; i++) &#123;</div><div class="line">			String element = array[i];</div><div class="line">			result[i] = (element != <span class="keyword">null</span> ? element.trim() : <span class="keyword">null</span>);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> result;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String[] removeDuplicateStrings(String[] array)</code> ： 去掉字符串数组中重复的字符串</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> String[] removeDuplicateStrings(String[] array) &#123;</div><div class="line">		<span class="keyword">if</span> (ObjectUtils.isEmpty(array)) &#123;</div><div class="line">			<span class="keyword">return</span> array;</div><div class="line">		&#125;</div><div class="line">    	<span class="comment">//使用集合set来去掉重复的元素</span></div><div class="line">		Set&lt;String&gt; set = <span class="keyword">new</span> TreeSet&lt;String&gt;();</div><div class="line">		<span class="keyword">for</span> (String element : array) &#123;</div><div class="line">			set.add(element);</div><div class="line">		&#125;</div><div class="line">    	<span class="comment">//将集合转换成String[]</span></div><div class="line">		<span class="keyword">return</span> toStringArray(set);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String[] split(String toSplit, String delimiter)</code>  ： 以分隔符分割字符串成两个数组，但是这个只是分割第一个分割符</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> String[] split(String toSplit, String delimiter) &#123;</div><div class="line">		<span class="keyword">if</span> (!hasLength(toSplit) || !hasLength(delimiter)) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">int</span> offset = toSplit.indexOf(delimiter);</div><div class="line">		<span class="keyword">if</span> (offset &lt; <span class="number">0</span>) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">		&#125;</div><div class="line">		String beforeDelimiter = toSplit.substring(<span class="number">0</span>, offset);</div><div class="line">		String afterDelimiter = toSplit.substring(offset + delimiter.length());</div><div class="line">		<span class="keyword">return</span> <span class="keyword">new</span> String[] &#123;beforeDelimiter, afterDelimiter&#125;;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><code>public static String arrayToDelimitedString(Object[] arr, String delim)</code> ： 将数组中的每一元素以分割符组成对应的字符串</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">arrayToDelimitedString</span><span class="params">(Object[] arr, String delim)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (ObjectUtils.isEmpty(arr)) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="string">""</span>;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">if</span> (arr.length == <span class="number">1</span>) &#123;</div><div class="line">			<span class="keyword">return</span> ObjectUtils.nullSafeToString(arr[<span class="number">0</span>]);</div><div class="line">		&#125;</div><div class="line">		StringBuilder sb = <span class="keyword">new</span> StringBuilder();</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; arr.length; i++) &#123;</div><div class="line">			<span class="keyword">if</span> (i &gt; <span class="number">0</span>) &#123;</div><div class="line">				sb.append(delim);</div><div class="line">			&#125;</div><div class="line">			sb.append(arr[i]);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> sb.toString();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">cleanPath</span><span class="params">(String path)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (path == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">		&#125;</div><div class="line">    	<span class="comment">//将path中的\\全部替换成/</span></div><div class="line">    <span class="comment">//如果这个路径是在windows下，如 c:\\image\\file.jpg,那么经过replace，将会变成 c://image//file.jpg</span></div><div class="line">		String pathToUse = replace(path, WINDOWS_FOLDER_SEPARATOR, FOLDER_SEPARATOR);</div><div class="line">    	<span class="comment">//获取pathToUse中:的索引</span></div><div class="line">		<span class="keyword">int</span> prefixIndex = pathToUse.indexOf(<span class="string">":"</span>);</div><div class="line">		String prefix = <span class="string">""</span>;   <span class="comment">//前缀，比如  c: 或者 /</span></div><div class="line">    <span class="comment">//如果这个路径是在windows下，如 c:\\image\\file.jpg,那么经过replace，将会变成 c://image//file.jpg</span></div><div class="line">		<span class="keyword">if</span> (prefixIndex != -<span class="number">1</span>) &#123;</div><div class="line">			prefix = pathToUse.substring(<span class="number">0</span>, prefixIndex + <span class="number">1</span>);  <span class="comment">//前缀变成 `c:`</span></div><div class="line">			pathToUse = pathToUse.substring(prefixIndex + <span class="number">1</span>);  <span class="comment">//去掉前面的前缀</span></div><div class="line">		&#125;</div><div class="line">    	<span class="comment">//如果pathToUse是以/开头，表示是linux下的路径</span></div><div class="line">		<span class="keyword">if</span> (pathToUse.startsWith(FOLDER_SEPARATOR)) &#123;</div><div class="line">			prefix = prefix + FOLDER_SEPARATOR;   <span class="comment">//前缀就是  /</span></div><div class="line">			pathToUse = pathToUse.substring(<span class="number">1</span>);   <span class="comment">//pathToUse就变成了去掉/之后的字符串</span></div><div class="line">		&#125;</div><div class="line">		<span class="comment">//将pathToUse使用/分割成一个字符串数组，比如pathToUse=home/chenjiabinbg/file.txt，那么数组为 ["home","chenjiabing","file.txt"]</span></div><div class="line">		String[] pathArray = delimitedListToStringArray(pathToUse, FOLDER_SEPARATOR);</div><div class="line">    </div><div class="line">		List&lt;String&gt; pathElements = <span class="keyword">new</span> LinkedList&lt;String&gt;();</div><div class="line">		<span class="keyword">int</span> tops = <span class="number">0</span>;</div><div class="line">		</div><div class="line">    	<span class="comment">//遍历数组</span></div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = pathArray.length - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</div><div class="line">			String element = pathArray[i];</div><div class="line">            <span class="comment">//如果这个元素是表示当前路径的   .表示当前路径，..表示上一级路径</span></div><div class="line">			<span class="keyword">if</span> (CURRENT_PATH.equals(element)) &#123;</div><div class="line">				<span class="comment">// Points to current directory - drop it.</span></div><div class="line">			&#125;</div><div class="line">            <span class="comment">//如果是上一级路径，tops+1</span></div><div class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (TOP_PATH.equals(element)) &#123;</div><div class="line">				<span class="comment">// Registering top path found.</span></div><div class="line">				tops++;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">else</span> &#123;</div><div class="line">				<span class="keyword">if</span> (tops &gt; <span class="number">0</span>) &#123;</div><div class="line">					<span class="comment">// Merging path element with element corresponding to top path.</span></div><div class="line">					tops--;</div><div class="line">				&#125;</div><div class="line">				<span class="keyword">else</span> &#123;</div><div class="line">					<span class="comment">// Normal path element found.</span></div><div class="line">					pathElements.add(<span class="number">0</span>, element);</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="comment">// Remaining top paths need to be retained.</span></div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; tops; i++) &#123;</div><div class="line">			pathElements.add(<span class="number">0</span>, TOP_PATH);</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		<span class="keyword">return</span> prefix + collectionToDelimitedString(pathElements, FOLDER_SEPARATOR);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Spring/">Spring</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Spring/">Spring</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/08/04/StringUtils的源码解析/" data-title="StringUtils的源码解析 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/09/02/springBoot基本使用/" title="springBoot基本使用">
+  <strong>上一篇：</strong><br/>
+  <span>
+  springBoot基本使用</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/08/04/spring整合Log4j/"  title="spring整合Log4j">
+ <strong>下一篇：</strong><br/> 
+ <span>spring整合Log4j
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#StringUtils"><span class="toc-number">1.</span> <span class="toc-text">StringUtils</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#源码解析"><span class="toc-number">1.1.</span> <span class="toc-text">源码解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.2.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

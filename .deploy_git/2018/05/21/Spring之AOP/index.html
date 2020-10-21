@@ -1,0 +1,957 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Spring之AOP | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="Spring之AOPSpring框架两大核心内容IOC （ＤＩ）
+ＩＯＣ：控制反转
+
+将创建和管理对象全部交给框架完成
+
+
+DI : 依赖注入
+
+为成员变量赋值
+其中有不同的方法赋值，但是我们推荐使用set方法注入或者注解方式
+
+
+
+AOP
+面向切面编程，是面向对象编程的重要组成部分，在不改变业务逻辑功能的基础上，对横切逻辑进行扩展
+aspectj框架是aop编程思想的体现，spring-aop对">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring之AOP">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/05/21/Spring之AOP/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="Spring之AOPSpring框架两大核心内容IOC （ＤＩ）
+ＩＯＣ：控制反转
+
+将创建和管理对象全部交给框架完成
+
+
+DI : 依赖注入
+
+为成员变量赋值
+其中有不同的方法赋值，但是我们推荐使用set方法注入或者注解方式
+
+
+
+AOP
+面向切面编程，是面向对象编程的重要组成部分，在不改变业务逻辑功能的基础上，对横切逻辑进行扩展
+aspectj框架是aop编程思想的体现，spring-aop对">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/aop%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86.png">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/2018-06-04%2019-20-31%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:14:33.806Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring之AOP">
+<meta name="twitter:description" content="Spring之AOPSpring框架两大核心内容IOC （ＤＩ）
+ＩＯＣ：控制反转
+
+将创建和管理对象全部交给框架完成
+
+
+DI : 依赖注入
+
+为成员变量赋值
+其中有不同的方法赋值，但是我们推荐使用set方法注入或者注解方式
+
+
+
+AOP
+面向切面编程，是面向对象编程的重要组成部分，在不改变业务逻辑功能的基础上，对横切逻辑进行扩展
+aspectj框架是aop编程思想的体现，spring-aop对">
+<meta name="twitter:image" content="http://ono60m7tl.bkt.clouddn.com/aop%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/05/21/Spring之AOP/" title="Spring之AOP" itemprop="url">Spring之AOP</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-05-21T10:22:06.000Z" itemprop="datePublished"> 发表于 2018-05-21</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Spring之AOP"><span class="toc-number">1.</span> <span class="toc-text">Spring之AOP</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring框架两大核心内容"><span class="toc-number">1.1.</span> <span class="toc-text">Spring框架两大核心内容</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IOC-（DI）"><span class="toc-number">1.1.1.</span> <span class="toc-text">IOC （ＤＩ）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AOP"><span class="toc-number">1.1.2.</span> <span class="toc-text">AOP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现步骤"><span class="toc-number">1.2.</span> <span class="toc-text">实现步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#依赖jar包"><span class="toc-number">1.2.1.</span> <span class="toc-text">依赖jar包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加依赖"><span class="toc-number">1.2.2.</span> <span class="toc-text">添加依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建一个aop的实现类"><span class="toc-number">1.2.3.</span> <span class="toc-text">创建一个aop的实现类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#定义配置文件"><span class="toc-number">1.2.4.</span> <span class="toc-text">定义配置文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通知-5种"><span class="toc-number">1.3.</span> <span class="toc-text">通知(5种)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接点"><span class="toc-number">1.4.</span> <span class="toc-text">连接点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#切点"><span class="toc-number">1.5.</span> <span class="toc-text">切点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#切面"><span class="toc-number">1.6.</span> <span class="toc-text">切面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#定义切点"><span class="toc-number">1.7.</span> <span class="toc-text">定义切点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#第一种方式-基于spring创建的bean"><span class="toc-number">1.7.1.</span> <span class="toc-text">第一种方式(基于spring创建的bean)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第二种方式-基于类的"><span class="toc-number">1.7.2.</span> <span class="toc-text">第二种方式(基于类的)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第三种方式-基于方法的"><span class="toc-number">1.7.3.</span> <span class="toc-text">第三种方式(基于方法的)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用场景"><span class="toc-number">1.8.</span> <span class="toc-text">使用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">1.9.</span> <span class="toc-text">实现原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-aop-处理事务"><span class="toc-number">1.10.</span> <span class="toc-text">Spring-aop 处理事务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#处理的前提"><span class="toc-number">1.10.1.</span> <span class="toc-text">处理的前提</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件"><span class="toc-number">1.10.2.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#注解配置事务-Transactional"><span class="toc-number">1.10.3.</span> <span class="toc-text">注解配置事务@Transactional</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring事务的传播属性"><span class="toc-number">1.10.4.</span> <span class="toc-text">Spring事务的传播属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring事务的隔离级别"><span class="toc-number">1.10.5.</span> <span class="toc-text">Spring事务的隔离级别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置须知"><span class="toc-number">1.10.6.</span> <span class="toc-text">配置须知</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例"><span class="toc-number">1.10.7.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.11.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Spring之AOP"><a href="#Spring之AOP" class="headerlink" title="Spring之AOP"></a>Spring之AOP</h1><h2 id="Spring框架两大核心内容"><a href="#Spring框架两大核心内容" class="headerlink" title="Spring框架两大核心内容"></a>Spring框架两大核心内容</h2><h3 id="IOC-（DI）"><a href="#IOC-（DI）" class="headerlink" title="IOC （ＤＩ）"></a>IOC （ＤＩ）</h3><ul>
+<li><p><code>ＩＯＣ</code>：控制反转</p>
+<ul>
+<li>将创建和管理对象全部交给框架完成</li>
+</ul>
+</li>
+<li><p><code>DI</code> : 依赖注入</p>
+<ul>
+<li>为成员变量赋值</li>
+<li>其中有不同的方法赋值，但是我们推荐使用<code>set</code>方法注入或者注解方式</li>
+</ul>
+</li>
+</ul>
+<h3 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h3><ul>
+<li>面向切面编程，是面向对象编程的重要组成部分，在不改变业务逻辑功能的基础上，对<strong>横切逻辑</strong>进行扩展</li>
+<li><code>aspectj</code>框架是<code>aop</code>编程思想的体现，<code>spring-aop</code>对<code>aspectj</code>又进一步的封装</li>
+<li>Aop的实现原理是<code>jdk的动态代理</code>和<code>Cglib代理</code></li>
+<li>如果<code>IOC容器组件</code>实现接口使用<code>JDK动态代理</code>，如果没有实现接口使用<code>Cglib代理</code></li>
+</ul>
+<h2 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h2><h3 id="依赖jar包"><a href="#依赖jar包" class="headerlink" title="依赖jar包"></a>依赖jar包</h3><ul>
+<li><code>aspectjweaver</code></li>
+<li><code>aspectjrt</code></li>
+<li><code>spring-aop</code><ul>
+<li>这个是spring对<code>aspectj</code>的封装，因此我们使用起来更加简单</li>
+</ul>
+</li>
+</ul>
+<h3 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h3><ul>
+<li>在<code>pom.xml</code>中添加如下依赖</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 导入aspectj依赖 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.aspectj<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>aspectjrt<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>1.8.13<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.aspectj<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>aspectjweaver<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>1.8.13<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="comment">&lt;!-- 导入spring的aop --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-aop<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>3.2.8.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="创建一个aop的实现类"><a href="#创建一个aop的实现类" class="headerlink" title="创建一个aop的实现类"></a>创建一个aop的实现类</h3><ul>
+<li>创建类</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Component</span>  <span class="comment">//spring自动创建对象</span></div><div class="line"><span class="meta">@Aspect</span>     <span class="comment">//表示当前类是一个切面类</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoAop</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * <span class="doctag">@Before</span>("bean(bean的名称)")  表示该方法在这个bean中的所有方法执行之前执行</div><div class="line">	 * 	其中可以使用通配符，比如bean("*ServiceImpl")  表示全部的service类，比如userServiceImpl</div><div class="line">	 */</div><div class="line">	<span class="meta">@Before</span>(<span class="string">"bean(userServiceImpl)"</span>)<span class="comment">//方法执行之前</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">before</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"方法执行之前..............."</span>);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 在方法之后执行</div><div class="line">	 */</div><div class="line">	<span class="meta">@After</span>(<span class="string">"bean(*ServiceImpl)"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">after</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"在方法执行之后执行"</span>);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 在业务方法没有异常的时候才会执行，并且实在<span class="doctag">@After</span>之后执行</div><div class="line">	 * 如果业务方法有异常，那么不会执行</div><div class="line">	 */</div><div class="line">	<span class="meta">@AfterReturning</span>(<span class="string">"bean(*ServiceImpl)"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterReturning</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"方法在after之后执行，并且这个业务方法没有出现异常"</span>);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 在业务方法发生异常才会执行，并且在<span class="doctag">@After</span>之后执行</div><div class="line">	 * 如果没有发生异常，不会执行</div><div class="line">	 */</div><div class="line">	<span class="meta">@AfterThrowing</span>(<span class="string">"bean(*ServiceImpl)"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterThrowing</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"方法发生异常执行...."</span>);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 环绕通知</div><div class="line">	 * <span class="doctag">@param</span> jp</div><div class="line">	 * <span class="doctag">@throws</span> Throwable </div><div class="line">	 */</div><div class="line">	<span class="meta">@Around</span>(<span class="string">"bean(*ServiceImpl)"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> Object <span class="title">test</span><span class="params">(ProceedingJoinPoint jp)</span> <span class="keyword">throws</span> Throwable</span>&#123;</div><div class="line">		System.out.println(<span class="string">"环绕通知 .....之前"</span>);</div><div class="line">		</div><div class="line">		<span class="comment">//调用业务层的方法,其中的Object是接收业务层方法的返回值</span></div><div class="line">		Object object =jp.proceed();  </div><div class="line">		</div><div class="line">		System.out.println(<span class="string">"环绕通知..........之后"</span>);</div><div class="line">		<span class="keyword">return</span> object;   <span class="comment">//这里的返回值必须返回，否则在业务层将不会获取到</span></div><div class="line">	&#125;</div><div class="line">		</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="定义配置文件"><a href="#定义配置文件" class="headerlink" title="定义配置文件"></a>定义配置文件</h3><ul>
+<li>配置注解扫描(<code>spring-aop.xm</code>l)</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 定义spring组件扫描componet --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"cn.tedu.store.aop"</span> /&gt;</span></div><div class="line"></div><div class="line"><span class="comment">&lt;!-- 解析切面注解 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">aop:aspectj-autoproxy</span> /&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="通知-5种"><a href="#通知-5种" class="headerlink" title="通知(5种)"></a>通知(5种)</h2><ul>
+<li><code>@Before</code>（前置通知）：在业务方法执行之前调用</li>
+<li><code>@After</code>（后置通知）：在方法之后执行</li>
+<li><code>@AfterReturning</code>(正常返回通知)：在方法之后执行，只有在业务方法没有出现异常的时候才会执行</li>
+<li><code>@AfterThrowing</code>(异常通知) ： 在方法之后执行，只有在业务方法出现异常的时候才会执行</li>
+<li><code>@Around</code> （环绕通知）：在业务方法执行之前和之后执行，即是在<code>@Before</code>之前执行，在<code>@After之后</code>执行，必须又返回值，这里的返回值就是业务层方法的返回值，如果不返回，那么业务层方法就获取不到返回值</li>
+</ul>
+<h2 id="连接点"><a href="#连接点" class="headerlink" title="连接点"></a>连接点</h2><ul>
+<li>业务层的所有方法，叫做连接点</li>
+<li>业务类中可以被增强的方法都叫做连接点</li>
+</ul>
+<h2 id="切点"><a href="#切点" class="headerlink" title="切点"></a>切点</h2><ul>
+<li>能切入切面逻辑的方法，叫做切点</li>
+<li><strong>实际被增强的方法叫做切入点</strong> ，其他的那些没有被增强的方法(连接点)不是切点</li>
+</ul>
+<h2 id="切面"><a href="#切面" class="headerlink" title="切面"></a>切面</h2><ul>
+<li>定义了增强方法的类就叫做切面</li>
+</ul>
+<h2 id="定义切点"><a href="#定义切点" class="headerlink" title="定义切点"></a>定义切点</h2><h3 id="第一种方式-基于spring创建的bean"><a href="#第一种方式-基于spring创建的bean" class="headerlink" title="第一种方式(基于spring创建的bean)"></a>第一种方式(基于spring创建的bean)</h3><ul>
+<li><code>bena</code>的切点定义 ： <code>(bean(&quot;userServiceImpl&quot;))</code>,这个是作用到该业务类中的所有方法上，并不能定义到某一个方法上</li>
+<li><code>bean(&quot;*ServiceImpl&quot;)</code>：作用到多个业务层，比如：<code>userServiceImpl</code>,<code>addressServiceImpl</code></li>
+<li><code>bean(&quot;userServiceImpl&quot;)||bean(&quot;addressServiceImpl&quot;)</code>： 只作用到当前的两个业务层</li>
+</ul>
+<h3 id="第二种方式-基于类的"><a href="#第二种方式-基于类的" class="headerlink" title="第二种方式(基于类的)"></a>第二种方式(基于类的)</h3><ul>
+<li><code>(within(&quot;全类名&quot;))</code>： 其中写的是全类名</li>
+</ul>
+<ul>
+<li><code>(within(&quot;cn.tedu.store.service.UserServiceImpl&quot;))</code>：作用于<code>UserServiceImpl</code>这个业务层中的所有方法</li>
+<li><code>(within(&quot;cn.tedu.store.service.*ServiceImpl&quot;))</code>: 使用<code>*</code>通配符，作用到全部的业务层</li>
+</ul>
+<h3 id="第三种方式-基于方法的"><a href="#第三种方式-基于方法的" class="headerlink" title="第三种方式(基于方法的)"></a>第三种方式(基于方法的)</h3><ul>
+<li><code>(&quot;execution(* cn.tedu.store.service.UserServiceImpl.login(..))&quot;)</code> ：第一个<code>*</code>表示方法的返回类型，一般使用<code>*</code>表示，其中的形式是<code>全类名.方法名(..)</code></li>
+<li><code>(&quot;execution(* cn.tedu.store.service.UserServiceImpl.get*(..))&quot;)</code>:这个将作用于<code>UserServiceImpl</code>这个业务类中的所有以<code>get</code>开头的方法</li>
+<li><code>(&quot;execution(* cn.tedu.store.service.*ServiceImpl.login(..))&quot;)</code>: 这个将作用于所有的业务类中的所有以<code>get</code>开头的方法</li>
+<li><code>(&quot;execution(* cn.tedu.store..get*(..))&quot;)</code> :这个将作用于<code>cn.tedu.store</code>这个包和其子包下的所有类中的所有以<code>get</code>开头的方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="meta">@Aspect</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestAop</span> </span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">    	在调用UserServiceImpl中的login()方法之前执行这个方法</div><div class="line">    */</div><div class="line">	<span class="meta">@Before</span>(<span class="string">"execution(* cn.tedu.store.service.UserServiceImpl.login(..))"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"TestAop.text"</span>);</div><div class="line">	&#125;</div><div class="line">    </div><div class="line">    	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 测试登录的业务方法的性能</div><div class="line">	 */</div><div class="line">	<span class="meta">@Around</span>(<span class="string">"execution(* cn.tedu.store.service.UserServiceImpl.login(..))"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> Object <span class="title">test1</span><span class="params">(ProceedingJoinPoint jp)</span> <span class="keyword">throws</span> Throwable</span>&#123;</div><div class="line">		Long before=System.currentTimeMillis();  <span class="comment">//获取执行之前的系统时间</span></div><div class="line">		Object object=jp.proceed();  <span class="comment">//调用业务层的方法</span></div><div class="line">		Long after=System.currentTimeMillis();  <span class="comment">//获取执行之后的系统时间</span></div><div class="line">		System.out.println(after-before);</div><div class="line">		<span class="keyword">return</span> object;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ol>
+<li>测试系统性能</li>
+<li>打印日志</li>
+<li>事务处理</li>
+<li>……………………………………</li>
+</ol>
+<h2 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h2><ul>
+<li>基于动态代理完成</li>
+<li>Aop的实现原理是<code>jdk的动态代理</code>和<code>Cglib代理</code></li>
+<li><code>cglib代理</code>使用的是<code>继承</code>，<code>动态代理</code>使用的是<code>接口</code>，如果需要添加横切逻辑的类没有接口，那么使用的是cglib代理，如果有接口，使用的是jdk的动态代理</li>
+<li><code>JDK的动态代理</code>的原理是代理类实现目标类的接口，但是<code>Cglib代理</code>原理是继承，因此如果目标有接口那么使用的是动态代理。</li>
+<li><code>spring-aop</code>是对<code>aspectj</code>的进一步封装</li>
+<li><img src="http://ono60m7tl.bkt.clouddn.com/aop%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86.png" alt="aop原理图"></li>
+</ul>
+<h2 id="Spring-aop-处理事务"><a href="#Spring-aop-处理事务" class="headerlink" title="Spring-aop 处理事务"></a>Spring-aop 处理事务</h2><h3 id="处理的前提"><a href="#处理的前提" class="headerlink" title="处理的前提"></a>处理的前提</h3><ul>
+<li><strong>默认发生<code>RuntimeException</code>或者其子类类型异常时，<code>spring-aop</code>会捕获异常，并且处理事务</strong></li>
+</ul>
+<h3 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h3><ol>
+<li>创建事务管理器对象</li>
+<li>开启基于注解的事务管理</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 配置事务管理器 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"transactionManager"</span> <span class="attr">class</span>=<span class="string">"org.springframework.jdbc.datasource.DataSourceTransactionManager"</span>&gt;</span></div><div class="line">	<span class="comment">&lt;!-- 注入数据源，这里使用的是上面配置好的DataSource --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"dataSource"</span> <span class="attr">ref</span>=<span class="string">"dataSource"</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></div><div class="line"></div><div class="line"><span class="comment">&lt;!-- 开启事务注解 ,transaction-manager指定的是上面配置的事务管理器的id--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">tx:annotation-driven</span> <span class="attr">transaction-manager</span>=<span class="string">"transactionManager"</span>/&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="注解配置事务-Transactional"><a href="#注解配置事务-Transactional" class="headerlink" title="注解配置事务@Transactional"></a>注解配置事务<code>@Transactional</code></h3><ul>
+<li>可以在service的实现类上添加，那么所有的实现方法都会被事务管理器管理</li>
+<li>可以在某一个方法上添加，那么只有配置了注解的方法才会被事务管理器管理</li>
+<li>可以在<code>Service</code>的接口上添加注解，那么所有的接口方法都会被事务管理器管理</li>
+<li><strong>我们推荐在<code>Service</code>的接口类上添加注解,并且在只涉及到<code>查询</code>语句的方法中设置传播行为为只读<code>@Transactional(readOnly=true)</code></strong><ul>
+<li><img src="http://ono60m7tl.bkt.clouddn.com/2018-06-04%2019-20-31%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE.png" alt="注解中的配置属性"></li>
+</ul>
+</li>
+</ul>
+<h3 id="Spring事务的传播属性"><a href="#Spring事务的传播属性" class="headerlink" title="Spring事务的传播属性"></a>Spring事务的传播属性</h3><table>
+<thead>
+<tr>
+<th>名称</th>
+<th style="text-align:center">值</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>PROPAGATION_REQUIRED</strong></td>
+<td style="text-align:center">0</td>
+<td>支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择，也是<strong>Spring默认的事务的传播。</strong></td>
+</tr>
+<tr>
+<td>PROPAGATION_SUPPORTS</td>
+<td style="text-align:center">1</td>
+<td>支持当前事务，如果当前没有事务，就以非事务方式执行。</td>
+</tr>
+<tr>
+<td>PROPAGATION_MANDATORY</td>
+<td style="text-align:center">2</td>
+<td>支持当前事务，如果当前没有事务，就抛出异常。</td>
+</tr>
+<tr>
+<td>PROPAGATION_REQUIRES_NEW</td>
+<td style="text-align:center">3</td>
+<td>新建事务，如果当前存在事务，把当前事务挂起。</td>
+</tr>
+<tr>
+<td>PROPAGATION_NOT_SUPPORTED</td>
+<td style="text-align:center">4</td>
+<td>以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。</td>
+</tr>
+<tr>
+<td>PROPAGATION_NEVER</td>
+<td style="text-align:center">5</td>
+<td>以非事务方式执行，如果当前存在事务，则抛出异常。</td>
+</tr>
+<tr>
+<td>PROPAGATION_NESTED</td>
+<td style="text-align:center">6</td>
+<td>如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则进行与PROPAGATION_REQUIRED类似的操作。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="Spring事务的隔离级别"><a href="#Spring事务的隔离级别" class="headerlink" title="Spring事务的隔离级别"></a>Spring事务的隔离级别</h3><table>
+<thead>
+<tr>
+<th>名称</th>
+<th>值</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ISOLATION_DEFAULT</td>
+<td>-1</td>
+<td>这是一个PlatfromTransactionManager默认的隔离级别，使用数据库默认的事务隔离级别。另外四个与JDBC的隔离级别相对应</td>
+</tr>
+<tr>
+<td>ISOLATION_READ_UNCOMMITTED</td>
+<td>1</td>
+<td>这是事务最低的隔离级别，它充许另外一个事务可以看到这个事务未提交的数据。这种隔离级别会产生脏读，不可重复读和幻读。</td>
+</tr>
+<tr>
+<td>ISOLATION_READ_COMMITTED</td>
+<td>2</td>
+<td>保证一个事务修改的数据提交后才能被另外一个事务读取。另外一个事务不能读取该事务未提交的数据。</td>
+</tr>
+<tr>
+<td>ISOLATION_REPEATABLE_READ</td>
+<td>4</td>
+<td>这种事务隔离级别可以防止脏读，不可重复读。但是可能出现幻读。</td>
+</tr>
+<tr>
+<td>ISOLATION_SERIALIZABLE</td>
+<td>8</td>
+<td>这是花费最高代价但是最可靠的事务隔离级别。事务被处理为顺序执行。除了防止脏读，不可重复读外，还避免了幻读。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="配置须知"><a href="#配置须知" class="headerlink" title="配置须知"></a>配置须知</h3><ul>
+<li>我们知道其实只有在涉及到数据库的修改才应该被事务管理，查询不需要被事务管理，但是一旦我们在一个<code>Service</code>接口上添加了<code>@Transactional</code>这个注解，那么默认这个接口中所有的方法都会被事务管理，因为这些方法都使用了默认的传播属性<code>PROPAGATION_REQUIRED</code>，我们可以在只涉及到<code>查询</code>语句的方法上添加<code>@Transactional(readyOnly=true)</code>，这样可以优化事务管理</li>
+</ul>
+<h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><ul>
+<li>接口上一旦添加了事务的注解，那么所有的方法都会被管理，但是我们可以设置只涉及到查询语句的方法传播属性为只读</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 博客的业务层接口</div><div class="line"> * <span class="doctag">@author</span> chenjiabing</div><div class="line"> */</div><div class="line"><span class="meta">@Transactional</span>  <span class="comment">//在接口中添加事务管理，那么其中的所有方法都被事务管理了</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IBlogService</span> </span>&#123;</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 获取当前用户的所有博客分类</div><div class="line">	 * <span class="doctag">@param</span> bloggerId  博主id</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@Transactional</span>(readOnly=<span class="keyword">true</span>)  <span class="comment">//设置传播属性为只读，因为其中只涉及了查询语句</span></div><div class="line">	<span class="function">List&lt;BlogType&gt; <span class="title">getBlogTypeList</span><span class="params">(Integer bloggerId)</span></span>;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 添加博客</div><div class="line">	 * <span class="doctag">@param</span> blog  Blog对象，其中封装了需要添加的内容</div><div class="line">	 */</div><div class="line"><span class="comment">//	@Transactional(propagation=Propagation.REQUIRED)  //这个是默认的，可以不用定义，因为在接口上已经定义了</span></div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">addBlog</span><span class="params">(Blog blog)</span></span>;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 分页获取博客总数</div><div class="line">	 * <span class="doctag">@param</span> bloggerId</div><div class="line">	 * <span class="doctag">@param</span> offest</div><div class="line">	 * <span class="doctag">@param</span> count</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@Transactional</span>(readOnly=<span class="keyword">true</span>)</div><div class="line">	<span class="function">List&lt;Blog&gt; <span class="title">getBlogList</span><span class="params">(Integer bloggerId,Integer offest,Integer count)</span></span>;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 获取博客总数</div><div class="line">	 * <span class="doctag">@param</span> bloggerId</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@Transactional</span>(readOnly=<span class="keyword">true</span>)</div><div class="line">	<span class="function">Integer <span class="title">getBlogCount</span><span class="params">(Integer bloggerId,String title,Integer typeId)</span></span>;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 批量删除博客</div><div class="line">	 * <span class="doctag">@param</span> ids</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">moveBlogByIdsBatch</span><span class="params">(Integer[] ids)</span></span>;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 根据id查询博客信息</div><div class="line">	 * <span class="doctag">@param</span> id  主键id</div><div class="line">	 * <span class="doctag">@return</span>  返回Blog对象，其中封装了需要的信息</div><div class="line">	 */</div><div class="line">	<span class="meta">@Transactional</span>(readOnly=<span class="keyword">true</span>)</div><div class="line">	<span class="function">Blog <span class="title">getBlogById</span><span class="params">(Integer id)</span></span>;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 根据日期分类</div><div class="line">	 * <span class="doctag">@param</span> bloggerId</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@Transactional</span>(readOnly=<span class="keyword">true</span>)</div><div class="line">	<span class="function">List&lt;Blog_Count_ReleaseDateStr_Vo&gt; <span class="title">getBlogGroupByReleaseDateStr</span><span class="params">(Integer bloggerId)</span></span>;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 按照博客分类来获取博客信息</div><div class="line">	 * <span class="doctag">@param</span> typeId  分类id</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@Transactional</span>(readOnly=<span class="keyword">true</span>)</div><div class="line">	<span class="function">List&lt;Blog&gt; <span class="title">getBlogByTypeId</span><span class="params">(Integer typeId,Integer offest,Integer count)</span></span>;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 按照日期分类获取博客信息</div><div class="line">	 * <span class="doctag">@param</span> bloggerId  博主id</div><div class="line">	 * <span class="doctag">@param</span> releaseDateStr  日期</div><div class="line">	 * <span class="doctag">@param</span> offest  偏移量</div><div class="line">	 * <span class="doctag">@param</span> count  数量</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@Transactional</span>(readOnly=<span class="keyword">true</span>)</div><div class="line">	<span class="function">List&lt;Blog&gt; <span class="title">getBlogByreleaseDateStr</span><span class="params">(@Param(<span class="string">"bloggerId"</span>)</span>Integer bloggerId,@<span class="title">Param</span><span class="params">(<span class="string">"releaseDateStr"</span>)</span>String releaseDateStr,@<span class="title">Param</span><span class="params">(<span class="string">"offest"</span>)</span>Integer offest,@<span class="title">Param</span><span class="params">(<span class="string">"count"</span>)</span>Integer count)</span>;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 按照日期查询博客数量</div><div class="line">	 * <span class="doctag">@param</span> bloggerId  博主id</div><div class="line">	 * <span class="doctag">@param</span> releaseDateStr  日期</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@Transactional</span>(readOnly=<span class="keyword">true</span>)</div><div class="line">	<span class="function">Integer <span class="title">getBlogCount</span><span class="params">(Integer bloggerId,String releaseDateStr)</span></span>;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 修改博客的点击次数</div><div class="line">	 * <span class="doctag">@param</span> id</div><div class="line">	 * <span class="doctag">@param</span> clickHit</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">modifyclickHit</span><span class="params">(Integer id,Integer clickHit)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Spring/">Spring</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Spring/">Spring</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/05/21/Spring之AOP/" data-title="Spring之AOP | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/05/21/Spring之AOP之底层实现/" title="Spring之AOP之底层实现">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Spring之AOP之底层实现</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/05/21/Mybatis之使用总结/"  title="Mybatis之使用总结">
+ <strong>下一篇：</strong><br/> 
+ <span>Mybatis之使用总结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Spring之AOP"><span class="toc-number">1.</span> <span class="toc-text">Spring之AOP</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring框架两大核心内容"><span class="toc-number">1.1.</span> <span class="toc-text">Spring框架两大核心内容</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IOC-（DI）"><span class="toc-number">1.1.1.</span> <span class="toc-text">IOC （ＤＩ）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AOP"><span class="toc-number">1.1.2.</span> <span class="toc-text">AOP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现步骤"><span class="toc-number">1.2.</span> <span class="toc-text">实现步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#依赖jar包"><span class="toc-number">1.2.1.</span> <span class="toc-text">依赖jar包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#添加依赖"><span class="toc-number">1.2.2.</span> <span class="toc-text">添加依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建一个aop的实现类"><span class="toc-number">1.2.3.</span> <span class="toc-text">创建一个aop的实现类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#定义配置文件"><span class="toc-number">1.2.4.</span> <span class="toc-text">定义配置文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通知-5种"><span class="toc-number">1.3.</span> <span class="toc-text">通知(5种)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接点"><span class="toc-number">1.4.</span> <span class="toc-text">连接点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#切点"><span class="toc-number">1.5.</span> <span class="toc-text">切点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#切面"><span class="toc-number">1.6.</span> <span class="toc-text">切面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#定义切点"><span class="toc-number">1.7.</span> <span class="toc-text">定义切点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#第一种方式-基于spring创建的bean"><span class="toc-number">1.7.1.</span> <span class="toc-text">第一种方式(基于spring创建的bean)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第二种方式-基于类的"><span class="toc-number">1.7.2.</span> <span class="toc-text">第二种方式(基于类的)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第三种方式-基于方法的"><span class="toc-number">1.7.3.</span> <span class="toc-text">第三种方式(基于方法的)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用场景"><span class="toc-number">1.8.</span> <span class="toc-text">使用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现原理"><span class="toc-number">1.9.</span> <span class="toc-text">实现原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-aop-处理事务"><span class="toc-number">1.10.</span> <span class="toc-text">Spring-aop 处理事务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#处理的前提"><span class="toc-number">1.10.1.</span> <span class="toc-text">处理的前提</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置文件"><span class="toc-number">1.10.2.</span> <span class="toc-text">配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#注解配置事务-Transactional"><span class="toc-number">1.10.3.</span> <span class="toc-text">注解配置事务@Transactional</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring事务的传播属性"><span class="toc-number">1.10.4.</span> <span class="toc-text">Spring事务的传播属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring事务的隔离级别"><span class="toc-number">1.10.5.</span> <span class="toc-text">Spring事务的隔离级别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置须知"><span class="toc-number">1.10.6.</span> <span class="toc-text">配置须知</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例"><span class="toc-number">1.10.7.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.11.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

@@ -1,0 +1,944 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>spring-data-elasticsearch | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="spring-data-elasticsearch
+SpringBoot整合es文档
+
+@Document
+@Document(indexName = &amp;quot;es&amp;quot;,type = &amp;quot;user&amp;quot;,shards = 5,replicas = 0) ： 标注在实体类上，声明存储的索引和类型
+indexName： 索引名称
+type：索引类型
+shards：分片的数量">
+<meta property="og:type" content="article">
+<meta property="og:title" content="spring-data-elasticsearch">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/09/02/spring-data-elasticsearch/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="spring-data-elasticsearch
+SpringBoot整合es文档
+
+@Document
+@Document(indexName = &amp;quot;es&amp;quot;,type = &amp;quot;user&amp;quot;,shards = 5,replicas = 0) ： 标注在实体类上，声明存储的索引和类型
+indexName： 索引名称
+type：索引类型
+shards：分片的数量">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:10:47.412Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="spring-data-elasticsearch">
+<meta name="twitter:description" content="spring-data-elasticsearch
+SpringBoot整合es文档
+
+@Document
+@Document(indexName = &amp;quot;es&amp;quot;,type = &amp;quot;user&amp;quot;,shards = 5,replicas = 0) ： 标注在实体类上，声明存储的索引和类型
+indexName： 索引名称
+type：索引类型
+shards：分片的数量">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/09/02/spring-data-elasticsearch/" title="spring-data-elasticsearch" itemprop="url">spring-data-elasticsearch</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-09-02T11:38:59.000Z" itemprop="datePublished"> 发表于 2018-09-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#spring-data-elasticsearch"><span class="toc-number">1.</span> <span class="toc-text">spring-data-elasticsearch</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Document"><span class="toc-number">1.1.</span> <span class="toc-text">@Document</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Field"><span class="toc-number">1.2.</span> <span class="toc-text">@Field</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Id"><span class="toc-number">1.3.</span> <span class="toc-text">@Id</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Date类型的存储"><span class="toc-number">1.4.</span> <span class="toc-text">Date类型的存储</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一个实体类"><span class="toc-number">1.5.</span> <span class="toc-text">创建一个实体类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#定义查询接口"><span class="toc-number">1.6.</span> <span class="toc-text">定义查询接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用方法如下："><span class="toc-number">1.6.1.</span> <span class="toc-text">常用方法如下：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义查询"><span class="toc-number">1.6.2.</span> <span class="toc-text">自定义查询</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例"><span class="toc-number">1.6.2.1.</span> <span class="toc-text">实例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-Query定义自己的es语句"><span class="toc-number">1.7.</span> <span class="toc-text">使用@Query定义自己的es语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#控制结果集数量"><span class="toc-number">1.8.</span> <span class="toc-text">控制结果集数量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分页查询"><span class="toc-number">1.9.</span> <span class="toc-text">分页查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单条件分页排序"><span class="toc-number">1.9.1.</span> <span class="toc-text">单条件分页排序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多条件分页排序"><span class="toc-number">1.9.2.</span> <span class="toc-text">多条件分页排序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#日期格式问题"><span class="toc-number">1.10.</span> <span class="toc-text">日期格式问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用ElasticsearchTemplate"><span class="toc-number">1.11.</span> <span class="toc-text">使用ElasticsearchTemplate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档"><span class="toc-number">1.12.</span> <span class="toc-text">参考文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.13.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="spring-data-elasticsearch"><a href="#spring-data-elasticsearch" class="headerlink" title="spring-data-elasticsearch"></a>spring-data-elasticsearch</h1><ul>
+<li><a href="https://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#boot-features-elasticsearch" target="_blank" rel="external">SpringBoot整合es文档</a></li>
+</ul>
+<h2 id="Document"><a href="#Document" class="headerlink" title="@Document"></a>@Document</h2><ul>
+<li><code>@Document(indexName = &quot;es&quot;,type = &quot;user&quot;,shards = 5,replicas = 0)</code> ： 标注在实体类上，声明存储的索引和类型<ul>
+<li><code>indexName</code>： 索引名称</li>
+<li><code>type</code>：索引类型</li>
+<li><code>shards</code>：分片的数量</li>
+<li><code>replicas</code>：副本的数量</li>
+<li><code>refreshInterval</code>： 刷新间隔</li>
+<li><code>indexStoreType</code>：索引文件存储类型</li>
+</ul>
+</li>
+</ul>
+<h2 id="Field"><a href="#Field" class="headerlink" title="@Field"></a>@Field</h2><ul>
+<li>标注在属性上，用来指定属性的类型。其中的属性如下：<ul>
+<li><code>analyzer</code>：指定分词器，es中默认使用的标准分词器，比如我们需要指定中文IK分词器，可以指定值为<code>ik_max_word</code></li>
+<li><code>type</code>： 指定该属性在es中的类型，其中的值是<code>FileType</code>类型的值，比如<code>FileType.Text</code>类型对应es中的text类型</li>
+<li><code>index</code>：指定该词是否需要索引，默认为true</li>
+<li><code>store</code>：指定该属性内容是否需要存储，默认为</li>
+<li><code>fielddata</code> ：指定该属性能否进行排序，因为es中的text类型是不能进行排序（已经分词了）</li>
+<li><code>searchAnalyzer</code> ： 指定搜索使用的分词器</li>
+</ul>
+</li>
+<li><strong>在插入数据之前我们需要先运行程序添加<code>mapping</code>，对于没有指定<code>@Field</code>的属性此时是不会创建索引的，而是在插入数据的时候自动创建索引。但是对于@Field注解标注的属性如果没有先加载生成mapping，等到插入数据的时候是没有效果的</strong></li>
+<li><strong>如果使用该注解，那么必须指定其中的<code>type</code>属性</strong></li>
+</ul>
+<h2 id="Id"><a href="#Id" class="headerlink" title="@Id"></a>@Id</h2><ul>
+<li>主键注解，标识一个属性为主键</li>
+</ul>
+<h2 id="Date类型的存储"><a href="#Date类型的存储" class="headerlink" title="Date类型的存储"></a>Date类型的存储</h2><ul>
+<li>es中默认存储Date类型的是一个时间戳，如果我们需要指定格式的存储，那么需要在<code>@Field</code>这个注解中指定日期的格式。如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Field</span>(type = FieldType.Date,format = DateFormat.custom, pattern =<span class="string">"yyyy-MM-dd HH:mm:ss"</span>)</div><div class="line"><span class="meta">@JsonFormat</span>(shape = JsonFormat.Shape.STRING, pattern =<span class="string">"yyyy-MM-dd HH:mm:ss"</span>, timezone = <span class="string">"GMT+8"</span>)</div><div class="line"> <span class="keyword">private</span> Date birthday;</div></pre></td></tr></table></figure>
+<h2 id="创建一个实体类"><a href="#创建一个实体类" class="headerlink" title="创建一个实体类"></a>创建一个实体类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * <span class="doctag">@Document</span> : 这个是ES的注解，在类使用，指定实体类的索引和类型。默认所有的属性都是索引的</div><div class="line"> *             1、indexName ：　指定索引</div><div class="line"> *             2、type：指定类型</div><div class="line"> *             3、shards：指定分片的数量</div><div class="line"> *             4、replicas：指定副本的数量</div><div class="line"> */</div><div class="line"><span class="meta">@Document</span>(indexName = <span class="string">"es"</span>,type = <span class="string">"user"</span>,shards = <span class="number">5</span>,replicas = <span class="number">0</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</div><div class="line">    <span class="meta">@Id</span>   <span class="comment">//指定这个是主键</span></div><div class="line">    <span class="keyword">private</span> Integer userId;</div><div class="line"></div><div class="line">    <span class="meta">@Field</span>(type = FieldType.Text,analyzer = <span class="string">"ik_max_word"</span>,fielddata = <span class="keyword">true</span>,store = <span class="keyword">false</span>)</div><div class="line">    <span class="keyword">private</span> String userName;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> String password;</div><div class="line"></div><div class="line">    <span class="meta">@Field</span>(type = FieldType.Date, store = <span class="keyword">true</span>, format = DateFormat.custom, pattern =<span class="string">"yyyy-MM-dd HH:mm:ss"</span>)</div><div class="line">    <span class="meta">@JsonFormat</span>(shape = JsonFormat.Shape.STRING, pattern =<span class="string">"yyyy-MM-dd HH:mm:ss"</span>, timezone = <span class="string">"GMT+8"</span>)</div><div class="line">    <span class="keyword">private</span> Date birthday;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> List&lt;String&gt; hobbies;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">getUserId</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> userId;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUserId</span><span class="params">(Integer userId)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.userId = userId;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getUserName</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> userName;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUserName</span><span class="params">(String userName)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.userName = userName;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getPassword</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> password;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPassword</span><span class="params">(String password)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.password = password;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> Date <span class="title">getBirthday</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> birthday;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBirthday</span><span class="params">(Date birthday)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.birthday = birthday;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">getHobbies</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> hobbies;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setHobbies</span><span class="params">(List&lt;String&gt; hobbies)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.hobbies = hobbies;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">"User&#123;"</span> +</div><div class="line">                <span class="string">"userId="</span> + userId +</div><div class="line">                <span class="string">", userName='"</span> + userName + <span class="string">'\''</span> +</div><div class="line">                <span class="string">", password='"</span> + password + <span class="string">'\''</span> +</div><div class="line">                <span class="string">", birthday="</span> + birthday +</div><div class="line">                <span class="string">", hobbies="</span> + hobbies +</div><div class="line">                <span class="string">'&#125;'</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="定义查询接口"><a href="#定义查询接口" class="headerlink" title="定义查询接口"></a>定义查询接口</h2><ul>
+<li>官网上提供了各种各样的方法，我们使用继承<code>ElasticsearchRepository</code>这个接口的方式拓展查询接口，基本的接口：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserRepo</span> <span class="keyword">extends</span> <span class="title">ElasticsearchRepository</span>&lt;<span class="title">User</span>,<span class="title">Integer</span>&gt; </span>&#123;</div><div class="line">    <span class="comment">//不需要实现其中的方法，只需要继承即可，spring-data-es会为我们自动完成</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="常用方法如下："><a href="#常用方法如下：" class="headerlink" title="常用方法如下："></a>常用方法如下：</h3><ol>
+<li><code>index(T t)</code> ：添加数据</li>
+<li><code>save(T t)</code>：添加数据</li>
+<li><code>count()</code>： 获取数据总数</li>
+<li><code>findAll()</code>：获取所有的数据，返回的是一个<code>java.lang.Iterable</code></li>
+<li><code>Iterable&lt;T&gt; findAllById(Iterable&lt;ID&gt; ids)</code>：根据Id批量返回数据</li>
+<li><code>saveAll(Iterable entity)</code> ：批量保存数据，可以传入List</li>
+<li><code>delete(T t)</code> ： 删除指定的实体类，只需要指定实体类中的Id即可</li>
+<li><code>deleteAll()</code>：删除所有的数据</li>
+<li><code>deleteById(ID Id)</code>：根据Id删除数据</li>
+<li><code>existsById(ID Id)</code>： 判断指定Id的数据是否存在</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div></pre></td><td class="code"><pre><div class="line">    <span class="comment">//添加数据</span></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test3</span><span class="params">()</span></span>&#123;</div><div class="line">        User user=<span class="keyword">new</span> User();</div><div class="line">        user.setUserId(<span class="number">1</span>);</div><div class="line">        user.setUserName(<span class="string">"郑元梅"</span>);</div><div class="line">        user.setBirthday(<span class="keyword">new</span> Date());</div><div class="line">        user.setPassword(<span class="string">"12345678"</span>);</div><div class="line">        List&lt;String&gt; hobbies=<span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">        hobbies.add(<span class="string">"篮球"</span>);</div><div class="line">        hobbies.add(<span class="string">"足球"</span>);</div><div class="line">        user.setHobbies(hobbies);</div><div class="line"><span class="comment">//        userRepo.save(user);   //调用其中的save方法保存信息</span></div><div class="line">        userRepo.index(user);  <span class="comment">//调用index方法添加数据</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">//获取其中的所有数据</span></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test4</span><span class="params">()</span></span>&#123;</div><div class="line">        Iterable&lt;User&gt; iterable=userRepo.findAll();</div><div class="line">        Iterator&lt;User&gt; iterator=iterable.iterator();</div><div class="line">        <span class="keyword">while</span> (iterator.hasNext())&#123;</div><div class="line">            System.out.println(iterator.next());</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span>  <span class="keyword">void</span> <span class="title">test5</span><span class="params">()</span></span>&#123;</div><div class="line">        List&lt;User&gt; users=<span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">        User user=<span class="keyword">new</span> User();</div><div class="line">        user.setUserId(<span class="number">4</span>);</div><div class="line">        user.setUserName(<span class="string">"张三"</span>);</div><div class="line">        user.setBirthday(<span class="keyword">new</span> Date());</div><div class="line">        user.setPassword(<span class="string">"12345678"</span>);</div><div class="line">        List&lt;String&gt; hobbies=<span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">        hobbies.add(<span class="string">"台球"</span>);</div><div class="line">        hobbies.add(<span class="string">"足球"</span>);</div><div class="line">        user.setHobbies(hobbies);</div><div class="line"></div><div class="line">        User user1=<span class="keyword">new</span> User();</div><div class="line">        user1.setUserId(<span class="number">5</span>);</div><div class="line">        user1.setUserName(<span class="string">"郑元梅"</span>);</div><div class="line">        user1.setBirthday(<span class="keyword">new</span> Date());</div><div class="line">        user1.setPassword(<span class="string">"12345678"</span>);</div><div class="line">        user1.setHobbies(hobbies);</div><div class="line"></div><div class="line">        users.add(user);</div><div class="line">        users.add(user1);</div><div class="line">        userRepo.saveAll(users);  <span class="comment">//保存List中的所有数据</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//删除指定的数据</span></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test6</span><span class="params">()</span></span>&#123;</div><div class="line">        User user=<span class="keyword">new</span> User();</div><div class="line">        user.setUserId(<span class="number">5</span>);</div><div class="line">        userRepo.delete(user);</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test7</span><span class="params">()</span></span>&#123;</div><div class="line">        List&lt;User&gt; users=userRepo.selectAll();</div><div class="line">        <span class="keyword">for</span> (User user</div><div class="line">             :users</div><div class="line">             ) &#123;</div><div class="line">            System.out.println(user);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h3 id="自定义查询"><a href="#自定义查询" class="headerlink" title="自定义查询"></a>自定义查询</h3><ul>
+<li>spring-data-elasticsearch为我们自动完成了许多的查询，我们只需要按照其中的规范使用即可。<ul>
+<li>查询方法定义以<code>get</code>或者<code>find</code>开头即可</li>
+</ul>
+</li>
+<li>关于es中各种查询，我们可以参照下表进行定义，<strong><a href="https://docs.spring.io/spring-data/elasticsearch/docs/current/reference/html/#elasticsearch.query-methods.criterions" target="_blank" rel="external">文档</a></strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><code>And</code></th>
+<th><code>findByNameAndPrice</code></th>
+<th><code>{&quot;bool&quot; : {&quot;must&quot; : [ {&quot;field&quot; : {&quot;name&quot; : &quot;?&quot;}}, {&quot;field&quot; : {&quot;price&quot; : &quot;?&quot;}} ]}}</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Or</code></td>
+<td><code>findByNameOrPrice</code></td>
+<td><code>{&quot;bool&quot; : {&quot;should&quot; : [ {&quot;field&quot; : {&quot;name&quot; : &quot;?&quot;}}, {&quot;field&quot; : {&quot;price&quot; : &quot;?&quot;}} ]}}</code></td>
+</tr>
+<tr>
+<td><code>Is</code></td>
+<td><code>findByName</code></td>
+<td><code>{&quot;bool&quot; : {&quot;must&quot; : {&quot;field&quot; : {&quot;name&quot; : &quot;?&quot;}}}}</code></td>
+</tr>
+<tr>
+<td><code>Not</code></td>
+<td><code>findByNameNot</code></td>
+<td><code>{&quot;bool&quot; : {&quot;must_not&quot; : {&quot;field&quot; : {&quot;name&quot; : &quot;?&quot;}}}}</code></td>
+</tr>
+<tr>
+<td><code>Between</code></td>
+<td><code>findByPriceBetween</code></td>
+<td><code>{&quot;bool&quot; : {&quot;must&quot; : {&quot;range&quot; : {&quot;price&quot; : {&quot;from&quot; : ?,&quot;to&quot; : ?,&quot;include_lower&quot; : true,&quot;include_upper&quot; : true}}}}}</code></td>
+</tr>
+<tr>
+<td><code>LessThanEqual</code></td>
+<td><code>findByPriceLessThan</code></td>
+<td><code>{&quot;bool&quot; : {&quot;must&quot; : {&quot;range&quot; : {&quot;price&quot; : {&quot;from&quot; : null,&quot;to&quot; : ?,&quot;include_lower&quot; : true,&quot;include_upper&quot; : true}}}}}</code></td>
+</tr>
+<tr>
+<td><code>GreaterThanEqual</code>（&gt;=）</td>
+<td><code>findByPriceGreaterThan</code></td>
+<td><code>{&quot;bool&quot; : {&quot;must&quot; : {&quot;range&quot; : {&quot;price&quot; : {&quot;from&quot; : ?,&quot;to&quot; : null,&quot;include_lower&quot; : true,&quot;include_upper&quot; : true}}}}}</code></td>
+</tr>
+<tr>
+<td><code>Before</code>（&lt;=）</td>
+<td><code>findByPriceBefore</code></td>
+<td><code>{&quot;bool&quot; : {&quot;must&quot; : {&quot;range&quot; : {&quot;price&quot; : {&quot;from&quot; : null,&quot;to&quot; : ?,&quot;include_lower&quot; : true,&quot;include_upper&quot; : true}}}}}</code></td>
+</tr>
+<tr>
+<td><code>After</code></td>
+<td><code>findByPriceAfter</code></td>
+<td><code>{&quot;bool&quot; : {&quot;must&quot; : {&quot;range&quot; : {&quot;price&quot; : {&quot;from&quot; : ?,&quot;to&quot; : null,&quot;include_lower&quot; : true,&quot;include_upper&quot; : true}}}}}</code></td>
+</tr>
+<tr>
+<td><code>Like</code>（<code>?%</code>）（如果需要实现<code>%?%</code>可以使用fuzzy）</td>
+<td><code>findByNameLike</code></td>
+<td><code>{&quot;bool&quot; : {&quot;must&quot; : {&quot;field&quot; : {&quot;name&quot; : {&quot;query&quot; : &quot;?*&quot;,&quot;analyze_wildcard&quot; : true}}}}}</code></td>
+</tr>
+<tr>
+<td><code>StartingWith</code></td>
+<td><code>findByNameStartingWith</code></td>
+<td><code>{&quot;bool&quot; : {&quot;must&quot; : {&quot;field&quot; : {&quot;name&quot; : {&quot;query&quot; : &quot;?*&quot;,&quot;analyze_wildcard&quot; : true}}}}}</code></td>
+</tr>
+<tr>
+<td><code>EndingWith</code></td>
+<td><code>findByNameEndingWith</code></td>
+<td><code>{&quot;bool&quot; : {&quot;must&quot; : {&quot;field&quot; : {&quot;name&quot; : {&quot;query&quot; : &quot;*?&quot;,&quot;analyze_wildcard&quot; : true}}}}}</code></td>
+</tr>
+<tr>
+<td><code>Contains/Containing</code></td>
+<td><code>findByNameContaining</code></td>
+<td><code>{&quot;bool&quot; : {&quot;must&quot; : {&quot;field&quot; : {&quot;name&quot; : {&quot;query&quot; : &quot;**?**&quot;,&quot;analyze_wildcard&quot; : true}}}}}</code></td>
+</tr>
+<tr>
+<td><code>In</code></td>
+<td><code>findByNameIn(Collection&lt;String&gt;names)</code></td>
+<td><code>{&quot;bool&quot; : {&quot;must&quot; : {&quot;bool&quot; : {&quot;should&quot; : [ {&quot;field&quot; : {&quot;name&quot; : &quot;?&quot;}}, {&quot;field&quot; : {&quot;name&quot; : &quot;?&quot;}} ]}}}}</code></td>
+</tr>
+<tr>
+<td><code>NotIn</code></td>
+<td><code>findByNameNotIn(Collection&lt;String&gt;names)</code></td>
+<td><code>{&quot;bool&quot; : {&quot;must_not&quot; : {&quot;bool&quot; : {&quot;should&quot; : {&quot;field&quot; : {&quot;name&quot; : &quot;?&quot;}}}}}}</code></td>
+</tr>
+<tr>
+<td><code>Near</code></td>
+<td><code>findByStoreNear</code></td>
+<td><code>Not Supported Yet !</code></td>
+</tr>
+<tr>
+<td><code>True</code></td>
+<td><code>findByAvailableTrue</code></td>
+<td><code>{&quot;bool&quot; : {&quot;must&quot; : {&quot;field&quot; : {&quot;available&quot; : true}}}}</code></td>
+</tr>
+<tr>
+<td><code>False</code></td>
+<td><code>findByAvailableFalse</code></td>
+<td><code>{&quot;bool&quot; : {&quot;must&quot; : {&quot;field&quot; : {&quot;available&quot; : false}}}}</code></td>
+</tr>
+<tr>
+<td><code>OrderBy</code></td>
+<td><code>findByAvailableTrueOrderByNameDesc</code></td>
+<td><code>{&quot;sort&quot; : [{ &quot;name&quot; : {&quot;order&quot; : &quot;desc&quot;} }],&quot;bool&quot; : {&quot;must&quot; : {&quot;field&quot; : {&quot;available&quot; : true}}}}</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.techwells.es;</div><div class="line"><span class="keyword">import</span> com.techwells.beans.User;</div><div class="line"><span class="keyword">import</span> org.springframework.data.domain.Page;</div><div class="line"><span class="keyword">import</span> org.springframework.data.domain.Pageable;</div><div class="line"><span class="keyword">import</span> org.springframework.data.elasticsearch.annotations.Document;</div><div class="line"><span class="keyword">import</span> org.springframework.data.elasticsearch.annotations.Query;</div><div class="line"><span class="keyword">import</span> org.springframework.data.elasticsearch.repository.ElasticsearchRepository;</div><div class="line"><span class="keyword">import</span> java.util.Date;</div><div class="line"><span class="keyword">import</span> java.util.List;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserRepo</span> <span class="keyword">extends</span> <span class="title">ElasticsearchRepository</span>&lt;<span class="title">User</span>,<span class="title">Integer</span>&gt;</span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 根据userId获取用户信息</div><div class="line">     * <span class="doctag">@param</span> userId</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">User <span class="title">findUserByUserId</span><span class="params">(Integer userId)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 根据用户查找用户信息</div><div class="line">     * <span class="doctag">@param</span> userName</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByUserName</span><span class="params">(String userName)</span></span>;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 根据用户名和密码查找用户信息，使用的是must查询</div><div class="line">     * 参数的顺序不能颠倒</div><div class="line">     * <span class="doctag">@param</span> userName</div><div class="line">     * <span class="doctag">@param</span> password</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByUserNameAndPassword</span><span class="params">(String userName,String password)</span></span>;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 根据用户名或者地址进行查询，满足其一即可，使用的是should</div><div class="line">     * 参数不能颠倒</div><div class="line">     * <span class="doctag">@param</span> userName</div><div class="line">     * <span class="doctag">@param</span> address</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByUserNameOrAddress</span><span class="params">(String userName,String address)</span></span>;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 使用<span class="doctag">@Query</span>注解自定义查询语句，其中的?是占位符，0表示第一个参数</div><div class="line">     * <span class="doctag">@param</span> userName</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="meta">@Query</span>(<span class="string">"&#123;\n"</span> +</div><div class="line">            <span class="string">"    \"bool\": &#123;\n"</span> +</div><div class="line">            <span class="string">"      \"must\": [\n"</span> +</div><div class="line">            <span class="string">"        &#123;\n"</span> +</div><div class="line">            <span class="string">"          \"match\": &#123;\n"</span> +</div><div class="line">            <span class="string">"            \"userName\": \"?0\"\n"</span> +</div><div class="line">            <span class="string">"          &#125;\n"</span> +</div><div class="line">            <span class="string">"        &#125;\n"</span> +</div><div class="line">            <span class="string">"      ]\n"</span> +</div><div class="line">            <span class="string">"    &#125;\n"</span> +</div><div class="line">            <span class="string">"  &#125;"</span>)</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">selectByUserName</span><span class="params">(String userName)</span></span>;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 查询密码不为null的用户信息</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="meta">@Query</span>(<span class="string">"&#123;\n"</span> +</div><div class="line">            <span class="string">"    \"bool\": &#123;\n"</span> +</div><div class="line">            <span class="string">"      \"must\":&#123;\n"</span> +</div><div class="line">            <span class="string">"        \"exists\":&#123;\n"</span> +</div><div class="line">            <span class="string">"          \"field\":\"password\"\n"</span> +</div><div class="line">            <span class="string">"        &#125;\n"</span> +</div><div class="line">            <span class="string">"      &#125;\n"</span> +</div><div class="line">            <span class="string">"    &#125;\n"</span> +</div><div class="line">            <span class="string">"  &#125;"</span>)</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByPasswordIsNotNull</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 查询密码为null的用户信息</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="meta">@Query</span>(<span class="string">"&#123;\n"</span> +</div><div class="line">            <span class="string">"    \"bool\": &#123;\n"</span> +</div><div class="line">            <span class="string">"      \"must_not\":&#123;\n"</span> +</div><div class="line">            <span class="string">"        \"exists\":&#123;\n"</span> +</div><div class="line">            <span class="string">"          \"field\":\"password\"\n"</span> +</div><div class="line">            <span class="string">"        &#125;\n"</span> +</div><div class="line">            <span class="string">"      &#125;\n"</span> +</div><div class="line">            <span class="string">"    &#125;\n"</span> +</div><div class="line">            <span class="string">"  &#125;"</span>)</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByPasswordIsNull</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 查询密码不是password的用户信息，使用的must_not</div><div class="line">     * <span class="doctag">@param</span> password</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByPasswordNot</span><span class="params">(String password)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 查询用户名是userName但是密码表示password的信息，必须同时满足</div><div class="line">     * <span class="doctag">@param</span> userName</div><div class="line">     * <span class="doctag">@param</span> password</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByUserNameAndPasswordNot</span><span class="params">(String userName,String password)</span></span>;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 查询年龄在from-to之间的用户，包含form和to，使用的是range查询</div><div class="line">     * <span class="doctag">@param</span> from  起始</div><div class="line">     * <span class="doctag">@param</span> to    截止</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByAgeBetween</span><span class="params">(Integer from,Integer to)</span></span>;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 查询年龄小于age的用户信息</div><div class="line">     * <span class="doctag">@param</span> age  年龄</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByAgeLessThan</span><span class="params">(Integer age)</span></span>;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 年龄小于等于age的用户信息</div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByAgeLessThanEqual</span><span class="params">(Integer age)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 年龄大于age的用户</div><div class="line">     * <span class="doctag">@param</span> age</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByAgeGreaterThan</span><span class="params">(Integer age)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 年龄大于等于age的用户</div><div class="line">     * <span class="doctag">@param</span> age</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByAgeGreaterThanEqual</span><span class="params">(Integer age)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 年龄小于等于age的用户信息</div><div class="line">     * <span class="doctag">@param</span> age</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByAgeBefore</span><span class="params">(Integer age)</span></span>;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 年龄大于等于age的用户</div><div class="line">     * <span class="doctag">@param</span> age</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByAgeAfter</span><span class="params">(Integer age)</span></span>;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 模糊查找，密码中以pwd开头用户信息，`content%`，</div><div class="line">     * <span class="doctag">@param</span> content</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByPasswordLike</span><span class="params">(String content)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 查询密码中包含content的用户信息  %content%</div><div class="line">     * <span class="doctag">@param</span> content</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByPasswordContaining</span><span class="params">(String content)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 查询密码以pwd开头的用户信息，和Like一样的效果</div><div class="line">     * <span class="doctag">@param</span> pwd</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByPasswordStartingWith</span><span class="params">(String pwd)</span></span>;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 查询密码以pwd结尾的用户信息</div><div class="line">     * <span class="doctag">@param</span> pwd</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByPasswordEndingWith</span><span class="params">(String pwd)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 查找年龄在集合中的用户信息</div><div class="line">     * <span class="doctag">@param</span> ages</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByAgeIn</span><span class="params">(List&lt;Integer&gt; ages)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 查找年龄不在集合中的用户信息</div><div class="line">     * <span class="doctag">@param</span> ages</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByAgeNotIn</span><span class="params">(List&lt;Integer&gt; ages)</span></span>;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 根据用户名查询并且按照年龄降序排列</div><div class="line">     * <span class="doctag">@param</span> userName</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByUserNameOrderByAgeDesc</span><span class="params">(String userName)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 根据用户名查询并且按照年龄降序排列、用户名升序排列</div><div class="line">     * <span class="doctag">@param</span> userName</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByUserNameOrderByAgeDescUserNameAsc</span><span class="params">(String userName)</span></span>;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 根据出生日期进行降序排列</div><div class="line">     * <span class="doctag">@param</span> userName</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findByUserNameOrderByBirthdayDesc</span><span class="params">(String userName)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 返回前2条数据</div><div class="line">     * <span class="doctag">@param</span> userName</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findTop2ByUserName</span><span class="params">(String userName)</span></span>;</div><div class="line">    </div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 根据用户名分页查询</div><div class="line">     * <span class="doctag">@param</span> userName</div><div class="line">     * <span class="doctag">@param</span> pageable</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">Page&lt;User&gt; <span class="title">findByUserName</span><span class="params">(String userName, Pageable pageable)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="使用-Query定义自己的es语句"><a href="#使用-Query定义自己的es语句" class="headerlink" title="使用@Query定义自己的es语句"></a>使用@Query定义自己的es语句</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">     * 使用<span class="doctag">@Query</span>注解自定义查询语句，其中的?是占位符，0表示第一个参数</div><div class="line">     * <span class="doctag">@param</span> userName</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="meta">@Query</span>(<span class="string">"&#123;\n"</span> +</div><div class="line">            <span class="string">"    \"bool\": &#123;\n"</span> +</div><div class="line">            <span class="string">"      \"must\": [\n"</span> +</div><div class="line">            <span class="string">"        &#123;\n"</span> +</div><div class="line">            <span class="string">"          \"match\": &#123;\n"</span> +</div><div class="line">            <span class="string">"            \"userName\": \"?0\"\n"</span> +</div><div class="line">            <span class="string">"          &#125;\n"</span> +</div><div class="line">            <span class="string">"        &#125;\n"</span> +</div><div class="line">            <span class="string">"      ]\n"</span> +</div><div class="line">            <span class="string">"    &#125;\n"</span> +</div><div class="line">            <span class="string">"  &#125;"</span>)</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">selectByUserName</span><span class="params">(String userName)</span></span>;</div></pre></td></tr></table></figure>
+<h2 id="控制结果集数量"><a href="#控制结果集数量" class="headerlink" title="控制结果集数量"></a>控制结果集数量</h2><ul>
+<li><a href="https://docs.spring.io/spring-data/elasticsearch/docs/current/reference/html/#repositories.limit-query-result" target="_blank" rel="external">https://docs.spring.io/spring-data/elasticsearch/docs/current/reference/html/#repositories.limit-query-result</a></li>
+<li>使用<code>Top</code>或者<code>First</code>控制返回的数量，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">     * 返回前2条数据</div><div class="line">     * <span class="doctag">@param</span> userName</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function">List&lt;User&gt; <span class="title">findTop2ByUserName</span><span class="params">(String userName)</span></span>;</div></pre></td></tr></table></figure>
+<h2 id="分页查询"><a href="#分页查询" class="headerlink" title="分页查询"></a>分页查询</h2><ul>
+<li><a href="https://www.tianmaying.com/tutorial/spring-jpa-page-sort" target="_blank" rel="external">https://www.tianmaying.com/tutorial/spring-jpa-page-sort</a></li>
+<li>直接使用<code>org.springframework.data.domain.Pageable</code>进行分页排序即可<ul>
+<li><code>page</code>：从０开始，第几页，默认为0</li>
+<li><code>size</code>：每页显示的数量</li>
+<li><code>sort</code>：排序的方向</li>
+</ul>
+</li>
+<li>其中的方法如下：<ul>
+<li><code>getTotalElements()</code>：返回数据的总数，不是分页的总数，而是根据条件查询到的全部的数据的总数</li>
+<li><code>getContent()</code>：获取分页的数据集合<code>List&lt;T&gt;</code></li>
+<li><code>getTotalPages()</code>：获取总共几页的数据</li>
+<li><code>iterator()</code>：获取迭代器</li>
+<li>剩余的方法如下：</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Slice</span>&lt;<span class="title">T</span>&gt; <span class="keyword">extends</span> <span class="title">Streamable</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line"></div><div class="line">	<span class="comment">//返回当前是第几页</span></div><div class="line">	<span class="function"><span class="keyword">int</span> <span class="title">getNumber</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">//返回每页显示的数量</span></div><div class="line">	<span class="function"><span class="keyword">int</span> <span class="title">getSize</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">//返回当前页获取到的元素数量</span></div><div class="line">	<span class="function"><span class="keyword">int</span> <span class="title">getNumberOfElements</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">//返回当前页元素的集合</span></div><div class="line">	<span class="function">List&lt;T&gt; <span class="title">getContent</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">//判断当前页是否存在数据</span></div><div class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">hasContent</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">//获取排序的Sort</span></div><div class="line">	<span class="function">Sort <span class="title">getSort</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">//判断当前页是否是第一页</span></div><div class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">isFirst</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">//判断当前页是否是最后一页</span></div><div class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">isLast</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">//判断是否还有下一页</span></div><div class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">hasNext</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">//判断是否有前一页</span></div><div class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">hasPrevious</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">//返回当前页的pageable</span></div><div class="line">	<span class="function"><span class="keyword">default</span> Pageable <span class="title">getPageable</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> PageRequest.of(getNumber(), getSize(), getSort());</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">//返回下一页的Pageable</span></div><div class="line">	<span class="function">Pageable <span class="title">nextPageable</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">//返回前一页的pageable</span></div><div class="line">	<span class="function">Pageable <span class="title">previousPageable</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    </div><div class="line">	&lt;U&gt; <span class="function">Slice&lt;U&gt; <span class="title">map</span><span class="params">(Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; converter)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="单条件分页排序"><a href="#单条件分页排序" class="headerlink" title="单条件分页排序"></a>单条件分页排序</h3><ul>
+<li>只使用了一个字段进行排序</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test3</span><span class="params">()</span></span>&#123;</div><div class="line">       Sort sort=<span class="keyword">new</span> Sort(Sort.Direction.DESC,<span class="string">"age"</span>);</div><div class="line">       Pageable pageable=<span class="keyword">new</span> PageRequest(<span class="number">9</span>,<span class="number">1</span>,sort);</div><div class="line">       Page&lt;User&gt; users=userRepo.findByUserName(<span class="string">"李"</span>,pageable);</div><div class="line">       System.out.println(users.getTotalPages());</div><div class="line">       <span class="keyword">for</span> (User user:users.getContent()) &#123;</div><div class="line">           System.out.println(user);</div><div class="line">       &#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<h3 id="多条件分页排序"><a href="#多条件分页排序" class="headerlink" title="多条件分页排序"></a>多条件分页排序</h3><ul>
+<li>使用<code>Order</code>进行排序条件</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test3</span><span class="params">()</span></span>&#123;</div><div class="line">      List&lt;Sort.Order&gt; orders=<span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">      orders.add(<span class="keyword">new</span> Sort.Order(Sort.Direction.DESC,<span class="string">"age"</span>));<span class="comment">//按照年龄降序排列</span></div><div class="line">      orders.add(<span class="keyword">new</span> Sort.Order(Sort.Direction.ASC,<span class="string">"userId"</span>));  <span class="comment">//按照用户Id升序排列</span></div><div class="line">      Sort sort=<span class="keyword">new</span> Sort(orders);  <span class="comment">//使用orders</span></div><div class="line"></div><div class="line">      Pageable pageable=<span class="keyword">new</span> PageRequest(<span class="number">0</span>,<span class="number">10</span>,sort);</div><div class="line">      Page&lt;User&gt; users=userRepo.findByUserName(<span class="string">"李"</span>,pageable);</div><div class="line">      System.out.println(users.getTotalPages());</div><div class="line">      <span class="keyword">for</span> (User user:users.getContent()) &#123;</div><div class="line">          System.out.println(user);</div><div class="line">      &#125;</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<h2 id="日期格式问题"><a href="#日期格式问题" class="headerlink" title="日期格式问题"></a>日期格式问题</h2><ul>
+<li>未完</li>
+</ul>
+<h2 id="使用ElasticsearchTemplate"><a href="#使用ElasticsearchTemplate" class="headerlink" title="使用ElasticsearchTemplate"></a>使用ElasticsearchTemplate</h2><ul>
+<li>未完 ………..待续…………………</li>
+</ul>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ul>
+<li><a href="https://blog.csdn.net/lijingyao8206/article/details/78614536" target="_blank" rel="external">https://blog.csdn.net/lijingyao8206/article/details/78614536</a></li>
+<li><a href="https://www.jianshu.com/p/27e1d583aafb" target="_blank" rel="external">https://www.jianshu.com/p/27e1d583aafb</a></li>
+<li><a href="https://blog.csdn.net/a772304419/article/details/79200141" target="_blank" rel="external">https://blog.csdn.net/a772304419/article/details/79200141</a></li>
+<li><a href="https://www.cnblogs.com/liqipeng/p/7657854.html" target="_blank" rel="external">https://www.cnblogs.com/liqipeng/p/7657854.html</a></li>
+<li><a href="https://my.oschina.net/kipeng/blog/1799827" target="_blank" rel="external">https://my.oschina.net/kipeng/blog/1799827</a></li>
+<li><a href="https://blog.csdn.net/sofighter/article/details/77840094" target="_blank" rel="external">https://blog.csdn.net/sofighter/article/details/77840094</a></li>
+<li><a href="https://es.yemengying.com/4/4.1.html" target="_blank" rel="external">https://es.yemengying.com/4/4.1.html</a></li>
+<li><a href="https://docs.spring.io/spring-data/elasticsearch/docs/3.0.9.RELEASE/api/" target="_blank" rel="external">sptring-data-es的API</a></li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Elasticsearch/">Elasticsearch</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Elasticsearch/">Elasticsearch</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/09/02/spring-data-elasticsearch/" data-title="spring-data-elasticsearch | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/09/02/Spring-Data-Redis/" title="Spring-Data-Redis">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Spring-Data-Redis</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/09/02/es集群管理/"  title="es集群管理">
+ <strong>下一篇：</strong><br/> 
+ <span>es集群管理
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#spring-data-elasticsearch"><span class="toc-number">1.</span> <span class="toc-text">spring-data-elasticsearch</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Document"><span class="toc-number">1.1.</span> <span class="toc-text">@Document</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Field"><span class="toc-number">1.2.</span> <span class="toc-text">@Field</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Id"><span class="toc-number">1.3.</span> <span class="toc-text">@Id</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Date类型的存储"><span class="toc-number">1.4.</span> <span class="toc-text">Date类型的存储</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一个实体类"><span class="toc-number">1.5.</span> <span class="toc-text">创建一个实体类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#定义查询接口"><span class="toc-number">1.6.</span> <span class="toc-text">定义查询接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用方法如下："><span class="toc-number">1.6.1.</span> <span class="toc-text">常用方法如下：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义查询"><span class="toc-number">1.6.2.</span> <span class="toc-text">自定义查询</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例"><span class="toc-number">1.6.2.1.</span> <span class="toc-text">实例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-Query定义自己的es语句"><span class="toc-number">1.7.</span> <span class="toc-text">使用@Query定义自己的es语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#控制结果集数量"><span class="toc-number">1.8.</span> <span class="toc-text">控制结果集数量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分页查询"><span class="toc-number">1.9.</span> <span class="toc-text">分页查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单条件分页排序"><span class="toc-number">1.9.1.</span> <span class="toc-text">单条件分页排序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多条件分页排序"><span class="toc-number">1.9.2.</span> <span class="toc-text">多条件分页排序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#日期格式问题"><span class="toc-number">1.10.</span> <span class="toc-text">日期格式问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用ElasticsearchTemplate"><span class="toc-number">1.11.</span> <span class="toc-text">使用ElasticsearchTemplate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档"><span class="toc-number">1.12.</span> <span class="toc-text">参考文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.13.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

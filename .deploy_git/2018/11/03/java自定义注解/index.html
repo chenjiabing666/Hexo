@@ -1,0 +1,865 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>java自定义注解 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="自定义注解【Annotation】元注解@Retention
+表示需要在什么级别保存该注解信息 。分为如下三类：
+@Retention(RetentionPolicy.SOURCE)：注解仅存在于源码中，在class字节码文件中不包含 
+@Retention(RetentionPolicy.CLASS)：默认的保留策略，注解会在class字节码文件中存在，但运行时无法获得 
+@Retention(">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java自定义注解">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/11/03/java自定义注解/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="自定义注解【Annotation】元注解@Retention
+表示需要在什么级别保存该注解信息 。分为如下三类：
+@Retention(RetentionPolicy.SOURCE)：注解仅存在于源码中，在class字节码文件中不包含 
+@Retention(RetentionPolicy.CLASS)：默认的保留策略，注解会在class字节码文件中存在，但运行时无法获得 
+@Retention(">
+<meta property="og:image" content="https://raw.githubusercontent.com/chenjiabing666/BlogImage/master/annotation.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T05:59:28.422Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="java自定义注解">
+<meta name="twitter:description" content="自定义注解【Annotation】元注解@Retention
+表示需要在什么级别保存该注解信息 。分为如下三类：
+@Retention(RetentionPolicy.SOURCE)：注解仅存在于源码中，在class字节码文件中不包含 
+@Retention(RetentionPolicy.CLASS)：默认的保留策略，注解会在class字节码文件中存在，但运行时无法获得 
+@Retention(">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/chenjiabing666/BlogImage/master/annotation.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/11/03/java自定义注解/" title="java自定义注解" itemprop="url">java自定义注解</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-11-03T14:50:08.000Z" itemprop="datePublished"> 发表于 2018-11-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#自定义注解【Annotation】"><span class="toc-number">1.</span> <span class="toc-text">自定义注解【Annotation】</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#元注解"><span class="toc-number">1.1.</span> <span class="toc-text">元注解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Retention"><span class="toc-number">1.1.1.</span> <span class="toc-text">@Retention</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Target"><span class="toc-number">1.1.2.</span> <span class="toc-text">@Target</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Document"><span class="toc-number">1.1.3.</span> <span class="toc-text">@Document</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Inherited"><span class="toc-number">1.1.4.</span> <span class="toc-text">@Inherited</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于注解的反射方法"><span class="toc-number">1.2.</span> <span class="toc-text">关于注解的反射方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五种通知"><span class="toc-number">1.3.</span> <span class="toc-text">五种通知</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JoinPoint-对象"><span class="toc-number">1.4.</span> <span class="toc-text">JoinPoint 对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实战"><span class="toc-number">1.5.</span> <span class="toc-text">实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#日志"><span class="toc-number">1.5.1.</span> <span class="toc-text">日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#性能监控"><span class="toc-number">1.5.2.</span> <span class="toc-text">性能监控</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出错误日志到文件中"><span class="toc-number">1.5.3.</span> <span class="toc-text">输出错误日志到文件中</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.6.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.7.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="自定义注解【Annotation】"><a href="#自定义注解【Annotation】" class="headerlink" title="自定义注解【Annotation】"></a>自定义注解【Annotation】</h1><h2 id="元注解"><a href="#元注解" class="headerlink" title="元注解"></a>元注解</h2><h3 id="Retention"><a href="#Retention" class="headerlink" title="@Retention"></a>@Retention</h3><ul>
+<li>表示需要在什么级别保存该注解信息 。分为如下三类：<ul>
+<li><code>@Retention(RetentionPolicy.SOURCE)</code>：注解仅存在于源码中，在class字节码文件中不包含 </li>
+<li><code>@Retention(RetentionPolicy.CLASS)</code>：默认的保留策略，注解会在class字节码文件中存在，但运行时无法获得 </li>
+<li><code>@Retention(RetentionPolicy.RUNTIME)</code>： 注解会在class字节码文件中存在，在运行时可以通过反射获取到 </li>
+</ul>
+</li>
+</ul>
+<h3 id="Target"><a href="#Target" class="headerlink" title="@Target"></a>@Target</h3><ul>
+<li>注解的作用目标 </li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>取值</th>
+<th>作用域</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>@Target(ElementType.TYPE)</code></td>
+<td>接口、类、枚举、注解</td>
+</tr>
+<tr>
+<td><code>@Target(ElementType.FIELD)</code></td>
+<td>字段、枚举的常量</td>
+</tr>
+<tr>
+<td><code>@Target(ElementType.METHOD)</code></td>
+<td>方法</td>
+</tr>
+<tr>
+<td><code>@Target(ElementType.PARAMETER)</code></td>
+<td>方法参数</td>
+</tr>
+<tr>
+<td><code>@Target(ElementType.CONSTRUCTOR)</code></td>
+<td>构造函数</td>
+</tr>
+<tr>
+<td><code>@Target(ElementType.LOCAL_VARIABLE)</code></td>
+<td>局部变量</td>
+</tr>
+<tr>
+<td><code>@Target(ElementType.ANNOTATION_TYPE)</code></td>
+<td>注解</td>
+</tr>
+<tr>
+<td><code>@Target(ElementType.PACKAGE)</code></td>
+<td>包</td>
+</tr>
+</tbody>
+</table>
+<h3 id="Document"><a href="#Document" class="headerlink" title="@Document"></a>@Document</h3><ul>
+<li>注解包含在javadoc中 </li>
+</ul>
+<h3 id="Inherited"><a href="#Inherited" class="headerlink" title="@Inherited"></a>@Inherited</h3><ul>
+<li>注解可以被继承 </li>
+</ul>
+<h2 id="关于注解的反射方法"><a href="#关于注解的反射方法" class="headerlink" title="关于注解的反射方法"></a>关于注解的反射方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 获取某个类型的注解</span></div><div class="line"><span class="keyword">public</span> &lt;A extends Annotation&gt; <span class="function">A <span class="title">getAnnotation</span><span class="params">(Class&lt;A&gt; annotationClass)</span></span>;</div><div class="line"></div><div class="line"><span class="comment">// 获取所有注解(包括父类中被Inherited修饰的注解)</span></div><div class="line"><span class="keyword">public</span> Annotation[] getAnnotations(); </div><div class="line"></div><div class="line"><span class="comment">// 获取声明的注解(但是不包括父类中被Inherited修饰的注解)</span></div><div class="line"><span class="keyword">public</span> Annotation[] getDeclaredAnnotations();</div><div class="line"></div><div class="line"><span class="comment">// 判断某个对象上是否被某个注解进行标注</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isAnnotationPresent</span><span class="params">(Class&lt;? extends Annotation&gt; annotationClass)</span></span></div><div class="line"></div><div class="line"><span class="comment">// 获取某个类声明的所有字段</span></div><div class="line"><span class="keyword">public</span> Field[] <span class="title">getDeclaredFields</span><span class="params">()</span> <span class="keyword">throws</span> SecurityException;</div><div class="line"></div><div class="line"><span class="comment">// 获取某个方法</span></div><div class="line"><span class="function"><span class="keyword">public</span> Method <span class="title">getMethod</span><span class="params">(String name, Class&lt;?&gt;... parameterTypes)</span></span>;</div></pre></td></tr></table></figure>
+<h2 id="五种通知"><a href="#五种通知" class="headerlink" title="五种通知"></a>五种通知</h2><ul>
+<li><code>@Before</code>：前置通知，在调用目标方法之前执行通知定义的任务</li>
+<li><code>@After</code>：后置通知，在目标方法执行结束后，无论执行结果如何（异常或者正常执行）都执行通知定义的任务</li>
+<li><code>@After-returning</code>：后置通知，在目标方法执行结束后，如果执行成功（没有异常），则执行通知定义的任务</li>
+<li><code>@After-throwing</code>：异常通知，如果目标方法执行过程中抛出异常，则执行通知定义的任务</li>
+<li><code>@Around</code>：环绕通知，在目标方法执行前和执行后，都需要执行通知定义的任务</li>
+</ul>
+<h2 id="JoinPoint-对象"><a href="#JoinPoint-对象" class="headerlink" title="JoinPoint 对象"></a>JoinPoint 对象</h2><table>
+<thead>
+<tr>
+<th>方法名</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Signature getSignature();</code></td>
+<td>获取封装了署名信息的对象,在该对象中可以获取到目标方法名,所属类的Class等信息</td>
+</tr>
+<tr>
+<td><code>Object[] getArgs();</code></td>
+<td>获取传入目标方法的参数对象</td>
+</tr>
+<tr>
+<td><code>Object getTarget();</code></td>
+<td>获取被代理的对象</td>
+</tr>
+<tr>
+<td><code>Object getThis();</code></td>
+<td>获取代理对象</td>
+</tr>
+</tbody>
+</table>
+<h2 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h2><ul>
+<li>使用springBoot，需要 添加aop相关的依赖，如下：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- springBoot的aop功能启动器 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-aop<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h3><ul>
+<li>实际的生产环境中会对每个都记录日志，比如xxx用户执行了xxx操作，这些日志如果都使用一个方法的话，未免太不雅，此时我们可以定义一个注解，使用spring中的aop，在方法执行成功之后记录日志信息，步骤如下：</li>
+<li>定义一个注解，使用<code>@Interface</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.lang.annotation.*;</div><div class="line"><span class="comment">/**</span></div><div class="line"> * 定义日志的注解，作用在方法上</div><div class="line"> * <span class="doctag">@author</span> 陈加兵 	</div><div class="line"> * <span class="doctag">@since</span> 2018年11月3日 上午11:53:59</div><div class="line"> */</div><div class="line"><span class="meta">@Target</span>(&#123;ElementType.PARAMETER, ElementType.METHOD&#125;)  <span class="comment">//作用在方法上面</span></div><div class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)   <span class="comment">//程序运行  </span></div><div class="line"><span class="meta">@Documented</span>  </div><div class="line"><span class="keyword">public</span> <span class="meta">@interface</span> InsertLog &#123;</div><div class="line">	<span class="function">String <span class="title">name</span><span class="params">()</span> <span class="keyword">default</span> ""</span>;   <span class="comment">//用户名</span></div><div class="line">	<span class="function">String <span class="title">operation</span><span class="params">()</span> <span class="keyword">default</span> ""</span>;  <span class="comment">//操作</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>定义一个注解的实现类，使用aop实现该注解</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Component</span>   <span class="comment">//注入</span></div><div class="line"><span class="meta">@Aspect</span>   <span class="comment">//切面</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InsertLogAnnotation</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="meta">@Resource</span></div><div class="line">	<span class="keyword">private</span> LogService logService;   <span class="comment">//日志的service，用来记录日志</span></div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 1、<span class="doctag">@pointCut</span>：定义切入点，其中支持多种表达式来匹配切入点，这里的annotation是用来匹配注解的</div><div class="line">	 * 2、<span class="doctag">@annotation</span>的参数必须和这个方法的参数字段相同，因为这里表示的扫描的哪个注解</div><div class="line">	 * 3、这个切入点的 意思：只要被`<span class="doctag">@InsertLog</span>`这个注解标注的都会被扫描到成为切入点</div><div class="line">	 * <span class="doctag">@param</span> log  注解的对象</div><div class="line">	 */</div><div class="line">	<span class="meta">@Pointcut</span>(<span class="string">"@annotation(log)"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">insertLog</span><span class="params">(InsertLog log)</span></span>&#123;&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * `<span class="doctag">@AfterReturning</span>`:定义后置通知，只有程序执行成功才会调用该注解，用来添加操作的日志</div><div class="line">	 * `insertLog(log)`: 这里的log一定要和上面定义切入点(<span class="doctag">@Pointcut</span>)中的参数字段一样</div><div class="line">	 * <span class="doctag">@param</span> point JoinPoint对象，可以获取一些切面信息，比如调用的类，调用的方法名称</div><div class="line">	 * <span class="doctag">@param</span> log  该注解的对象，可以获取注解中参数的内容</div><div class="line">	 * <span class="doctag">@throws</span> Exception </div><div class="line">	 */</div><div class="line">	<span class="meta">@AfterReturning</span>(<span class="string">"insertLog(log)"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SystemLog</span><span class="params">(JoinPoint point,InsertLog log)</span> <span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		<span class="comment">//获取注解中的参数内容</span></div><div class="line">		String name=log.name();  <span class="comment">//姓名</span></div><div class="line">		String operation=log.operation();  <span class="comment">//操作</span></div><div class="line">		</div><div class="line">		Log log2=<span class="keyword">new</span> Log();</div><div class="line">		log2.setName(name);</div><div class="line">		log2.setOperation(operation);</div><div class="line">		logService.addLog(log2);  <span class="comment">//添加到日志中</span></div><div class="line">		</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>此时就已经完成了，我们只需要将该注解添加到需要记录日志的方法上即可，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@InsertLog</span>(name=<span class="string">"陈加兵"</span>,operation=<span class="string">"删除用户"</span>)  <span class="comment">//使用日志注解，在程序执行成功之后记录日志</span></div><div class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">deleteUserById</span><span class="params">(Integer userId)</span> </span>&#123;</div><div class="line">	System.out.println(<span class="string">"删除成功"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>完整的项目截图如下：</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/chenjiabing666/BlogImage/master/annotation.png" alt="注解截图"></p>
+<h3 id="性能监控"><a href="#性能监控" class="headerlink" title="性能监控"></a>性能监控</h3><ul>
+<li>可以定义一个注解实现性能监控，设置一个环绕通知即可，在程序执行开始和结束之后统计时间即可</li>
+<li>定义一个注解，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.lang.annotation.*;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 性能监控的注解</div><div class="line"> * <span class="doctag">@author</span> 陈加兵 	</div><div class="line"> * <span class="doctag">@since</span> 2018年11月3日 下午1:08:30</div><div class="line"> */</div><div class="line"><span class="meta">@Target</span>(&#123;ElementType.PARAMETER, ElementType.METHOD&#125;)  <span class="comment">//作用在方法上面</span></div><div class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)   <span class="comment">//程序运行  </span></div><div class="line"><span class="meta">@Documented</span></div><div class="line"><span class="keyword">public</span> <span class="meta">@interface</span> CapabilityMonitor &#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>定义注解的实现类，使用切面的环绕通知</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 性能监控注解的实现类</div><div class="line"> * <span class="doctag">@author</span> 陈加兵 	</div><div class="line"> * <span class="doctag">@since</span> 2018年11月3日 下午1:09:40</div><div class="line"> */</div><div class="line"><span class="meta">@Aspect</span>    <span class="comment">//切面</span></div><div class="line"><span class="meta">@Component</span>   <span class="comment">//注入</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CapabilityMonitorAnnotationImpl</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> Logger logger=LoggerFactory.getLogger(CapabilityMonitorAnnotationImpl.class);  <span class="comment">//selfj的日志信息</span></div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 定义切入点，只要方法体上有这个注解</div><div class="line">	 * <span class="doctag">@param</span> capabilityMonitor  注解的对象</div><div class="line">	 */</div><div class="line">	<span class="meta">@Pointcut</span>(<span class="string">"@annotation(capabilityMonitor)"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">capabilityMonitor</span><span class="params">(CapabilityMonitor capabilityMonitor)</span></span>&#123;&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 环绕通知，在方法执行之前和之后都执行</div><div class="line">	 * capabilityMonitor(capabilityMonitor)：这里的参数一定要和切入点（`<span class="doctag">@Pointcut</span>("<span class="doctag">@annotation</span>(capabilityMonitor)")`）的参数相同</div><div class="line">	 * <span class="doctag">@param</span> point</div><div class="line">	 * <span class="doctag">@param</span> capabilityMonitor  注解的对象</div><div class="line">	 * <span class="doctag">@throws</span> Throwable </div><div class="line">	 */</div><div class="line">	<span class="meta">@Around</span>(<span class="string">"capabilityMonitor(capabilityMonitor)"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(ProceedingJoinPoint point,CapabilityMonitor capabilityMonitor)</span> <span class="keyword">throws</span> Throwable</span>&#123;</div><div class="line">		Long startTime=System.currentTimeMillis();  <span class="comment">//开始时间</span></div><div class="line">		Object[] args=point.getArgs(); <span class="comment">//获取目标方法执行的参数数组</span></div><div class="line">		Object returnValues=point.proceed(args);   <span class="comment">//执行目标方法</span></div><div class="line">		Long endTime=System.currentTimeMillis();  <span class="comment">//结束时间</span></div><div class="line">		logger.info(<span class="string">"程序执行的时间："</span>+((endTime-startTime)/<span class="number">1000.0</span>));   <span class="comment">//输出程序执行的时间，秒位单位</span></div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="输出错误日志到文件中"><a href="#输出错误日志到文件中" class="headerlink" title="输出错误日志到文件中"></a>输出错误日志到文件中</h3><ul>
+<li>定义日志注解，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 输出日志信息到日志文件的注解</div><div class="line"> * <span class="doctag">@author</span> 陈加兵 	</div><div class="line"> * <span class="doctag">@since</span> 2018年11月7日 下午5:52:55</div><div class="line"> */</div><div class="line"><span class="meta">@Target</span>(&#123;ElementType.PARAMETER, ElementType.METHOD&#125;)  <span class="comment">//作用在方法上面</span></div><div class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)   <span class="comment">//程序运行  </span></div><div class="line"><span class="meta">@Documented</span></div><div class="line"><span class="keyword">public</span> <span class="meta">@interface</span> PrintLog &#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>注解的实现类，结合aop实现</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="meta">@Aspect</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PrintLogAnnotationImpl</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 定义切入点，凡是方法体上标注<span class="doctag">@PrintLog</span>这个注解都会被增强</div><div class="line">	 * <span class="doctag">@param</span> printLog</div><div class="line">	 */</div><div class="line">	<span class="meta">@Pointcut</span>(<span class="string">"@annotation(printLog)"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printLog</span><span class="params">(PrintLog printLog)</span></span>&#123;&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 在程序之后执行并且在出现异常的时候才会执行</div><div class="line">	 * <span class="doctag">@param</span> point  JoinPoint对象，用于获取切入点的信息，比如被增加的类，被增强的方法名称、方法传入的参数等信息</div><div class="line">	 * <span class="doctag">@param</span> printLog  注解的接口信息，可以获取接口的信息</div><div class="line">	 * <span class="doctag">@param</span> message   异常信息</div><div class="line">	 */</div><div class="line">	<span class="meta">@AfterThrowing</span>(value=<span class="string">"printLog(printLog)"</span>,throwing=<span class="string">"message"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">excute</span><span class="params">(JoinPoint point,PrintLog printLog,Throwable message)</span></span>&#123;</div><div class="line">		Class targetCls=point.getTarget().getClass();  <span class="comment">//获取目标类</span></div><div class="line">		Logger logger = LoggerFactory.getLogger(targetCls);</div><div class="line">		logger.error(<span class="string">"异常信息："</span>,message);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>只需要在方法上标注这个注解，只要是遇到异常信息，就会自动写入日志文件中</li>
+</ul>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ul>
+<li><a href="http://shouce.jb51.net/spring/aop.html" target="_blank" rel="external">aop的相关知识点</a></li>
+<li><a href="https://chenjiabing666.github.io/2018/05/21/Spring%E4%B9%8BAOP/">spring aop</a></li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Spring/">Spring</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Spring/">Spring</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/11/03/java自定义注解/" data-title="java自定义注解 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/11/15/消息中间件之Rabbitmq/" title="消息中间件之Rabbitmq">
+  <strong>上一篇：</strong><br/>
+  <span>
+  消息中间件之Rabbitmq</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/10/22/SpringBoot整合Swagger/"  title="SpringBoot整合Swagger">
+ <strong>下一篇：</strong><br/> 
+ <span>SpringBoot整合Swagger
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#自定义注解【Annotation】"><span class="toc-number">1.</span> <span class="toc-text">自定义注解【Annotation】</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#元注解"><span class="toc-number">1.1.</span> <span class="toc-text">元注解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Retention"><span class="toc-number">1.1.1.</span> <span class="toc-text">@Retention</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Target"><span class="toc-number">1.1.2.</span> <span class="toc-text">@Target</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Document"><span class="toc-number">1.1.3.</span> <span class="toc-text">@Document</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Inherited"><span class="toc-number">1.1.4.</span> <span class="toc-text">@Inherited</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#关于注解的反射方法"><span class="toc-number">1.2.</span> <span class="toc-text">关于注解的反射方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五种通知"><span class="toc-number">1.3.</span> <span class="toc-text">五种通知</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JoinPoint-对象"><span class="toc-number">1.4.</span> <span class="toc-text">JoinPoint 对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实战"><span class="toc-number">1.5.</span> <span class="toc-text">实战</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#日志"><span class="toc-number">1.5.1.</span> <span class="toc-text">日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#性能监控"><span class="toc-number">1.5.2.</span> <span class="toc-text">性能监控</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出错误日志到文件中"><span class="toc-number">1.5.3.</span> <span class="toc-text">输出错误日志到文件中</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.6.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.7.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

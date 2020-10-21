@@ -1,0 +1,845 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Hibernate注解之基本注解的注解使用 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="Hibernate注解之基本注解的注解使用使用注解须知
+我们在使用注解自动创建表的时候，系统会默认为我们创建一张表Hibernate_sequence，我们可以在Hibernate.cfg.xml文件中添加如下语句解决问题12&amp;lt;!--  配置不生成Hibernate_sequence --&amp;gt;&amp;lt;property name=&quot;hibernate.id.new_generator_ma">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hibernate注解之基本注解的注解使用">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/04/22/Hibernate注解之基本注解的注解使用/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="Hibernate注解之基本注解的注解使用使用注解须知
+我们在使用注解自动创建表的时候，系统会默认为我们创建一张表Hibernate_sequence，我们可以在Hibernate.cfg.xml文件中添加如下语句解决问题12&amp;lt;!--  配置不生成Hibernate_sequence --&amp;gt;&amp;lt;property name=&quot;hibernate.id.new_generator_ma">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T05:56:11.210Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hibernate注解之基本注解的注解使用">
+<meta name="twitter:description" content="Hibernate注解之基本注解的注解使用使用注解须知
+我们在使用注解自动创建表的时候，系统会默认为我们创建一张表Hibernate_sequence，我们可以在Hibernate.cfg.xml文件中添加如下语句解决问题12&amp;lt;!--  配置不生成Hibernate_sequence --&amp;gt;&amp;lt;property name=&quot;hibernate.id.new_generator_ma">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/04/22/Hibernate注解之基本注解的注解使用/" title="Hibernate注解之基本注解的注解使用" itemprop="url">Hibernate注解之基本注解的注解使用</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-04-21T20:21:08.000Z" itemprop="datePublished"> 发表于 2018-04-22</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Hibernate注解之基本注解的注解使用"><span class="toc-number">1.</span> <span class="toc-text">Hibernate注解之基本注解的注解使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用注解须知"><span class="toc-number">1.1.</span> <span class="toc-text">使用注解须知</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类级别注解"><span class="toc-number">1.2.</span> <span class="toc-text">类级别注解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#属性级别的注解"><span class="toc-number">1.3.</span> <span class="toc-text">属性级别的注解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#主键相关的注解"><span class="toc-number">1.4.</span> <span class="toc-text">主键相关的注解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#与非主键相关的注解"><span class="toc-number">1.5.</span> <span class="toc-text">与非主键相关的注解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实例"><span class="toc-number">1.6.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JoinColumn"><span class="toc-number">1.7.</span> <span class="toc-text">@JoinColumn</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JoinTabl"><span class="toc-number">1.8.</span> <span class="toc-text">@JoinTabl</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档"><span class="toc-number">1.9.</span> <span class="toc-text">参考文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.10.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Hibernate注解之基本注解的注解使用"><a href="#Hibernate注解之基本注解的注解使用" class="headerlink" title="Hibernate注解之基本注解的注解使用"></a>Hibernate注解之基本注解的注解使用</h1><h2 id="使用注解须知"><a href="#使用注解须知" class="headerlink" title="使用注解须知"></a>使用注解须知</h2><ul>
+<li>我们在使用注解自动创建表的时候，系统会默认为我们创建一张表<code>Hibernate_sequence</code>，我们可以在Hibernate.cfg.xml文件中添加如下语句解决问题<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--  配置不生成Hibernate_sequence --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"hibernate.id.new_generator_mappings"</span>&gt;</span>false<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="类级别注解"><a href="#类级别注解" class="headerlink" title="类级别注解"></a>类级别注解</h2><ol>
+<li><p><code>@Entity</code> : 映射实体类，其中有一个name属性指定当前实体类映射的表的名称</p>
+<ul>
+<li>name: 可选属性 ，指定对应表的名称，<strong>如果没有指定name属性，那么创建表的名称和类名一样</strong></li>
+</ul>
+</li>
+<li><p><code>@Table</code> : 在实体类的上方使用，和Entity配合使用，指定实体类对应的数据库中的表的信息</p>
+<ul>
+<li>name ：可选，指定表的名称，默认的是和类名一样，只有在不一致的情况下才会指定表名</li>
+<li>catalog ： 可选，表示Catalog名称，默认为 Catalog(“”)</li>
+<li>schema ： 可选 , 表示 Schema 名称 , 默认为Schema(“”)</li>
+</ul>
+</li>
+</ol>
+<h2 id="属性级别的注解"><a href="#属性级别的注解" class="headerlink" title="属性级别的注解"></a>属性级别的注解</h2><ul>
+<li><p><strong>属性级别的注解在getXXX()方法上使用</strong></p>
+</li>
+<li><p>@Id     映射生成主键</p>
+</li>
+<li><p>@Version    定义乐观锁</p>
+</li>
+<li><p>@Column     映射表的列</p>
+</li>
+<li><p>@Transient     定义暂态属性</p>
+</li>
+</ul>
+<h2 id="主键相关的注解"><a href="#主键相关的注解" class="headerlink" title="主键相关的注解"></a>主键相关的注解</h2><ol>
+<li><p><code>@id</code>： 指定该属性为主键</p>
+</li>
+<li><p><code>@GeneratedValue(strategy=,generator=&quot;&quot;)</code> : 主键生成策略</p>
+<ul>
+<li><p>Strategy的值</p>
+<ul>
+<li>GenerationType.AUTO - 根据底层数据库自动选择（默认），若数据库支持自动增长类型，则为自动增长。</li>
+<li><p>GenerationType.INDENTITY - 根据数据库的Identity字段生成，支持DB2、MySQL、                                        MS、SQL Server、SyBase与HyperanoicSQL数据库的Identity                                          类型主键。</p>
+</li>
+<li><p>GenerationType.SEQUENCE - 使用Sequence来决定主键的取值，适合Oracle、DB2等                                      支持Sequence的数据库，一般结合@SequenceGenerator使用。</p>
+</li>
+<li><p>GenerationType.TABLE  - 使用指定表来决定主键取值，结合@TableGenerator使用。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="与非主键相关的注解"><a href="#与非主键相关的注解" class="headerlink" title="与非主键相关的注解"></a>与非主键相关的注解</h2><ol>
+<li>@Version - 可以在实体bean中使用@Version注解,通过这种方式可添加对乐观锁定的支持</li>
+</ol>
+<ol>
+<li><p>@Basic - 用于声明属性的存取策略：</p>
+<ul>
+<li>@Basic(fetch=FetchType.EAGER)   即时获取（默认的存取策略）</li>
+<li>@Basic(fetch=FetchType.LAZY)    延迟获取</li>
+</ul>
+</li>
+<li><p>@Temporal</p>
+<ul>
+<li>这个使用来设置数据库表中显示的日期的精度，因为java中的Date属性可以对应着数据库中的三种类型(DATE,TIME, TIMESTAMP)即是单纯的表示日期，时间，两者兼备的，默认的是两者兼备的，输出的是:2012-01-22 17:55:55</li>
+<li>因此可以使用@Temporal来设置显示的时间的精度，这三种的表示形式如下：</li>
+<li><code>TemporalType.TIME</code> 输出到数据库中的仅仅是小时格式的，比如:12:22:12</li>
+<li><code>TemporalType.DATE</code> 输出到数据库中的是日期的格式：2012-12-01</li>
+<li><code>TemporalType.TIMESTAMP</code> 两者兼备，这个是默认的</li>
+</ul>
+</li>
+<li><p>@Column - 可将属性映射到列，使用该注解来覆盖默认值，@Column描述了数据库表中           该字段的详细定义，这对于根据 JPA 注解生成数据库表结构的工具非常有作用。</p>
+<ul>
+<li><p>name - 可选，表示数据库表中该字段的名称，默认情形属性名称一致</p>
+</li>
+<li><p>nullable -可选，表示该字段是否允许为 null，默认为true</p>
+</li>
+<li><p>unique - 可选，表示该字段是否是唯一标识，默认为 false</p>
+</li>
+<li><p>length - 可选，表示该字段的大小，仅对 String 类型的字段有效，默认值255.</p>
+</li>
+<li><p>insertable -可选，表示在ORM框架执行插入操作时，该字段是否应出现INSETRT              语句中，默认为 true</p>
+</li>
+<li><p>updateable -可选，表示在ORM 框架执行更新操作时，该字段是否应该出现在               UPDATE语句中，默认为 true. 对于一经创建就不可以更改的字段，该          属性非常有用，如对于 birthday字段。</p>
+</li>
+<li><p>columnDefinition - 可选，表示该字段在数据库中的实际类型。通常ORM框架可以根    据属性类型自动判断数据库中字段的类型，但是对于Date类型仍无法确定数据      库中字段类型究竟是 DATE,TIME还是 TIMESTAMP. 此外 ,String 的默认映射类型为VARCHAR, 如果要将 String 类型映射到特定数据库的 BLOB或 TEXT字段类型，该属性非常有用。</p>
+</li>
+</ul>
+</li>
+<li><p>@Transient - 可选，表示该属性并非一个到数据库表的字段的映射，ORM框架将忽略该属性，如果一个属性并非数据库表的字段映射，就务必将其标示为@Transient。</p>
+<ul>
+<li>如果使用这个注解，那么表中不会出现这个字段</li>
+</ul>
+</li>
+</ol>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><ul>
+<li>我们现在创建一个实体类Teacher，映射到数据库teacher表中</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.Date;</div><div class="line"><span class="keyword">import</span> javax.persistence.Column;</div><div class="line"><span class="keyword">import</span> javax.persistence.Entity;</div><div class="line"><span class="keyword">import</span> javax.persistence.GeneratedValue;</div><div class="line"><span class="keyword">import</span> javax.persistence.GenerationType;</div><div class="line"><span class="keyword">import</span> javax.persistence.Id;</div><div class="line"><span class="keyword">import</span> javax.persistence.Table;</div><div class="line"><span class="keyword">import</span> javax.persistence.Temporal;</div><div class="line"><span class="keyword">import</span> javax.persistence.TemporalType;</div><div class="line"><span class="keyword">import</span> javax.persistence.Transient;</div><div class="line"><span class="meta">@Entity</span></div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"teacher"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Teacher</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> id;  <span class="comment">//主键</span></div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">int</span> age;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">double</span> sal;</div><div class="line">	<span class="keyword">private</span> Date joinDate;</div><div class="line">	<span class="keyword">private</span> String wife;  <span class="comment">//妻子的名字</span></div><div class="line"></div><div class="line">	<span class="meta">@Transient</span>   <span class="comment">//设置该属性不在表中</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getWife</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> wife;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setWife</span><span class="params">(String wife)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.wife = wife;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Id</span></div><div class="line">	<span class="meta">@GeneratedValue</span>(strategy=GenerationType.AUTO) <span class="comment">//设置主键自增长</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Temporal</span>(TemporalType.DATE)   <span class="comment">//设置时间精确到天数，2012-01-12</span></div><div class="line">	<span class="meta">@Column</span>(name=<span class="string">"JoinTime"</span>)   <span class="comment">//改变表中字段的名字</span></div><div class="line">	<span class="function"><span class="keyword">public</span> Date <span class="title">getJoinDate</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> joinDate;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(<span class="keyword">int</span> id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Column</span>(nullable=<span class="keyword">false</span>)   <span class="comment">//设置名字不为空</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.name = name;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.age = age;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getSal</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> sal;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSal</span><span class="params">(<span class="keyword">double</span> sal)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.sal = sal;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setJoinDate</span><span class="params">(Date joinDate)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.joinDate = joinDate;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>在核心配置文件(hibernate.cfg.xml)中配置这个映射<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 直接指定这个Teacher实体类的全类名即可，即是完成了映射 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">mapping</span> <span class="attr">class</span>=<span class="string">"cn.tedu.bean.Teacher"</span>&gt;</span><span class="tag">&lt;/<span class="name">mapping</span>&gt;</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="JoinColumn"><a href="#JoinColumn" class="headerlink" title="@JoinColumn"></a>@JoinColumn</h2><ul>
+<li><p>我们知道外键的生成的字段的名称是默认的，但是我们也可以使用这个注解改变这个名称</p>
+</li>
+<li><p>这个注解是用来设置自动生成的外键的属性，比如外键的名称，非空……</p>
+</li>
+<li><p><code>name</code><br>指定外键的名称</p>
+</li>
+<li><p><code>nullable</code><br>指定外键是否为空，默认的是true</p>
+</li>
+<li><p><code>unique</code><br>生成唯一的约束，就是这个字段的值唯一，默认的false</p>
+</li>
+</ul>
+<h2 id="JoinTabl"><a href="#JoinTabl" class="headerlink" title="@JoinTabl"></a>@JoinTabl</h2><ul>
+<li><p>当涉及到多对多的映射关系的时候，用来定义第三表的表名，和字段的名称。</p>
+</li>
+<li><p><code>name</code><br>设置第三张表的名称</p>
+</li>
+<li><p><code>joinColumns</code><br>设置的是当前实体类对应的表在第三张表的外键的字段名称</p>
+</li>
+<li><p><code>inverseJoinColumns</code><br>设置的是另外一个实体类对应的表在第三张表的外键的字段名称</p>
+</li>
+</ul>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ul>
+<li><p><a href="http://docs.jboss.org/hibernate/annotations/3.4/reference/zh_cn/html_single/#d0e1148" target="_blank" rel="external">http://docs.jboss.org/hibernate/annotations/3.4/reference/zh_cn/html_single/#d0e1148</a></p>
+</li>
+<li><p><a href="http://www.cnblogs.com/qjjazry/p/6306744.html" target="_blank" rel="external">http://www.cnblogs.com/qjjazry/p/6306744.html</a></p>
+</li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Hibernate/">Hibernate</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Hibernate/">Hibernate</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/04/22/Hibernate注解之基本注解的注解使用/" data-title="Hibernate注解之基本注解的注解使用 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/04/22/Hibernate之延迟加载/" title="Hibernate之延迟加载">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Hibernate之延迟加载</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/04/22/Hibernate使用日志-log4j/"  title="Hibernate使用日志(log4j)">
+ <strong>下一篇：</strong><br/> 
+ <span>Hibernate使用日志(log4j)
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Hibernate注解之基本注解的注解使用"><span class="toc-number">1.</span> <span class="toc-text">Hibernate注解之基本注解的注解使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用注解须知"><span class="toc-number">1.1.</span> <span class="toc-text">使用注解须知</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类级别注解"><span class="toc-number">1.2.</span> <span class="toc-text">类级别注解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#属性级别的注解"><span class="toc-number">1.3.</span> <span class="toc-text">属性级别的注解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#主键相关的注解"><span class="toc-number">1.4.</span> <span class="toc-text">主键相关的注解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#与非主键相关的注解"><span class="toc-number">1.5.</span> <span class="toc-text">与非主键相关的注解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实例"><span class="toc-number">1.6.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JoinColumn"><span class="toc-number">1.7.</span> <span class="toc-text">@JoinColumn</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JoinTabl"><span class="toc-number">1.8.</span> <span class="toc-text">@JoinTabl</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档"><span class="toc-number">1.9.</span> <span class="toc-text">参考文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.10.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

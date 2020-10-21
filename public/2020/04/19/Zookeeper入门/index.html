@@ -1,0 +1,969 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Zookeeper入门 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="导读
+Zookeeper 相信大家都听说过，最典型的使用就是作为服务注册中心。今天陈某带大家从零基础入门 Zookeeper，看了本文，你将会对 Zookeeper 有了初步的了解和认识。
+注意：本文基于 Zookeeper 的版本是 3.4.14，最新版本的在使用上会有一些出入，但是企业现在使用的大部分都是 3.4x 版本的。
+
+Zookeeper 概述
+Zookeeper 是一个分布式协调服务">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Zookeeper入门">
+<meta property="og:url" content="http://chenjiabing666.github.io/2020/04/19/Zookeeper入门/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="导读
+Zookeeper 相信大家都听说过，最典型的使用就是作为服务注册中心。今天陈某带大家从零基础入门 Zookeeper，看了本文，你将会对 Zookeeper 有了初步的了解和认识。
+注意：本文基于 Zookeeper 的版本是 3.4.14，最新版本的在使用上会有一些出入，但是企业现在使用的大部分都是 3.4x 版本的。
+
+Zookeeper 概述
+Zookeeper 是一个分布式协调服务">
+<meta property="og:updated_time" content="2020-04-19T07:48:31.119Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Zookeeper入门">
+<meta name="twitter:description" content="导读
+Zookeeper 相信大家都听说过，最典型的使用就是作为服务注册中心。今天陈某带大家从零基础入门 Zookeeper，看了本文，你将会对 Zookeeper 有了初步的了解和认识。
+注意：本文基于 Zookeeper 的版本是 3.4.14，最新版本的在使用上会有一些出入，但是企业现在使用的大部分都是 3.4x 版本的。
+
+Zookeeper 概述
+Zookeeper 是一个分布式协调服务">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/04/19/Zookeeper入门/" title="Zookeeper入门" itemprop="url">Zookeeper入门</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2020-04-19T07:48:16.000Z" itemprop="datePublished"> 发表于 2020-04-19</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#导读"><span class="toc-number">1.</span> <span class="toc-text">导读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-概述"><span class="toc-number">2.</span> <span class="toc-text">Zookeeper 概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-特性"><span class="toc-number">3.</span> <span class="toc-text">Zookeeper 特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-节点类型"><span class="toc-number">4.</span> <span class="toc-text">Zookeeper 节点类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ZooKeeper-Watcher"><span class="toc-number">5.</span> <span class="toc-text">ZooKeeper Watcher</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Watcher-机制特点"><span class="toc-number">6.</span> <span class="toc-text">Watcher 机制特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常用-Shell-命令"><span class="toc-number">7.</span> <span class="toc-text">常用 Shell 命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#新增节点"><span class="toc-number">7.1.</span> <span class="toc-text">新增节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更新节点"><span class="toc-number">7.2.</span> <span class="toc-text">更新节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除节点"><span class="toc-number">7.3.</span> <span class="toc-text">删除节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看节点数据和状态"><span class="toc-number">7.4.</span> <span class="toc-text">查看节点数据和状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看节点状态"><span class="toc-number">7.5.</span> <span class="toc-text">查看节点状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看节点列表"><span class="toc-number">7.6.</span> <span class="toc-text">查看节点列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#监听器-get-path-watch"><span class="toc-number">7.7.</span> <span class="toc-text">监听器 get path watch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#监听器-stat-path-watch"><span class="toc-number">7.8.</span> <span class="toc-text">监听器 stat path watch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#监听器-ls-ls2-path-watch"><span class="toc-number">7.9.</span> <span class="toc-text">监听器 ls/ls2 path watch</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-的-ACL-权限控制"><span class="toc-number">8.</span> <span class="toc-text">Zookeeper 的 ACL 权限控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#权限模式"><span class="toc-number">8.1.</span> <span class="toc-text">权限模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#授权对象"><span class="toc-number">8.2.</span> <span class="toc-text">授权对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#授予的权限"><span class="toc-number">8.3.</span> <span class="toc-text">授予的权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#授权相关命令"><span class="toc-number">8.4.</span> <span class="toc-text">授权相关命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#world-授权模式案例"><span class="toc-number">8.5.</span> <span class="toc-text">world 授权模式案例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IP-授权模式案例"><span class="toc-number">8.6.</span> <span class="toc-text">IP 授权模式案例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Auth-授权模式案例"><span class="toc-number">8.7.</span> <span class="toc-text">Auth 授权模式案例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多种模式授权"><span class="toc-number">8.8.</span> <span class="toc-text">多种模式授权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ACL-超级管理员"><span class="toc-number">8.9.</span> <span class="toc-text">ACL 超级管理员</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Curator-客户端"><span class="toc-number">9.</span> <span class="toc-text">Curator 客户端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#添加依赖"><span class="toc-number">9.1.</span> <span class="toc-text">添加依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#建立连接"><span class="toc-number">9.2.</span> <span class="toc-text">建立连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#重连策略"><span class="toc-number">9.3.</span> <span class="toc-text">重连策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#新增节点-1"><span class="toc-number">9.4.</span> <span class="toc-text">新增节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更新节点数据"><span class="toc-number">9.5.</span> <span class="toc-text">更新节点数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除节点-1"><span class="toc-number">9.6.</span> <span class="toc-text">删除节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取节点数据"><span class="toc-number">9.7.</span> <span class="toc-text">获取节点数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取子节点"><span class="toc-number">9.8.</span> <span class="toc-text">获取子节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看节点是否存在"><span class="toc-number">9.9.</span> <span class="toc-text">查看节点是否存在</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Watcher-API"><span class="toc-number">9.10.</span> <span class="toc-text">Watcher API</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小福利"><span class="toc-number">10.</span> <span class="toc-text">小福利</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="导读"><a href="#导读" class="headerlink" title="导读"></a>导读</h2><ul>
+<li>Zookeeper 相信大家都听说过，最典型的使用就是作为服务注册中心。今天陈某带大家从零基础入门 Zookeeper，看了本文，你将会对 Zookeeper 有了初步的了解和认识。</li>
+<li>注意：本文基于 Zookeeper 的版本是 3.4.14，最新版本的在使用上会有一些出入，但是企业现在使用的大部分都是 3.4x 版本的。</li>
+</ul>
+<h2 id="Zookeeper-概述"><a href="#Zookeeper-概述" class="headerlink" title="Zookeeper 概述"></a>Zookeeper 概述</h2><ul>
+<li>Zookeeper 是一个分布式协调服务的开源框架。主要用来解决分布式集群中应用系统的一致性问题，例如怎样避免同时操作同一数据造成脏读的问题。</li>
+<li>ZooKeeper 本质上是一个分布式的小文件存储系统。提供基于类似于文件系 统的目录树方式的数据存储，并且可以对树中的节点进行有效管理。从而用来维护和监控你存储的数据的状态变化。通过监控这些数据状态的变化，从而可以达 到基于数据的集群管理。诸如：<code>统一命名服务</code>、<code>分布式配置管理</code>、<code>分布式消息队列</code>、<code>分布式锁</code>、<code>分布式协调</code>等功能。</li>
+</ul>
+<h2 id="Zookeeper-特性"><a href="#Zookeeper-特性" class="headerlink" title="Zookeeper 特性"></a>Zookeeper 特性</h2><ol>
+<li><p><code>全局数据一致</code>：每个 server 保存一份相同的数据副本，client 无论连 接到哪个 server，展示的数据都是一致的，这是最重要的特征；</p>
+</li>
+<li><p><code>可靠性</code>：如果消息被其中一台服务器接受，那么将被所有的服务器接受。</p>
+</li>
+<li><p><code>顺序性</code>：包括全局有序和偏序两种：全局有序是指如果在一台服务器上 消息 a 在消息 b 前发布，则在所有 Server 上消息 a 都将在消息 b 前被 发布；偏序是指如果一个消息 b 在消息 a 后被同一个发送者发布，a 必将排在 b 前面。</p>
+</li>
+<li><p><code>数据更新原子性</code>：一次数据更新要么成功（半数以上节点成功），要么失 败，不存在中间状态；</p>
+</li>
+<li><p><code>实时性</code>：Zookeeper 保证客户端将在一个时间间隔范围内获得服务器的更新信息，或者服务器失效的信息。</p>
+</li>
+</ol>
+<h2 id="Zookeeper-节点类型"><a href="#Zookeeper-节点类型" class="headerlink" title="Zookeeper 节点类型"></a>Zookeeper 节点类型</h2><ul>
+<li>Znode 有两种，分别为临时节点和永久节点。<ul>
+<li><code>临时节点</code>：该节点的生命周期依赖于创建它们的会话。一旦会话结束，临时节点将被自动删除，当然可以也可以手动删除。临时节点不允许拥有子节点。</li>
+<li><code>永久节点</code>：该节点的生命周期不依赖于会话，并且只有在客户端显示执行删除操作的时候，他们才能被删除。</li>
+</ul>
+</li>
+<li>节点的类型在创建时即被确定，并且不能改变。</li>
+<li>Znode 还有一个序列化的特性，如果创建的时候指定的话，该 Znode 的名字后面会自动追加一个不断增加的序列号。序列号对于此节点的父节点来说是唯一的，这样便会记录每个子节点创建的先后顺序。它的格式为<code>&quot;%10d&quot;</code>(10 位数字,没有数值的数位用 0 补充，例如“0000000001”)。</li>
+<li>这样便会存在四种类型的 Znode 节点，分类如下：<ul>
+<li><code>PERSISTENT</code>：永久节点</li>
+<li><code>EPHEMERAL</code>：临时节点</li>
+<li><code>PERSISTENT_SEQUENTIAL</code>：永久节点、序列化</li>
+<li><code>EPHEMERAL_SEQUENTIAL</code>：临时节点、序列化</li>
+</ul>
+</li>
+</ul>
+<h2 id="ZooKeeper-Watcher"><a href="#ZooKeeper-Watcher" class="headerlink" title="ZooKeeper Watcher"></a>ZooKeeper Watcher</h2><ul>
+<li>ZooKeeper 提供了分布式数据发布/订阅功能，一个典型的发布/订阅模型系统定义了一种一对多的订阅关系，能让多个订阅者同时监听某一个主题对象，当这个主题对象自身状态变化时，会通知所有订阅者，使他们能够做出相应的处理。</li>
+<li>触发事件种类很多，如：节点创建，节点删除，节点改变，子节点改变等。</li>
+<li>总的来说可以概括 Watcher 为以下三个过程：客户端向服务端注册 Watcher、服务端事件发生触发 Watcher、客户端回调 Watcher 得到触发事件情况。</li>
+</ul>
+<h2 id="Watcher-机制特点"><a href="#Watcher-机制特点" class="headerlink" title="Watcher 机制特点"></a>Watcher 机制特点</h2><ul>
+<li><p><code>一次性触发</code> ：事件发生触发监听，一个 watcher event 就会被发送到设置监听的客户端，这种效果是一次性的，后续再次发生同样的事件，不会再次触发。</p>
+</li>
+<li><p><code>事件封装</code> ：ZooKeeper 使用 WatchedEvent 对象来封装服务端事件并传递。WatchedEvent 包含了每一个事件的三个基本属性： <code>通知状态</code>（keeperState），<code>事件类型</code>（EventType）和<code>节点路径</code>（path）。</p>
+</li>
+<li><p><code>event 异步发送</code> ：watcher 的通知事件从服务端发送到客户端是异步的。</p>
+</li>
+<li><p><code>先注册再触发</code> ：Zookeeper 中的 watch 机制，必须客户端先去服务端注册监听，这样事件发送才会触发监听，通知给客户端。</p>
+</li>
+</ul>
+<h2 id="常用-Shell-命令"><a href="#常用-Shell-命令" class="headerlink" title="常用 Shell 命令"></a>常用 Shell 命令</h2><h3 id="新增节点"><a href="#新增节点" class="headerlink" title="新增节点"></a>新增节点</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">create [<span class="_">-s</span>] [<span class="_">-e</span>] path data</div></pre></td></tr></table></figure>
+<ul>
+<li><code>-s</code>：表示创建有序节点</li>
+<li><code>-e</code>：表示创建临时节点</li>
+<li>创建持久化节点：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">create /<span class="built_in">test</span> 1234</div><div class="line"></div><div class="line"><span class="comment">## 子节点</span></div><div class="line">create /<span class="built_in">test</span>/node1 node1</div></pre></td></tr></table></figure>
+<ul>
+<li>创建持久化有序节点：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">## 完整的节点名称是a0000000001</span></div><div class="line">create /a a</div><div class="line">Created /a0000000001</div><div class="line"></div><div class="line"><span class="comment">## 完整的节点名称是b0000000002</span></div><div class="line">create /b b</div><div class="line">Created /b0000000002</div></pre></td></tr></table></figure>
+<ul>
+<li>创建临时节点：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">create <span class="_">-e</span> /a a</div></pre></td></tr></table></figure>
+<ul>
+<li>创建临时有序节点：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">## 完整的节点名称是a0000000001</span></div><div class="line">create <span class="_">-e</span> <span class="_">-s</span> /a a</div><div class="line">Created /a0000000001</div></pre></td></tr></table></figure>
+<h3 id="更新节点"><a href="#更新节点" class="headerlink" title="更新节点"></a>更新节点</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">set</span> [path] [data] [version]</div></pre></td></tr></table></figure>
+<ul>
+<li><code>path</code>：节点路径</li>
+<li><code>data</code>：数据</li>
+<li><code>version</code>：版本号</li>
+<li>修改节点数据：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">set</span> /<span class="built_in">test</span> aaa</div><div class="line"></div><div class="line"><span class="comment">## 修改子节点</span></div><div class="line"><span class="built_in">set</span> /<span class="built_in">test</span>/node1 bbb</div></pre></td></tr></table></figure>
+<ul>
+<li>基于数据版本号修改，如果修改的节点的版本号(<code>dataVersion</code>)不正确，拒绝修改</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">set</span> /<span class="built_in">test</span> aaa 1</div></pre></td></tr></table></figure>
+<h3 id="删除节点"><a href="#删除节点" class="headerlink" title="删除节点"></a>删除节点</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">delete [path] [version]</div></pre></td></tr></table></figure>
+<ul>
+<li><code>path</code>：节点路径</li>
+<li><code>version</code>：版本号，版本号不正确拒绝删除</li>
+<li>删除节点</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">delete /<span class="built_in">test</span></div><div class="line"></div><div class="line"><span class="comment">## 版本号删除</span></div><div class="line">delete /<span class="built_in">test</span> 2</div></pre></td></tr></table></figure>
+<ul>
+<li>递归删除，删除某个节点及后代</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">rmr /<span class="built_in">test</span></div></pre></td></tr></table></figure>
+<h3 id="查看节点数据和状态"><a href="#查看节点数据和状态" class="headerlink" title="查看节点数据和状态"></a>查看节点数据和状态</h3><ul>
+<li>命令格式如下：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">get path</div></pre></td></tr></table></figure>
+<ul>
+<li>获取节点详情：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">## 获取节点详情</span></div><div class="line">get /node1</div><div class="line"></div><div class="line"><span class="comment">## 节点内容</span></div><div class="line">aaa</div><div class="line">cZxid = 0x6</div><div class="line">ctime = Sun Apr 05 14:50:10 CST 2020</div><div class="line">mZxid = 0x6</div><div class="line">mtime = Sun Apr 05 14:50:10 CST 2020</div><div class="line">pZxid = 0x7</div><div class="line">cversion = 1</div><div class="line">dataVersion = 0</div><div class="line">aclVersion = 0</div><div class="line">ephemeralOwner = 0x0</div><div class="line">dataLength = 3</div><div class="line">numChildren = 1</div></pre></td></tr></table></figure>
+<ul>
+<li>节点各个属性对应的含义如下：<ul>
+<li><code>cZxid</code>：数据节点创建时的事务 ID。</li>
+<li><code>ctime</code>：数据节点创建时间。</li>
+<li><code>mZxid</code>：数据节点最后一次更新时的事务 ID。</li>
+<li><code>mtime</code>：数据节点最后一次更新的时间。</li>
+<li><code>pZxid</code>：数据节点的子节点最后一次被修改时的事务 ID。</li>
+<li><code>cversion</code>：子节点的更改次数。</li>
+<li><code>dataVersion</code>：节点数据的更改次数。</li>
+<li><code>aclVersion</code>  ：节点 ACL 的更改次数。</li>
+<li><code>ephemeralOwner</code>：如果节点是临时节点，则表示创建该节点的会话的 SessionID。如果节点是持久化节点，值为 0。</li>
+<li><code>dataLength</code>  ：节点数据内容的长度。</li>
+<li><code>numChildren</code>：数据节点当前的子节点的个数。</li>
+</ul>
+</li>
+</ul>
+<h3 id="查看节点状态"><a href="#查看节点状态" class="headerlink" title="查看节点状态"></a>查看节点状态</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">stat</span> path</div></pre></td></tr></table></figure>
+<ul>
+<li><code>stat</code>命令和<code>get</code>命令相似，不过这个命令不会返回节点的数据，只返回节点的状态属性。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">stat</span> /node1</div><div class="line"></div><div class="line"><span class="comment">## 节点状态信息，没有节点数据</span></div><div class="line">cZxid = 0x6</div><div class="line">ctime = Sun Apr 05 14:50:10 CST 2020</div><div class="line">mZxid = 0x6</div><div class="line">mtime = Sun Apr 05 14:50:10 CST 2020</div><div class="line">pZxid = 0x7</div><div class="line">cversion = 1</div><div class="line">dataVersion = 0</div><div class="line">aclVersion = 0</div><div class="line">ephemeralOwner = 0x0</div><div class="line">dataLength = 3</div><div class="line">numChildren = 1</div></pre></td></tr></table></figure>
+<h3 id="查看节点列表"><a href="#查看节点列表" class="headerlink" title="查看节点列表"></a>查看节点列表</h3><ul>
+<li>查看节点列表有<code>ls path</code>和<code>ls2 path</code>两个命令。后者是前者的增强，不仅会返回节点列表还会返回当前节点的状态信息。</li>
+<li><code>ls path</code>：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ls /</div><div class="line"></div><div class="line"><span class="comment">## 仅仅返回节点列表</span></div><div class="line">[zookeeper, node1]</div></pre></td></tr></table></figure>
+<ul>
+<li><code>ls2 path</code>：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">ls2 /</div><div class="line"></div><div class="line"><span class="comment">## 返回节点列表和当前节点的状态信息</span></div><div class="line">[zookeeper, node1]</div><div class="line">cZxid = 0x0</div><div class="line">ctime = Thu Jan 01 08:00:00 CST 1970</div><div class="line">mZxid = 0x0</div><div class="line">mtime = Thu Jan 01 08:00:00 CST 1970</div><div class="line">pZxid = 0x6</div><div class="line">cversion = 2</div><div class="line">dataVersion = 0</div><div class="line">aclVersion = 0</div><div class="line">ephemeralOwner = 0x0</div><div class="line">dataLength = 0</div><div class="line">numChildren = 2</div></pre></td></tr></table></figure>
+<h3 id="监听器-get-path-watch"><a href="#监听器-get-path-watch" class="headerlink" title="监听器 get path watch"></a>监听器 get path watch</h3><ul>
+<li>使用<code>get path watch</code>注册的监听器在<code>节点内容</code>发生改变时，向客户端发送通知，注意 Zookeeper 的触发器是一次性的，触发一次后会立即生效。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">get /node1 watch</div><div class="line"></div><div class="line"><span class="comment">## 改变节点数据</span></div><div class="line"><span class="built_in">set</span> /node1 bbb</div><div class="line"></div><div class="line"><span class="comment">## 监听到节点内容改变了</span></div><div class="line">WATCHER::</div><div class="line">WatchedEvent state:SyncConnected <span class="built_in">type</span>:NodeDataChanged path:/node1</div></pre></td></tr></table></figure>
+<h3 id="监听器-stat-path-watch"><a href="#监听器-stat-path-watch" class="headerlink" title="监听器 stat path watch"></a>监听器 stat path watch</h3><ul>
+<li><code>stat path watch</code>注册的监听器能够在<code>节点状态</code>发生改变时向客户端发出通知。比如节点数据改变、节点被删除等。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">stat</span> /node2 watch</div><div class="line"></div><div class="line"><span class="comment">## 删除节点node2</span></div><div class="line">delete /node2</div><div class="line"></div><div class="line"><span class="comment">## 监听器监听到了节点删除</span></div><div class="line">WATCHER::</div><div class="line">WatchedEvent state:SyncConnected <span class="built_in">type</span>:NodeDeleted path:/node2</div></pre></td></tr></table></figure>
+<h3 id="监听器-ls-ls2-path-watch"><a href="#监听器-ls-ls2-path-watch" class="headerlink" title="监听器 ls/ls2 path watch"></a>监听器 ls/ls2 path watch</h3><ul>
+<li>使用<code>ls path watch</code>或者<code>ls2 path watch</code>注册的监听器，能够监听到该节点下的子节点的<code>增加</code>和<code>删除</code>操作。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">ls /node1 watch</div><div class="line"></div><div class="line"><span class="comment">## 创建子节点</span></div><div class="line">create /node1/b b</div><div class="line"></div><div class="line"><span class="comment">## 监听到了子节点的新增</span></div><div class="line">WATCHER::</div><div class="line">WatchedEvent state:SyncConnected <span class="built_in">type</span>:NodeChildrenChanged path:/node1</div></pre></td></tr></table></figure>
+<h2 id="Zookeeper-的-ACL-权限控制"><a href="#Zookeeper-的-ACL-权限控制" class="headerlink" title="Zookeeper 的 ACL 权限控制"></a>Zookeeper 的 ACL 权限控制</h2><ul>
+<li>zookeeper 类似文件控制系统，client 可以创建，删除，修改，查看节点，那么如何做到权限控制的呢？zookeeper 的<code>access control list</code> 访问控制列表可以做到这一点。</li>
+<li>ACL 权限控制，使用<code>scheme:id:permission</code>来标识。<ul>
+<li><code>权限模式(scheme)</code>：授权的策略</li>
+<li><code>授权对象(id)</code>：授权的对象</li>
+<li><code>权限(permission)</code>：授予的权限</li>
+</ul>
+</li>
+<li>权限控制是基于每个节点的，需要对每个节点设置权限。</li>
+<li>每个节点支持设置多种权限控制方案和多个权限。</li>
+<li>子节点不会继承父节点的权限，客户端无权访问某节点，但可能可以访问它的子节点。</li>
+<li>例如：根据 IP 地址进行授权，命令如下：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">set</span>ACl /node1 ip:192.168.10.1:crdwa</div></pre></td></tr></table></figure>
+<h3 id="权限模式"><a href="#权限模式" class="headerlink" title="权限模式"></a>权限模式</h3><ul>
+<li>权限模式即是采用何种方式授权。</li>
+<li><code>world</code>：只有一个用户，anyone，表示登录 zookeeper 所有人（默认的模式）。</li>
+<li><code>ip</code>：对客户端使用 IP 地址认证。</li>
+<li><code>auth</code>：使用已添加认证的用户认证。</li>
+<li><code>digest</code>：使用<code>用户名:密码</code>方式认证。</li>
+</ul>
+<h3 id="授权对象"><a href="#授权对象" class="headerlink" title="授权对象"></a>授权对象</h3><ul>
+<li>给谁授权，授权对象的 ID 指的是权限赋予的实体，例如 IP 地址或用户。</li>
+</ul>
+<h3 id="授予的权限"><a href="#授予的权限" class="headerlink" title="授予的权限"></a>授予的权限</h3><ul>
+<li>授予的权限包括<code>create</code>、<code>delete</code>、<code>read</code>、<code>writer</code>、<code>admin</code>。也就是增、删、改、查、管理的权限，简写<code>cdrwa</code>。</li>
+<li><strong>注意</strong>：以上 5 种权限中，<code>delete</code>是指对子节点的删除权限，其他 4 种权限是对自身节点的操作权限。</li>
+<li><code>create</code>：简写<code>c</code>，可以创建子节点。</li>
+<li><code>delete</code>：简写<code>d</code>，可以删除子节点（仅下一级节点）。</li>
+<li><code>read</code>：简写<code>r</code>，可以读取节点数据以及显示子节点列表。</li>
+<li><code>write</code>：简写<code>w</code>，可以更改节点数据。</li>
+<li><code>admin</code>：简写<code>a</code>，可以设置节点访问控制列表权限。</li>
+</ul>
+<h3 id="授权相关命令"><a href="#授权相关命令" class="headerlink" title="授权相关命令"></a>授权相关命令</h3><ul>
+<li><code>getAcl [path]</code>：读取指定节点的 ACL 权限。</li>
+<li><code>setAcl [path] [acl]</code>：设置 ACL</li>
+<li><code>addauth &lt;scheme&gt; &lt;auth&gt;</code>：添加认证用户，和 auth，digest 授权模式相关。</li>
+</ul>
+<h3 id="world-授权模式案例"><a href="#world-授权模式案例" class="headerlink" title="world 授权模式案例"></a>world 授权模式案例</h3><ul>
+<li>zookeeper 中默认的授权模式，针对登录 zookeeper 的任何用户授予指定的权限。命令如下：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">set</span>Acl [path] world:anyone:[permission]</div></pre></td></tr></table></figure>
+<ul>
+<li><code>path</code>：节点</li>
+<li><code>permission</code>：授予的权限，比如<code>cdrwa</code></li>
+<li>去掉不能读取节点数据的权限：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">## 获取权限列表（默认的）</span></div><div class="line">getAcl /node2</div><div class="line"></div><div class="line"><span class="string">'world,'</span>anyone</div><div class="line">: cdrwa</div><div class="line"></div><div class="line"><span class="comment">## 去掉读取节点数据的的权限，去掉r</span></div><div class="line"><span class="built_in">set</span>Acl /node2 world:anyone:cdwa</div><div class="line"></div><div class="line"><span class="comment">## 再次获取权限列表</span></div><div class="line">getAcl /node2</div><div class="line"></div><div class="line"><span class="string">'world,'</span>anyone</div><div class="line">: cdwa</div><div class="line"></div><div class="line"><span class="comment">## 获取节点数据，没有权限，失败</span></div><div class="line">get /node2</div><div class="line"></div><div class="line">Authentication is not valid : /node2</div></pre></td></tr></table></figure>
+<h3 id="IP-授权模式案例"><a href="#IP-授权模式案例" class="headerlink" title="IP 授权模式案例"></a>IP 授权模式案例</h3><ul>
+<li>针对登录用户的 ip 进行限制权限。命令如下：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">set</span>Acl [path] ip:[ip]:[acl]</div></pre></td></tr></table></figure>
+<ul>
+<li>远程登录 zookeeper 的命令如下：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./zkCli.sh -server ip</div></pre></td></tr></table></figure>
+<ul>
+<li>设置<code>192.168.10.1</code>这个 ip 的增删改查管理的权限。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">set</span>Acl /node2 ip:192.168.10.1:crdwa</div></pre></td></tr></table></figure>
+<h3 id="Auth-授权模式案例"><a href="#Auth-授权模式案例" class="headerlink" title="Auth 授权模式案例"></a>Auth 授权模式案例</h3><ul>
+<li>auth 授权模式需要有一个认证用户，添加命令如下：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">addauth digest [username]:[password]</div></pre></td></tr></table></figure>
+<ul>
+<li>设置 auth 授权模式命令如下：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">set</span>Acl [path] auth:[user]:[acl]</div></pre></td></tr></table></figure>
+<ul>
+<li>为<code>chenmou</code>这个账户添加 cdrwa 权限：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">## 添加一个认证账户</span></div><div class="line">addauth digest chenmou:123456</div><div class="line"></div><div class="line"><span class="comment">## 添加权限</span></div><div class="line"><span class="built_in">set</span>Acl /node2 auth:chenmou:crdwa</div></pre></td></tr></table></figure>
+<h3 id="多种模式授权"><a href="#多种模式授权" class="headerlink" title="多种模式授权"></a>多种模式授权</h3><ul>
+<li>zookeeper 中同一个节点可以使用多种授权模式，多种授权模式用<code>,</code>分隔。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">## 创建节点</span></div><div class="line">create /node3</div><div class="line"></div><div class="line"><span class="comment">## 添加认证用户</span></div><div class="line">addauth chenmou:123456</div><div class="line"></div><div class="line"><span class="comment">## 添加多种授权模式</span></div><div class="line"><span class="built_in">set</span>Acl /node3 ip:192.178.10.1:crdwa,auth:chenmou:crdwa</div></pre></td></tr></table></figure>
+<h3 id="ACL-超级管理员"><a href="#ACL-超级管理员" class="headerlink" title="ACL 超级管理员"></a>ACL 超级管理员</h3><ul>
+<li>zookeeper 的权限管理模式有一种叫做<code>super</code>，该模式提供一个超管可以方便的访问任何权限的节点。</li>
+<li>假设这个超管是<code>super:admin</code>，需要先为超管生成密码的密文：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">echo</span> -n super:admin | openssl dgst  -binary -sha1 |openssl base64</div><div class="line"></div><div class="line"><span class="comment">## 执行完生成了秘钥</span></div><div class="line">xQJmxLMiHGwaqBvst5y6rkB6HQs=</div></pre></td></tr></table></figure>
+<ul>
+<li>打开<code>zookeeper</code>目录下<code>/bin/zkServer.sh</code>，找到如下一行：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nohup JAVA&amp;quot;−Dzookeeper.log.dir=JAVA<span class="string">"−Dzookeeper.log.dir=&#123;ZOO_LOG_DIR&#125;"</span> <span class="string">"-Dzookeeper.root.logger=<span class="variable">$&#123;ZOO_LOG4J_PROP&#125;</span>"</span></div></pre></td></tr></table></figure>
+<ul>
+<li>在后面添加一行脚本，如下：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="string">"-Dzookeeper.DigestAuthenticationProvider.superDigest=super:xQJmxLMiHGwaqBvst5y6rkB6HQs="</span></div></pre></td></tr></table></figure>
+<ul>
+<li>此时完整的脚本如下：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">nohup <span class="string">"<span class="variable">$JAVA</span>"</span> <span class="string">"-Dzookeeper.log.dir=<span class="variable">$&#123;ZOO_LOG_DIR&#125;</span>"</span> <span class="string">"-Dzookeeper.root.logger=<span class="variable">$&#123;ZOO_LOG4J_PROP&#125;</span>"</span> <span class="string">"-Dzookeeper.DigestAuthenticationProvider.superDigest=super:xQJmxLMiHGwaqBvst5y6rkB6HQs="</span> \</div><div class="line">    -cp <span class="string">"<span class="variable">$CLASSPATH</span>"</span> <span class="variable">$JVMFLAGS</span> <span class="variable">$ZOOMAIN</span> <span class="string">"<span class="variable">$ZOOCFG</span>"</span> &gt; <span class="string">"<span class="variable">$_ZOO_DAEMON_OUT</span>"</span> 2&gt;&amp;1 &lt; /dev/null &amp;</div></pre></td></tr></table></figure>
+<ul>
+<li>重启 zookeeper</li>
+<li>重启完成之后此时超管即配置完成，如果需要使用，则使用如下命令：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">addauth digest super:admin</div></pre></td></tr></table></figure>
+<h2 id="Curator-客户端"><a href="#Curator-客户端" class="headerlink" title="Curator 客户端"></a>Curator 客户端</h2><ul>
+<li>Curator 是 Netflix 公司开源的一个 Zookeeper 客户端，与 Zookeeper 提供的原生客户端相比，Curator 的抽象层次更高，简化了 Zookeeper 客户端的开发量。</li>
+</ul>
+<h3 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">           <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.curator<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">           <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>curator-recipes<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">           <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line">           <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></div><div class="line">               <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></div><div class="line">                   <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.zookeeper<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">                   <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>zookeeper<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">               <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></div><div class="line">           <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></div><div class="line">       <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line">       <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">           <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.zookeeper<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">           <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>zookeeper<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">           <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.4.10<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line">       <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="建立连接"><a href="#建立连接" class="headerlink" title="建立连接"></a>建立连接</h3><ul>
+<li>客户端建立与 Zookeeper 的连接，这里仅仅演示单机版本的连接，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//创建CuratorFramework，用来操作api</span></div><div class="line">CuratorFramework  client = CuratorFrameworkFactory.builder()</div><div class="line">    <span class="comment">//ip地址+端口号，如果是集群，逗号分隔</span></div><div class="line">    .connectString(<span class="string">"120.26.101.207:2181"</span>)</div><div class="line">    <span class="comment">//会话超时时间</span></div><div class="line">    .sessionTimeoutMs(<span class="number">5000</span>)</div><div class="line">    <span class="comment">//超时重试策略,RetryOneTime：超时重连仅仅一次</span></div><div class="line">    .retryPolicy(<span class="keyword">new</span> RetryOneTime(<span class="number">3000</span>))</div><div class="line">    <span class="comment">//命名空间，父节点，如果不指定是在根节点下</span></div><div class="line">    .namespace(<span class="string">"node4"</span>)</div><div class="line">    .build();</div><div class="line"><span class="comment">//启动</span></div><div class="line">client.start();</div></pre></td></tr></table></figure>
+<h3 id="重连策略"><a href="#重连策略" class="headerlink" title="重连策略"></a>重连策略</h3><ul>
+<li>会话连接策略，即是当客户端与 Zookeeper 断开连接之后，客户端重新连接 Zookeeper 时使用的策略，比如重新连接一次。</li>
+<li><code>RetryOneTime：</code>N 秒后重连一次，仅仅一次，演示如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">.retryPolicy(<span class="keyword">new</span> RetryOneTime(<span class="number">3000</span>))</div></pre></td></tr></table></figure>
+<ul>
+<li><code>RetryNTimes</code>：每 n 秒重连一次，重连 m 次。演示如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//每三秒重连一次，重连3次。arg1：多长时间后重连，单位毫秒，arg2：总共重连几次</span></div><div class="line">.retryPolicy(<span class="keyword">new</span> RetryNTimes(<span class="number">3000</span>,<span class="number">3</span>))</div></pre></td></tr></table></figure>
+<ul>
+<li><code>RetryUntilElapsed</code>：设置了最大等待时间，如果超过这个最大等待时间将会不再连接。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//每三秒重连一次，等待时间超过10秒不再重连。arg1：总等待时间，arg2：多长时间重连，单位毫秒</span></div><div class="line">.retryPolicy(<span class="keyword">new</span> RetryUntilElapsed(<span class="number">10000</span>,<span class="number">3000</span>))</div></pre></td></tr></table></figure>
+<h3 id="新增节点-1"><a href="#新增节点-1" class="headerlink" title="新增节点"></a>新增节点</h3><ul>
+<li>新增节点</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">client.create()</div><div class="line">    <span class="comment">//指定节点的类型。PERSISTENT：持久化节点，PERSISTENT_SEQUENTIAL：持久化有序节点，EPHEMERAL：临时节点，EPHEMERAL_SEQUENTIAL临时有序节点</span></div><div class="line">    .withMode(CreateMode.PERSISTENT)</div><div class="line">    <span class="comment">//指定权限列表，OPEN_ACL_UNSAFE：world:anyone:crdwa</span></div><div class="line">    .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)</div><div class="line">    <span class="comment">//写入节点数据，arg1:节点名称 arg2:节点数据</span></div><div class="line">    .forPath(<span class="string">"/a"</span>, <span class="string">"a"</span>.getBytes());</div></pre></td></tr></table></figure>
+<ul>
+<li>自定义权限列表：<code>withACL(acls)</code>方法中可以设置自定义的权限列表，代码如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//自定义权限列表</span></div><div class="line">List&lt;ACL&gt; acls=<span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line"><span class="comment">//指定授权模式和授权对象 arg1:授权模式，arg2授权对象</span></div><div class="line">Id id=<span class="keyword">new</span> Id(<span class="string">"ip"</span>,<span class="string">"127.0.0.1"</span>);</div><div class="line"><span class="comment">//指定授予的权限，ZooDefs.Perms.ALL:crdwa</span></div><div class="line">acls.add(<span class="keyword">new</span> ACL(ZooDefs.Perms.ALL,id));</div><div class="line">client.create()</div><div class="line">    .withMode(CreateMode.PERSISTENT)</div><div class="line">    <span class="comment">//指定自定义权限列表</span></div><div class="line">    .withACL(acls)</div><div class="line">    .forPath(<span class="string">"/b"</span>, <span class="string">"b"</span>.getBytes());</div></pre></td></tr></table></figure>
+<ul>
+<li>递归创建节点：<code>creatingParentsIfNeeded()</code>方法对于创建多层节点，如果其中一个节点不存在的话会自动创建</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//递归创建节点</span></div><div class="line">client.create()</div><div class="line">    <span class="comment">//递归方法，如果节点不存在，那么创建该节点</span></div><div class="line">    .creatingParentsIfNeeded()</div><div class="line">    .withMode(CreateMode.PERSISTENT)</div><div class="line">    .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)</div><div class="line">    <span class="comment">//test节点和b节点不存在，递归创建出来</span></div><div class="line">    .forPath(<span class="string">"/test/a"</span>, <span class="string">"a"</span>.getBytes());</div></pre></td></tr></table></figure>
+<ul>
+<li>异步创建节点：<code>inBackground()</code>方法可以异步回调创建节点，创建完成后会自动回调实现的方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"> <span class="comment">//异步创建节点</span></div><div class="line">client.create()</div><div class="line">    .withMode(CreateMode.PERSISTENT)</div><div class="line">    .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)</div><div class="line">    <span class="comment">//异步创建</span></div><div class="line">    .inBackground(<span class="keyword">new</span> BackgroundCallback() &#123;</div><div class="line">        <span class="comment">/**</span></div><div class="line">        * <span class="doctag">@param</span> curatorFramework 客户端对象</div><div class="line">        * <span class="doctag">@param</span> curatorEvent 事件对象</div><div class="line">        */</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processResult</span><span class="params">(CuratorFramework curatorFramework, CuratorEvent curatorEvent)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">            <span class="comment">//打印事件类型</span></div><div class="line">            System.out.println(curatorEvent.getType());</div><div class="line">            &#125;</div><div class="line">    &#125;)</div><div class="line">    .forPath(<span class="string">"/test1"</span>, <span class="string">"a"</span>.getBytes());</div></pre></td></tr></table></figure>
+<h3 id="更新节点数据"><a href="#更新节点数据" class="headerlink" title="更新节点数据"></a>更新节点数据</h3><ul>
+<li>更新节点，当节点不存在会报错，代码如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">client.setData()</div><div class="line">      .forPath(<span class="string">"/a"</span>,<span class="string">"a"</span>.getBytes());</div></pre></td></tr></table></figure>
+<ul>
+<li>携带版本号更新节点，当版本错误拒绝更新</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">client.setData()</div><div class="line">    <span class="comment">//指定版本号更新，如果版本号错误则拒绝更新</span></div><div class="line">    .withVersion(<span class="number">1</span>)</div><div class="line">    .forPath(<span class="string">"/a"</span>,<span class="string">"a"</span>.getBytes());</div></pre></td></tr></table></figure>
+<ul>
+<li>异步更新节点数据：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">client.setData()</div><div class="line">        <span class="comment">//异步更新</span></div><div class="line">        .inBackground(<span class="keyword">new</span> BackgroundCallback() &#123;</div><div class="line">        <span class="comment">//回调方法</span></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processResult</span><span class="params">(CuratorFramework curatorFramework, CuratorEvent curatorEvent)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                   &#125;</div><div class="line">        &#125;)</div><div class="line">		.forPath(<span class="string">"/a"</span>,<span class="string">"a"</span>.getBytes());</div></pre></td></tr></table></figure>
+<h3 id="删除节点-1"><a href="#删除节点-1" class="headerlink" title="删除节点"></a>删除节点</h3><ul>
+<li>删除当前节点，如果有子节点则拒绝删除</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">client.delete()</div><div class="line">    <span class="comment">//删除节点，如果是该节点包含子节点，那么不能删除</span></div><div class="line">    .forPath(<span class="string">"/a"</span>);</div></pre></td></tr></table></figure>
+<ul>
+<li>指定版本号删除，如果版本错误则拒绝删除</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">client.delete()</div><div class="line">    <span class="comment">//指定版本号删除</span></div><div class="line">    .withVersion(<span class="number">1</span>)</div><div class="line">    <span class="comment">//删除节点，如果是该节点包含子节点，那么不能删除</span></div><div class="line">    .forPath(<span class="string">"/a"</span>);</div></pre></td></tr></table></figure>
+<ul>
+<li>如果当前节点包含子节点则一并删除，使用<code>deletingChildrenIfNeeded()</code>方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">client.delete()</div><div class="line">    <span class="comment">//如果删除的节点包含子节点则一起删除</span></div><div class="line">    .deletingChildrenIfNeeded()</div><div class="line">    <span class="comment">//删除节点，如果是该节点包含子节点，那么不能删除</span></div><div class="line">    .forPath(<span class="string">"/a"</span>);</div></pre></td></tr></table></figure>
+<ul>
+<li>异步删除节点，使用<code>inBackground()</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">client.delete()</div><div class="line">	.deletingChildrenIfNeeded()</div><div class="line">	<span class="comment">//异步删除节点</span></div><div class="line">    .inBackground(<span class="keyword">new</span> BackgroundCallback() &#123;</div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processResult</span><span class="params">(CuratorFramework curatorFramework, CuratorEvent curatorEvent)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        <span class="comment">//回调监听</span></div><div class="line">        &#125;</div><div class="line">       &#125;)</div><div class="line">    <span class="comment">//删除节点，如果是该节点包含子节点，那么不能删除</span></div><div class="line">    .forPath(<span class="string">"/a"</span>);</div></pre></td></tr></table></figure>
+<h3 id="获取节点数据"><a href="#获取节点数据" class="headerlink" title="获取节点数据"></a>获取节点数据</h3><ul>
+<li>同步获取节点数据</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">byte</span>[] bytes = client.getData().forPath(<span class="string">"/node1"</span>);</div><div class="line">System.out.println(<span class="keyword">new</span> String(bytes));</div></pre></td></tr></table></figure>
+<ul>
+<li>获取节点状态和数据</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//保存节点状态</span></div><div class="line">Stat stat=<span class="keyword">new</span> Stat();</div><div class="line"><span class="keyword">byte</span>[] bytes = client.getData()</div><div class="line">	<span class="comment">//获取节点状态存储在stat对象中</span></div><div class="line">    .storingStatIn(stat)</div><div class="line">    .forPath(<span class="string">"/node1"</span>);</div><div class="line">System.out.println(<span class="keyword">new</span> String(bytes));</div><div class="line"><span class="comment">//获取节点数据的长度</span></div><div class="line">System.out.println(stat.getDataLength());</div></pre></td></tr></table></figure>
+<ul>
+<li>异步获取节点数据</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">client.getData()</div><div class="line">    <span class="comment">//异步获取节点数据，回调监听</span></div><div class="line">     .inBackground((curatorFramework, curatorEvent) -&gt; &#123;</div><div class="line">          <span class="comment">//节点数据</span></div><div class="line">          System.out.println(<span class="keyword">new</span> String(curatorEvent.getData()));</div><div class="line">      &#125;)</div><div class="line">     .forPath(<span class="string">"/node1"</span>);</div></pre></td></tr></table></figure>
+<h3 id="获取子节点"><a href="#获取子节点" class="headerlink" title="获取子节点"></a>获取子节点</h3><ul>
+<li>同步获取全部子节点</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">List&lt;String&gt; strs = client.getChildren().forPath(<span class="string">"/"</span>);</div><div class="line">       <span class="keyword">for</span> (String str:strs) &#123;</div><div class="line">           System.out.println(str);</div><div class="line">       &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>异步获取全部子节点</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">client.getChildren()</div><div class="line"><span class="comment">//异步获取</span></div><div class="line">.inBackground((curatorFramework, curatorEvent) -&gt; &#123;</div><div class="line">        List&lt;String&gt; strs = curatorEvent.getChildren();</div><div class="line">        <span class="keyword">for</span> (String str:strs) &#123;</div><div class="line">              System.out.println(str);</div><div class="line">        &#125;</div><div class="line">  &#125;)</div><div class="line">.forPath(<span class="string">"/"</span>);</div></pre></td></tr></table></figure>
+<h3 id="查看节点是否存在"><a href="#查看节点是否存在" class="headerlink" title="查看节点是否存在"></a>查看节点是否存在</h3><ul>
+<li>同步查看</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//如果节点不存在，stat为null</span></div><div class="line">Stat stat = client.checkExists().forPath(<span class="string">"/node"</span>);</div></pre></td></tr></table></figure>
+<ul>
+<li>异步查看</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//如果节点不存在，stat为null</span></div><div class="line">client.checkExists()</div><div class="line">    .inBackground((curatorFramework, curatorEvent) -&gt; &#123;</div><div class="line">    <span class="comment">//如果为null则不存在</span></div><div class="line">    System.out.println(curatorEvent.getStat());</div><div class="line">    &#125;)</div><div class="line">    .forPath(<span class="string">"/node"</span>);</div></pre></td></tr></table></figure>
+<h3 id="Watcher-API"><a href="#Watcher-API" class="headerlink" title="Watcher API"></a>Watcher API</h3><ul>
+<li>curator 提供了两种 watcher 来监听节点的变化<ul>
+<li><code>NodeCache</code>：监听一个特定的节点，监听新增和修改</li>
+<li><code>PathChildrenCache</code>：监听一个节点的子节点，当一个子节点增加、删除、更新时，path Cache 会改变他的状态，会包含最新的子节点的数据和状态。</li>
+</ul>
+</li>
+<li>NodeCache 演示：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//arg1:连接对象 arg2:监听的节点路径,/namespace/path</span></div><div class="line"><span class="keyword">final</span> NodeCache nodeCache = <span class="keyword">new</span> NodeCache(client, <span class="string">"/w1"</span>);</div><div class="line"><span class="comment">//启动监听</span></div><div class="line">nodeCache.start();</div><div class="line"><span class="comment">//添加监听器</span></div><div class="line">nodeCache.getListenable().addListener(() -&gt; &#123;</div><div class="line">    <span class="comment">//节点路径</span></div><div class="line">    System.out.println(nodeCache.getCurrentData().getPath());</div><div class="line">    <span class="comment">//节点数据</span></div><div class="line">    System.out.println(<span class="keyword">new</span> String(nodeCache.getCurrentData().getData()));</div><div class="line">&#125;);</div><div class="line"><span class="comment">//睡眠100秒</span></div><div class="line">Thread.sleep(<span class="number">1000000</span>);</div><div class="line"><span class="comment">//关闭监听</span></div><div class="line">nodeCache.close();</div></pre></td></tr></table></figure>
+<ul>
+<li><code>PathChildrenCache</code>演示：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//arg1：连接对象 arg2：节点路径  arg3:是否能够获取节点数据</span></div><div class="line">PathChildrenCache cache=<span class="keyword">new</span> PathChildrenCache(client,<span class="string">"/w1"</span>, <span class="keyword">true</span>);</div><div class="line">cache.start();</div><div class="line">cache.getListenable().addListener((curatorFramework, pathChildrenCacheEvent) -&gt; &#123;</div><div class="line">	<span class="comment">//节点路径</span></div><div class="line">	System.out.println(pathChildrenCacheEvent.getData().getPath());</div><div class="line">	<span class="comment">//节点状态</span></div><div class="line">	System.out.println(pathChildrenCacheEvent.getData().getStat());</div><div class="line">	<span class="comment">//节点数据</span></div><div class="line">	System.out.println(<span class="keyword">new</span> String(pathChildrenCacheEvent.getData().getData()));</div><div class="line">&#125;);</div><div class="line">cache.close();</div></pre></td></tr></table></figure>
+<h2 id="小福利"><a href="#小福利" class="headerlink" title="小福利"></a>小福利</h2><ul>
+<li>是不是觉得文章太长看得头晕脑胀，为此陈某特地将本篇文章制作成 PDF 文本，需要回去仔细研究的朋友，老规矩，回复关键词<code>ZK入门指南</code>。</li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/杂谈/">杂谈</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/杂谈/">杂谈</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2020/04/19/Zookeeper入门/" data-title="Zookeeper入门 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/04/19/Zookeeper实现分布式锁/" title="Zookeeper实现分布式锁">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Zookeeper实现分布式锁</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/04/19/Mysql中orderby底层执行流程/"  title="Mysql中orderby底层执行流程">
+ <strong>下一篇：</strong><br/> 
+ <span>Mysql中orderby底层执行流程
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#导读"><span class="toc-number">1.</span> <span class="toc-text">导读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-概述"><span class="toc-number">2.</span> <span class="toc-text">Zookeeper 概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-特性"><span class="toc-number">3.</span> <span class="toc-text">Zookeeper 特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-节点类型"><span class="toc-number">4.</span> <span class="toc-text">Zookeeper 节点类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ZooKeeper-Watcher"><span class="toc-number">5.</span> <span class="toc-text">ZooKeeper Watcher</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Watcher-机制特点"><span class="toc-number">6.</span> <span class="toc-text">Watcher 机制特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常用-Shell-命令"><span class="toc-number">7.</span> <span class="toc-text">常用 Shell 命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#新增节点"><span class="toc-number">7.1.</span> <span class="toc-text">新增节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更新节点"><span class="toc-number">7.2.</span> <span class="toc-text">更新节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除节点"><span class="toc-number">7.3.</span> <span class="toc-text">删除节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看节点数据和状态"><span class="toc-number">7.4.</span> <span class="toc-text">查看节点数据和状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看节点状态"><span class="toc-number">7.5.</span> <span class="toc-text">查看节点状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看节点列表"><span class="toc-number">7.6.</span> <span class="toc-text">查看节点列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#监听器-get-path-watch"><span class="toc-number">7.7.</span> <span class="toc-text">监听器 get path watch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#监听器-stat-path-watch"><span class="toc-number">7.8.</span> <span class="toc-text">监听器 stat path watch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#监听器-ls-ls2-path-watch"><span class="toc-number">7.9.</span> <span class="toc-text">监听器 ls/ls2 path watch</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zookeeper-的-ACL-权限控制"><span class="toc-number">8.</span> <span class="toc-text">Zookeeper 的 ACL 权限控制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#权限模式"><span class="toc-number">8.1.</span> <span class="toc-text">权限模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#授权对象"><span class="toc-number">8.2.</span> <span class="toc-text">授权对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#授予的权限"><span class="toc-number">8.3.</span> <span class="toc-text">授予的权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#授权相关命令"><span class="toc-number">8.4.</span> <span class="toc-text">授权相关命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#world-授权模式案例"><span class="toc-number">8.5.</span> <span class="toc-text">world 授权模式案例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IP-授权模式案例"><span class="toc-number">8.6.</span> <span class="toc-text">IP 授权模式案例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Auth-授权模式案例"><span class="toc-number">8.7.</span> <span class="toc-text">Auth 授权模式案例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多种模式授权"><span class="toc-number">8.8.</span> <span class="toc-text">多种模式授权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ACL-超级管理员"><span class="toc-number">8.9.</span> <span class="toc-text">ACL 超级管理员</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Curator-客户端"><span class="toc-number">9.</span> <span class="toc-text">Curator 客户端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#添加依赖"><span class="toc-number">9.1.</span> <span class="toc-text">添加依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#建立连接"><span class="toc-number">9.2.</span> <span class="toc-text">建立连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#重连策略"><span class="toc-number">9.3.</span> <span class="toc-text">重连策略</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#新增节点-1"><span class="toc-number">9.4.</span> <span class="toc-text">新增节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更新节点数据"><span class="toc-number">9.5.</span> <span class="toc-text">更新节点数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除节点-1"><span class="toc-number">9.6.</span> <span class="toc-text">删除节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取节点数据"><span class="toc-number">9.7.</span> <span class="toc-text">获取节点数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取子节点"><span class="toc-number">9.8.</span> <span class="toc-text">获取子节点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看节点是否存在"><span class="toc-number">9.9.</span> <span class="toc-text">查看节点是否存在</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Watcher-API"><span class="toc-number">9.10.</span> <span class="toc-text">Watcher API</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#小福利"><span class="toc-number">10.</span> <span class="toc-text">小福利</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Mybatis进阶/" title="Mybatis进阶">Mybatis进阶<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring-Boot-进阶/" title="Spring Boot 进阶">Spring Boot 进阶<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/开发工具/" title="开发工具">开发工具<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring-Boot/" title="Spring Boot">Spring Boot<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mybatis/" title="Mybatis">Mybatis<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/破解/" title="破解">破解<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

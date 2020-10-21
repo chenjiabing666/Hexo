@@ -1,0 +1,793 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>分布式锁-redis实现 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="为什么要分布式锁
+在单机的情况下，可以通过jvm提供的系列线程安全的操作来处理高并发的情况，但是在分布式的环境下，jvm提供的线程安全操作明显是不能满足要求的。在一些小型的互联网公司经常做的crud操作如果在高并发的情况下会出现很大的问题，比如：
+
+12345//伪代码：下订单1、查库存：getStock()2、判断库存：stock&amp;gt;0下单3、下单：addOrder()4、减库存
+
+仅仅以上">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式锁-redis实现">
+<meta property="og:url" content="http://chenjiabing666.github.io/2020/03/07/分布式锁-redis实现/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="为什么要分布式锁
+在单机的情况下，可以通过jvm提供的系列线程安全的操作来处理高并发的情况，但是在分布式的环境下，jvm提供的线程安全操作明显是不能满足要求的。在一些小型的互联网公司经常做的crud操作如果在高并发的情况下会出现很大的问题，比如：
+
+12345//伪代码：下订单1、查库存：getStock()2、判断库存：stock&amp;gt;0下单3、下单：addOrder()4、减库存
+
+仅仅以上">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:20:54.400Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="分布式锁-redis实现">
+<meta name="twitter:description" content="为什么要分布式锁
+在单机的情况下，可以通过jvm提供的系列线程安全的操作来处理高并发的情况，但是在分布式的环境下，jvm提供的线程安全操作明显是不能满足要求的。在一些小型的互联网公司经常做的crud操作如果在高并发的情况下会出现很大的问题，比如：
+
+12345//伪代码：下订单1、查库存：getStock()2、判断库存：stock&amp;gt;0下单3、下单：addOrder()4、减库存
+
+仅仅以上">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/03/07/分布式锁-redis实现/" title="分布式锁-redis实现" itemprop="url">分布式锁-redis实现</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2020-03-07T09:53:15.000Z" itemprop="datePublished"> 发表于 2020-03-07</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么要分布式锁"><span class="toc-number">1.</span> <span class="toc-text">为什么要分布式锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis实现"><span class="toc-number">2.</span> <span class="toc-text">Redis实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#问题与解决思路"><span class="toc-number">2.1.</span> <span class="toc-text">问题与解决思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现"><span class="toc-number">2.2.</span> <span class="toc-text">实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redisson"><span class="toc-number">3.</span> <span class="toc-text">Redisson</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#可重入锁"><span class="toc-number">3.1.</span> <span class="toc-text">可重入锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#文档"><span class="toc-number">3.2.</span> <span class="toc-text">文档</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">4.</span> <span class="toc-text">笔者有话说</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="为什么要分布式锁"><a href="#为什么要分布式锁" class="headerlink" title="为什么要分布式锁"></a>为什么要分布式锁</h2><ul>
+<li>在单机的情况下，可以通过jvm提供的系列线程安全的操作来处理高并发的情况，但是在分布式的环境下，jvm提供的线程安全操作明显是不能满足要求的。在一些小型的互联网公司经常做的crud操作如果在高并发的情况下会出现很大的问题，比如：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//伪代码：下订单</span></div><div class="line"><span class="number">1</span>、查库存：getStock()</div><div class="line"><span class="number">2</span>、判断库存：stock&gt;<span class="number">0</span>下单</div><div class="line"><span class="number">3</span>、下单：addOrder()</div><div class="line"><span class="number">4</span>、减库存</div></pre></td></tr></table></figure>
+<ul>
+<li>仅仅以上三步，如果在高并发的情况下，无论是单机或者集群，如果不加锁一定会出现超卖的情况。一瞬间成千上万个请求过来，如何能够确保查询到的库存是最新的数据？</li>
+</ul>
+<h2 id="Redis实现"><a href="#Redis实现" class="headerlink" title="Redis实现"></a>Redis实现</h2><ul>
+<li>通过redis的setNx方法可以自己简单的实现以下分布式锁，但是在实现之前需要考虑清楚几个问题。</li>
+</ul>
+<h3 id="问题与解决思路"><a href="#问题与解决思路" class="headerlink" title="问题与解决思路"></a>问题与解决思路</h3><ul>
+<li><strong>如何避免死锁？</strong>在高并发的情况下很可能由于服务重启，服务器宕机的等情况导致锁没有及时释放，导致其他线程不能获得锁。<ul>
+<li>setNx的使用设置一个过期时间，当锁没有手动释放的时候能够超过一定时间自动释放</li>
+<li>这个时间如何设置？如果业务没有执行完成但是过期时间到了，这个锁释放了，怎么处理？<ul>
+<li>过期时间最好能够是业务执行完成的时间，为了防止时间到了业务没有执行完成，可以分开一个线程或者设置一个定时器，定时的延长这个过期时间，直到当前线程完成业务。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>如何避免锁的误删（设置过期时间没有设置定时器延长过期时间）？</strong>高并发的情况下瞬间几万个请求过来，很有可能A线程执行完成之后，但是B线程没有执行完成（<em>前提：B线程先获得锁先执行并且未执行完成之后过期时间到了删除了自己持有的锁，此时A线程获得锁并率先执行完成</em>），A线程执行<strong>deleteKey</strong>方法，删除了B的锁。<ul>
+<li>在执行每一个业务逻辑之前先生成一个唯一id作为setNx的value值标识这个线程执行的任务，删除的时候先获取和当前线程的id比对一下，如果不一样，这个锁不是当前的线程持有的。</li>
+</ul>
+</li>
+<li><strong>如何保证锁的可重入性？</strong><ul>
+<li>在获取锁的时候先获取锁，比对一下当前的唯一标识，相同的话可重入。</li>
+</ul>
+</li>
+<li><strong>如何确保获取锁和释放锁的原子性？</strong>在获取锁或者释放锁的过程中如果不是原子操作很有可能导致一系列问题<ul>
+<li>使用Lua脚本获取锁和释放锁来保证原子性</li>
+</ul>
+</li>
+</ul>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ul>
+<li>根据上面的思路可以通过redis自己手写一个分布式锁的实现，当然这个例子并没有保证解锁和获得锁的原子性，不喜勿喷。</li>
+<li>redis的工具类：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisUtils</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> RedisTemplate redisTemplate=ApplicationContextUtils.applicationContext.getBean(<span class="string">"redisTemplate"</span>,RedisTemplate.class);</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> StringRedisTemplate stringRedisTemplate=ApplicationContextUtils.applicationContext.getBean(StringRedisTemplate.class);</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * setNx</div><div class="line">     * <span class="doctag">@param</span> key</div><div class="line">     * <span class="doctag">@param</span> value</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Boolean <span class="title">setNx</span><span class="params">(String key,String value)</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> stringRedisTemplate.opsForValue().setIfAbsent(key,value);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * setNx</div><div class="line">     * <span class="doctag">@param</span> key</div><div class="line">     * <span class="doctag">@param</span> value</div><div class="line">     * <span class="doctag">@param</span> seconds  过期时间，单位秒</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Boolean <span class="title">setNx</span><span class="params">(String key, String value, Long seconds)</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> stringRedisTemplate.opsForValue().setIfAbsent(key,value,seconds, TimeUnit.SECONDS);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 删除key</div><div class="line">     * <span class="doctag">@param</span> key</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Boolean <span class="title">deleteKey</span><span class="params">(String key)</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> redisTemplate.delete(key);</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 获取NX设置的值</div><div class="line">     * <span class="doctag">@param</span> key</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getNX</span><span class="params">(String key)</span></span>&#123;</div><div class="line">       <span class="keyword">return</span> stringRedisTemplate.opsForValue().get(key);</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 设置key的过期时间</div><div class="line">     * <span class="doctag">@param</span> key</div><div class="line">     * <span class="doctag">@param</span> seconds</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Boolean <span class="title">expireKey</span><span class="params">(String key,Long seconds)</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> stringRedisTemplate.expire(key,seconds,TimeUnit.SECONDS);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>分布式锁的实现：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisLock</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 存储的KEY，每个业务应该不同</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> String key;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 过期时间，单位秒</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> Long expireSeconds;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 异步任务，用于分开一个线程延长过期时间，也可以使用定时器</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> TaskAsync taskAsync;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RedisLock</span><span class="params">(String key,Long expireSeconds)</span></span>&#123;</div><div class="line">        <span class="keyword">this</span>.key=key;</div><div class="line">        <span class="keyword">this</span>.expireSeconds=expireSeconds;</div><div class="line">        taskAsync= ApplicationContextUtils.applicationContext.getBean(TaskAsync.class);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 上锁</div><div class="line">     * <span class="doctag">@param</span>  uuid setNx的值，唯一标识当前线程</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">lock</span><span class="params">(String uuid)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">        <span class="comment">//获取value</span></div><div class="line">        String nx = RedisUtils.getNX(key);</div><div class="line">        <span class="comment">/**</span></div><div class="line">         * 如果此时的uuid和redis中的一致，那么就是可重入的</div><div class="line">         */</div><div class="line">        <span class="keyword">if</span> (StringUtils.equals(nx,uuid))&#123;</div><div class="line">            <span class="keyword">return</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">//如果不一致，需要设置，为了避免死锁，需要设置一个过期时间</span></div><div class="line">        Boolean b = RedisUtils.setNx(key, uuid,expireSeconds);</div><div class="line">        <span class="comment">//加锁失败，每隔两秒重试一次</span></div><div class="line">        <span class="keyword">while</span>(!b)&#123;</div><div class="line">            b = RedisUtils.setNx(key, uuid,expireSeconds);</div><div class="line">            Thread.sleep(<span class="number">2000</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="comment">//开启异步线程延长过期时间</span></div><div class="line">        taskAsync.delayExpireTime(uuid,key,expireSeconds);</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 解锁</div><div class="line">     * <span class="doctag">@param</span>  uuid 为了避免误删，这里的uuid是唯一标识当前方法执行的，如果和当前方法的相同才能删除</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">unlock</span><span class="params">(String uuid)</span> </span>&#123;</div><div class="line">         String value= RedisUtils.getNX(key);</div><div class="line">         <span class="comment">//说明当前线程执行的方法所获得的锁已经被释放了</span></div><div class="line">         <span class="keyword">if</span> (!StringUtils.equals(value,uuid))&#123;</div><div class="line">             <span class="keyword">return</span>;</div><div class="line">         &#125;</div><div class="line">        Boolean b = RedisUtils.deleteKey(key);</div><div class="line">        <span class="keyword">while</span>(!b)&#123;</div><div class="line">            b=RedisUtils.deleteKey(key);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>异步线程延长锁的过期时间：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TaskAsync</span> </span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 异步开一个线程延长执行的任务，</div><div class="line">     * <span class="doctag">@param</span> uuid 当前线程持有锁的唯一标识</div><div class="line">     * <span class="doctag">@param</span>  key key</div><div class="line">     * <span class="doctag">@param</span>  expireSeconds 过期时间</div><div class="line">     */</div><div class="line">    <span class="meta">@Async</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">delayExpireTime</span><span class="params">(String uuid,String key,Long expireSeconds)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line">        <span class="comment">//无限循环</span></div><div class="line">        <span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</div><div class="line">            String nx = RedisUtils.getNX(key);</div><div class="line">            <span class="comment">//key对应的值不存在，或者不等于当前方法的唯一id，直接跳出，不需要延长时间了</span></div><div class="line">            <span class="keyword">if</span> (nx==<span class="keyword">null</span>||!StringUtils.equals(uuid,nx))</div><div class="line">                <span class="keyword">break</span>;</div><div class="line">            <span class="comment">//延长时间</span></div><div class="line">            RedisUtils.expireKey(key,expireSeconds);</div><div class="line">            Thread.sleep(<span class="number">3000L</span>);</div><div class="line"></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="Redisson"><a href="#Redisson" class="headerlink" title="Redisson"></a>Redisson</h2><ul>
+<li>Redisson和jedis一样同样是redis的客户端，但是其在解决分布式问题上有着很大的优势，对分布式锁的实现更是封装的更加简洁，能够通过简单的api完成。</li>
+<li>Redisson封装了多种锁，包括重入锁，公平锁，红锁……，这里简单的演示一下重入锁的使用方式。</li>
+</ul>
+<h3 id="可重入锁"><a href="#可重入锁" class="headerlink" title="可重入锁"></a>可重入锁</h3><ul>
+<li><code>RedissonClient</code>通过<code>getxxLock(name)</code>获取不同锁的对象，RLock对应的是可重入锁的接口。与SpringBoot整合之后，配置的方式创建RedissonClient，并且注入了一个处理订单业务的锁：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="meta">@EnableConfigurationProperties</span>(value = &#123;RedissonProperties.class&#125;)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedissonConfig</span> </span>&#123;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 注入RedissonClient对象</div><div class="line">     */</div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="function"><span class="keyword">public</span> RedissonClient <span class="title">redissonClient</span><span class="params">(RedissonProperties redissonProperties)</span></span>&#123;</div><div class="line">        Config config = <span class="keyword">new</span> Config();</div><div class="line">        config.useSingleServer().setAddress(redissonProperties.getAddress()).setPassword(redissonProperties.getPassword()).setDatabase(redissonProperties.getDatabase());</div><div class="line">        <span class="keyword">return</span> Redisson.create(config);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 注入可重入锁，用于订单业务</div><div class="line">     */</div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="function"><span class="keyword">public</span> RLock <span class="title">orderLock</span><span class="params">(@Qualifier(value = <span class="string">"redissonClient"</span>)</span> RedissonClient redissonClient,RedissonProperties redissonProperties)</span>&#123;</div><div class="line">        <span class="keyword">return</span> redissonClient.getLock(redissonProperties.getOrderLock());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>模拟订单的下单，如下：<ul>
+<li><code>void lock(long leaseTime, TimeUnit unit)</code>：获得锁，leaseTime设置的过期时间，unit是时间单位，如果设置了-1，redisson会设置默认的时间30秒，这个时间可以在config配置中修改，具体看文档。锁的值是<code>UUID:线程Id</code>(作为唯一标识)</li>
+<li><code>void unlock()</code>：解锁</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(String goodsId)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            <span class="comment">//获取锁</span></div><div class="line">            rLock.lock(<span class="number">10</span>, TimeUnit.SECONDS);</div><div class="line">            <span class="comment">//检查库存，存储在redis中</span></div><div class="line">            Integer stock = Integer.valueOf(stringRedisTemplate.opsForValue().get(goodsId));</div><div class="line">            <span class="keyword">if</span> (stock&lt;<span class="number">0</span>)</div><div class="line">                <span class="keyword">return</span>;</div><div class="line">            <span class="comment">//减库存</span></div><div class="line">            Long increment = stringRedisTemplate.opsForValue().increment(goodsId, -<span class="number">1</span>);</div><div class="line">            <span class="keyword">if</span> (increment&lt;<span class="number">0</span>)</div><div class="line">                <span class="keyword">return</span>;</div><div class="line">            <span class="comment">//减库存成功，下单</span></div><div class="line">            Order order = Order.builder().build();</div><div class="line">            orderMapper.add(order);</div><div class="line">        &#125;<span class="keyword">finally</span> &#123;</div><div class="line">            <span class="comment">//解锁</span></div><div class="line">            rLock.unlock();</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h3 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h3><ul>
+<li>Redisson的文档很齐全，具体可看文档<a href="https://github.com/redisson/redisson/wiki/%E7%9B%AE%E5%BD%95" target="_blank" rel="external">https://github.com/redisson/redisson/wiki/%E7%9B%AE%E5%BD%95</a></li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/杂谈/">杂谈</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/杂谈/">杂谈</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2020/03/07/分布式锁-redis实现/" data-title="分布式锁-redis实现 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/03/09/一文搞懂Spring-AMQP/" title="一文搞懂Spring-AMQP">
+  <strong>上一篇：</strong><br/>
+  <span>
+  一文搞懂Spring-AMQP</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2019/08/17/Shiro/"  title="Shiro">
+ <strong>下一篇：</strong><br/> 
+ <span>Shiro
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么要分布式锁"><span class="toc-number">1.</span> <span class="toc-text">为什么要分布式锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis实现"><span class="toc-number">2.</span> <span class="toc-text">Redis实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#问题与解决思路"><span class="toc-number">2.1.</span> <span class="toc-text">问题与解决思路</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现"><span class="toc-number">2.2.</span> <span class="toc-text">实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redisson"><span class="toc-number">3.</span> <span class="toc-text">Redisson</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#可重入锁"><span class="toc-number">3.1.</span> <span class="toc-text">可重入锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#文档"><span class="toc-number">3.2.</span> <span class="toc-text">文档</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">4.</span> <span class="toc-text">笔者有话说</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

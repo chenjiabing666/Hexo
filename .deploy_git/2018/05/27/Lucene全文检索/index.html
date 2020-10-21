@@ -1,0 +1,855 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Lucene全文检索 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="Lucene  全文检索Field域
+Field是文档中的域，包括Field名和Field值两部分，一个文档可以包括多个Field，Document只是Field的一个承载体，Field值即为要索引的内容，也是要搜索的内容。
+
+是否分词
+分词就是对文件的内容或者其他的属性进行分割形成一个一个的语汇单元，分词的过程就是将一些动词，定冠词，不定冠词等内容去掉，保留名词。比如文件的内容，商品的介绍，这些">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lucene全文检索">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/05/27/Lucene全文检索/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="Lucene  全文检索Field域
+Field是文档中的域，包括Field名和Field值两部分，一个文档可以包括多个Field，Document只是Field的一个承载体，Field值即为要索引的内容，也是要搜索的内容。
+
+是否分词
+分词就是对文件的内容或者其他的属性进行分割形成一个一个的语汇单元，分词的过程就是将一些动词，定冠词，不定冠词等内容去掉，保留名词。比如文件的内容，商品的介绍，这些">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/field.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:01:51.758Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Lucene全文检索">
+<meta name="twitter:description" content="Lucene  全文检索Field域
+Field是文档中的域，包括Field名和Field值两部分，一个文档可以包括多个Field，Document只是Field的一个承载体，Field值即为要索引的内容，也是要搜索的内容。
+
+是否分词
+分词就是对文件的内容或者其他的属性进行分割形成一个一个的语汇单元，分词的过程就是将一些动词，定冠词，不定冠词等内容去掉，保留名词。比如文件的内容，商品的介绍，这些">
+<meta name="twitter:image" content="http://ono60m7tl.bkt.clouddn.com/field.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/05/27/Lucene全文检索/" title="Lucene全文检索" itemprop="url">Lucene全文检索</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-05-27T02:13:57.000Z" itemprop="datePublished"> 发表于 2018-05-27</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Lucene-全文检索"><span class="toc-number">1.</span> <span class="toc-text">Lucene  全文检索</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Field域"><span class="toc-number">1.1.</span> <span class="toc-text">Field域</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#是否分词"><span class="toc-number">1.1.1.</span> <span class="toc-text">是否分词</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#是否索引"><span class="toc-number">1.1.2.</span> <span class="toc-text">是否索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#是否存储"><span class="toc-number">1.1.3.</span> <span class="toc-text">是否存储</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Field的常用类型"><span class="toc-number">1.2.</span> <span class="toc-text">Field的常用类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Field改进"><span class="toc-number">1.3.</span> <span class="toc-text">Field改进</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加依赖"><span class="toc-number">1.4.</span> <span class="toc-text">添加依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加IK中文分词器的扩展"><span class="toc-number">1.5.</span> <span class="toc-text">添加IK中文分词器的扩展</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lucene的工具类"><span class="toc-number">1.6.</span> <span class="toc-text">Lucene的工具类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建索引库"><span class="toc-number">1.7.</span> <span class="toc-text">创建索引库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Query-搜索"><span class="toc-number">1.8.</span> <span class="toc-text">Query 搜索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TermQuery"><span class="toc-number">1.8.1.</span> <span class="toc-text">TermQuery</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NumericRangeQuery"><span class="toc-number">1.8.2.</span> <span class="toc-text">NumericRangeQuery</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BooleanQuery"><span class="toc-number">1.8.3.</span> <span class="toc-text">BooleanQuery</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MatchAllDocsQuery"><span class="toc-number">1.8.4.</span> <span class="toc-text">MatchAllDocsQuery</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#QueryParser-常用"><span class="toc-number">1.8.5.</span> <span class="toc-text">QueryParser [常用]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MultiFieldQueryParser"><span class="toc-number">1.8.6.</span> <span class="toc-text">MultiFieldQueryParser</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#索引维护"><span class="toc-number">1.9.</span> <span class="toc-text">索引维护</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#添加索引"><span class="toc-number">1.9.1.</span> <span class="toc-text">添加索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除索引"><span class="toc-number">1.9.2.</span> <span class="toc-text">删除索引</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#指定条件删除"><span class="toc-number">1.9.2.1.</span> <span class="toc-text">指定条件删除</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#删除全部"><span class="toc-number">1.9.2.2.</span> <span class="toc-text">删除全部</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改索引"><span class="toc-number">1.9.3.</span> <span class="toc-text">修改索引</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.10.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Lucene-全文检索"><a href="#Lucene-全文检索" class="headerlink" title="Lucene  全文检索"></a>Lucene  全文检索</h1><h2 id="Field域"><a href="#Field域" class="headerlink" title="Field域"></a>Field域</h2><ul>
+<li>Field是文档中的域，包括Field名和Field值两部分，一个文档可以包括多个Field，Document只是Field的一个承载体，Field值即为要索引的内容，也是要搜索的内容。</li>
+</ul>
+<h3 id="是否分词"><a href="#是否分词" class="headerlink" title="是否分词"></a>是否分词</h3><ul>
+<li>分词就是对文件的内容或者其他的属性进行分割形成一个一个的语汇单元，分词的过程就是将一些动词，定冠词，不定冠词等内容去掉，保留名词。比如文件的内容，商品的介绍，这些内容都是需要用户输入关键词来查询的，因此这个必须分词</li>
+<li>但是对于商品的<code>id</code>，订单号，身份证号这些是不用分词的，这个是必须全局匹配才会找到相关的内容</li>
+</ul>
+<h3 id="是否索引"><a href="#是否索引" class="headerlink" title="是否索引"></a>是否索引</h3><ul>
+<li><p>索引的目的就是为了将来作为查询条件来搜索，比如商品的名称，商品的介绍，文章的内容，这些内容需要输入关键词搜索的，我们必须进行索引，如果不索引将会不能爱按照这些内容搜索。</p>
+</li>
+<li><p>不索引： 商品的<code>id</code>，图片的路径等这个是不需要作为查询条件的，因此不需要索引</p>
+</li>
+</ul>
+<h3 id="是否存储"><a href="#是否存储" class="headerlink" title="是否存储"></a>是否存储</h3><ul>
+<li>将Field值存储在文档中，存储在文档中的Field才可以从<code>Document</code>中获取。 </li>
+<li>比如：商品名称、订单号，凡是将来要从<code>Document</code>中获取的<code>Field</code>都要存储。</li>
+<li>否：不存储Field值，不存储的Field无法通过<code>Document</code>获取 </li>
+<li>比如：商品简介，内容较大不用存储。如果要向用户展示商品简介可以从系统的关系数据库中获取商品简介。</li>
+<li>如果需要商品描述，则根据搜索出的商品ID去数据库中查询，然后显示出商品描述信息即可。</li>
+</ul>
+<p>​    </p>
+<h2 id="Field的常用类型"><a href="#Field的常用类型" class="headerlink" title="Field的常用类型"></a>Field的常用类型</h2><ul>
+<li><img src="http://ono60m7tl.bkt.clouddn.com/field.png" alt="类型"></li>
+</ul>
+<h2 id="Field改进"><a href="#Field改进" class="headerlink" title="Field改进"></a>Field改进</h2><ul>
+<li>图书id<ul>
+<li>是否分词：不用分词，因为不会根据商品id来搜索商品  </li>
+<li>是否索引：不索引，因为不需要根据图书ID进行搜索 </li>
+<li>是否存储：要存储，因为查询结果页面需要使用id这个值。</li>
+</ul>
+</li>
+<li>图书名称：<ul>
+<li>是否分词：要分词，因为要将图书的名称内容分词索引，根据关键搜索图书名称抽取的词。 </li>
+<li>是否索引：要索引。 </li>
+<li>是否存储：要存储。</li>
+</ul>
+</li>
+<li>图书价格<ul>
+<li>是否分词：要分词，lucene对数字型的值只要有搜索需求的都要分词和索 引，因为lucene对数字型的内容要特殊分词处理，本例子可能要根据价格范 围搜索，需要分词和索引。</li>
+<li>是否索引：要索引 是否存储：要存储</li>
+</ul>
+</li>
+<li>图书图片地址：<ul>
+<li>是否分词：不分词 </li>
+<li>是否索引：不索引</li>
+<li>是否存储：要存储，因为只有根据图片地址才能找到对应的图片</li>
+</ul>
+</li>
+<li>图书描述：<ul>
+<li>是否分词：要分词</li>
+<li>是否索引：要索引 </li>
+<li>是否存储：因为图书描述内容量大，不在查询结果页面直接显示，不存储。 不存储是来不在lucene的索引文件中记录，节省lucene的索引文件空间， 如果要在详情页面显示描述，思路： 从lucene中取出图书的id，根据图书的id查询关系数据库中book表 得到描述信息。</li>
+</ul>
+</li>
+</ul>
+<h2 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h2><ul>
+<li>这里使用的<code>IKAnalyzer</code>这个中文分词器</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 添加lucene支持 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.lucene<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lucene-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">version</span>&gt;</span>4.10.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.lucene<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lucene-queryparser<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">version</span>&gt;</span>4.10.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.lucene<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lucene-analyzers-common<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">version</span>&gt;</span>4.10.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>commons-io<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>commons-io<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">version</span>&gt;</span>2.4<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"></div><div class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.lucene<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lucene-highlighter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">version</span>&gt;</span>4.10.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- IK分词器 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.janeluo<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>ikanalyzer<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">version</span>&gt;</span>2012_u6<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="添加IK中文分词器的扩展"><a href="#添加IK中文分词器的扩展" class="headerlink" title="添加IK中文分词器的扩展"></a>添加IK中文分词器的扩展</h2><ul>
+<li>只需要将<a href="http://ono60m7tl.bkt.clouddn.com/Ikanalyzer.tar.gz" target="_blank" rel="external">这些文件下载</a>下载出来，然后添加到<code>src/main/resource</code>路径下即可</li>
+</ul>
+<h2 id="Lucene的工具类"><a href="#Lucene的工具类" class="headerlink" title="Lucene的工具类"></a>Lucene的工具类</h2><ul>
+<li>其中自己封装了一些方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * Lucene的工具类</div><div class="line"> * <span class="doctag">@author</span> chenjiabing</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LuceneUtils</span> </span>&#123;</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 获取IndexWriter  用于创建索引库</div><div class="line">	 * <span class="doctag">@return</span> IndexWriter对象</div><div class="line">	 * <span class="doctag">@throws</span> Exception</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> IndexWriter <span class="title">getIndexWriter</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		<span class="comment">//创建索引库存放的位置</span></div><div class="line">    	Directory directory=FSDirectory.open(<span class="keyword">new</span> File(<span class="string">"/home/chenjiabing/Documents/Lucene"</span>));</div><div class="line">    	<span class="comment">//使用IK中文分词器</span></div><div class="line">    	IKAnalyzer ikAnalyzer=<span class="keyword">new</span> IKAnalyzer(<span class="keyword">true</span>);</div><div class="line">    	</div><div class="line">    	<span class="comment">//创建IndexWriteConfig对象，其中传入的是分析器对象</span></div><div class="line">    	IndexWriterConfig indexWriterConfig=<span class="keyword">new</span> IndexWriterConfig(Version.LATEST, ikAnalyzer);</div><div class="line">    	</div><div class="line">    	<span class="comment">//创建索引，其中的变量是索引库的位置，索引配置对象</span></div><div class="line">    	IndexWriter indexWriter=<span class="keyword">new</span> IndexWriter(directory, indexWriterConfig);</div><div class="line">    	<span class="keyword">return</span> indexWriter;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 获取IndexSearcher，用于查询</div><div class="line">	 * <span class="doctag">@return</span> IndexSearcher对象</div><div class="line">	 * <span class="doctag">@throws</span> Exception</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> IndexSearcher <span class="title">getIndexSearcher</span><span class="params">()</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		<span class="comment">//创建Directory对象，指定索引库的位置</span></div><div class="line">    	Directory directory=FSDirectory.open(<span class="keyword">new</span> File(<span class="string">"/home/chenjiabing/Documents/Lucene"</span>));</div><div class="line">    	<span class="comment">//创建IndexReader对象</span></div><div class="line">    	IndexReader indexReader=DirectoryReader.open(directory);</div><div class="line">    	<span class="comment">//创建IndexSearcher对象</span></div><div class="line">    	IndexSearcher indexSearcher=<span class="keyword">new</span> IndexSearcher(indexReader);</div><div class="line">    	<span class="keyword">return</span> indexSearcher;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 根据查询语句，打印结果</div><div class="line">	 * <span class="doctag">@param</span> indexSearcher  IndexSearch对象</div><div class="line">	 * <span class="doctag">@param</span> query  查询对象</div><div class="line">	 * <span class="doctag">@param</span> n  显示结果数量</div><div class="line">	 * <span class="doctag">@throws</span> IOException </div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">doSearch</span><span class="params">(IndexSearcher indexSearcher,Query query,Integer n)</span> <span class="keyword">throws</span> IOException</span>&#123;</div><div class="line">		<span class="comment">//执行查询</span></div><div class="line">    	TopDocs topDocs=indexSearcher.search(query, n);</div><div class="line">    	</div><div class="line">    	<span class="comment">//返回查询结果</span></div><div class="line">    	ScoreDoc[] scoreDocs=topDocs.scoreDocs;</div><div class="line">    	</div><div class="line">    	<span class="comment">//遍历查询结果</span></div><div class="line">    	<span class="keyword">for</span> (ScoreDoc scoreDoc : scoreDocs) &#123;</div><div class="line">			<span class="keyword">int</span> doc=scoreDoc.doc;  <span class="comment">//返回文档的编号</span></div><div class="line">			</div><div class="line">			<span class="comment">//根据编号查询文档</span></div><div class="line">			Document document=indexSearcher.doc(doc);</div><div class="line">			</div><div class="line">			<span class="comment">//输出文档中定义的域</span></div><div class="line">			System.out.println(document.get(<span class="string">"fileName"</span>));</div><div class="line">			<span class="comment">/*System.out.println(document.get("fileSize"));</span></div><div class="line">			System.out.println(document.get("fileContent"));</div><div class="line">			System.out.println(document.get("filePath"));*/</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="创建索引库"><a href="#创建索引库" class="headerlink" title="创建索引库"></a>创建索引库</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 创建索引</span></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testIndex</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">    	IndexWriter indexWriter=LuceneUtils.getIndexWriter();</div><div class="line">    	<span class="comment">//创建File对象,这里是需要索引的文件</span></div><div class="line">    	File file=<span class="keyword">new</span> File(<span class="string">"/home/chenjiabing/Documents/Blog"</span>);</div><div class="line">    	</div><div class="line">    	<span class="comment">//获取文件夹下的所有文件</span></div><div class="line">    	File[] files=file.listFiles();</div><div class="line">    	</div><div class="line">    	<span class="comment">//遍历所有的文件，取出相关 的内容</span></div><div class="line">    	<span class="keyword">for</span> (File f : files) &#123;</div><div class="line">    		Document document=<span class="keyword">new</span> Document();  <span class="comment">//创建文档对象</span></div><div class="line">    		</div><div class="line">    		<span class="comment">//获取文件名</span></div><div class="line">			String fileName=f.getName();</div><div class="line">			<span class="comment">//创建域  文件名  分词，索引 存储</span></div><div class="line">			Field fieldName=<span class="keyword">new</span>  TextField(<span class="string">"fileName"</span>, fileName, Store.YES);</div><div class="line">			</div><div class="line">			<span class="comment">//获取文件大小</span></div><div class="line">			Long fileSize=FileUtils.sizeOf(f);</div><div class="line">			<span class="comment">//创建文件大小的域，分词，索引，存储</span></div><div class="line">			Field fieldSize=<span class="keyword">new</span> LongField(<span class="string">"fileSize"</span>, fileSize, Store.YES);</div><div class="line">			</div><div class="line">			<span class="comment">//获取文件路径</span></div><div class="line">			String filePath=f.getPath();</div><div class="line">			<span class="comment">//创建文件路径的域 不分词，不索引 但是必须存储，用来找到指定的文件</span></div><div class="line">			Field fieldPath=<span class="keyword">new</span> StoredField(<span class="string">"filePath"</span>, filePath);</div><div class="line">			</div><div class="line">			<span class="comment">//获取文件内容</span></div><div class="line">			String fileContent=FileUtils.readFileToString(f);</div><div class="line">			</div><div class="line">			<span class="comment">//创建文件内容的域，分词，索引，存储</span></div><div class="line">			Field fieldContent=<span class="keyword">new</span> TextField(<span class="string">"fileContent"</span>, fileContent,Store.YES);</div><div class="line">			<span class="comment">//将分出的这些域添加到文档中</span></div><div class="line">			document.add(fieldContent);</div><div class="line">			document.add(fieldName);</div><div class="line">			document.add(fieldPath);</div><div class="line">			document.add(fieldSize);</div><div class="line">			</div><div class="line">			<span class="comment">//将文档写入索引库</span></div><div class="line">			indexWriter.addDocument(document);</div><div class="line">		&#125;</div><div class="line">    	<span class="comment">//关闭IndexWriter对象</span></div><div class="line">    	indexWriter.close();</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h2 id="Query-搜索"><a href="#Query-搜索" class="headerlink" title="Query 搜索"></a>Query 搜索</h2><h3 id="TermQuery"><a href="#TermQuery" class="headerlink" title="TermQuery"></a>TermQuery</h3><ul>
+<li>这个是精确搜索</li>
+<li><code>TermQuery</code>项查询，TermQuery<code>不使用分析器</code>，搜索关键词作为整体来匹配Field域中的词进行查询，比如订单号、分类ID号等。<ul>
+<li>这个查询的方式不会通过分词器进行分词查询，而是整个内容匹配。比如其中的查询条件为文件的名称：<code>springmvc拦截器</code>，那么只有当名称为<code>...springmvc拦截器.....</code>这样整个词语连接在一起的时候才会查询到</li>
+</ul>
+</li>
+<li><code>`TermQuery(new Term(&quot;域名&quot;,&quot;搜索的词语&quot;))</code> : 这里的域名是创建Field的时候指定的：<code>new Field(&quot;域名&quot;,值)</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testTermQuerySearch</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">  	<span class="comment">//获取IndexSearcher</span></div><div class="line">  	IndexSearcher indexSearcher=LuceneUtils.getIndexSearcher();</div><div class="line">  	<span class="comment">//创建一个TermQuery对象，指定查询的域和需要查询的词</span></div><div class="line">  	TermQuery query=<span class="keyword">new</span> TermQuery(<span class="keyword">new</span> Term(<span class="string">"fileName"</span>,<span class="string">"springmvc拦截器"</span>));</div><div class="line">  	System.out.println(query);</div><div class="line">  	<span class="comment">//打印查询结果</span></div><div class="line">  	LuceneUtils.doSearch(indexSearcher, query, <span class="number">10</span>);</div><div class="line">  	<span class="comment">//关闭IndexReader</span></div><div class="line">  	indexSearcher.getIndexReader().close();</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<h3 id="NumericRangeQuery"><a href="#NumericRangeQuery" class="headerlink" title="NumericRangeQuery"></a>NumericRangeQuery</h3><ul>
+<li>指定数字范围查询.<ul>
+<li>适合查询价格等数字类型的</li>
+</ul>
+</li>
+<li>其中有许多创建查询范围的静态方法，适合多种数据类型的查询</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testNumericRangeQuery</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</div><div class="line"> 	IndexSearcher indexSearcher=LuceneUtils.getIndexSearcher();</div><div class="line"> 	<span class="comment">/**</span></div><div class="line"> 	 * 这里是查询文件大小的域：fileSize</div><div class="line"> 	 * 第一个参数： 域名</div><div class="line"> 	 * 第二个参数：最小值</div><div class="line"> 	 * 第三个参数： 最大值</div><div class="line"> 	 * 第四个参数： 是否包含最小值</div><div class="line"> 	 * 第五个参数： 是否包含最大值</div><div class="line"> 	 */</div><div class="line"> 	Query query=NumericRangeQuery.newLongRange(<span class="string">"fileSize"</span>, <span class="number">1000L</span>, <span class="number">2000L</span>, <span class="keyword">true</span>, <span class="keyword">true</span>);</div><div class="line"> 	<span class="comment">//输出查询条件：fileSize:[1000 TO 2000]</span></div><div class="line"> 	System.out.println(query);</div><div class="line"> 	LuceneUtils.doSearch(indexSearcher, query, <span class="number">10</span>);</div><div class="line"> 	<span class="comment">//关闭IndexReader</span></div><div class="line"> 	indexSearcher.getIndexReader().close();</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<h3 id="BooleanQuery"><a href="#BooleanQuery" class="headerlink" title="BooleanQuery"></a>BooleanQuery</h3><ul>
+<li><p>BooleanQuery，布尔查询，实现组合条件查询。</p>
+</li>
+<li><p><code>Occur.MUST</code> : 当前的查询条件必须满足</p>
+</li>
+<li><code>Occur.SHOULD</code> ： 当前的查询条件可满足可不满足，相当于<code>or</code></li>
+<li><code>MUST_NOT</code>：查询条件不能满足，相当于<code>NOT</code>非+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testBooleanQuery</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">   	IndexSearcher indexSearcher=LuceneUtils.getIndexSearcher();</div><div class="line">   	</div><div class="line">   	<span class="comment">//第一个查询条件 根据fileName域查询</span></div><div class="line">   	Query query1=<span class="keyword">new</span> TermQuery(<span class="keyword">new</span> Term(<span class="string">"fileName"</span>, <span class="string">"springmvc"</span>));</div><div class="line">   	<span class="comment">//第二个查询条件，根据fileSize查询</span></div><div class="line">   	Query query2=NumericRangeQuery.newLongRange(<span class="string">"fileSize"</span>, <span class="number">1000L</span>, <span class="number">2000L</span>, <span class="keyword">true</span>, <span class="keyword">true</span>);</div><div class="line">   	</div><div class="line">   	<span class="comment">//创建BooleanQuery</span></div><div class="line">   	BooleanQuery query=<span class="keyword">new</span> BooleanQuery();</div><div class="line">   	</div><div class="line">   	<span class="comment">//添加查询条件，这个条件是必须满足的 ：Occur.MUST</span></div><div class="line">   	query.add(query1,Occur.MUST);</div><div class="line">   	<span class="comment">//添加第二个查询条件，这个条件可满足可不满足，相当于or</span></div><div class="line">   	query.add(query2,Occur.SHOULD);</div><div class="line">   	System.out.println(query);</div><div class="line">   	<span class="comment">//执行查询</span></div><div class="line">   	LuceneUtils.doSearch(indexSearcher, query, <span class="number">10</span>);</div><div class="line">   	</div><div class="line">   	indexSearcher.getIndexReader().close();</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<h3 id="MatchAllDocsQuery"><a href="#MatchAllDocsQuery" class="headerlink" title="MatchAllDocsQuery"></a>MatchAllDocsQuery</h3><ul>
+<li>查询所有</li>
+<li>返回的是索引库中所有的文件信息</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//查询所有</span></div><div class="line">   <span class="meta">@Test</span></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testMatchAllDoc</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">   	IndexSearcher indexSearcher=LuceneUtils.getIndexSearcher();</div><div class="line">   	Query query=<span class="keyword">new</span> MatchAllDocsQuery();</div><div class="line">   	System.out.println(query);</div><div class="line">   	LuceneUtils.doSearch(indexSearcher, query, <span class="number">10</span>);</div><div class="line">   	indexSearcher.getIndexReader().close();</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<h3 id="QueryParser-常用"><a href="#QueryParser-常用" class="headerlink" title="QueryParser [常用]"></a>QueryParser [常用]</h3><ul>
+<li>通过<code>QueryParser</code>也可以创建Query，QueryParser提供一个<code>Parse</code>方法，此方法可以直接根据查询语法来查询</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testQueryParser</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">   	IndexSearcher indexSearcher=LuceneUtils.getIndexSearcher();</div><div class="line">   	<span class="comment">/**</span></div><div class="line">   	 * 第一个参数：指定了默认的查询的域名</div><div class="line">   	 * 第二个参数： 指定了分词器</div><div class="line">   	 */</div><div class="line">   	QueryParser parser=<span class="keyword">new</span> QueryParser(<span class="string">"fileName"</span>,<span class="keyword">new</span> IKAnalyzer());</div><div class="line">   	<span class="comment">/**</span></div><div class="line">   	 * 其中的字符串的形式为： *:*</div><div class="line">   	 * 查询所有： *:*</div><div class="line">   	 * 根据默认域名查询直接写一个查询内容即可： "springmvc"</div><div class="line">   	 * 根据指定域名查询： "fileContent:springmvc"</div><div class="line">   	 */</div><div class="line">   	Query query=parser.parse(<span class="string">"fileContent:拦截器"</span>);</div><div class="line">   	System.out.println(query);</div><div class="line">   	LuceneUtils.doSearch(indexSearcher, query, <span class="number">50</span>);</div><div class="line">   	indexSearcher.getIndexReader().close();</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<h3 id="MultiFieldQueryParser"><a href="#MultiFieldQueryParser" class="headerlink" title="MultiFieldQueryParser"></a>MultiFieldQueryParser</h3><ul>
+<li>通过MultiFieldQueryParser对多个域查询。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testMulitFiledQueryParser</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">  	IndexSearcher indexSearcher=LuceneUtils.getIndexSearcher();</div><div class="line">  	<span class="comment">//指定默认查询的域名</span></div><div class="line">  	String[] fields=&#123;<span class="string">"fileName"</span>,<span class="string">"fileContent"</span>&#125;;</div><div class="line">  	</div><div class="line">  	<span class="comment">/**</span></div><div class="line">  	 * 创建对象</div><div class="line">  	 * 第一个参数： 指定默认域名的数组</div><div class="line">  	 * 第二参数： 指定分词器，这里使用中文分词器</div><div class="line">  	 */</div><div class="line">  	MultiFieldQueryParser parser=<span class="keyword">new</span> MultiFieldQueryParser(fields, <span class="keyword">new</span> IKAnalyzer());</div><div class="line">  	<span class="comment">//这里没有指定域名，因此使用上面指定的两个默认的域名进行查询，这两个默认域名之间是or关系，只要满足就查询返回</span></div><div class="line">  	<span class="comment">//Query query=parser.parse("springmvc");</span></div><div class="line">  	</div><div class="line">  	<span class="comment">//指定filePath域名中搜索</span></div><div class="line">  	Query query=parser.parse(<span class="string">"filePath:/home/chenjiabing"</span>);</div><div class="line">  	System.out.println(query);</div><div class="line">  	LuceneUtils.doSearch(indexSearcher, query, <span class="number">50</span>);</div><div class="line">  	indexSearcher.getIndexReader().close();</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<h2 id="索引维护"><a href="#索引维护" class="headerlink" title="索引维护"></a>索引维护</h2><ul>
+<li>每个document代表一个索引，维护索引其实就是对<code>document</code>的增删改查</li>
+</ul>
+<h3 id="添加索引"><a href="#添加索引" class="headerlink" title="添加索引"></a>添加索引</h3><ul>
+<li>如果数据库系统做了变更，那么我们需要添加索引，那么此时就需要添加索引</li>
+<li><code>indexWriter.addDocument（doc)</code></li>
+<li>这个就像是创建索引库的时候，其实就是在添加索引</li>
+</ul>
+<h3 id="删除索引"><a href="#删除索引" class="headerlink" title="删除索引"></a>删除索引</h3><h4 id="指定条件删除"><a href="#指定条件删除" class="headerlink" title="指定条件删除"></a>指定条件删除</h4><ul>
+<li>根据<code>Term</code>项删除索引，满足条件的将全部删除。</li>
+<li>Term是索引域中最小的单位。根据条件删除时，建议根据唯一键来进行删除。在solr中就是根据<code>ID</code>来进行删除和修改操作的。</li>
+<li><code>writer.deleteDocuments(new Term(&quot;域名&quot;,&quot;值&quot;));</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteIndex</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">    <span class="comment">// 创建分词器，标准分词器</span></div><div class="line">    Analyzer analyzer = <span class="keyword">new</span> IKAnalyzer();</div><div class="line"></div><div class="line">    <span class="comment">// 创建IndexWriter</span></div><div class="line">    IndexWriterConfig cfg = <span class="keyword">new</span> IndexWriterConfig(Version.LUCENE_4_10_3,</div><div class="line">            analyzer);</div><div class="line">    Directory directory = FSDirectory</div><div class="line">            .open(<span class="keyword">new</span> File(<span class="string">"E:\\11-index\\hcx\\"</span>));</div><div class="line">    <span class="comment">// 创建IndexWriter</span></div><div class="line">    IndexWriter writer = <span class="keyword">new</span> IndexWriter(directory, cfg);</div><div class="line"></div><div class="line">    <span class="comment">// Terms</span></div><div class="line">    writer.deleteDocuments(<span class="keyword">new</span> Term(<span class="string">"id"</span>, <span class="string">"1"</span>));</div><div class="line"></div><div class="line">    writer.close();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="删除全部"><a href="#删除全部" class="headerlink" title="删除全部"></a>删除全部</h4><ul>
+<li>将索引目录的索引信息全部删除，直接彻底删除，无法恢复。慎用！</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 删除索引</span></div><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteIndex</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">    <span class="comment">// 1、指定索引库目录</span></div><div class="line">    Directory directory = FSDirectory.open(<span class="keyword">new</span> File(<span class="string">"E:\\11-index\\0720"</span>));</div><div class="line">    <span class="comment">// 2、创建IndexWriterConfig</span></div><div class="line">    IndexWriterConfig cfg = <span class="keyword">new</span> IndexWriterConfig(Version.LATEST,</div><div class="line">            <span class="keyword">new</span> StandardAnalyzer());</div><div class="line">    <span class="comment">// 3、 创建IndexWriter</span></div><div class="line">    IndexWriter writer = <span class="keyword">new</span> IndexWriter(directory, cfg);</div><div class="line">    <span class="comment">// 4、通过IndexWriter来删除索引</span></div><div class="line">    <span class="comment">// a)、删除全部索引</span></div><div class="line">    writer.deleteAll();</div><div class="line">    <span class="comment">// 5、关闭IndexWriter</span></div><div class="line">    writer.close();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="修改索引"><a href="#修改索引" class="headerlink" title="修改索引"></a>修改索引</h3><ul>
+<li>更新索引是先删除再添加，建议对更新需求采用此方法并且要保证对已存在的索引执行更新，可以先查询出来，确定更新记录存在执行更新操作。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateIndex</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">    <span class="comment">// 创建分词器，标准分词器</span></div><div class="line">    Analyzer analyzer = <span class="keyword">new</span> StandardAnalyzer();</div><div class="line"></div><div class="line">    <span class="comment">// 创建IndexWriter</span></div><div class="line">    IndexWriterConfig cfg = <span class="keyword">new</span> IndexWriterConfig(Version.LUCENE_4_10_3,</div><div class="line">            analyzer);</div><div class="line"></div><div class="line">    Directory directory = FSDirectory</div><div class="line">            .open(<span class="keyword">new</span> File(<span class="string">"E:\\11-index\\hcx\\"</span>));</div><div class="line">    <span class="comment">// 创建IndexWriter</span></div><div class="line">    IndexWriter writer = <span class="keyword">new</span> IndexWriter(directory, cfg);</div><div class="line"></div><div class="line">    <span class="comment">// 第一个参数：指定查询条件</span></div><div class="line">    <span class="comment">// 第二个参数：修改之后的对象</span></div><div class="line">    <span class="comment">// 修改时如果根据查询条件，可以查询出结果，则将以前的删掉，然后覆盖新的Document对象，如果没有查询出结果，则新增一个Document</span></div><div class="line">    <span class="comment">// 修改流程即：先查询，再删除，在添加</span></div><div class="line">    Document doc = <span class="keyword">new</span> Document();</div><div class="line">    doc.add(<span class="keyword">new</span> TextField(<span class="string">"name"</span>, <span class="string">"lisi"</span>, Store.YES));</div><div class="line">    writer.updateDocument(<span class="keyword">new</span> Term(<span class="string">"name"</span>, <span class="string">"zhangsan"</span>), doc);</div><div class="line"></div><div class="line">    writer.close();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Elasticsearch/">Elasticsearch</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Elasticsearch/">Elasticsearch</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/05/27/Lucene全文检索/" data-title="Lucene全文检索 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/05/27/SSM整合/" title="">
+  <strong>上一篇：</strong><br/>
+  <span>
+  (no title)</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/05/21/Spring之AOP之底层实现/"  title="Spring之AOP之底层实现">
+ <strong>下一篇：</strong><br/> 
+ <span>Spring之AOP之底层实现
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Lucene-全文检索"><span class="toc-number">1.</span> <span class="toc-text">Lucene  全文检索</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Field域"><span class="toc-number">1.1.</span> <span class="toc-text">Field域</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#是否分词"><span class="toc-number">1.1.1.</span> <span class="toc-text">是否分词</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#是否索引"><span class="toc-number">1.1.2.</span> <span class="toc-text">是否索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#是否存储"><span class="toc-number">1.1.3.</span> <span class="toc-text">是否存储</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Field的常用类型"><span class="toc-number">1.2.</span> <span class="toc-text">Field的常用类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Field改进"><span class="toc-number">1.3.</span> <span class="toc-text">Field改进</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加依赖"><span class="toc-number">1.4.</span> <span class="toc-text">添加依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加IK中文分词器的扩展"><span class="toc-number">1.5.</span> <span class="toc-text">添加IK中文分词器的扩展</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lucene的工具类"><span class="toc-number">1.6.</span> <span class="toc-text">Lucene的工具类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建索引库"><span class="toc-number">1.7.</span> <span class="toc-text">创建索引库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Query-搜索"><span class="toc-number">1.8.</span> <span class="toc-text">Query 搜索</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TermQuery"><span class="toc-number">1.8.1.</span> <span class="toc-text">TermQuery</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NumericRangeQuery"><span class="toc-number">1.8.2.</span> <span class="toc-text">NumericRangeQuery</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BooleanQuery"><span class="toc-number">1.8.3.</span> <span class="toc-text">BooleanQuery</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MatchAllDocsQuery"><span class="toc-number">1.8.4.</span> <span class="toc-text">MatchAllDocsQuery</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#QueryParser-常用"><span class="toc-number">1.8.5.</span> <span class="toc-text">QueryParser [常用]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MultiFieldQueryParser"><span class="toc-number">1.8.6.</span> <span class="toc-text">MultiFieldQueryParser</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#索引维护"><span class="toc-number">1.9.</span> <span class="toc-text">索引维护</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#添加索引"><span class="toc-number">1.9.1.</span> <span class="toc-text">添加索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除索引"><span class="toc-number">1.9.2.</span> <span class="toc-text">删除索引</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#指定条件删除"><span class="toc-number">1.9.2.1.</span> <span class="toc-text">指定条件删除</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#删除全部"><span class="toc-number">1.9.2.2.</span> <span class="toc-text">删除全部</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改索引"><span class="toc-number">1.9.3.</span> <span class="toc-text">修改索引</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.10.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

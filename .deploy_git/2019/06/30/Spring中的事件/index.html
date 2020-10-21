@@ -1,0 +1,843 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Spring中的事件 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="简介
+学过编程语言的肯定知道事件，在JS中事件，Android中的事件，大多是鼠标点击，键盘事件，手指滑动事件等等。在Spring中也有一些事件，比如容器启动、容器关闭、容器刷新都是一个事件。
+既然有了事件，自然少不了事件监听器，事件分发器等，后续会详细介绍
+
+事件Spring中内置的事件
+ContextStartedEvent：容器启动的时候触发(start方法)
+ContextRefreshe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring中的事件">
+<meta property="og:url" content="http://chenjiabing666.github.io/2019/06/30/Spring中的事件/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="简介
+学过编程语言的肯定知道事件，在JS中事件，Android中的事件，大多是鼠标点击，键盘事件，手指滑动事件等等。在Spring中也有一些事件，比如容器启动、容器关闭、容器刷新都是一个事件。
+既然有了事件，自然少不了事件监听器，事件分发器等，后续会详细介绍
+
+事件Spring中内置的事件
+ContextStartedEvent：容器启动的时候触发(start方法)
+ContextRefreshe">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:14:25.700Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring中的事件">
+<meta name="twitter:description" content="简介
+学过编程语言的肯定知道事件，在JS中事件，Android中的事件，大多是鼠标点击，键盘事件，手指滑动事件等等。在Spring中也有一些事件，比如容器启动、容器关闭、容器刷新都是一个事件。
+既然有了事件，自然少不了事件监听器，事件分发器等，后续会详细介绍
+
+事件Spring中内置的事件
+ContextStartedEvent：容器启动的时候触发(start方法)
+ContextRefreshe">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/06/30/Spring中的事件/" title="Spring中的事件" itemprop="url">Spring中的事件</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2019-06-30T06:22:07.000Z" itemprop="datePublished"> 发表于 2019-06-30</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#事件"><span class="toc-number">2.</span> <span class="toc-text">事件</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring中内置的事件"><span class="toc-number">2.1.</span> <span class="toc-text">Spring中内置的事件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义事件"><span class="toc-number">2.2.</span> <span class="toc-text">自定义事件</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#监听器"><span class="toc-number">3.</span> <span class="toc-text">监听器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#实现ApplicationListener接口"><span class="toc-number">3.1.</span> <span class="toc-text">实现ApplicationListener接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-EventListener注解"><span class="toc-number">3.2.</span> <span class="toc-text">使用@EventListener注解</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#事件发布"><span class="toc-number">4.</span> <span class="toc-text">事件发布</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring的事件发布类"><span class="toc-number">4.1.</span> <span class="toc-text">Spring的事件发布类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#直接注入"><span class="toc-number">4.2.</span> <span class="toc-text">直接注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用ApplicationEventPublisherAware注入"><span class="toc-number">4.3.</span> <span class="toc-text">使用ApplicationEventPublisherAware注入</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#事件多播器"><span class="toc-number">5.</span> <span class="toc-text">事件多播器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#异步事件"><span class="toc-number">6.</span> <span class="toc-text">异步事件</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-Async实现异步"><span class="toc-number">6.1.</span> <span class="toc-text">使用@Async实现异步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义事件多播器"><span class="toc-number">6.2.</span> <span class="toc-text">自定义事件多播器</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#源码解析"><span class="toc-number">7.</span> <span class="toc-text">源码解析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">7.1.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><ul>
+<li>学过编程语言的肯定知道事件，在JS中事件，Android中的事件，大多是鼠标点击，键盘事件，手指滑动事件等等。在Spring中也有一些事件，比如容器启动、容器关闭、容器刷新都是一个事件。</li>
+<li>既然有了事件，自然少不了事件监听器，事件分发器等，后续会详细介绍</li>
+</ul>
+<h1 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h1><h2 id="Spring中内置的事件"><a href="#Spring中内置的事件" class="headerlink" title="Spring中内置的事件"></a>Spring中内置的事件</h2><ul>
+<li><code>ContextStartedEvent</code>：容器启动的时候触发(start方法)</li>
+<li><code>ContextRefreshedEvent</code>：容器刷新的时候触发(onRefresh，在finisRefresh中调用)</li>
+<li><code>ContextStoppedEvent</code>：容器停止的时候触发(stop方法)</li>
+<li><code>ContextClosedEvent</code>：容器关闭的时候触发(close方法)</li>
+</ul>
+<h2 id="自定义事件"><a href="#自定义事件" class="headerlink" title="自定义事件"></a>自定义事件</h2><ul>
+<li>Spring中自定义事件只需要继承<code>ApplicationEvent</code>即可完成一个自定义的Spring事件<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 自定义事件，继承ApplicationEvent</div><div class="line"> */</div><div class="line"><span class="meta">@Data</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FirstEvent</span> <span class="keyword">extends</span> <span class="title">ApplicationEvent</span> </span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 需要携带的消息，可以是任意类型的数据，相当于传递数据</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> String message;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 构造方法</div><div class="line">     * <span class="doctag">@param</span> source 事件发生的类</div><div class="line">     * <span class="doctag">@param</span> message 携带的消息</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">FirstEvent</span><span class="params">(Object source,String message)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(source);</div><div class="line">        <span class="keyword">this</span>.message=message;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="监听器"><a href="#监听器" class="headerlink" title="监听器"></a>监听器</h1><ul>
+<li>监听器用来监听事件触发，一旦事件触发了，监听器会执行相应的操作。</li>
+<li>监听器的实现有两种方式：<ul>
+<li>实现<code>ApplicationListener</code>接口</li>
+<li>使用<code>@EventListener</code>注解</li>
+</ul>
+</li>
+</ul>
+<h2 id="实现ApplicationListener接口"><a href="#实现ApplicationListener接口" class="headerlink" title="实现ApplicationListener接口"></a>实现ApplicationListener接口</h2><ul>
+<li><p>创建监听器需要两个条件：</p>
+<ul>
+<li>实现ApplicationListener接口</li>
+<li>将该自定义的监听器注入到ioc容器中<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 自定义一个监听器，实现ApplicationListener，指定的泛型就是需要监听的事件</div><div class="line"> * 监听ContextRefreshedEvent，当容器完成刷新的时候该监听器就会监听到并执行onApplicationEvent方法</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FirstListener</span> <span class="keyword">implements</span> <span class="title">ApplicationListener</span>&lt;<span class="title">ContextRefreshedEvent</span>&gt; </span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 重载方法，被监听的事件触发了就会调用这个方法</div><div class="line">     * <span class="doctag">@param</span> event 触发事件的对象</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onApplicationEvent</span><span class="params">(ContextRefreshedEvent event)</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"容器刷新的监听器启动了........"</span>);</div><div class="line">        System.out.println(event.getSource()+<span class="string">"----&gt;"</span>+event.getTimestamp()+<span class="string">"----"</span>+event.getApplicationContext());</div><div class="line">        System.out.println(<span class="string">"........................................."</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>此时只要启动容器，自定义的监听器就会起作用，当然我们监听的是Spring内置的事件，在容器启动的时候Spring会使用事件发布器发布事件，此时才是真正的触发事件，我们自定义的事件并不能被监听，除非被事件发布器发布。</p>
+</li>
+</ul>
+<h2 id="使用-EventListener注解"><a href="#使用-EventListener注解" class="headerlink" title="使用@EventListener注解"></a>使用@EventListener注解</h2><ul>
+<li>常见的属性：<ul>
+<li><code>classes</code>：Class数组，指定需要监听的事件</li>
+<li><code>condition</code>：指定条件，默认监听<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 注解方式实现事件监听器</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomEventListener</span> </span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 使用<span class="doctag">@EventListener</span>监听事件</div><div class="line">     * <span class="doctag">@param</span> event 传入的事件源</div><div class="line">     */</div><div class="line">    <span class="meta">@EventListener</span>(classes = &#123;ApplicationEvent.class&#125;)</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handlerContextRefreshEvent</span><span class="params">(ApplicationEvent event)</span></span>&#123;</div><div class="line">        <span class="keyword">if</span> (event <span class="keyword">instanceof</span> ContextRefreshedEvent) &#123;</div><div class="line">            ContextRefreshedEvent e=(ContextRefreshedEvent)event;</div><div class="line">            System.out.println(<span class="string">"ContextRefreshedEvent启动了........"</span>);</div><div class="line">            System.out.println(event.getSource() + <span class="string">"----&gt;"</span> + event.getTimestamp() + <span class="string">"----"</span> + e.getApplicationContext());</div><div class="line">            System.out.println(<span class="string">"........................................."</span>);</div><div class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(event <span class="keyword">instanceof</span> ContextStartedEvent)&#123;</div><div class="line">            ContextStartedEvent e=(ContextStartedEvent)event;</div><div class="line">            System.out.println(<span class="string">"ContextStartedEvent启动了........"</span>);</div><div class="line">            System.out.println(event.getSource() + <span class="string">"----&gt;"</span> + event.getTimestamp() + <span class="string">"----"</span> + e.getApplicationContext());</div><div class="line">            System.out.println(<span class="string">"........................................."</span>);</div><div class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(event <span class="keyword">instanceof</span> ContextStoppedEvent)&#123;</div><div class="line">            ContextStoppedEvent e=(ContextStoppedEvent)event;</div><div class="line">            System.out.println(<span class="string">"ContextStoppedEvent启动了........"</span>);</div><div class="line">            System.out.println(event.getSource() + <span class="string">"----&gt;"</span> + event.getTimestamp() + <span class="string">"----"</span> + e.getApplicationContext());</div><div class="line">            System.out.println(<span class="string">"........................................."</span>);</div><div class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(event <span class="keyword">instanceof</span> ContextClosedEvent)&#123;</div><div class="line">            ContextClosedEvent e=(ContextClosedEvent)event;</div><div class="line">            System.out.println(<span class="string">"ContextClosedEvent启动了........"</span>);</div><div class="line">            System.out.println(event.getSource() + <span class="string">"----&gt;"</span> + event.getTimestamp() + <span class="string">"----"</span> + e.getApplicationContext());</div><div class="line">            System.out.println(<span class="string">"........................................."</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 可以不指定classes，默认监听的是方法参数中的事件</div><div class="line">     * <span class="doctag">@param</span> event 事件源</div><div class="line">     */</div><div class="line">    <span class="meta">@EventListener</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleFirstEvent</span><span class="params">(FirstEvent event)</span></span>&#123;</div><div class="line">        System.out.println(<span class="string">"firstEvent事件启动了，。。。。。。。。。"</span>);</div><div class="line">        System.out.println(event.getSource()+<span class="string">"----&gt;"</span>+event.getMessage());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="事件发布"><a href="#事件发布" class="headerlink" title="事件发布"></a>事件发布</h1><ul>
+<li>Spring中发布事件的接口是<code>ApplicationEventPublisher</code>，我们可以自定义自己的类，当然也可以使用spring现成的类</li>
+</ul>
+<h2 id="Spring的事件发布类"><a href="#Spring的事件发布类" class="headerlink" title="Spring的事件发布类"></a>Spring的事件发布类</h2><ul>
+<li>ApplicationContext</li>
+<li>AnnotationConfigApplicationContext</li>
+</ul>
+<h2 id="直接注入"><a href="#直接注入" class="headerlink" title="直接注入"></a>直接注入</h2><ul>
+<li><p>在容器启动刷新的时候已经注入了<code>ApplicationEventPublisher</code>的实现，我们可以直接注入使用。如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 自定义的事件发布器</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomPublisher</span>  </span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 直接注入ApplicationEventPublisher</div><div class="line">     */</div><div class="line">    <span class="meta">@Autowired</span></div><div class="line">    <span class="keyword">private</span> ApplicationEventPublisher applicationEventPublisher;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 发布事件</div><div class="line">     * <span class="doctag">@param</span> event 指定的事件</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">publishEvent</span><span class="params">(ApplicationEvent event)</span></span>&#123;</div><div class="line">        applicationEventPublisher.publishEvent(event);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>测试</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test1</span><span class="params">()</span></span>&#123;</div><div class="line">    CustomPublisher customPublisher = applicationContext.getBean(CustomPublisher.class);</div><div class="line">    customPublisher.publishEvent(<span class="keyword">new</span> FirstEvent(<span class="keyword">this</span>,<span class="string">"启动自定义事件"</span>));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="使用ApplicationEventPublisherAware注入"><a href="#使用ApplicationEventPublisherAware注入" class="headerlink" title="使用ApplicationEventPublisherAware注入"></a>使用ApplicationEventPublisherAware注入</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 自定义的事件发布器，实现ApplicationEventPublisherAware接口</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomPublisher</span> <span class="keyword">implements</span> <span class="title">ApplicationEventPublisherAware</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> ApplicationEventPublisher applicationEventPublisher;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 发布事件</div><div class="line">     * <span class="doctag">@param</span> event 指定的事件</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">publishEvent</span><span class="params">(ApplicationEvent event)</span></span>&#123;</div><div class="line">        applicationEventPublisher.publishEvent(event);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setApplicationEventPublisher</span><span class="params">(ApplicationEventPublisher applicationEventPublisher)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.applicationEventPublisher=applicationEventPublisher;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="事件多播器"><a href="#事件多播器" class="headerlink" title="事件多播器"></a>事件多播器</h1><ul>
+<li>何为事件多播器【<code>ApplicationEventMulticaster</code>】？<ul>
+<li>简单的说事件多播器就是一个管理事件监听器并且广播事件【根据指定的事件调用指定的监听器而已】</li>
+</ul>
+</li>
+<li>spring中两个实现类分别为<code>AbstractApplicationEventMulticaster</code>、<code>SimpleApplicationEventMulticaster</code></li>
+<li>如何广播事件？【如何通过指定的事件调用指定的监听器】<ul>
+<li>真正的实现在<code>org.springframework.context.event.SimpleApplicationEventMulticaster#multicastEvent(org.springframework.context.ApplicationEvent, org.springframework.core.ResolvableType)</code>这个方法中，如下：</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">multicastEvent</span><span class="params">(<span class="keyword">final</span> ApplicationEvent event, @Nullable ResolvableType eventType)</span> </span>&#123;</div><div class="line">		ResolvableType type = (eventType != <span class="keyword">null</span> ? eventType : resolveDefaultEventType(event));</div><div class="line">        <span class="comment">//遍历事件监听器</span></div><div class="line">		<span class="keyword">for</span> (<span class="keyword">final</span> ApplicationListener&lt;?&gt; listener : getApplicationListeners(event, type)) &#123;</div><div class="line">            <span class="comment">//判断是否设置了Executor，如果存在，那么就异步执行</span></div><div class="line">			Executor executor = getTaskExecutor();</div><div class="line">			<span class="keyword">if</span> (executor != <span class="keyword">null</span>) &#123;</div><div class="line">				executor.execute(() -&gt; invokeListener(listener, event));</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">else</span> &#123;</div><div class="line">                <span class="comment">//否则的话，同步执行，调用invokeListener</span></div><div class="line">				invokeListener(listener, event);</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">/****************************************invokeListener******************************/</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">invokeListener</span><span class="params">(ApplicationListener&lt;?&gt; listener, ApplicationEvent event)</span> </span>&#123;</div><div class="line">    	<span class="comment">//如果有异常处理器，就try-catch执行</span></div><div class="line">		ErrorHandler errorHandler = getErrorHandler();</div><div class="line">		<span class="keyword">if</span> (errorHandler != <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">try</span> &#123;</div><div class="line">				doInvokeListener(listener, event);</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">catch</span> (Throwable err) &#123;</div><div class="line">                <span class="comment">//如果有异常了，执行异常处理器的handleError方法</span></div><div class="line">				errorHandler.handleError(err);</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span> &#123;</div><div class="line">            <span class="comment">//没有异常处理器直接执行</span></div><div class="line">			doInvokeListener(listener, event);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line"></div><div class="line"><span class="comment">/*******************************doInvokeListener****************************/</span></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doInvokeListener</span><span class="params">(ApplicationListener listener, ApplicationEvent event)</span> </span>&#123;</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">            <span class="comment">//此时真正调用监听器中的方法</span></div><div class="line">			listener.onApplicationEvent(event);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">catch</span> (ClassCastException ex) &#123;</div><div class="line">			String msg = ex.getMessage();</div><div class="line">			<span class="keyword">if</span> (msg == <span class="keyword">null</span> || matchesClassCastMessage(msg, event.getClass())) &#123;</div><div class="line">				<span class="comment">// Possibly a lambda-defined listener which we could not resolve the generic event type for</span></div><div class="line">				<span class="comment">// -&gt; let's suppress the exception and just log a debug message.</span></div><div class="line">				Log logger = LogFactory.getLog(getClass());</div><div class="line">				<span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</div><div class="line">					logger.debug(<span class="string">"Non-matching event type for listener: "</span> + listener, ex);</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">else</span> &#123;</div><div class="line">				<span class="keyword">throw</span> ex;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<h1 id="异步事件"><a href="#异步事件" class="headerlink" title="异步事件"></a>异步事件</h1><ul>
+<li>前面创建的事件和监听器都是同步进行，我们可以使用异步事件</li>
+</ul>
+<h2 id="使用-Async实现异步"><a href="#使用-Async实现异步" class="headerlink" title="使用@Async实现异步"></a>使用@Async实现异步</h2><ul>
+<li><p>Spring中可以使用<code>@Async</code>注解标注方法异步执行，不过需要在配置类上开启异步功能，使用<code>@EnableAsync</code>注解，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="meta">@ComponentScan</span>(value = &#123;<span class="string">"cn.tedu.demo"</span>&#125;)</div><div class="line"><span class="meta">@EnableAsync</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FirstConfig</span> </span>&#123;</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>此时可以在监听方法上标注<code>@Async</code>注解，使得事件异步执行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 注解方式实现事件监听器</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomEventListener</span> </span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 可以不指定classes，默认监听的是方法参数中的事件</div><div class="line">     * <span class="doctag">@Async</span> : 指定这个方法异步执行</div><div class="line">     * <span class="doctag">@param</span> event 事件源</div><div class="line">     */</div><div class="line">    <span class="meta">@EventListener</span></div><div class="line">    <span class="meta">@Async</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleFirstEvent</span><span class="params">(FirstEvent event)</span></span>&#123;</div><div class="line">        System.out.println(<span class="string">"firstEvent事件启动了，。。。。。。。。。"</span>);</div><div class="line">        System.out.println(event.getSource()+<span class="string">"----&gt;"</span>+event.getMessage());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="自定义事件多播器"><a href="#自定义事件多播器" class="headerlink" title="自定义事件多播器"></a>自定义事件多播器</h2><ul>
+<li>从源码我们可以知道，spring容器加载的时候先获取的是ioc容器中的，如果不存在，那么才会新建一个<code>SimpleApplicationEventMulticaster</code>，我们可以自己注入一个多播器直接使用即可。</li>
+<li><p>源码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initApplicationEventMulticaster</span><span class="params">()</span> </span>&#123;</div><div class="line">		ConfigurableListableBeanFactory beanFactory = getBeanFactory();</div><div class="line">		<span class="comment">//判断ioc容器中是否存在id为applicationEventMulticaster事件多播器</span></div><div class="line">		<span class="keyword">if</span> (beanFactory.containsLocalBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)) &#123;</div><div class="line">		    <span class="comment">//直接使用ioc容器中的</span></div><div class="line">			<span class="keyword">this</span>.applicationEventMulticaster =</div><div class="line">					beanFactory.getBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, ApplicationEventMulticaster.class);</div><div class="line">			<span class="keyword">if</span> (logger.isTraceEnabled()) &#123;</div><div class="line">				logger.trace(<span class="string">"Using ApplicationEventMulticaster ["</span> + <span class="keyword">this</span>.applicationEventMulticaster + <span class="string">"]"</span>);</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">else</span> &#123;</div><div class="line">		    <span class="comment">//新建一个，不过没有设置TaskExector</span></div><div class="line">			<span class="keyword">this</span>.applicationEventMulticaster = <span class="keyword">new</span> SimpleApplicationEventMulticaster(beanFactory);</div><div class="line">			beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, <span class="keyword">this</span>.applicationEventMulticaster);</div><div class="line">			<span class="keyword">if</span> (logger.isTraceEnabled()) &#123;</div><div class="line">				logger.trace(<span class="string">"No '"</span> + APPLICATION_EVENT_MULTICASTER_BEAN_NAME + <span class="string">"' bean, using "</span> +</div><div class="line">						<span class="string">"["</span> + <span class="keyword">this</span>.applicationEventMulticaster.getClass().getSimpleName() + <span class="string">"]"</span>);</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>从源码中【<code>org.springframework.context.event.SimpleApplicationEventMulticaster.multicastEvent(org.springframework.context.ApplicationEvent, org.springframework.core.ResolvableType)</code>】我们可以看出监听器的执行是先判断多播器中是否存在<code>Executor</code>,如果存在，那么就单独开启一个线程执行，否则就同步执行，我们在初始化多播器的时候，可以为其设置一个<code>Executor</code>，那么就可以异步执行了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">multicastEvent</span><span class="params">(<span class="keyword">final</span> ApplicationEvent event, @Nullable ResolvableType eventType)</span> </span>&#123;</div><div class="line">		ResolvableType type = (eventType != <span class="keyword">null</span> ? eventType : resolveDefaultEventType(event));</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">final</span> ApplicationListener&lt;?&gt; listener : getApplicationListeners(event, type)) &#123;</div><div class="line">			Executor executor = getTaskExecutor();</div><div class="line">			<span class="keyword">if</span> (executor != <span class="keyword">null</span>) &#123;</div><div class="line">				executor.execute(() -&gt; invokeListener(listener, event));</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">else</span> &#123;</div><div class="line">				invokeListener(listener, event);</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>实现：在配置类注入一个多播器即可，bean的id一定要是<code>applicationEventMulticaster</code>，同时为其设置一个<code>executor</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 自定义一个事件多播器，用来管理监听器和执行监听器</div><div class="line"> * <span class="doctag">@return</span></div><div class="line"> */</div><div class="line"><span class="meta">@Bean</span>(name = <span class="string">"applicationEventMulticaster"</span>)</div><div class="line"><span class="function"><span class="keyword">public</span> ApplicationEventMulticaster <span class="title">applicationEventMulticaster</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="comment">//事件多播器</span></div><div class="line">    SimpleApplicationEventMulticaster simpleApplicationEventMulticaster=<span class="keyword">new</span> SimpleApplicationEventMulticaster();</div><div class="line">    <span class="comment">//设置executor</span></div><div class="line">    SimpleAsyncTaskExecutor executor=<span class="keyword">new</span> SimpleAsyncTaskExecutor();</div><div class="line">    simpleApplicationEventMulticaster.setTaskExecutor(executor);</div><div class="line">    <span class="comment">//设置一个事件异常处理器，当监听器执行出现错误了会进行补救</span></div><div class="line">    simpleApplicationEventMulticaster.setErrorHandler(t-&gt;&#123;</div><div class="line">        <span class="comment">//这里可以针对不同的异常进行处理，在监听器中trycatch，不同执行抛出不同异常即可分类处理</span></div><div class="line">        System.out.println(<span class="string">"监听事件执行报错了"</span>);</div><div class="line">        System.out.println(t.getMessage());</div><div class="line">    &#125;);</div><div class="line">    <span class="keyword">return</span> simpleApplicationEventMulticaster;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h1><ul>
+<li>在spring源码中和事件涉及到的主要概念如下：<ul>
+<li>事件（ApplicationEvent）</li>
+<li>监听器（ApplicationEventListener）</li>
+<li>事件发布器（ApplicationEventPublisher）</li>
+<li>事件多播器（ApplicationEventMulticaster）</li>
+</ul>
+</li>
+<li>具体源码层面的涉及如下：<ul>
+<li>容器刷新<code>refresh</code>方法中：<ul>
+<li><code>initApplicationEventMulticaster()</code>：初始化事件多播器</li>
+<li><code>registerListeners();</code>：注册事件监听器</li>
+<li><code>finishRefresh()</code>方法中调用<code>publishEvent(new ContextRefreshedEvent(this))</code>方法发布容器刷新事件。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>​    </p>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Spring/">Spring</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Spring/">Spring</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2019/06/30/Spring中的事件/" data-title="Spring中的事件 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2019/07/07/Spring事务源码解析/" title="Spring事务源码解析">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Spring事务源码解析</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2019/06/27/BeanFactoryPostProcessor解析/"  title="BeanFactoryPostProcessor解析">
+ <strong>下一篇：</strong><br/> 
+ <span>BeanFactoryPostProcessor解析
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#事件"><span class="toc-number">2.</span> <span class="toc-text">事件</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring中内置的事件"><span class="toc-number">2.1.</span> <span class="toc-text">Spring中内置的事件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义事件"><span class="toc-number">2.2.</span> <span class="toc-text">自定义事件</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#监听器"><span class="toc-number">3.</span> <span class="toc-text">监听器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#实现ApplicationListener接口"><span class="toc-number">3.1.</span> <span class="toc-text">实现ApplicationListener接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-EventListener注解"><span class="toc-number">3.2.</span> <span class="toc-text">使用@EventListener注解</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#事件发布"><span class="toc-number">4.</span> <span class="toc-text">事件发布</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring的事件发布类"><span class="toc-number">4.1.</span> <span class="toc-text">Spring的事件发布类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#直接注入"><span class="toc-number">4.2.</span> <span class="toc-text">直接注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用ApplicationEventPublisherAware注入"><span class="toc-number">4.3.</span> <span class="toc-text">使用ApplicationEventPublisherAware注入</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#事件多播器"><span class="toc-number">5.</span> <span class="toc-text">事件多播器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#异步事件"><span class="toc-number">6.</span> <span class="toc-text">异步事件</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用-Async实现异步"><span class="toc-number">6.1.</span> <span class="toc-text">使用@Async实现异步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义事件多播器"><span class="toc-number">6.2.</span> <span class="toc-text">自定义事件多播器</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#源码解析"><span class="toc-number">7.</span> <span class="toc-text">源码解析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">7.1.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

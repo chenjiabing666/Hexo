@@ -1,0 +1,766 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>docker安装服务 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="docker安装Nginx1、docker pull nginx ：下载nginx
+2、docker run --name mynginx -d nginx： 运行nginx实例
+3、新建nginx目录在本地
+12cd /usr/local/mkdir nginx
+3、复制nginx的目录到本地，命令如下
+12345678//复制配置文件到本地docker cp mynginx:/etc/ngin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="docker安装服务">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/10/09/docker安装服务/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="docker安装Nginx1、docker pull nginx ：下载nginx
+2、docker run --name mynginx -d nginx： 运行nginx实例
+3、新建nginx目录在本地
+12cd /usr/local/mkdir nginx
+3、复制nginx的目录到本地，命令如下
+12345678//复制配置文件到本地docker cp mynginx:/etc/ngin">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T05:52:34.423Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="docker安装服务">
+<meta name="twitter:description" content="docker安装Nginx1、docker pull nginx ：下载nginx
+2、docker run --name mynginx -d nginx： 运行nginx实例
+3、新建nginx目录在本地
+12cd /usr/local/mkdir nginx
+3、复制nginx的目录到本地，命令如下
+12345678//复制配置文件到本地docker cp mynginx:/etc/ngin">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/10/09/docker安装服务/" title="docker安装服务" itemprop="url">docker安装服务</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-10-08T16:47:55.000Z" itemprop="datePublished"> 发表于 2018-10-09</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#docker安装Nginx"><span class="toc-number">1.</span> <span class="toc-text">docker安装Nginx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装tomcat"><span class="toc-number">2.</span> <span class="toc-text">安装tomcat</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装mysql"><span class="toc-number">3.</span> <span class="toc-text">安装mysql</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置参数详解"><span class="toc-number">3.1.</span> <span class="toc-text">配置参数详解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">4.</span> <span class="toc-text">笔者有话说</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="docker安装Nginx"><a href="#docker安装Nginx" class="headerlink" title="docker安装Nginx"></a>docker安装Nginx</h2><p>1、<code>docker pull nginx</code> ：下载nginx</p>
+<p>2、<code>docker run --name mynginx -d nginx</code>： 运行nginx实例</p>
+<p>3、新建nginx目录在本地</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd /usr/local/</div><div class="line">mkdir nginx</div></pre></td></tr></table></figure>
+<p>3、复制nginx的目录到本地，命令如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">//复制配置文件到本地</div><div class="line">docker cp mynginx:/etc/nginx /usr/share/nginx/conf/</div><div class="line"></div><div class="line">//复制html目录到本地</div><div class="line">docker cp mynginx:/usr/share/nginx/html /usr/share/nginx/html</div><div class="line"></div><div class="line">//复制日志到到本地</div><div class="line">docker cp mynginx:/var/log/nginx /usr/share/nginx/logs</div></pre></td></tr></table></figure>
+<p>4、挂载目录并且启动nginx，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run  --name mynginx -p 80:80 -v /usr/share/nginx/html:/usr/share/nginx/html -v /usr/share/nginx/conf:/etc/nginx -v /usr/share/nginx/logs:/var/log/nginx/  -d nginx</div></pre></td></tr></table></figure>
+<p>5、安装完成，此时的docker容器中的nginx的html路径就和本地的<code>/usr/share/nginx/html</code>对应了，如果需要建立目录，只需要在本地目录下建立就会自动更新到容器中</p>
+<h2 id="安装tomcat"><a href="#安装tomcat" class="headerlink" title="安装tomcat"></a>安装tomcat</h2><ul>
+<li><code>docker pull tomcat:8-jre8</code>  ： 现在镜像（tomcat8，jdk的版本8）</li>
+<li>运行实例：<code>docker run --name tom -d -p 8081:8080 41a54fe1f79d</code></li>
+<li>复制配置到本地（建立/usr/local/tomcat文件夹）</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">docker cp tom:/usr/local/tomcat/conf /usr/local/tomcat/conf</div><div class="line">docker cp tom:/usr/local/tomcat/lib /usr/local/tomcat/lib</div><div class="line">docker cp tom:/usr/local/tomcat/webapps /usr/local/tomcat/webapps</div><div class="line">docker cp tom:/usr/local/tomcat/bin /usr/local/tomcat/bin</div><div class="line">docker cp tom:/usr/local/tomcat/work /usr/local/tomcat/work</div><div class="line">docker cp tom:/usr/local/tomcat/temp /usr/local/tomcat/temp</div><div class="line">docker cp tom:/usr/local/tomcat/logs /usr/local/tomcat/logs</div></pre></td></tr></table></figure>
+<ul>
+<li>挂载目录</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run --name tom -p 8081:8080 -v /usr/local/tomcat/conf:/usr/local/tomcat/conf -v /usr/local/tomcat/lib:/usr/local/tomcat/lib -v /usr/local/tomcat/webapps:/usr/local/tomcat/webapps -v /usr/local/tomcat/bin:/usr/local/tomcat/bin -v /usr/local/tomcat/work:/usr/local/tomcat/work -v /usr/local/tomcat/temp:/usr/local/tomcat/temp -v /usr/local/tomcat/logs:/usr/local/tomcat/logs -d 41a54fe1f79d</div></pre></td></tr></table></figure>
+<ul>
+<li>完成，此时目录已经挂载完成，能够同步更新了</li>
+</ul>
+<h2 id="安装mysql"><a href="#安装mysql" class="headerlink" title="安装mysql"></a>安装mysql</h2><ul>
+<li>下载：<code>docker pull mysql:5.7.24</code></li>
+<li>启动：<code>docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=12345 -d 702fb0b7837f</code></li>
+<li>复制文件夹</li>
+</ul>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">docker cp mysql:/sbin /usr/local/mysql/bin</div><div class="line">docker cp mysql:/var/lib/mysql /usr/local/mysql/data</div><div class="line">docker cp mysql:/etc/mysql /usr/local/mysql/conf</div></pre></td></tr></table></figure>
+<ul>
+<li>挂载运行</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">docker run --name mysql -p 3306:3306 -v /usr/local/mysql/bin:/sbin -v /usr/local/mysql/data:/var/lib/mysql -v /usr/local/mysql/conf:/etc/mysql  -e MYSQL_ROOT_PASSWORD=12345 -d 702fb0b7837f</div></pre></td></tr></table></figure>
+<h3 id="配置参数详解"><a href="#配置参数详解" class="headerlink" title="配置参数详解"></a>配置参数详解</h3><ul>
+<li><a href="https://www.cnblogs.com/wyy123/p/6092976.html" target="_blank" rel="external">https://www.cnblogs.com/wyy123/p/6092976.html</a></li>
+<li><a href="http://www.cnblogs.com/Ray-xujianguo/p/3322455.html" target="_blank" rel="external">http://www.cnblogs.com/Ray-xujianguo/p/3322455.html</a></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div></pre></td><td class="code"><pre><div class="line">[mysql]</div><div class="line">default-character-set=utf8</div><div class="line"></div><div class="line"></div><div class="line"># SERVER SECTION</div><div class="line"># ----------------------------------------------------------------------</div><div class="line">#</div><div class="line"># The following options will be read by the MySQL Server. Make sure that</div><div class="line"># you have installed the server correctly (see above) so it reads this </div><div class="line"># file.</div><div class="line">#</div><div class="line">[mysqld]</div><div class="line"></div><div class="line"># The TCP/IP Port the MySQL Server will listen on</div><div class="line">port=3306</div><div class="line"></div><div class="line"></div><div class="line">#Path to installation directory. All paths are usually resolved relative to this.</div><div class="line">#basedir=&quot;E:/Java/Mysql/&quot;</div><div class="line"></div><div class="line">#Path to the database root</div><div class="line">datadir=&quot;/usr/local/mysql/data&quot;</div><div class="line"></div><div class="line"># The default character set that will be used when a new schema or table is</div><div class="line"># created and no character set is defined</div><div class="line">character-set-server=utf8</div><div class="line"></div><div class="line"># The default storage engine that will be used when create new tables when</div><div class="line">default-storage-engine=INNODB</div><div class="line"></div><div class="line"># Set the SQL mode to strict</div><div class="line">sql-mode=&quot;STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION&quot;</div><div class="line"></div><div class="line"># The maximum amount of concurrent sessions the MySQL server will</div><div class="line"># allow. One of these connections will be reserved for a user with</div><div class="line"># SUPER privileges to allow the administrator to login even if the</div><div class="line"># connection limit has been reached.</div><div class="line">max_connections=1000</div><div class="line"></div><div class="line"># Query cache is used to cache SELECT results and later return them</div><div class="line"># without actual executing the same query once again. Having the query</div><div class="line"># cache enabled may result in significant speed improvements, if your</div><div class="line"># have a lot of identical queries and rarely changing tables. See the</div><div class="line"># &quot;Qcache_lowmem_prunes&quot; status variable to check if the current value</div><div class="line"># is high enough for your load.</div><div class="line"># Note: In case your tables change very often or if your queries are</div><div class="line"># textually different every time, the query cache may result in a</div><div class="line"># slowdown instead of a performance improvement.</div><div class="line">query_cache_size=0</div><div class="line"></div><div class="line"># The number of open tables for all threads. Increasing this value</div><div class="line"># increases the number of file descriptors that mysqld requires.</div><div class="line"># Therefore you have to make sure to set the amount of open files</div><div class="line"># allowed to at least 4096 in the variable &quot;open-files-limit&quot; in</div><div class="line"># section [mysqld_safe]</div><div class="line">#table_cache=256</div><div class="line"></div><div class="line"># Maximum size for internal (in-memory) temporary tables. If a table</div><div class="line"># grows larger than this value, it is automatically converted to disk</div><div class="line"># based table This limitation is for a single table. There can be many</div><div class="line"># of them.</div><div class="line">tmp_table_size=35M</div><div class="line"></div><div class="line"></div><div class="line"># How many threads we should keep in a cache for reuse. When a client</div><div class="line"># disconnects, the client&apos;s threads are put in the cache if there aren&apos;t</div><div class="line"># more than thread_cache_size threads from before.  This greatly reduces</div><div class="line"># the amount of thread creations needed if you have a lot of new</div><div class="line"># connections. (Normally this doesn&apos;t give a notable performance</div><div class="line"># improvement if you have a good thread implementation.)</div><div class="line">thread_cache_size=8</div><div class="line"></div><div class="line">#*** MyISAM Specific options</div><div class="line"></div><div class="line"># The maximum size of the temporary file MySQL is allowed to use while</div><div class="line"># recreating the index (during REPAIR, ALTER TABLE or LOAD DATA INFILE.</div><div class="line"># If the file-size would be bigger than this, the index will be created</div><div class="line"># through the key cache (which is slower).</div><div class="line">myisam_max_sort_file_size=100G</div><div class="line"></div><div class="line"># If the temporary file used for fast index creation would be bigger</div><div class="line"># than using the key cache by the amount specified here, then prefer the</div><div class="line"># key cache method.  This is mainly used to force long character keys in</div><div class="line"># large tables to use the slower key cache method to create the index.</div><div class="line">myisam_sort_buffer_size=69M</div><div class="line"></div><div class="line"># Size of the Key Buffer, used to cache index blocks for MyISAM tables.</div><div class="line"># Do not set it larger than 30% of your available memory, as some memory</div><div class="line"># is also required by the OS to cache rows. Even if you&apos;re not using</div><div class="line"># MyISAM tables, you should still set it to 8-64M as it will also be</div><div class="line"># used for internal temporary disk tables.</div><div class="line">key_buffer_size=55M</div><div class="line"></div><div class="line"># Size of the buffer used for doing full table scans of MyISAM tables.</div><div class="line"># Allocated per thread, if a full scan is needed.</div><div class="line">read_buffer_size=64K</div><div class="line">read_rnd_buffer_size=256K</div><div class="line"></div><div class="line"># This buffer is allocated when MySQL needs to rebuild the index in</div><div class="line"># REPAIR, OPTIMZE, ALTER table statements as well as in LOAD DATA INFILE</div><div class="line"># into an empty table. It is allocated per thread so be careful with</div><div class="line"># large settings.</div><div class="line">sort_buffer_size=256K</div><div class="line"></div><div class="line">#*** INNODB Specific options ***</div><div class="line"></div><div class="line"></div><div class="line"># Use this option if you have a MySQL server with InnoDB support enabled</div><div class="line"># but you do not plan to use it. This will save memory and disk space</div><div class="line"># and speed up some things.</div><div class="line">#skip-innodb</div><div class="line"></div><div class="line"># Additional memory pool that is used by InnoDB to store metadata</div><div class="line"># information.  If InnoDB requires more memory for this purpose it will</div><div class="line"># start to allocate it from the OS.  As this is fast enough on most</div><div class="line"># recent operating systems, you normally do not need to change this</div><div class="line"># value. SHOW INNODB STATUS will display the current amount used.</div><div class="line">#innodb_additional_mem_pool_size=3M</div><div class="line"></div><div class="line"># If set to 1, InnoDB will flush (fsync) the transaction logs to the</div><div class="line"># disk at each commit, which offers full ACID behavior. If you are</div><div class="line"># willing to compromise this safety, and you are running small</div><div class="line"># transactions, you may set this to 0 or 2 to reduce disk I/O to the</div><div class="line"># logs. Value 0 means that the log is only written to the log file and</div><div class="line"># the log file flushed to disk approximately once per second. Value 2</div><div class="line"># means the log is written to the log file at each commit, but the log</div><div class="line"># file is only flushed to disk approximately once per second.</div><div class="line">#innodb_flush_log_at_trx_commit=1</div><div class="line"></div><div class="line"># The size of the buffer InnoDB uses for buffering log data. As soon as</div><div class="line"># it is full, InnoDB will have to flush it to disk. As it is flushed</div><div class="line"># once per second anyway, it does not make sense to have it very large</div><div class="line"># (even with long transactions).</div><div class="line">#innodb_log_buffer_size=2M</div><div class="line"></div><div class="line"># InnoDB, unlike MyISAM, uses a buffer pool to cache both indexes and</div><div class="line"># row data. The bigger you set this the less disk I/O is needed to</div><div class="line"># access data in tables. On a dedicated database server you may set this</div><div class="line"># parameter up to 80% of the machine physical memory size. Do not set it</div><div class="line"># too large, though, because competition of the physical memory may</div><div class="line"># cause paging in the operating system.  Note that on 32bit systems you</div><div class="line"># might be limited to 2-3.5G of user level memory per process, so do not</div><div class="line"># set it too high.</div><div class="line">#innodb_buffer_pool_size=107M</div><div class="line"></div><div class="line"># Size of each log file in a log group. You should set the combined size</div><div class="line"># of log files to about 25%-100% of your buffer pool size to avoid</div><div class="line"># unneeded buffer pool flush activity on log file overwrite. However,</div><div class="line"># note that a larger logfile size will increase the time needed for the</div><div class="line"># recovery process.</div><div class="line">#innodb_log_file_size=54M</div><div class="line"></div><div class="line"># Number of threads allowed inside the InnoDB kernel. The optimal value</div><div class="line"># depends highly on the application, hardware as well as the OS</div><div class="line"># scheduler properties. A too high value may lead to thread thrashing.</div><div class="line">#innodb_thread_concurrency=18</div></pre></td></tr></table></figure>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/docker/">docker</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/docker/">docker</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/10/09/docker安装服务/" data-title="docker安装服务 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/10/21/Shell编程/" title="Shell编程">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Shell编程</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/10/07/Mycat/"  title="数据库中间件之Mycat">
+ <strong>下一篇：</strong><br/> 
+ <span>数据库中间件之Mycat
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#docker安装Nginx"><span class="toc-number">1.</span> <span class="toc-text">docker安装Nginx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装tomcat"><span class="toc-number">2.</span> <span class="toc-text">安装tomcat</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装mysql"><span class="toc-number">3.</span> <span class="toc-text">安装mysql</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置参数详解"><span class="toc-number">3.1.</span> <span class="toc-text">配置参数详解</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">4.</span> <span class="toc-text">笔者有话说</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

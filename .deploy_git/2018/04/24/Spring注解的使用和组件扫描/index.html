@@ -1,0 +1,808 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Spring注解的使用和组件扫描 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="Spring注解的使用和组件扫描【非常重要】 组件扫描(Component-Scan)
+通过配置组件扫描，可以使得spring自动扫描package，而不必在spring的配置文件中逐一声明各个&amp;lt;bean&amp;gt;
+
+在配置组件扫描时，指定的包是“根包”，即例如指定了cn.tedu.spring,spring不只会扫描这个包，还会扫描它的各个层级子包，例如：cn.tedu.spring.dao">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring注解的使用和组件扫描">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/04/24/Spring注解的使用和组件扫描/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="Spring注解的使用和组件扫描【非常重要】 组件扫描(Component-Scan)
+通过配置组件扫描，可以使得spring自动扫描package，而不必在spring的配置文件中逐一声明各个&amp;lt;bean&amp;gt;
+
+在配置组件扫描时，指定的包是“根包”，即例如指定了cn.tedu.spring,spring不只会扫描这个包，还会扫描它的各个层级子包，例如：cn.tedu.spring.dao">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:16:16.722Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring注解的使用和组件扫描">
+<meta name="twitter:description" content="Spring注解的使用和组件扫描【非常重要】 组件扫描(Component-Scan)
+通过配置组件扫描，可以使得spring自动扫描package，而不必在spring的配置文件中逐一声明各个&amp;lt;bean&amp;gt;
+
+在配置组件扫描时，指定的包是“根包”，即例如指定了cn.tedu.spring,spring不只会扫描这个包，还会扫描它的各个层级子包，例如：cn.tedu.spring.dao">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/04/24/Spring注解的使用和组件扫描/" title="Spring注解的使用和组件扫描" itemprop="url">Spring注解的使用和组件扫描</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-04-24T03:13:38.000Z" itemprop="datePublished"> 发表于 2018-04-24</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Spring注解的使用和组件扫描"><span class="toc-number">1.</span> <span class="toc-text">Spring注解的使用和组件扫描</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#【非常重要】-组件扫描-Component-Scan"><span class="toc-number">1.1.</span> <span class="toc-text">【非常重要】 组件扫描(Component-Scan)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注解"><span class="toc-number">1.2.</span> <span class="toc-text">注解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#前提"><span class="toc-number">1.2.1.</span> <span class="toc-text">前提</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常用注解"><span class="toc-number">1.2.2.</span> <span class="toc-text">常用注解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其他注解"><span class="toc-number">1.2.3.</span> <span class="toc-text">其他注解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Scope"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">@Scope</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Lazy"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">@Lazy</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#PostConstruct"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">@PostConstruct</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#PreDestroy-单例模式下才会销毁"><span class="toc-number">1.2.3.4.</span> <span class="toc-text">@PreDestroy(单例模式下才会销毁)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#注入值"><span class="toc-number">1.2.4.</span> <span class="toc-text">注入值</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Autowired-（不推荐使用）"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">@Autowired （不推荐使用）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Resource-推荐使用"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">@Resource (推荐使用)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Value"><span class="toc-number">1.2.4.3.</span> <span class="toc-text">@Value</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.3.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Spring注解的使用和组件扫描"><a href="#Spring注解的使用和组件扫描" class="headerlink" title="Spring注解的使用和组件扫描"></a>Spring注解的使用和组件扫描</h1><h2 id="【非常重要】-组件扫描-Component-Scan"><a href="#【非常重要】-组件扫描-Component-Scan" class="headerlink" title="【非常重要】 组件扫描(Component-Scan)"></a>【非常重要】 组件扫描(Component-Scan)</h2><ul>
+<li><p>通过配置组件扫描，可以使得spring自动扫描package，而不必在spring的配置文件中逐一声明各个<code>&lt;bean&gt;</code></p>
+</li>
+<li><p>在配置组件扫描时，指定的包是“根包”，即例如指定了<code>cn.tedu.spring</code>,spring不只会扫描这个包，还会扫描它的各个层级子包，例如：<code>cn.tedu.spring.dao</code></p>
+</li>
+<li><p>直接在spring的配置文件中开启组件扫描即可 <code>&lt;context:component-scan base-package=&quot;cn.tedu.spring&quot;&gt;&lt;/context:component-scan&gt;</code></p>
+</li>
+<li><p><strong>注意</strong>： 仅仅开启组件扫描<code>spring</code>是不会自动管理bean的，而是自动的扫描<code>package</code>，要想自动管理bean，那么还需要配置注解</p>
+</li>
+</ul>
+<h2 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h2><ul>
+<li><p>在类的声明上方添加<code>@Component</code>注解，可以是的spring知道这个类是一个组件，需要进行管理，所以如过某个类需要被Spring管理，应该将这个类放在被扫描的包中，并且添加注解</p>
+</li>
+<li><p>由Spring扫描到的组件(由<code>@Component</code>注解标记的类)，会由Spring自动设置<code>Bean Id</code>，值为将<strong>类名首字母小写</strong>的名称，例如组件类的名称是<code>UserDao</code>，则配置的Bean的id是<code>userDao</code>，如果需要自定义Bean，那么可以直接在注解中设置，比如<code>@Component(&quot;id&quot;)</code></p>
+</li>
+</ul>
+<h3 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h3><ul>
+<li>一定要是在开启组件扫描的包下使用注解，否则将不会扫描到配置的注解</li>
+</ul>
+<h3 id="常用注解"><a href="#常用注解" class="headerlink" title="常用注解"></a>常用注解</h3><ul>
+<li><p>可以混用，暂时这几个注解没有差异，完全功能相同，但是我们还是要根据规则使用</p>
+</li>
+<li><p><code>@Component</code> ： 通用注解</p>
+</li>
+<li><code>@Service</code> ： 用于对业务逻辑类的注解(Service层)</li>
+<li><code>@Controller</code> ： 用于对控制器类的注解</li>
+<li><code>@Repository</code> ：用于对持久层处理类的注解(Dao层)</li>
+<li><p><code>@Named</code> ：通用注解(不用)</p>
+</li>
+<li><p>以上5个注解从实现目标和效果是等效的，但是基于方便理解代码的目的，应该按需使用，了；例如对名为<code>UserService</code>类的，应该使用<code>@Service</code></p>
+</li>
+</ul>
+<h3 id="其他注解"><a href="#其他注解" class="headerlink" title="其他注解"></a>其他注解</h3><h4 id="Scope"><a href="#Scope" class="headerlink" title="@Scope"></a>@Scope</h4><ul>
+<li>在类的声明语句上方添加这个注解，用于设置bean的作用域,比如<code>@Scope(&quot;prototype&quot;)</code>表示非单例，默认是单例</li>
+</ul>
+<h4 id="Lazy"><a href="#Lazy" class="headerlink" title="@Lazy"></a>@Lazy</h4><ul>
+<li>在单例模式下设置是否懒加载，例如<code>@Lazy(&quot;true&quot;)</code>用于设置成懒加载</li>
+<li>在类的声明语句上方添加</li>
+<li>前面之前已经说过，在创建Bean的时候默认使用的是单例模式下的饿汉式的创建，即是在spring配置文件加载的时候创建</li>
+</ul>
+<h4 id="PostConstruct"><a href="#PostConstruct" class="headerlink" title="@PostConstruct"></a>@PostConstruct</h4><ul>
+<li>将方法设置为生命周期的初始化方法</li>
+<li>设置初始化方法，直接在初始化方法的声明语句中添加即可</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 初始化方法： 应该是public的，无返回参数，无参数的</div><div class="line"> */</div><div class="line"><span class="meta">@PostConstruct</span>   <span class="comment">//定义初始化方法，在构造方法之后执行</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</div><div class="line">	System.out.println(<span class="string">"初始化方法"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="PreDestroy-单例模式下才会销毁"><a href="#PreDestroy-单例模式下才会销毁" class="headerlink" title="@PreDestroy(单例模式下才会销毁)"></a>@PreDestroy(单例模式下才会销毁)</h4><ul>
+<li>在方法的声明语句上方使用，可以将这个方法设置为生命周期的销毁方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@PreDestroy</span>   <span class="comment">//定义销毁方法</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"销毁方法"</span>);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<h3 id="注入值"><a href="#注入值" class="headerlink" title="注入值"></a>注入值</h3><h4 id="Autowired-（不推荐使用）"><a href="#Autowired-（不推荐使用）" class="headerlink" title="@Autowired （不推荐使用）"></a>@Autowired （不推荐使用）</h4><ul>
+<li><p>在类中，在声明属性的上方添加<code>@Autowired</code>，用于标记该属性是自动装配值</p>
+</li>
+<li><p><strong>这种自动装配默认按照类型(<code>byType</code>)实现自动装配</strong></p>
+</li>
+<li><p><strong>如果需要按照名称(byName)来自动装配,还需要使用<code>@Qualifier(&quot;userDao&quot;)</code>来组合使用，注解中配置的名称是需要注入的值的<code>Bean-Id</code></strong></p>
+</li>
+</ul>
+<ul>
+<li><code>UserDao</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">@Repository(&quot;userDao&quot;)</div><div class="line">public class UserDaoImpl implements UserDao&#123;</div><div class="line">	public void reg() &#123;</div><div class="line">		System.out.println(&quot;reg&quot;);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>UserService</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Service</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserService</span> </span>&#123;</div><div class="line">	<span class="meta">@Autowired</span></div><div class="line">	<span class="meta">@Qualifier</span>(<span class="string">"userDao"</span>)</div><div class="line">	<span class="keyword">private</span> UserDao userDao;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">reg</span><span class="params">()</span></span>&#123;</div><div class="line">		userDao.reg();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="Resource-推荐使用"><a href="#Resource-推荐使用" class="headerlink" title="@Resource (推荐使用)"></a>@Resource (推荐使用)</h4><ul>
+<li>在需要注入的属性的上方添加该注解</li>
+<li><strong>默认先按照名称来自动装配的(byName),如果名称对应不上，那么按照类型(byType)进行匹配</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Resource</span>   <span class="comment">//这里会先自动匹配和属性名一样的Bean Id，如果没有匹配到，那么就按照类型进行匹配</span></div><div class="line"><span class="keyword">private</span> UserDao userDao;</div></pre></td></tr></table></figure>
+<ul>
+<li><strong>如果使用<code>@Resource(name=&quot;userDaoImpl&quot;)</code>，name属性指定的是<code>Bean Id</code>,添加了name属性，那么只是按照名称来装配，如果这个名称对应的Bean不存在，那么就注入失败</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Resource</span>(name=<span class="string">"userDaoImpl"</span>)   <span class="comment">//这里只会匹配Bean Id为userDaoImpl的，如果匹配不上，那么报异常</span></div><div class="line"><span class="keyword">private</span> UserDao userDao;</div></pre></td></tr></table></figure>
+<h4 id="Value"><a href="#Value" class="headerlink" title="@Value"></a>@Value</h4><ul>
+<li><p>使用<code>@Value</code>注解添加在属性的声明的上方，可以对属性注入值</p>
+</li>
+<li><p>直接注入值</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Value</span>(<span class="string">"陈加兵"</span>)</div><div class="line"><span class="keyword">private</span> String name;</div></pre></td></tr></table></figure>
+<ul>
+<li>在使用<code>@Value(&quot;#{beanId.属性名}&quot;)</code>的注解时还可以使用Spring表达式</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">@Value(#&#123;jdbc.url&#125;)</div><div class="line">private String url;</div></pre></td></tr></table></figure>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Spring/">Spring</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Spring/">Spring</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/04/24/Spring注解的使用和组件扫描/" data-title="Spring注解的使用和组件扫描 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/04/24/Springmvc入门/" title="Springmvc入门">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Springmvc入门</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/04/24/Spring表达式和自动装配/"  title="Spring表达式和自动装配">
+ <strong>下一篇：</strong><br/> 
+ <span>Spring表达式和自动装配
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Spring注解的使用和组件扫描"><span class="toc-number">1.</span> <span class="toc-text">Spring注解的使用和组件扫描</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#【非常重要】-组件扫描-Component-Scan"><span class="toc-number">1.1.</span> <span class="toc-text">【非常重要】 组件扫描(Component-Scan)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注解"><span class="toc-number">1.2.</span> <span class="toc-text">注解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#前提"><span class="toc-number">1.2.1.</span> <span class="toc-text">前提</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常用注解"><span class="toc-number">1.2.2.</span> <span class="toc-text">常用注解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其他注解"><span class="toc-number">1.2.3.</span> <span class="toc-text">其他注解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Scope"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">@Scope</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Lazy"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">@Lazy</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#PostConstruct"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">@PostConstruct</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#PreDestroy-单例模式下才会销毁"><span class="toc-number">1.2.3.4.</span> <span class="toc-text">@PreDestroy(单例模式下才会销毁)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#注入值"><span class="toc-number">1.2.4.</span> <span class="toc-text">注入值</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Autowired-（不推荐使用）"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">@Autowired （不推荐使用）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Resource-推荐使用"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">@Resource (推荐使用)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Value"><span class="toc-number">1.2.4.3.</span> <span class="toc-text">@Value</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.3.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

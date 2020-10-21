@@ -1,0 +1,841 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>mysql索引优化详解 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="Explain
+使用explain能够知道自己写的sql语句在mysql中到底是怎样运行的，到底扫描了多少行，是否使用了索引，返回的结果如下：
+
+12345+------+-------------+-----------+------+---------------+------+---------+------+------+-------+| id   | select_type | tab">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql索引优化详解">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/09/07/mysql索引优化详解/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="Explain
+使用explain能够知道自己写的sql语句在mysql中到底是怎样运行的，到底扫描了多少行，是否使用了索引，返回的结果如下：
+
+12345+------+-------------+-----------+------+---------------+------+---------+------+------+-------+| id   | select_type | tab">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:05:07.890Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mysql索引优化详解">
+<meta name="twitter:description" content="Explain
+使用explain能够知道自己写的sql语句在mysql中到底是怎样运行的，到底扫描了多少行，是否使用了索引，返回的结果如下：
+
+12345+------+-------------+-----------+------+---------------+------+---------+------+------+-------+| id   | select_type | tab">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/09/07/mysql索引优化详解/" title="mysql索引优化详解" itemprop="url">mysql索引优化详解</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-09-06T16:31:32.000Z" itemprop="datePublished"> 发表于 2018-09-07</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Explain"><span class="toc-number">1.</span> <span class="toc-text">Explain</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#id"><span class="toc-number">1.1.</span> <span class="toc-text">id</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#id相同"><span class="toc-number">1.1.1.</span> <span class="toc-text">id相同</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#id不同"><span class="toc-number">1.1.2.</span> <span class="toc-text">id不同</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#table"><span class="toc-number">1.2.</span> <span class="toc-text">table</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#索引优化"><span class="toc-number">2.</span> <span class="toc-text">索引优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#全值匹配"><span class="toc-number">2.1.</span> <span class="toc-text">全值匹配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最佳左前缀法则"><span class="toc-number">2.2.</span> <span class="toc-text">最佳左前缀法则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#不在索引上列上做任何操作"><span class="toc-number">2.3.</span> <span class="toc-text">不在索引上列上做任何操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#不能使用索引中范围条件右边的列（范围之后的索引全失效）"><span class="toc-number">2.4.</span> <span class="toc-text">不能使用索引中范围条件右边的列（范围之后的索引全失效）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用覆盖索引，少使用select"><span class="toc-number">2.5.</span> <span class="toc-text">使用覆盖索引，少使用select*</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mysql在使用不等于-或者-lt-gt-的时候无法使用导致全表扫描"><span class="toc-number">2.6.</span> <span class="toc-text">mysql在使用不等于(!=或者<>)的时候无法使用导致全表扫描</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在使用or的时候，前后两个都是索引的时候才会生效"><span class="toc-number">2.7.</span> <span class="toc-text">在使用or的时候，前后两个都是索引的时候才会生效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#is-null和is-not-null-导致索引失效"><span class="toc-number">2.8.</span> <span class="toc-text">is null和is not null 导致索引失效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#like使用-开头的将会导致索引失效"><span class="toc-number">2.9.</span> <span class="toc-text">like使用%开头的将会导致索引失效</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#解决方法"><span class="toc-number">2.9.1.</span> <span class="toc-text">解决方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#字符串不加单引号导致索引失效"><span class="toc-number">2.10.</span> <span class="toc-text">字符串不加单引号导致索引失效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#单表查询优化"><span class="toc-number">2.11.</span> <span class="toc-text">单表查询优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#两表查询优化"><span class="toc-number">2.12.</span> <span class="toc-text">两表查询优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三表查询优化"><span class="toc-number">2.13.</span> <span class="toc-text">三表查询优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#小表驱动大表"><span class="toc-number">2.14.</span> <span class="toc-text">小表驱动大表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#order-by-排序的索引生效"><span class="toc-number">2.15.</span> <span class="toc-text">order by 排序的索引生效</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#总结"><span class="toc-number">2.15.1.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">3.</span> <span class="toc-text">笔者有话说</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="Explain"><a href="#Explain" class="headerlink" title="Explain"></a>Explain</h2><ul>
+<li>使用explain能够知道自己写的sql语句在mysql中到底是怎样运行的，到底扫描了多少行，是否使用了索引，返回的结果如下：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">+<span class="comment">------+-------------+-----------+------+---------------+------+---------+------+------+-------+</span></div><div class="line">| id   | select_type | table     | type | possible_keys | key  | key_len | ref  | rows | Extra |</div><div class="line">+<span class="comment">------+-------------+-----------+------+---------------+------+---------+------+------+-------+</span></div><div class="line">|    1 | SIMPLE      | t_blogger | ALL  | NULL          | NULL | NULL    | NULL |    2 |       |</div><div class="line">+<span class="comment">------+-------------+-----------+------+---------------+------+---------+------+------+-------+</span></div></pre></td></tr></table></figure>
+<ul>
+<li>下面将会针对上面的值详细讲解</li>
+</ul>
+<h3 id="id"><a href="#id" class="headerlink" title="id"></a>id</h3><ul>
+<li>sql执行查询的序列号，决定了查询中select子句的查询顺序，分为三种情况，如下：</li>
+</ul>
+<h4 id="id相同"><a href="#id相同" class="headerlink" title="id相同"></a>id相同</h4><ul>
+<li>查询的select子句从<strong>上到到下</strong>执行，如下：</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">MariaDB [db_blog3]&gt; explain select * from t_blog ,t_blogger;</div><div class="line"></div><div class="line">+------+-------------+-----------+------+---------------+------+---------+------+------+------------------------------------+</div><div class="line">| id   | select_type | table     | type | possible_keys | key  | key_len | ref  | rows | Extra                              |</div><div class="line">+------+-------------+-----------+------+---------------+------+---------+------+------+------------------------------------+</div><div class="line">|    1 | SIMPLE      | t_blogger | ALL  | NULL          | NULL | NULL    | NULL |    2 |                                    |</div><div class="line">|    1 | SIMPLE      | t_blog    | ALL  | NULL          | NULL | NULL    | NULL |   16 | Using join buffer (flat, BNL join) |</div><div class="line">+------+-------------+-----------+------+---------------+------+---------+------+------+------------------------------------+</div></pre></td></tr></table></figure>
+<ul>
+<li>那么执行的孙顺序就是先查询<code>t_blogger</code>，之后查询<code>t_blog</code></li>
+</ul>
+<h4 id="id不同"><a href="#id不同" class="headerlink" title="id不同"></a>id不同</h4><ul>
+<li>id的值越大优先级越高，就先执行，剩下相同的id的值，按照顺序从上到下执行</li>
+</ul>
+<h3 id="table"><a href="#table" class="headerlink" title="table"></a>table</h3><ul>
+<li>select语句执行查询的表，如果是使用联合查询的，那么会使用这个值可能是虚拟的表</li>
+</ul>
+<h2 id="索引优化"><a href="#索引优化" class="headerlink" title="索引优化"></a>索引优化</h2><h3 id="全值匹配"><a href="#全值匹配" class="headerlink" title="全值匹配"></a>全值匹配</h3><ul>
+<li>全部使用了索引，并且如果是复合索引，一定要按照复合索引的顺序查询，这样才能达到最高效的查询，如下：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">-- 为user表创建组合索引 index_nameAgePos</span></div><div class="line"></div><div class="line"><span class="comment">-- 全值匹配的实例 ,查询的条件的顺序必须和创建索引的顺序一致</span></div><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_user <span class="keyword">where</span> <span class="keyword">name</span>=<span class="string">"Tom"</span> <span class="keyword">and</span> age=<span class="number">22</span> <span class="keyword">and</span> pos=<span class="string">"1"</span></div></pre></td></tr></table></figure>
+<h3 id="最佳左前缀法则"><a href="#最佳左前缀法则" class="headerlink" title="最佳左前缀法则"></a>最佳左前缀法则</h3><ul>
+<li><strong>如果使用了组合索引（索引了多列） ，那么一定查询要从最左前列开始并且不能跳过索引中的列</strong></li>
+<li>比如<code>index_nameAgePos</code>这个索引，实例如下：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">-- 全值匹配，最为高效</span></div><div class="line"><span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> t_user <span class="keyword">where</span> <span class="keyword">name</span>=<span class="string">"Tom"</span> <span class="keyword">and</span> age=<span class="number">22</span> <span class="keyword">and</span> pos=<span class="string">"1"</span>  </div><div class="line"></div><div class="line"><span class="comment">-- 去掉最后一个，使用前两个，那么前两个索引会有效，使用了部分索引</span></div><div class="line"> <span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> t_user <span class="keyword">where</span> <span class="keyword">name</span>=<span class="string">"Tom"</span> <span class="keyword">and</span> age=<span class="number">22</span></div><div class="line"></div><div class="line"><span class="comment">-- 去掉后面两个，只是用第一个，索引依然有效，使用了第一个索引的类，部分索引</span></div><div class="line"><span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> t_user <span class="keyword">where</span> <span class="keyword">name</span>=<span class="string">"Tom"</span></div><div class="line"></div><div class="line"><span class="comment">-- 去掉第一个，使用后面两个索引查询，没有使用做前缀，索引失效，</span></div><div class="line"><span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> t_user <span class="keyword">where</span> <span class="keyword">and</span> age=<span class="number">22</span> <span class="keyword">and</span> pos=<span class="string">"1"</span>  </div><div class="line"></div><div class="line"><span class="comment">-- 去掉中间的一个，只使用第一个和第三个,中间断了，不能查找到索引，索引失效，即使有了做前缀依然会失效</span></div><div class="line"><span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> t_user <span class="keyword">where</span> <span class="keyword">name</span>=<span class="string">"Tom"</span> <span class="keyword">and</span> pos=<span class="string">"1"</span></div></pre></td></tr></table></figure>
+<ul>
+<li>通过上面的例子得出：<strong>使用组合索引的时候，一定要带上左前缀，并且不能跳过中间的索引，否则将会索引失效</strong></li>
+</ul>
+<h3 id="不在索引上列上做任何操作"><a href="#不在索引上列上做任何操作" class="headerlink" title="不在索引上列上做任何操作"></a>不在索引上列上做任何操作</h3><ul>
+<li>不要在索引列上做任何的操作，包括<strong>计算、函数、自动或者手动类型的转换</strong>，这样都会导致索引失效</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> <span class="keyword">name</span>=<span class="number">2000</span>  <span class="comment">---- 我们知道name是一个varchar类型的，但是用name=2000虽然能够查到，但是在内部其实是将name转换成了数值类型，因此不能使用索引</span></div><div class="line"></div><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> <span class="keyword">left</span>(<span class="keyword">name</span>,<span class="number">4</span>)=<span class="string">"TOm"</span>    <span class="comment">-- 这里将对name使用了left这个函数，索引失效</span></div></pre></td></tr></table></figure>
+<h3 id="不能使用索引中范围条件右边的列（范围之后的索引全失效）"><a href="#不能使用索引中范围条件右边的列（范围之后的索引全失效）" class="headerlink" title="不能使用索引中范围条件右边的列（范围之后的索引全失效）"></a>不能使用索引中范围条件右边的列（范围之后的索引全失效）</h3><ul>
+<li>在使用组合索引的时候，一旦索引中有列使用了<strong>范围查询</strong>（&gt;=…in….like,between子句），那么在其右边的索引将会失效</li>
+<li>假设创建了组合索引，顺序为<strong>name，age，address</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">-- age使用了范围查询，那么在其右边的address将不会使用索引查询，但是name和age使用了索引</div><div class="line">explain select age from user where name=<span class="string">"JOhn"</span> and age&gt;<span class="number">22</span> and address=<span class="string">"江苏"</span>；</div></pre></td></tr></table></figure>
+<h3 id="使用覆盖索引，少使用select"><a href="#使用覆盖索引，少使用select" class="headerlink" title="使用覆盖索引，少使用select*"></a>使用覆盖索引，少使用select*</h3><ul>
+<li>需要用到什么数据就查询什么数据，这样可以减少网络的传输和mysql的全表扫描</li>
+<li><strong>尽量使用覆盖索引，比如索引为<code>name，age，address</code>的组合索引，那么尽量覆盖这三个字段之中的值，mysql将会直接在索引上取值（using index）。并且返回值不包含不是索引的字段</strong></li>
+</ul>
+<h3 id="mysql在使用不等于-或者-lt-gt-的时候无法使用导致全表扫描"><a href="#mysql在使用不等于-或者-lt-gt-的时候无法使用导致全表扫描" class="headerlink" title="mysql在使用不等于(!=或者&lt;&gt;)的时候无法使用导致全表扫描"></a>mysql在使用不等于(!=或者&lt;&gt;)的时候无法使用导致全表扫描</h3><ul>
+<li>在查询的时候，如果对索引使用不等于的操作将会导致索引失效，进行全表扫描</li>
+</ul>
+<h3 id="在使用or的时候，前后两个都是索引的时候才会生效"><a href="#在使用or的时候，前后两个都是索引的时候才会生效" class="headerlink" title="在使用or的时候，前后两个都是索引的时候才会生效"></a>在使用or的时候，前后两个都是索引的时候才会生效</h3><ul>
+<li>比如我们创建组合索引<code>name，age，address</code></li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> <span class="keyword">name</span>=<span class="string">"John"</span> <span class="keyword">or</span> age=<span class="number">22</span>;  <span class="comment">-- name和age都是索引，生效</span></div><div class="line"></div><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> <span class="keyword">name</span>=<span class="string">"John"</span> <span class="keyword">or</span> pos=<span class="number">22</span>;    <span class="comment">-- pos不是索引，因此导致全表扫描，索引失效</span></div></pre></td></tr></table></figure>
+<h3 id="is-null和is-not-null-导致索引失效"><a href="#is-null和is-not-null-导致索引失效" class="headerlink" title="is null和is not null 导致索引失效"></a>is null和is not null 导致索引失效</h3><ul>
+<li>索引条件一旦是is null或者is not null 将会导致索引失效</li>
+</ul>
+<h3 id="like使用-开头的将会导致索引失效"><a href="#like使用-开头的将会导致索引失效" class="headerlink" title="like使用%开头的将会导致索引失效"></a>like使用%开头的将会导致索引失效</h3><ul>
+<li>如果使用模糊查找的时候，使用<code>%a%</code>的时候将会导致索引失效</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> <span class="keyword">name</span> <span class="keyword">like</span> <span class="string">"%a%"</span>;   <span class="comment">--  索引失效</span></div><div class="line"></div><div class="line"><span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> <span class="keyword">name</span> <span class="keyword">like</span> <span class="string">"a%"</span>;  <span class="comment">-- 索引生效、</span></div><div class="line"></div><div class="line"><span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> <span class="keyword">name</span> <span class="keyword">like</span> <span class="string">"%a"</span>;  <span class="comment">--- 索引失效</span></div></pre></td></tr></table></figure>
+<h4 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h4><ul>
+<li>需求就需要使用<code>%$%</code>查询，那么我们如何解决索引失效？我们可以使用覆盖索引避免索引失效</li>
+<li>假设我们的索引为<code>name，age</code></li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> <span class="keyword">name</span> <span class="keyword">like</span> <span class="string">"%aa%"</span>;   <span class="comment">-- 索引失效，没有使用覆盖索引而是select*</span></div><div class="line"></div><div class="line"><span class="keyword">select</span> <span class="keyword">name</span> <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> <span class="keyword">name</span> <span class="keyword">like</span> <span class="string">"%a%"</span> ;   <span class="comment">-- 索引生效，使用了覆盖索引，返回索引列name</span></div><div class="line"></div><div class="line"><span class="keyword">select</span> <span class="keyword">name</span>,age <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> <span class="keyword">name</span> <span class="keyword">like</span> <span class="string">"%aa%"</span>  <span class="comment">-- 索引生效，name和age都是索引</span></div><div class="line"></div><div class="line"><span class="keyword">select</span> naem，pos <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">where</span> <span class="keyword">name</span> <span class="keyword">like</span> <span class="string">"%a"</span>  <span class="comment">-- 索引失效，pos不是索引</span></div></pre></td></tr></table></figure>
+<h3 id="字符串不加单引号导致索引失效"><a href="#字符串不加单引号导致索引失效" class="headerlink" title="字符串不加单引号导致索引失效"></a>字符串不加单引号导致索引失效</h3><ul>
+<li><code>select * from user where pos=2000</code>，将会导致name这个索引失效，因为mysql在底层会自动为name这个字段进行类型转换</li>
+</ul>
+<h3 id="单表查询优化"><a href="#单表查询优化" class="headerlink" title="单表查询优化"></a>单表查询优化</h3><ul>
+<li>在经常查询或者排序的字段建立索引</li>
+</ul>
+<h3 id="两表查询优化"><a href="#两表查询优化" class="headerlink" title="两表查询优化"></a>两表查询优化</h3><ul>
+<li>我们一般会使用联合查询，比如left Join，right Join</li>
+<li>我们在不建立索引的情况下，如下：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">-- 没有索引，全表扫描</span></div><div class="line"><span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">user</span> <span class="keyword">left</span> <span class="keyword">join</span> image <span class="keyword">on</span> user.url=image.url</div></pre></td></tr></table></figure>
+<ul>
+<li>那么我们这个索引应该建在哪张表上呢？我们验证之后知道，应该在image表中对url建立索引</li>
+<li><strong>总结：左连接在右边的表上加索引，右连接在左表添加索引</strong></li>
+</ul>
+<h3 id="三表查询优化"><a href="#三表查询优化" class="headerlink" title="三表查询优化"></a>三表查询优化</h3><ul>
+<li>三表建立索引，依然按照左连接在右表上建立索引，右连接在左表上建立索引。</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">-- 没有建立索引，全表扫描</span></div><div class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t1 <span class="keyword">left</span> jon t2 t1.name=t2.name <span class="keyword">left</span> <span class="keyword">join</span> t3 t2.url=t3.url</div></pre></td></tr></table></figure>
+<ul>
+<li><strong>我们可以在<code>t2</code>的表上为<code>name</code>字段建立索引，在<code>t3</code>表上为<code>url</code>字段建立索引</strong>，那么将会使用索引查询</li>
+</ul>
+<h3 id="小表驱动大表"><a href="#小表驱动大表" class="headerlink" title="小表驱动大表"></a>小表驱动大表</h3><ul>
+<li>在链接查询的时候，比如<code>left Join</code>，这种查询是左边的表驱动右边的表，那么我们应该小表驱动大表的策略，对于左连接的时候，左边的表应该是小表，右连接反之</li>
+</ul>
+<h3 id="order-by-排序的索引生效"><a href="#order-by-排序的索引生效" class="headerlink" title="order by 排序的索引生效"></a>order by 排序的索引生效</h3><ul>
+<li><p>假设组合索引为<code>name，age，address</code></p>
+</li>
+<li><p>对于order by排序问题，只有满足以下两种情况才会使用索引排序（using index)</p>
+<ul>
+<li><strong>对于组合索引，order by 语句使用最左前缀查询</strong><ul>
+<li><code>select * from user order by name</code>： 使用索引</li>
+<li><code>select * from user order by age</code>： 不使用索引</li>
+<li><code>select * from user order by name,age</code>： 使用索引，因为排序规则一样并且是左前缀查询</li>
+<li><code>select * from user order by name asc,age desc</code>：不使用索引，因为排序规则不同，即使使用了最佳左前缀</li>
+</ul>
+</li>
+<li>使用<code>where</code>子句与<code>order by</code>子句条件列组合满足索引最左前缀查询<ul>
+<li><code>select * from user where name=&quot;John&quot; order by age</code> ： 使用索引，因为where中的name和order by中的age组合在一起符合最佳左前缀原则</li>
+<li><code>select * from user where age=22 order by address</code>：不使用索引</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>总结：order by排序应该遵循最佳左前缀查询，如果是使用多个索引字段进行排序，那么排序的规则必须相同（同是升序或者降序）</strong></li>
+</ul>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><ul>
+<li>使用最佳左前缀</li>
+<li>提高<code>sort_buffer_size</code>的值：不管是使用单路排序还是双路排序，提高这个参数都会提高查询效率</li>
+<li>提高<code>max_length_for_sort_data</code>的值：提高这个参数的值，会增加使用单路排序算法的概率，但是如果设置的太高，数据总容量超出sort_buffer_size的概率增大，明显症状是磁盘I/O活动和低的处理器使用率</li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/数据库干货篇/">数据库干货篇</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/SQL/">SQL</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/09/07/mysql索引优化详解/" data-title="mysql索引优化详解 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/10/03/springBoot整合dubbo/" title="springBoot整合dubbo">
+  <strong>上一篇：</strong><br/>
+  <span>
+  springBoot整合dubbo</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/09/02/Bean加载过程/"  title="spring的Bean加载过程">
+ <strong>下一篇：</strong><br/> 
+ <span>spring的Bean加载过程
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Explain"><span class="toc-number">1.</span> <span class="toc-text">Explain</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#id"><span class="toc-number">1.1.</span> <span class="toc-text">id</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#id相同"><span class="toc-number">1.1.1.</span> <span class="toc-text">id相同</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#id不同"><span class="toc-number">1.1.2.</span> <span class="toc-text">id不同</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#table"><span class="toc-number">1.2.</span> <span class="toc-text">table</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#索引优化"><span class="toc-number">2.</span> <span class="toc-text">索引优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#全值匹配"><span class="toc-number">2.1.</span> <span class="toc-text">全值匹配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最佳左前缀法则"><span class="toc-number">2.2.</span> <span class="toc-text">最佳左前缀法则</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#不在索引上列上做任何操作"><span class="toc-number">2.3.</span> <span class="toc-text">不在索引上列上做任何操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#不能使用索引中范围条件右边的列（范围之后的索引全失效）"><span class="toc-number">2.4.</span> <span class="toc-text">不能使用索引中范围条件右边的列（范围之后的索引全失效）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用覆盖索引，少使用select"><span class="toc-number">2.5.</span> <span class="toc-text">使用覆盖索引，少使用select*</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mysql在使用不等于-或者-lt-gt-的时候无法使用导致全表扫描"><span class="toc-number">2.6.</span> <span class="toc-text">mysql在使用不等于(!=或者<>)的时候无法使用导致全表扫描</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#在使用or的时候，前后两个都是索引的时候才会生效"><span class="toc-number">2.7.</span> <span class="toc-text">在使用or的时候，前后两个都是索引的时候才会生效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#is-null和is-not-null-导致索引失效"><span class="toc-number">2.8.</span> <span class="toc-text">is null和is not null 导致索引失效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#like使用-开头的将会导致索引失效"><span class="toc-number">2.9.</span> <span class="toc-text">like使用%开头的将会导致索引失效</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#解决方法"><span class="toc-number">2.9.1.</span> <span class="toc-text">解决方法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#字符串不加单引号导致索引失效"><span class="toc-number">2.10.</span> <span class="toc-text">字符串不加单引号导致索引失效</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#单表查询优化"><span class="toc-number">2.11.</span> <span class="toc-text">单表查询优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#两表查询优化"><span class="toc-number">2.12.</span> <span class="toc-text">两表查询优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三表查询优化"><span class="toc-number">2.13.</span> <span class="toc-text">三表查询优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#小表驱动大表"><span class="toc-number">2.14.</span> <span class="toc-text">小表驱动大表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#order-by-排序的索引生效"><span class="toc-number">2.15.</span> <span class="toc-text">order by 排序的索引生效</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#总结"><span class="toc-number">2.15.1.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">3.</span> <span class="toc-text">笔者有话说</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

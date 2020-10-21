@@ -1,0 +1,766 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>一文搞懂Redis持久化 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="前言
+Redis目前已经成为主流的内存数据库了，但是大部分人仅仅是停留在会用的阶段，你真的了解Redis内部的工作原理吗？
+今天这篇文章将为大家介绍Redis持久化的两种方案，文章将会从以下五个方面介绍：
+什么是RDB，RDB如何实现持久化？
+什么是AOF，AOF如何实现持久化？
+AOF和RDB的区别。
+如何重启恢复数据？
+持久化性能问题和解决方案RDB
+
+
+RDB持久化是把当前进程数据生成快照保">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一文搞懂Redis持久化">
+<meta property="og:url" content="http://chenjiabing666.github.io/2020/04/20/一文搞懂Redis持久化/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="前言
+Redis目前已经成为主流的内存数据库了，但是大部分人仅仅是停留在会用的阶段，你真的了解Redis内部的工作原理吗？
+今天这篇文章将为大家介绍Redis持久化的两种方案，文章将会从以下五个方面介绍：
+什么是RDB，RDB如何实现持久化？
+什么是AOF，AOF如何实现持久化？
+AOF和RDB的区别。
+如何重启恢复数据？
+持久化性能问题和解决方案RDB
+
+
+RDB持久化是把当前进程数据生成快照保">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Redis%E6%8C%81%E4%B9%85%E5%8C%96/RDB%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Redis%E6%8C%81%E4%B9%85%E5%8C%96/AOF%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Redis%E6%8C%81%E4%B9%85%E5%8C%96/%E6%96%87%E4%BB%B6%E9%87%8D%E5%86%99%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Redis%E6%8C%81%E4%B9%85%E5%8C%96/%E5%90%AF%E5%8A%A8%E6%81%A2%E5%A4%8D.png">
+<meta property="og:updated_time" content="2020-04-20T09:00:11.604Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一文搞懂Redis持久化">
+<meta name="twitter:description" content="前言
+Redis目前已经成为主流的内存数据库了，但是大部分人仅仅是停留在会用的阶段，你真的了解Redis内部的工作原理吗？
+今天这篇文章将为大家介绍Redis持久化的两种方案，文章将会从以下五个方面介绍：
+什么是RDB，RDB如何实现持久化？
+什么是AOF，AOF如何实现持久化？
+AOF和RDB的区别。
+如何重启恢复数据？
+持久化性能问题和解决方案RDB
+
+
+RDB持久化是把当前进程数据生成快照保">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/Redis%E6%8C%81%E4%B9%85%E5%8C%96/RDB%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/04/20/一文搞懂Redis持久化/" title="一文搞懂Redis持久化" itemprop="url">一文搞懂Redis持久化</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2020-04-20T08:59:42.000Z" itemprop="datePublished"> 发表于 2020-04-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RDB"><span class="toc-number">2.</span> <span class="toc-text">RDB</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#手动触发"><span class="toc-number">2.1.</span> <span class="toc-text">手动触发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自动触发"><span class="toc-number">2.2.</span> <span class="toc-text">自动触发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RDB执行流程"><span class="toc-number">2.3.</span> <span class="toc-text">RDB执行流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RDB的优点"><span class="toc-number">2.4.</span> <span class="toc-text">RDB的优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RDB的缺点"><span class="toc-number">2.5.</span> <span class="toc-text">RDB的缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AOF"><span class="toc-number">3.</span> <span class="toc-text">AOF</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#如何开启AOF"><span class="toc-number">3.1.</span> <span class="toc-text">如何开启AOF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AOF整体的执行流程"><span class="toc-number">3.2.</span> <span class="toc-text">AOF整体的执行流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#命令写入"><span class="toc-number">3.3.</span> <span class="toc-text">命令写入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#文件同步"><span class="toc-number">3.4.</span> <span class="toc-text">文件同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#文件重写机制"><span class="toc-number">3.5.</span> <span class="toc-text">文件重写机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AOF的优点"><span class="toc-number">3.6.</span> <span class="toc-text">AOF的优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AOF的缺点"><span class="toc-number">3.7.</span> <span class="toc-text">AOF的缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AOF和RDB的区别"><span class="toc-number">4.</span> <span class="toc-text">AOF和RDB的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重启加载"><span class="toc-number">5.</span> <span class="toc-text">重启加载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能问题与解决方案"><span class="toc-number">6.</span> <span class="toc-text">性能问题与解决方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><ul>
+<li>Redis目前已经成为主流的内存数据库了，但是大部分人仅仅是停留在会用的阶段，你真的了解Redis内部的工作原理吗？</li>
+<li>今天这篇文章将为大家介绍Redis持久化的两种方案，文章将会从以下五个方面介绍：<ol>
+<li><strong>什么是RDB，RDB如何实现持久化？</strong></li>
+<li><strong>什么是AOF，AOF如何实现持久化？</strong></li>
+<li><strong>AOF和RDB的区别。</strong></li>
+<li><strong>如何重启恢复数据？</strong></li>
+<li><strong>持久化性能问题和解决方案</strong><h2 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h2></li>
+</ol>
+</li>
+<li>RDB持久化是把当前进程数据生成快照保存到硬盘的过程， 触发RDB持久化过程分为手动触发和自动触发。</li>
+<li>RDB完成后会自动生成一个文件，保存在<code>dir</code>配置的指定目录下，文件名是<code>dbfileName</code>指定。</li>
+<li>Redis默认会采用LZF算法对生成的RDB文件做压缩处理，压缩后的文件远远小于内存大小，默认开启。</li>
+</ul>
+<h3 id="手动触发"><a href="#手动触发" class="headerlink" title="手动触发"></a>手动触发</h3><ul>
+<li>手动触发的命令有<code>save</code>和<code>bgsave</code>。</li>
+<li><code>save</code>：该命令会阻塞Redis服务器，直到RDB的过程完成，已经被废弃，因此线上不建议使用。</li>
+<li><code>bgsave</code>：每次进行RDB过程都会fork一个子进程，由子进程完成RDB的操作，因此阻塞只会发生在fork阶段，一般时间很短。</li>
+</ul>
+<h3 id="自动触发"><a href="#自动触发" class="headerlink" title="自动触发"></a>自动触发</h3><ul>
+<li>除了手动触发RDB，Redis服务器内部还有如下几个场景能够自动触发RDB：<ol>
+<li>根据我们的 <code>save m n</code> 配置规则自动触发。</li>
+<li>如果从节点执行全量复制操作， 主节点自动执行bgsave生成RDB文件并发送给从节点。</li>
+<li>执行<code>debug reload</code>命令重新加载Redis时， 也会自动触发save操作。</li>
+<li>默认情况下执行shutdown命令时， 如果没有开启AOF持久化功能则自动执行<code>bgsave</code>。</li>
+</ol>
+</li>
+</ul>
+<h3 id="RDB执行流程"><a href="#RDB执行流程" class="headerlink" title="RDB执行流程"></a>RDB执行流程</h3><ul>
+<li>RDB的主流方式就是bgsave，通过下图我们来看看RDB的执行流程：<br><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/Redis%E6%8C%81%E4%B9%85%E5%8C%96/RDB%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png" alt="RDB执行流程"></li>
+<li>通过上图可以很清楚RDB的执行流程，如下：<ol>
+<li>执行bgsave命令后，会先判断是否存在AOF或者RDB的子进程，如果存在，直接返回。</li>
+<li>父进程fork操作创建一个子进程，fork操作中父进程会被阻塞。</li>
+<li>fork完成后，子进程开始根据父进程的内存生成临时快照文件，完成后对原有的RDB文件进行替换。执行<code>lastsave</code>命令可以查看最近一次的RDB时间。</li>
+<li>子进程完成后发送信号给父进程，父进程更新统计信息。</li>
+</ol>
+</li>
+</ul>
+<h3 id="RDB的优点"><a href="#RDB的优点" class="headerlink" title="RDB的优点"></a>RDB的优点</h3><ul>
+<li>RDB是一个紧凑压缩的二进制文件， 代表Redis在某个时间点上的数据快照。 非常适用于备份， 全量复制等场景。 比如每6小时执行<code>bgsave</code>备份，并把RDB文件拷贝到远程机器或者文件系统中，用于灾难恢复。</li>
+<li>Redis加载<code>RDB</code>恢复数据远远快于<code>AOF</code>的方式。</li>
+</ul>
+<h3 id="RDB的缺点"><a href="#RDB的缺点" class="headerlink" title="RDB的缺点"></a>RDB的缺点</h3><ul>
+<li>RDB方式数据没办法做到<code>实时持久化</code>/<code>秒级持久化</code>。 因为bgsave每次运行都要执行fork操作创建子进程，属于重量级操作，频繁执行成本过高。</li>
+<li>RDB文件使用特定二进制格式保存， Redis版本演进过程中有多个格式的RDB版本， 存在老版本Redis服务无法兼容新版RDB格式的问题。</li>
+</ul>
+<h2 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h2><ul>
+<li><code>AOF</code>（append only file） 持久化： 以独立日志的方式记录每次写命令，重启时再重新执行AOF文件中的命令达到恢复数据的目的。 AOF的主要作用是解决了数据持久化的实时性， 目前已经是Redis持久化的<code>主流方式</code>。</li>
+</ul>
+<h3 id="如何开启AOF"><a href="#如何开启AOF" class="headerlink" title="如何开启AOF"></a>如何开启AOF</h3><ul>
+<li>开启AOF功能需要设置配置：<code>appendonly yes</code>， 默认不开启。 AOF文件名通过<code>appendfilename</code>配置设置， 默认文件名是<code>appendonly.aof</code>。 保存路径同RDB持久化方式一致，通过<code>dir</code>配置指定。 </li>
+</ul>
+<h3 id="AOF整体的执行流程"><a href="#AOF整体的执行流程" class="headerlink" title="AOF整体的执行流程"></a>AOF整体的执行流程</h3><ul>
+<li>AOF执行的流程大致分为<code>命令写入</code>、<code>文件同步</code>、<code>文件重写</code>、<code>重启加载</code>四个步骤，如下图：<br><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/Redis%E6%8C%81%E4%B9%85%E5%8C%96/AOF%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png" alt="AOF执行流程"></li>
+<li>从上图大致了解了AOF的执行流程，下面一一分析上述的四个步骤。</li>
+</ul>
+<h3 id="命令写入"><a href="#命令写入" class="headerlink" title="命令写入"></a>命令写入</h3><ul>
+<li><p>AOF命令写入的内容直接是文本协议格式。 例如<code>set hello world</code>这条命<br>令， 在AOF缓冲区会追加如下文本：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">*<span class="number">3</span>\r\n$<span class="number">3</span>\r\nset\r\n$<span class="number">5</span>\r\nhello\r\n$<span class="number">5</span>\r\nworld\r\n</div></pre></td></tr></table></figure>
+</li>
+<li><p>命令写入是直接写入到AOF的缓冲区中，至于为什么？原因很简单，Redis使用单线程响应命令，如果每次写AOF文件命令都直接追加到硬盘， 那么性能完全取决于当前硬盘负载。先写入缓冲区<code>aof_buf</code>中， 还有另一个好处， Redis可以提供多种缓冲区<br>同步硬盘的策略，在性能和安全性方面做出平衡。</p>
+</li>
+</ul>
+<h3 id="文件同步"><a href="#文件同步" class="headerlink" title="文件同步"></a>文件同步</h3><ul>
+<li>Redis提供了多种AOF缓冲区同步文件策略， 由参数<code>appendfsync</code>控制，如下：<ul>
+<li>配置为<code>always</code>时， 每次写入都要同步AOF文件， 在一般的SATA硬盘上，Redis只能支持大约几百TPS写入， 显然跟Redis高性能特性背道而驰，不建议配置。</li>
+<li>配置为<code>no</code>，由于操作系统每次同步AOF文件的周期不可控，而且会加大每次同步硬盘的数据量，虽然提升了性能，但数据安全性无法保证。</li>
+<li>配置为<code>everysec</code>（默认的配置），是<strong>建议的同步策略</strong>， 也是默认配置，做到兼顾性能和数据安全性。理论上只有在系统突然宕机的情况下丢失1秒的数据（当然，这是不太准确的）。</li>
+</ul>
+</li>
+</ul>
+<h3 id="文件重写机制"><a href="#文件重写机制" class="headerlink" title="文件重写机制"></a>文件重写机制</h3><ul>
+<li>随着命令不断写入AOF， 文件会越来越大， 为了解决这个问题， Redis引入AOF重写机制压缩文件体积。 AOF文件重写是把Redis进程内的数据转化为写命令同步到新AOF文件的过程。</li>
+<li><strong>为什么要文件重写呢？</strong> 因为文件重写能够使得AOF文件的体积变得更小，从而使得可以更快的被Redis加载。</li>
+<li>重写过程分为手动触发和自动触发。<ul>
+<li>手动触发直接使用<code>bgrewriteaof</code>命令。</li>
+<li>根据<code>auto-aof-rewrite-min-size</code>和<code>auto-aof-rewrite-percentage</code>参数确定自动触发时机。</li>
+</ul>
+</li>
+<li><code>auto-aof-rewrite-min-size</code>：表示运行AOF重写时文件最小体积， 默认为64MB。</li>
+<li><code>auto-aof-rewrite-percentage</code>：代表当前AOF文件空间（<code>aof_current_size</code>） 和上一次重写后AOF文件空间（<code>aof_base_size</code>） 的比值。</li>
+<li>自动触发时机相当于<strong>aof_current_size&gt;auto-aof-rewrite-minsize&amp;&amp;（aof_current_size-aof_base_size） /aof_base_size&gt;=auto-aof-rewritepercentage</strong>。其中<code>aof_current_size</code>和<code>aof_base_size</code>可以在<code>info Persistence</code>统计信息中查看。</li>
+<li><strong>那么文件重写后的AOF文件为什么会变小呢？</strong> 有如下几个原因：<ol>
+<li>进程内已经超时的数据将不会再次写入AOF文件中。</li>
+<li>旧的AOF文件含有无效命令，如<code>del key1</code>、 <code>hdel key2</code>等。重写使用进程内数据直接生成，这样新的AOF文件只保留最终数据的写入命令。</li>
+<li>多条写命令可以合并为一个， 如：<code>lpush list a</code>、 <code>lpush list b</code>、<code>lpush listc</code>可以转化为：<code>lpush list a b c</code>。为了防止单条命令过大造成客户端缓冲区溢出，对于<code>list</code>、 <code>set</code>、 <code>hash</code>、 <code>zset</code>等类型操作，以64个元素为界拆分为多条。</li>
+</ol>
+</li>
+<li>介绍了文件重写的系列知识，下面来看看Redis内部是如何进行文件重写的，如下图：<br><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/Redis%E6%8C%81%E4%B9%85%E5%8C%96/%E6%96%87%E4%BB%B6%E9%87%8D%E5%86%99%E6%B5%81%E7%A8%8B.png" alt="文件重写"></li>
+<li>看完上图，大致了解了文件重写的流程，对于重写的流程，补充如下：<ol>
+<li>重写期间，主线程并没有阻塞，而是在执行其他的操作命令，依然会向旧的AOF文件写入数据，这样能够保证备份的最终完整性，如果数据重写失败，也能保证数据不会丢失。</li>
+<li>为了把重写期间响应的写入信息也写入到新的文件中，因此也会为子进程保留一个缓冲区，防止新写的文件丢失数据。</li>
+<li>重写是直接把当前内存的数据生成对应命令，并不需要读取老的AOF文件进行分析、命令合并。</li>
+<li>AOF文件直接采用的<code>文本协议</code>，主要是兼容性好、追加方便、可读性高可认为修改修复。</li>
+<li>无论是<code>RDB</code>还是<code>AOF</code>都是先写入一个临时文件，然后通过<code>重命名</code>完成文件的替换。</li>
+</ol>
+</li>
+</ul>
+<h3 id="AOF的优点"><a href="#AOF的优点" class="headerlink" title="AOF的优点"></a>AOF的优点</h3><ul>
+<li>使用 AOF 持久化会让 Redis 变得非常耐久：你可以设置不同的 fsync 策略，比如无 fsync ，每秒钟一次 fsync ，或者每次执行写入命令时 fsync 。 AOF 的默认策略为每秒钟 fsync 一次，在这种配置下，Redis 仍然可以保持良好的性能，并且就算发生故障停机，也最多只会丢失一秒钟的数据（ fsync 会在后台线程执行，所以主线程可以继续努力地处理命令请求）。</li>
+</ul>
+<h3 id="AOF的缺点"><a href="#AOF的缺点" class="headerlink" title="AOF的缺点"></a>AOF的缺点</h3><ul>
+<li>对于相同的数据集来说，AOF 文件的体积通常要大于 RDB 文件的体积。根据所使用的 fsync 策略，AOF 的速度可能会慢于 RDB。 在一般情况下， 每秒 fsync 的性能依然非常高， 而关闭 fsync 可以让 AOF 的速度和 RDB 一样快， 即使在高负荷之下也是如此。不过在处理巨大的写入载入时，RDB 可以提供更有保证的最大延迟时间。</li>
+<li>数据恢复速度相对于RDB比较慢。</li>
+</ul>
+<h2 id="AOF和RDB的区别"><a href="#AOF和RDB的区别" class="headerlink" title="AOF和RDB的区别"></a>AOF和RDB的区别</h2><ul>
+<li>RDB持久化是指在指定的时间间隔内将内存中的数据集快照写入磁盘，实际操作过程是fork一个子进程，先将数据集写入临时文件，写入成功后，再替换之前的文件，用二进制压缩存储。</li>
+<li>AOF持久化以日志的形式记录服务器所处理的每一个写、删除操作，查询操作不会记录，以文本的方式记录，可以打开文件看到详细的操作记录。</li>
+</ul>
+<h2 id="重启加载"><a href="#重启加载" class="headerlink" title="重启加载"></a>重启加载</h2><ul>
+<li>无论是RDB还是AOF都可用于服务器重启时的数据恢复，执行流程如下图：<br><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/Redis%E6%8C%81%E4%B9%85%E5%8C%96/%E5%90%AF%E5%8A%A8%E6%81%A2%E5%A4%8D.png" alt="重启加载流程"></li>
+<li>上图很清晰的分析了Redis启动恢复数据的流程，先检查AOF文件是否开启，文件是否存在，再检查RDB是否开启，文件是否存在。</li>
+</ul>
+<h2 id="性能问题与解决方案"><a href="#性能问题与解决方案" class="headerlink" title="性能问题与解决方案"></a>性能问题与解决方案</h2><ul>
+<li>通过上面的分析，我们都知道RDB的快照、AOF的重写都需要fork，这是一个重量级操作，会对Redis造成阻塞。因此为了不影响Redis主进程响应，我们需要尽可能降低阻塞。</li>
+<li>那么如何减少fork操作的阻塞呢？<ol>
+<li>优先使用物理机或者高效支持fork操作的虚拟化技术。</li>
+<li>控制Redis实例最大可用内存， fork耗时跟内存量成正比， 线上建议每个Redis实例内存控制在10GB以内。</li>
+<li>合理配置Linux内存分配策略，避免物理内存不足导致fork失败。</li>
+<li>降低fork操作的频率，如适度放宽AOF自动触发时机，避免不必要的全量复制等。</li>
+</ol>
+</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li>本文介绍了Redis持久化的两种不同的策略，大部分内容是运维人员需要掌握的，当然作为后端人员也是需要了解一下，毕竟小公司都是一人搞全栈，哈哈。</li>
+<li><strong>如果觉得陈某写的不错，有所收获的话，关注分享一波，你的关注将是陈某写作的最大动力，谢谢支持！！！</strong></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/杂谈/">杂谈</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/杂谈/">杂谈</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2020/04/20/一文搞懂Redis持久化/" data-title="一文搞懂Redis持久化 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/04/20/order by 如何工作/" title="order by 如何工作">
+  <strong>上一篇：</strong><br/>
+  <span>
+  order by 如何工作</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/04/20/Mysql最全面试指南/"  title="Mysql最全面试指南">
+ <strong>下一篇：</strong><br/> 
+ <span>Mysql最全面试指南
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RDB"><span class="toc-number">2.</span> <span class="toc-text">RDB</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#手动触发"><span class="toc-number">2.1.</span> <span class="toc-text">手动触发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自动触发"><span class="toc-number">2.2.</span> <span class="toc-text">自动触发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RDB执行流程"><span class="toc-number">2.3.</span> <span class="toc-text">RDB执行流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RDB的优点"><span class="toc-number">2.4.</span> <span class="toc-text">RDB的优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RDB的缺点"><span class="toc-number">2.5.</span> <span class="toc-text">RDB的缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AOF"><span class="toc-number">3.</span> <span class="toc-text">AOF</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#如何开启AOF"><span class="toc-number">3.1.</span> <span class="toc-text">如何开启AOF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AOF整体的执行流程"><span class="toc-number">3.2.</span> <span class="toc-text">AOF整体的执行流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#命令写入"><span class="toc-number">3.3.</span> <span class="toc-text">命令写入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#文件同步"><span class="toc-number">3.4.</span> <span class="toc-text">文件同步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#文件重写机制"><span class="toc-number">3.5.</span> <span class="toc-text">文件重写机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AOF的优点"><span class="toc-number">3.6.</span> <span class="toc-text">AOF的优点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AOF的缺点"><span class="toc-number">3.7.</span> <span class="toc-text">AOF的缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AOF和RDB的区别"><span class="toc-number">4.</span> <span class="toc-text">AOF和RDB的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#重启加载"><span class="toc-number">5.</span> <span class="toc-text">重启加载</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#性能问题与解决方案"><span class="toc-number">6.</span> <span class="toc-text">性能问题与解决方案</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Mybatis进阶/" title="Mybatis进阶">Mybatis进阶<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring-Boot-进阶/" title="Spring Boot 进阶">Spring Boot 进阶<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/开发工具/" title="开发工具">开发工具<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring-Boot/" title="Spring Boot">Spring Boot<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mybatis/" title="Mybatis">Mybatis<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/破解/" title="破解">破解<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

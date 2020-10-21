@@ -1,0 +1,675 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Spring生命周期 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="导读
+Spring中Bean的生命周期从容器的启动到停止，涉及到的源码主要是在org.springframework.context.support.AbstractApplicationContext.refresh方法中，下面也是围绕其中的逻辑进行讲解。
+
+开撸【1】 prepareRefresh()
+ 内部其实很简单，就是设置一些标志，比如开始时间，激活的状态等。
+【2】prepareBea">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring生命周期">
+<meta property="og:url" content="http://chenjiabing666.github.io/2020/03/23/Spring生命周期/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="导读
+Spring中Bean的生命周期从容器的启动到停止，涉及到的源码主要是在org.springframework.context.support.AbstractApplicationContext.refresh方法中，下面也是围绕其中的逻辑进行讲解。
+
+开撸【1】 prepareRefresh()
+ 内部其实很简单，就是设置一些标志，比如开始时间，激活的状态等。
+【2】prepareBea">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/lifecy.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-23T02:15:15.480Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring生命周期">
+<meta name="twitter:description" content="导读
+Spring中Bean的生命周期从容器的启动到停止，涉及到的源码主要是在org.springframework.context.support.AbstractApplicationContext.refresh方法中，下面也是围绕其中的逻辑进行讲解。
+
+开撸【1】 prepareRefresh()
+ 内部其实很简单，就是设置一些标志，比如开始时间，激活的状态等。
+【2】prepareBea">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/lifecy.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/03/23/Spring生命周期/" title="Spring生命周期" itemprop="url">Spring生命周期</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2020-03-23T02:13:32.000Z" itemprop="datePublished"> 发表于 2020-03-23</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#导读"><span class="toc-number">1.</span> <span class="toc-text">导读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开撸"><span class="toc-number">2.</span> <span class="toc-text">开撸</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实例化单例Bean"><span class="toc-number">3.</span> <span class="toc-text">实例化单例Bean</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">5.</span> <span class="toc-text">笔者有话说</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="导读"><a href="#导读" class="headerlink" title="导读"></a>导读</h2><ul>
+<li>Spring中Bean的生命周期从容器的启动到停止，涉及到的源码主要是在<code>org.springframework.context.support.AbstractApplicationContext.refresh</code>方法中，下面也是围绕其中的逻辑进行讲解。</li>
+</ul>
+<h2 id="开撸"><a href="#开撸" class="headerlink" title="开撸"></a>开撸</h2><p>【1】 prepareRefresh()</p>
+<p> 内部其实很简单，就是设置一些标志，比如开始时间，激活的状态等。</p>
+<p>【2】prepareBeanFactory(beanFactory)</p>
+<p>做一些简单的准备工作，此处不再赘述！！！</p>
+<p>【3】postProcessBeanFactory(beanFactory)</p>
+<p>主要的作用就是添加了一个后置处理器<code>ServletContextAwareProcessor</code></p>
+<p>【4】invokeBeanFactoryPostProcessors(beanFactory)</p>
+<p>调用容器中的所有的<strong>BeanFactoryPostProcessor</strong>中的<strong>postProcessBeanFactory</strong>方法，按照优先级调用，主要实现逻辑在org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(org.springframework.beans.factory.config.ConfigurableListableBeanFactory, java.util.List<org.springframework.beans.factory.config.beanfactorypostprocessor>)<br>    (1) 执行所有BeanDefinitionRegistryPostProcessor(对BeanFactoryPostProcessor的扩展，运行在普通的实现类之前注册bean)的方法，同样是内部按照优先级进行排序调用<br>    (2) 对剩余的进行按照优先级排序调用，同样是内部进行排序执行</org.springframework.beans.factory.config.beanfactorypostprocessor></p>
+<p>【5】<strong>registerBeanPostProcessors(beanFactory)</strong></p>
+<p>注册所有的<strong>BeanPostProcessor</strong>（后置处理器），按照优先级注册，分别是PriorityOrdered，Ordered，普通的，内部的。主要的实现逻辑在PostProcessorRegistrationDelegate.registerBeanPostProcessors()</p>
+<p>【6】initMessageSource()<br>注册MessageSource,提供消息国际化等功能</p>
+<p>【7】initApplicationEventMulticaster();</p>
+<p>注册事件广播器ApplicationEventMulticaster，用于spring事件的广播和事件监听器的处理</p>
+<p>【8】registerListeners()</p>
+<p>注册事件监听器ApplicationListener，并且广播一些早期的事件，主要的逻辑在org.springframework.context.support.AbstractApplicationContext.registerListeners</p>
+<p>【9】finishBeanFactoryInitialization(beanFactory)</p>
+<p>实例化所有非懒加载的Bean，spring生命周期中的主要方法，主要逻辑在org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons，深入进去其实就是getBean()方法创建，详情向下看。</p>
+<p>【10】finishRefresh()</p>
+<p>主要的功能是发布事件ContextRefreshedEvent</p>
+<p>【11】destroyBeans()</p>
+<p>容器启动出现异常时销毁Bean</p>
+<p>以上就是Spring容器启动的过程，主要的逻辑都在org.springframework.context.support.AbstractApplicationContext#refresh中，其他的都很容易理解，现在我们着重分析一下单例Bean的创建过程，入口是第9步。</p>
+<h2 id="实例化单例Bean"><a href="#实例化单例Bean" class="headerlink" title="实例化单例Bean"></a>实例化单例Bean</h2><p>【1】debug进入，实际主要的逻辑都在org.springframework.beans.factory.support.DefaultListableBeanFactory#preInstantiateSingletons方法中，逻辑如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//获取所有注入到ioc容器中的bean定义信息</span></div><div class="line">List&lt;String&gt; beanNames = <span class="keyword">new</span> ArrayList&lt;&gt;(<span class="keyword">this</span>.beanDefinitionNames);</div><div class="line">		<span class="comment">//循环创建</span></div><div class="line">		<span class="keyword">for</span> (String beanName : beanNames) &#123;</div><div class="line">			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);</div><div class="line">            <span class="comment">//非抽象，单例，非懒加载的bean初始化</span></div><div class="line">			<span class="keyword">if</span> (!bd.isAbstract() &amp;&amp; bd.isSingleton() &amp;&amp; !bd.isLazyInit()) &#123;</div><div class="line">                <span class="comment">//如果是FactoryBean</span></div><div class="line">				<span class="keyword">if</span> (isFactoryBean(beanName)) &#123;</div><div class="line">                    <span class="comment">//getBean</span></div><div class="line">					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);</div><div class="line">                    <span class="comment">//非FactoryBean，getBean</span></div><div class="line">				<span class="keyword">else</span> &#123;</div><div class="line">					getBean(beanName);</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div></pre></td></tr></table></figure>
+<p>以上源码总结得知，最终实例化Bean的方法肯定在getBean中的，debug进入，得知doGetBean是大boss，spring源码有趣的是最终的实现都是在doxxxx()。</p>
+<p>【2】AbstractBeanFactory#doGetBean，由于篇幅太短，就不贴源码了，只贴关键代码</p>
+<p>实例化的主要流程全部都在这里，下面一一解析即可。</p>
+<p>(1) Object sharedInstance = getSingleton(beanName)</p>
+<p>从早期的缓存中获取，如果存在返回Bean，实例化</p>
+<p>（2）BeanFactory parentBeanFactory = getParentBeanFactory()</p>
+<p>从父工厂的中获取Bean</p>
+<p>（3）if (mbd.isSingleton()) </p>
+<p>分单例和多例进行分开创建Bean，这里只分析单例Bean的创建</p>
+<p>（4）sharedInstance = getSingleton(beanName, () -&gt; {   try {      return createBean(beanName, mbd, args);   }</p>
+<p>createBean方法创建Bean，进入createBean(）</p>
+<p>​    a. Object bean = resolveBeforeInstantiation(beanName, mbdToUse)：执行所有的InstantiationAwareBeanPostProcessor中的<strong>postProcessBeforeInstantiation</strong>，在实例化之前调用，返回null继续下一步，返回一个bean，那么bean实例化完成，将调用其中的<strong>postProcessAfterInstantiation</strong>方法</p>
+<p>​       b. Object beanInstance = doCreateBean(beanName, mbdToUse, args)：创建Bean的完成过程</p>
+<p>​    c. 进入<strong>doCreateBean</strong>，instanceWrapper = createBeanInstance(beanName, mbd, args)：创建Bean的实例</p>
+<p>​    d. populateBean(beanName, mbd, instanceWrapper)：属性装配，执行InstantiationAwareBeanPostProcessor的<strong>postProcessAfterInstantiation</strong>，再执行<strong>postProcessProperties</strong>方法。</p>
+<p>​    e. exposedObject = initializeBean(beanName, exposedObject, mbd)：初始化Bean，debug进入</p>
+<p>​    f. invokeAwareMethods(beanName, bean)：调用<strong>BeanNameAware</strong>，<strong>BeanClassLoaderAware</strong>，<strong>BeanFactoryAware</strong>中的对应方法</p>
+<p>​    g. wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName)：调用BeanPostProcessord中的<strong>postProcessBeforeInitialization</strong>方法</p>
+<p>​    h. invokeInitMethods(beanName, wrappedBean, mbd)：执行<strong>InitializingBean</strong>中的<strong>afterPropertiesSet</strong></p>
+<p>​    i. wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName)：调用<strong>BeanPostProcessor</strong>中的<strong>postProcessAfterInitialization</strong>方法</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>以上是spring容器从启动到销毁的全部过程，根据源码陈某画了一张生命周期的图，仅供参考，请勿转载！！！</p>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/lifecy.png" alt=""></p>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/杂谈/">杂谈</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/杂谈/">杂谈</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2020/03/23/Spring生命周期/" data-title="Spring生命周期 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/03/23/IDEA调试技巧/" title="IDEA调试技巧">
+  <strong>上一篇：</strong><br/>
+  <span>
+  IDEA调试技巧</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/03/23/接口限流算法/"  title="接口限流算法">
+ <strong>下一篇：</strong><br/> 
+ <span>接口限流算法
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#导读"><span class="toc-number">1.</span> <span class="toc-text">导读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#开撸"><span class="toc-number">2.</span> <span class="toc-text">开撸</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实例化单例Bean"><span class="toc-number">3.</span> <span class="toc-text">实例化单例Bean</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">5.</span> <span class="toc-text">笔者有话说</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Mybatis进阶/" title="Mybatis进阶">Mybatis进阶<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring-Boot-进阶/" title="Spring Boot 进阶">Spring Boot 进阶<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/开发工具/" title="开发工具">开发工具<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring-Boot/" title="Spring Boot">Spring Boot<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mybatis/" title="Mybatis">Mybatis<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/破解/" title="破解">破解<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

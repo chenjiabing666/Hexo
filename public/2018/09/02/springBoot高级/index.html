@@ -1,0 +1,775 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>springBoot高级 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="springBoot高级普通缓存1、在springBoot中可以使用注解式开发缓存，默认没有开启缓存中间件，那么使用的就是存储在Map中的原理，但是我们还可以配置自己的缓存中间件，比如redis
+2、引入依赖，启动器
+12345&amp;lt;!--导入缓存的启动器--&amp;gt;       &amp;lt;dependency&amp;gt;           &amp;lt;groupId&amp;gt;org.springfram">
+<meta property="og:type" content="article">
+<meta property="og:title" content="springBoot高级">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/09/02/springBoot高级/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="springBoot高级普通缓存1、在springBoot中可以使用注解式开发缓存，默认没有开启缓存中间件，那么使用的就是存储在Map中的原理，但是我们还可以配置自己的缓存中间件，比如redis
+2、引入依赖，启动器
+12345&amp;lt;!--导入缓存的启动器--&amp;gt;       &amp;lt;dependency&amp;gt;           &amp;lt;groupId&amp;gt;org.springfram">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:12:41.766Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="springBoot高级">
+<meta name="twitter:description" content="springBoot高级普通缓存1、在springBoot中可以使用注解式开发缓存，默认没有开启缓存中间件，那么使用的就是存储在Map中的原理，但是我们还可以配置自己的缓存中间件，比如redis
+2、引入依赖，启动器
+12345&amp;lt;!--导入缓存的启动器--&amp;gt;       &amp;lt;dependency&amp;gt;           &amp;lt;groupId&amp;gt;org.springfram">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/09/02/springBoot高级/" title="springBoot高级" itemprop="url">springBoot高级</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-09-02T11:25:24.000Z" itemprop="datePublished"> 发表于 2018-09-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#springBoot高级"><span class="toc-number">1.</span> <span class="toc-text">springBoot高级</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#普通缓存"><span class="toc-number">1.1.</span> <span class="toc-text">普通缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis缓存"><span class="toc-number">1.2.</span> <span class="toc-text">Redis缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringBoot共用session"><span class="toc-number">1.3.</span> <span class="toc-text">SpringBoot共用session</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#springBoot高级-1"><span class="toc-number">2.</span> <span class="toc-text">springBoot高级</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#普通缓存-1"><span class="toc-number">2.1.</span> <span class="toc-text">普通缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis缓存-1"><span class="toc-number">2.2.</span> <span class="toc-text">Redis缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringBoot共用session-1"><span class="toc-number">2.3.</span> <span class="toc-text">SpringBoot共用session</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#springBoot异步任务"><span class="toc-number">2.4.</span> <span class="toc-text">springBoot异步任务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#springBoot定时任务"><span class="toc-number">2.5.</span> <span class="toc-text">springBoot定时任务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实例"><span class="toc-number">2.5.1.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">2.6.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="springBoot高级"><a href="#springBoot高级" class="headerlink" title="springBoot高级"></a>springBoot高级</h1><h2 id="普通缓存"><a href="#普通缓存" class="headerlink" title="普通缓存"></a>普通缓存</h2><p>1、在springBoot中可以使用注解式开发缓存，默认没有开启缓存中间件，那么使用的就是存储在Map中的原理，但是我们还可以配置自己的缓存中间件，比如redis</p>
+<p>2、引入依赖，启动器</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--导入缓存的启动器--&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">           <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">           <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-cache<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">       <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>3、开启缓存，在主配置类上添加<code>EnableCaching</code>这个注解即可，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//批量扫描com.tellwess.springbootserver.mappers这个包下面的所有mapper</span></div><div class="line"><span class="meta">@MapperScan</span>(value =<span class="string">"com.tellwess.springbootserver.mappers"</span>)</div><div class="line"><span class="meta">@EnableCaching</span>    <span class="comment">//开启缓存注解</span></div><div class="line"><span class="meta">@SpringBootApplication</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringbootServerApplication</span> </span>&#123;</div></pre></td></tr></table></figure>
+<p>4、使用注解版本的mybatis和数据库进行交互，其中的UserMapper如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * User对应的Mapper</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserMapper</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Select</span>(<span class="string">"select * from t_user where user_id=#&#123;userId&#125;"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">selectUserById</span><span class="params">(Integer userId)</span></span>;</div><div class="line"></div><div class="line">    <span class="meta">@Options</span>(useGeneratedKeys = <span class="keyword">true</span>,keyProperty = <span class="string">"userId"</span>)</div><div class="line">    <span class="meta">@Insert</span>(&#123;<span class="string">"insert into t_user(name,gender,age) values(#&#123;name&#125;,#&#123;gender&#125;,#&#123;age&#125;)"</span>&#125;)</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">insertUser</span><span class="params">(User user)</span></span>;</div><div class="line"></div><div class="line">    <span class="meta">@Delete</span>(<span class="string">"delete from t_user where user_id=#&#123;userId&#125;"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">deleteUser</span><span class="params">(Integer userId)</span></span>;</div><div class="line"></div><div class="line">    <span class="meta">@Select</span>(<span class="string">"select * from t_user where name=#&#123;name&#125;"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">selectUserByName</span><span class="params">(String name)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>5、在service层中使用缓存的各种注解实现缓存的操作，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * <span class="doctag">@CacheConfig</span> ： 这个注解用于指定这个service类中的缓存操作的公共属性，比如缓存的名字可以使用cacheNames指定，那么在下面的每一个注解中都可以不指定，默认使用的就是这个指定的</div><div class="line"> */</div><div class="line"><span class="meta">@Service</span></div><div class="line"><span class="comment">//@CacheConfig(cacheNames = "user",keyGenerator = "myGenerate")</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserService</span> </span>&#123;</div><div class="line">    <span class="meta">@Resource</span></div><div class="line">    <span class="keyword">private</span> UserMapper userMapper;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     *<span class="doctag">@Cacheable</span> : 这个注解是在方法运行之前检查缓存中是否存在指定的key的数据，如果存在，那么直接返回</div><div class="line">     *              如果不存在，那么执行方法体，最后将方法体返回的结果添加到缓存中</div><div class="line">     *           1、 cacheNames/value : 指定cache的名字,指定将方法的返回值放在那个缓存中，是数组的方式</div><div class="line">     *           2、key : 指定缓存的key，如果不指定的，那么默认使用方法参数的值，当然也是可以使用一些表达式指定这个key的值</div><div class="line">     *              1、spEL表达式：</div><div class="line">     *                  1、当前被调用的方法名称 ---- #root.methodName  ---- #root.method.name</div><div class="line">     *                  2、当前目标对象  ---- #root.target</div><div class="line">     *                  3、当前目标对象的类  ----- #root.targetClass</div><div class="line">     *                  4、当前被调用对象的参数列表  ---- #root.args[index]</div><div class="line">     *                  5、方法参数的名字，直接使用`#名字`即可获取参数的值  ------ `#userId`</div><div class="line">     *                  6、方法的返回值    -----    #result</div><div class="line">     *           3、keyGenerator : key的生成器，这个和key只能同时指定一个，当然也是可以自定义这个生成器</div><div class="line">     *           4、condition :  指定缓存的条件，只有满足这个条件的时候才会使用缓存 --- condition = "#userId&gt;2"</div><div class="line">     *           5、unless :  当这个条件为true的时候就不缓存，这个和condition条件相反。</div><div class="line">     *                      1、这个可以使用返回的结果进行判断，比如当我们对返回结果为空的时候不使用缓存，那么可以写成unless = "#result==null"</div><div class="line">     *</div><div class="line">     *           6、cacheManager : 指定缓存管理器</div><div class="line">     *           7、sync ： 是否使用异步模式</div><div class="line">     *           8、注意：springBoot默认是将返回值为null的时候也会将其缓存起来，我们可以使用unless条件对结果进行判断是否缓存</div><div class="line">     *</div><div class="line">     *</div><div class="line">     */</div><div class="line">    <span class="meta">@Cacheable</span>(value = &#123;<span class="string">"user"</span>&#125;,key = <span class="string">"#userId"</span>,condition = <span class="string">"#userId&gt;2"</span>,unless = <span class="string">"#result==null"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">getUser</span><span class="params">(Integer userId)</span></span>&#123;</div><div class="line">        System.out.println(<span class="string">"查询数据库"</span>);</div><div class="line">        <span class="keyword">return</span> userMapper.selectUserById(userId);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * <span class="doctag">@CachePut</span> ： 这个注解的作用是，在方法体执行完成之后，将返回的结果添加到缓存中，可以用于添加和修改操作</div><div class="line">     *              其中可以设置的参数和<span class="doctag">@cacheable</span>差不多</div><div class="line">     * 注意：**只要是标注了这个注解之后，那么这个方法一定是要执行的，因为需要将方法执行的结果添加到缓存中**</div><div class="line">     *</div><div class="line">     */</div><div class="line">    <span class="meta">@CachePut</span>(value = <span class="string">"user"</span>,key = <span class="string">"#user.userId"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">addUser</span><span class="params">(User user)</span></span>&#123;</div><div class="line">        System.out.println(<span class="string">"添加用户"</span>);</div><div class="line">        userMapper.insertUser(user);</div><div class="line">        <span class="keyword">return</span> user;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * <span class="doctag">@CacheEvict</span> : 这个注解的作用是清除缓存，默认是在执行方法体之后清除缓存，如果执行的代码出现了异常，那么这个清除缓存将不会执行</div><div class="line">     *      1、vaue ： 指定缓存的名字</div><div class="line">     *      2、key : 指定需要删除的key</div><div class="line">     *      3、allEntries ： 是否删除指定缓存中的全部缓存，默认为false，一旦指定为true，那么将会删除value指定的cache中的全部缓存</div><div class="line">     *      4、beforeInvocation : 是否在执行方法体的代码之前执行清除缓存，默认为false，如果指定了为true，那么就会在方法执行之前清除缓存，</div><div class="line">     *                            此时如果方法体运行出错，那么缓存中的数据将不能回滚</div><div class="line">     */</div><div class="line">    <span class="meta">@CacheEvict</span>(value = <span class="string">"user"</span>,key = <span class="string">"#userId"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteUser</span><span class="params">(Integer userId)</span></span>&#123;</div><div class="line">        System.out.println(<span class="string">"调用了删除的方法"</span>);</div><div class="line">        userMapper.deleteUser(userId);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * <span class="doctag">@Caching</span> : 这个是一个组合注解，针对一个方法逻辑中多种的缓存操作</div><div class="line">     *             1、cacheable ： 一个数组，其中指定<span class="doctag">@Cacheable</span>这个注解，可以指定多个，用于在执行方法之前先查询缓存，如果没有才会执行方法体，并且将结果缓存起来</div><div class="line">     *             2、put： 一个数组，其中只能指定<span class="doctag">@CachePut</span>这个注解，可以指定多个，用于在执行方法之后将返回的结果添加到缓存中</div><div class="line">     *             3、evict　：　一个数组，其中只能指定＠CacheEvict这个注解，用于在方法执行完成之后清除缓存</div><div class="line">     */</div><div class="line">    <span class="meta">@Caching</span>(</div><div class="line">            cacheable = &#123;</div><div class="line">                    <span class="meta">@Cacheable</span>(value = <span class="string">"user"</span>,key = <span class="string">"#name"</span>)   <span class="comment">//首先根据name从缓存中获取数据，如果没有将会把缓存的结果添加到缓存中</span></div><div class="line">            &#125;,</div><div class="line">            put = &#123;</div><div class="line">                    <span class="meta">@CachePut</span>(value = <span class="string">"user"</span>,key = <span class="string">"#result.age"</span>),</div><div class="line">                    <span class="meta">@CachePut</span>(value = <span class="string">"user"</span>,key = <span class="string">"#result.gender"</span>),</div><div class="line">            &#125;</div><div class="line">    )</div><div class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">getUserByName</span><span class="params">(String name)</span></span>&#123;</div><div class="line">        System.out.println(<span class="string">"调用getUserByName方法"</span>);</div><div class="line">        <span class="keyword">return</span> userMapper.selectUserByName(name);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="Redis缓存"><a href="#Redis缓存" class="headerlink" title="Redis缓存"></a>Redis缓存</h2><p>1、添加场景启动器，如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">          <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">          <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">      <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>2、在全局配置文件中配置redis的连接配置，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"># Redis数据库索引（默认为0）</div><div class="line">spring.redis.database=0</div><div class="line"># Redis服务器地址</div><div class="line">spring.redis.host=172.31.19.222	</div><div class="line"># Redis服务器连接端口</div><div class="line">spring.redis.port=6379</div><div class="line"># Redis服务器连接密码（默认为空）</div><div class="line">spring.redis.password=</div><div class="line"># 连接池最大连接数（使用负值表示没有限制）</div><div class="line">spring.redis.pool.max-active=8</div><div class="line"># 连接池最大阻塞等待时间（使用负值表示没有限制）</div><div class="line">spring.redis.pool.max-wait=-1</div><div class="line"># 连接池中的最大空闲连接</div><div class="line">spring.redis.pool.max-idle=8</div><div class="line"># 连接池中的最小空闲连接</div><div class="line">spring.redis.pool.min-idle=0</div><div class="line"># 连接超时时间（毫秒）</div><div class="line">spring.redis.timeout=0</div></pre></td></tr></table></figure>
+<p>3、一旦注入这个场景启动器，那么将会为我们自动配置，我们可以直接使用spring-data-redis操作redis，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RunWith</span>(SpringRunner.class)</div><div class="line"><span class="meta">@SpringBootTest</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringbootCacheApplicationTests</span> </span>&#123;</div><div class="line">    <span class="meta">@Resource</span></div><div class="line">    <span class="keyword">private</span> StringRedisTemplate stringRedisTemplate;  <span class="comment">//存储key和value都是字符串的数据</span></div><div class="line"></div><div class="line">    <span class="meta">@Resource</span></div><div class="line">    <span class="keyword">private</span> RedisTemplate&lt;String,Object&gt; redisTemplate; <span class="comment">//操作key和value都是Object的数据</span></div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextLoads</span><span class="params">()</span> </span>&#123;</div><div class="line">        stringRedisTemplate.opsForValue().append(<span class="string">"hello"</span>,<span class="string">"hello world"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>4、springBoot默认是使用的jdk的序列化方式将数据保存在Redis中，但是我们可以自定义自己的序列化规则，可以指定的json序列化器，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//指定一个redis的配置类</span></div><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisConfig</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">//指定自己的RedisTemplate，并且指定默认的序列化器为json的，只需要设置默认的即可，因为value和key的序列化器和默认的是一样的，不需要重复指定</span></div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="function"><span class="keyword">public</span> RedisTemplate&lt;Object, User&gt; <span class="title">redisTemplate</span><span class="params">(</span></span></div><div class="line">            RedisConnectionFactory redisConnectionFactory) <span class="keyword">throws</span> UnknownHostException &#123;</div><div class="line">        RedisTemplate&lt;Object, User&gt; template = <span class="keyword">new</span> RedisTemplate&lt;&gt;();</div><div class="line">        template.setConnectionFactory(redisConnectionFactory);</div><div class="line">        <span class="comment">//指定json的序列化器</span></div><div class="line">        Jackson2JsonRedisSerializer&lt;User&gt; serializer=<span class="keyword">new</span> Jackson2JsonRedisSerializer&lt;User&gt;(User.class);</div><div class="line">        template.setDefaultSerializer(serializer);  <span class="comment">//设置为默认的序列化器</span></div><div class="line">        <span class="keyword">return</span> template;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>5、只要引入redis的场景启动器，那么就会为我们配置一个RedisCache这个名字的缓存管理器，因此不需要重新配置了，那么我们可以直接使用缓存的注解了。此时使用缓存注解的时候就会将数据存储在redis中了。但是默认的保存的数据还是使用jdk序列化后的结果。</p>
+<p>6、个人觉得使用缓存不需要使用注解，手写代码应该更加灵活一些。</p>
+<h2 id="SpringBoot共用session"><a href="#SpringBoot共用session" class="headerlink" title="SpringBoot共用session"></a>SpringBoot共用session</h2><ul>
+<li><a href="http://www.ityouknow.com/springboot/2016/03/06/spring-boot-redis.html" target="_blank" rel="external">http://www.ityouknow.com/springboot/2016/03/06/spring-boot-redis.html</a></li>
+</ul>
+<h1 id="springBoot高级-1"><a href="#springBoot高级-1" class="headerlink" title="springBoot高级"></a>springBoot高级</h1><h2 id="普通缓存-1"><a href="#普通缓存-1" class="headerlink" title="普通缓存"></a>普通缓存</h2><p>1、在springBoot中可以使用注解式开发缓存，默认没有开启缓存中间件，那么使用的就是存储在Map中的原理，但是我们还可以配置自己的缓存中间件，比如redis</p>
+<p>2、引入依赖，启动器</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--导入缓存的启动器--&gt;</span></div><div class="line">       <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">           <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">           <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-cache<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">       <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>3、开启缓存，在主配置类上添加<code>EnableCaching</code>这个注解即可，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//批量扫描com.tellwess.springbootserver.mappers这个包下面的所有mapper</span></div><div class="line"><span class="meta">@MapperScan</span>(value =<span class="string">"com.tellwess.springbootserver.mappers"</span>)</div><div class="line"><span class="meta">@EnableCaching</span>    <span class="comment">//开启缓存注解</span></div><div class="line"><span class="meta">@SpringBootApplication</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringbootServerApplication</span> </span>&#123;</div></pre></td></tr></table></figure>
+<p>4、使用注解版本的mybatis和数据库进行交互，其中的UserMapper如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * User对应的Mapper</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserMapper</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Select</span>(<span class="string">"select * from t_user where user_id=#&#123;userId&#125;"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">selectUserById</span><span class="params">(Integer userId)</span></span>;</div><div class="line"></div><div class="line">    <span class="meta">@Options</span>(useGeneratedKeys = <span class="keyword">true</span>,keyProperty = <span class="string">"userId"</span>)</div><div class="line">    <span class="meta">@Insert</span>(&#123;<span class="string">"insert into t_user(name,gender,age) values(#&#123;name&#125;,#&#123;gender&#125;,#&#123;age&#125;)"</span>&#125;)</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">insertUser</span><span class="params">(User user)</span></span>;</div><div class="line"></div><div class="line">    <span class="meta">@Delete</span>(<span class="string">"delete from t_user where user_id=#&#123;userId&#125;"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">deleteUser</span><span class="params">(Integer userId)</span></span>;</div><div class="line"></div><div class="line">    <span class="meta">@Select</span>(<span class="string">"select * from t_user where name=#&#123;name&#125;"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">selectUserByName</span><span class="params">(String name)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>5、在service层中使用缓存的各种注解实现缓存的操作，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * <span class="doctag">@CacheConfig</span> ： 这个注解用于指定这个service类中的缓存操作的公共属性，比如缓存的名字可以使用cacheNames指定，那么在下面的每一个注解中都可以不指定，默认使用的就是这个指定的</div><div class="line"> */</div><div class="line"><span class="meta">@Service</span></div><div class="line"><span class="comment">//@CacheConfig(cacheNames = "user",keyGenerator = "myGenerate")</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserService</span> </span>&#123;</div><div class="line">    <span class="meta">@Resource</span></div><div class="line">    <span class="keyword">private</span> UserMapper userMapper;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     *<span class="doctag">@Cacheable</span> : 这个注解是在方法运行之前检查缓存中是否存在指定的key的数据，如果存在，那么直接返回</div><div class="line">     *              如果不存在，那么执行方法体，最后将方法体返回的结果添加到缓存中</div><div class="line">     *           1、 cacheNames/value : 指定cache的名字,指定将方法的返回值放在那个缓存中，是数组的方式</div><div class="line">     *           2、key : 指定缓存的key，如果不指定的，那么默认使用方法参数的值，当然也是可以使用一些表达式指定这个key的值</div><div class="line">     *              1、spEL表达式：</div><div class="line">     *                  1、当前被调用的方法名称 ---- #root.methodName  ---- #root.method.name</div><div class="line">     *                  2、当前目标对象  ---- #root.target</div><div class="line">     *                  3、当前目标对象的类  ----- #root.targetClass</div><div class="line">     *                  4、当前被调用对象的参数列表  ---- #root.args[index]</div><div class="line">     *                  5、方法参数的名字，直接使用`#名字`即可获取参数的值  ------ `#userId`</div><div class="line">     *                  6、方法的返回值    -----    #result</div><div class="line">     *           3、keyGenerator : key的生成器，这个和key只能同时指定一个，当然也是可以自定义这个生成器</div><div class="line">     *           4、condition :  指定缓存的条件，只有满足这个条件的时候才会使用缓存 --- condition = "#userId&gt;2"</div><div class="line">     *           5、unless :  当这个条件为true的时候就不缓存，这个和condition条件相反。</div><div class="line">     *                      1、这个可以使用返回的结果进行判断，比如当我们对返回结果为空的时候不使用缓存，那么可以写成unless = "#result==null"</div><div class="line">     *</div><div class="line">     *           6、cacheManager : 指定缓存管理器</div><div class="line">     *           7、sync ： 是否使用异步模式</div><div class="line">     *           8、注意：springBoot默认是将返回值为null的时候也会将其缓存起来，我们可以使用unless条件对结果进行判断是否缓存</div><div class="line">     *</div><div class="line">     *</div><div class="line">     */</div><div class="line">    <span class="meta">@Cacheable</span>(value = &#123;<span class="string">"user"</span>&#125;,key = <span class="string">"#userId"</span>,condition = <span class="string">"#userId&gt;2"</span>,unless = <span class="string">"#result==null"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">getUser</span><span class="params">(Integer userId)</span></span>&#123;</div><div class="line">        System.out.println(<span class="string">"查询数据库"</span>);</div><div class="line">        <span class="keyword">return</span> userMapper.selectUserById(userId);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * <span class="doctag">@CachePut</span> ： 这个注解的作用是，在方法体执行完成之后，将返回的结果添加到缓存中，可以用于添加和修改操作</div><div class="line">     *              其中可以设置的参数和<span class="doctag">@cacheable</span>差不多</div><div class="line">     * 注意：**只要是标注了这个注解之后，那么这个方法一定是要执行的，因为需要将方法执行的结果添加到缓存中**</div><div class="line">     *</div><div class="line">     */</div><div class="line">    <span class="meta">@CachePut</span>(value = <span class="string">"user"</span>,key = <span class="string">"#user.userId"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">addUser</span><span class="params">(User user)</span></span>&#123;</div><div class="line">        System.out.println(<span class="string">"添加用户"</span>);</div><div class="line">        userMapper.insertUser(user);</div><div class="line">        <span class="keyword">return</span> user;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * <span class="doctag">@CacheEvict</span> : 这个注解的作用是清除缓存，默认是在执行方法体之后清除缓存，如果执行的代码出现了异常，那么这个清除缓存将不会执行</div><div class="line">     *      1、vaue ： 指定缓存的名字</div><div class="line">     *      2、key : 指定需要删除的key</div><div class="line">     *      3、allEntries ： 是否删除指定缓存中的全部缓存，默认为false，一旦指定为true，那么将会删除value指定的cache中的全部缓存</div><div class="line">     *      4、beforeInvocation : 是否在执行方法体的代码之前执行清除缓存，默认为false，如果指定了为true，那么就会在方法执行之前清除缓存，</div><div class="line">     *                            此时如果方法体运行出错，那么缓存中的数据将不能回滚</div><div class="line">     */</div><div class="line">    <span class="meta">@CacheEvict</span>(value = <span class="string">"user"</span>,key = <span class="string">"#userId"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteUser</span><span class="params">(Integer userId)</span></span>&#123;</div><div class="line">        System.out.println(<span class="string">"调用了删除的方法"</span>);</div><div class="line">        userMapper.deleteUser(userId);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * <span class="doctag">@Caching</span> : 这个是一个组合注解，针对一个方法逻辑中多种的缓存操作</div><div class="line">     *             1、cacheable ： 一个数组，其中指定<span class="doctag">@Cacheable</span>这个注解，可以指定多个，用于在执行方法之前先查询缓存，如果没有才会执行方法体，并且将结果缓存起来</div><div class="line">     *             2、put： 一个数组，其中只能指定<span class="doctag">@CachePut</span>这个注解，可以指定多个，用于在执行方法之后将返回的结果添加到缓存中</div><div class="line">     *             3、evict　：　一个数组，其中只能指定＠CacheEvict这个注解，用于在方法执行完成之后清除缓存</div><div class="line">     */</div><div class="line">    <span class="meta">@Caching</span>(</div><div class="line">            cacheable = &#123;</div><div class="line">                    <span class="meta">@Cacheable</span>(value = <span class="string">"user"</span>,key = <span class="string">"#name"</span>)   <span class="comment">//首先根据name从缓存中获取数据，如果没有将会把缓存的结果添加到缓存中</span></div><div class="line">            &#125;,</div><div class="line">            put = &#123;</div><div class="line">                    <span class="meta">@CachePut</span>(value = <span class="string">"user"</span>,key = <span class="string">"#result.age"</span>),</div><div class="line">                    <span class="meta">@CachePut</span>(value = <span class="string">"user"</span>,key = <span class="string">"#result.gender"</span>),</div><div class="line">            &#125;</div><div class="line">    )</div><div class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">getUserByName</span><span class="params">(String name)</span></span>&#123;</div><div class="line">        System.out.println(<span class="string">"调用getUserByName方法"</span>);</div><div class="line">        <span class="keyword">return</span> userMapper.selectUserByName(name);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="Redis缓存-1"><a href="#Redis缓存-1" class="headerlink" title="Redis缓存"></a>Redis缓存</h2><p>1、添加场景启动器，如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">          <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">          <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">      <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>2、在全局配置文件中配置redis的连接配置，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"># Redis数据库索引（默认为0）</div><div class="line">spring.redis.database=0</div><div class="line"># Redis服务器地址</div><div class="line">spring.redis.host=172.31.19.222	</div><div class="line"># Redis服务器连接端口</div><div class="line">spring.redis.port=6379</div><div class="line"># Redis服务器连接密码（默认为空）</div><div class="line">spring.redis.password=</div><div class="line"># 连接池最大连接数（使用负值表示没有限制）</div><div class="line">spring.redis.pool.max-active=8</div><div class="line"># 连接池最大阻塞等待时间（使用负值表示没有限制）</div><div class="line">spring.redis.pool.max-wait=-1</div><div class="line"># 连接池中的最大空闲连接</div><div class="line">spring.redis.pool.max-idle=8</div><div class="line"># 连接池中的最小空闲连接</div><div class="line">spring.redis.pool.min-idle=0</div><div class="line"># 连接超时时间（毫秒）</div><div class="line">spring.redis.timeout=0</div></pre></td></tr></table></figure>
+<p>3、一旦注入这个场景启动器，那么将会为我们自动配置，我们可以直接使用spring-data-redis操作redis，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RunWith</span>(SpringRunner.class)</div><div class="line"><span class="meta">@SpringBootTest</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringbootCacheApplicationTests</span> </span>&#123;</div><div class="line">    <span class="meta">@Resource</span></div><div class="line">    <span class="keyword">private</span> StringRedisTemplate stringRedisTemplate;  <span class="comment">//存储key和value都是字符串的数据</span></div><div class="line"></div><div class="line">    <span class="meta">@Resource</span></div><div class="line">    <span class="keyword">private</span> RedisTemplate&lt;String,Object&gt; redisTemplate; <span class="comment">//操作key和value都是Object的数据</span></div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextLoads</span><span class="params">()</span> </span>&#123;</div><div class="line">        stringRedisTemplate.opsForValue().append(<span class="string">"hello"</span>,<span class="string">"hello world"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>4、springBoot默认是使用的jdk的序列化方式将数据保存在Redis中，但是我们可以自定义自己的序列化规则，可以指定的json序列化器，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//指定一个redis的配置类</span></div><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisConfig</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">//指定自己的RedisTemplate，并且指定默认的序列化器为json的，只需要设置默认的即可，因为value和key的序列化器和默认的是一样的，不需要重复指定</span></div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="function"><span class="keyword">public</span> RedisTemplate&lt;Object, User&gt; <span class="title">redisTemplate</span><span class="params">(</span></span></div><div class="line">            RedisConnectionFactory redisConnectionFactory) <span class="keyword">throws</span> UnknownHostException &#123;</div><div class="line">        RedisTemplate&lt;Object, User&gt; template = <span class="keyword">new</span> RedisTemplate&lt;&gt;();</div><div class="line">        template.setConnectionFactory(redisConnectionFactory);</div><div class="line">        <span class="comment">//指定json的序列化器</span></div><div class="line">        Jackson2JsonRedisSerializer&lt;User&gt; serializer=<span class="keyword">new</span> Jackson2JsonRedisSerializer&lt;User&gt;(User.class);</div><div class="line">        template.setDefaultSerializer(serializer);  <span class="comment">//设置为默认的序列化器</span></div><div class="line">        <span class="keyword">return</span> template;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>5、只要引入redis的场景启动器，那么就会为我们配置一个RedisCache这个名字的缓存管理器，因此不需要重新配置了，那么我们可以直接使用缓存的注解了。此时使用缓存注解的时候就会将数据存储在redis中了。但是默认的保存的数据还是使用jdk序列化后的结果。</p>
+<p>6、个人觉得使用缓存不需要使用注解，手写代码应该更加灵活一些。</p>
+<h2 id="SpringBoot共用session-1"><a href="#SpringBoot共用session-1" class="headerlink" title="SpringBoot共用session"></a>SpringBoot共用session</h2><ul>
+<li><a href="http://www.ityouknow.com/springboot/2016/03/06/spring-boot-redis.html" target="_blank" rel="external">http://www.ityouknow.com/springboot/2016/03/06/spring-boot-redis.html</a></li>
+</ul>
+<h2 id="springBoot异步任务"><a href="#springBoot异步任务" class="headerlink" title="springBoot异步任务"></a>springBoot异步任务</h2><h2 id="springBoot定时任务"><a href="#springBoot定时任务" class="headerlink" title="springBoot定时任务"></a>springBoot定时任务</h2><ul>
+<li>sprignBoot定时任务是与quartz整合，不需要添加任何的依赖</li>
+<li>在springBoot的启动类上添加<code>@EnableScheduling</code>注解开启定时调度</li>
+<li>在需要定时调度的方法上添加<code>@Scheduled</code>这个注解即可，其中可以指定<strong>cron表达式</strong> 和其他的定时方式，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Scheduled</span>(fixedRate = <span class="number">6000</span>) ：上一次开始执行时间点之后<span class="number">6</span>秒再执行</div><div class="line"><span class="meta">@Scheduled</span>(fixedDelay = <span class="number">6000</span>) ：上一次执行完毕时间点之后<span class="number">6</span>秒再执行</div><div class="line"><span class="meta">@Scheduled</span>(initialDelay=<span class="number">1000</span>, fixedRate=<span class="number">6000</span>) ：第一次延迟<span class="number">1</span>秒后执行，之后按fixedRate的规则每<span class="number">6</span>秒执行一次</div></pre></td></tr></table></figure>
+<h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Service</span>   <span class="comment">//注入到容器中</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">QuartService</span> </span>&#123;	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 开启定时调度任务，使用cron表达式指定时间</div><div class="line">	 */</div><div class="line">	<span class="meta">@Scheduled</span>(cron=<span class="string">"0/1 * * * * ? "</span>)   <span class="comment">//指定cron表达式每秒执行一次</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sysHello</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"say hello"</span>);</div><div class="line">	&#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>启动类上添加注解开启定时任务</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@SpringBootApplication</span></div><div class="line"><span class="meta">@EnableScheduling</span>  <span class="comment">//开启定时任务调度</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DemoApplication</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">		SpringApplication.run(DemoApplication.class, args);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/SpringBoot/">SpringBoot</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/SpringBoot/">SpringBoot</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/09/02/springBoot高级/" data-title="springBoot高级 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/09/02/docker基本使用/" title="docker基本使用">
+  <strong>上一篇：</strong><br/>
+  <span>
+  docker基本使用</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/09/02/springBoot基本使用/"  title="springBoot基本使用">
+ <strong>下一篇：</strong><br/> 
+ <span>springBoot基本使用
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#springBoot高级"><span class="toc-number">1.</span> <span class="toc-text">springBoot高级</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#普通缓存"><span class="toc-number">1.1.</span> <span class="toc-text">普通缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis缓存"><span class="toc-number">1.2.</span> <span class="toc-text">Redis缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringBoot共用session"><span class="toc-number">1.3.</span> <span class="toc-text">SpringBoot共用session</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#springBoot高级-1"><span class="toc-number">2.</span> <span class="toc-text">springBoot高级</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#普通缓存-1"><span class="toc-number">2.1.</span> <span class="toc-text">普通缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis缓存-1"><span class="toc-number">2.2.</span> <span class="toc-text">Redis缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringBoot共用session-1"><span class="toc-number">2.3.</span> <span class="toc-text">SpringBoot共用session</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#springBoot异步任务"><span class="toc-number">2.4.</span> <span class="toc-text">springBoot异步任务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#springBoot定时任务"><span class="toc-number">2.5.</span> <span class="toc-text">springBoot定时任务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实例"><span class="toc-number">2.5.1.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">2.6.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

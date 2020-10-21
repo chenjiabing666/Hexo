@@ -1,0 +1,857 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>java nio | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="缓冲区（Buffer）
+负责数据的存取，实际上就是一个数组，用于存储不同的数据
+除了布尔类型之后，其他类型都有，最常用的就是ByteBuffer
+
+常用的方法
+allocate(int capacity)： 分配指定大小的缓冲区（非直接缓冲区）
+allocateDirect(int capacity)： 分配指定大小的缓冲区（直接缓冲区）
+put()：向缓冲区中存储数据
+get(byte[] ds">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java nio">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/12/01/java-nio/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="缓冲区（Buffer）
+负责数据的存取，实际上就是一个数组，用于存储不同的数据
+除了布尔类型之后，其他类型都有，最常用的就是ByteBuffer
+
+常用的方法
+allocate(int capacity)： 分配指定大小的缓冲区（非直接缓冲区）
+allocateDirect(int capacity)： 分配指定大小的缓冲区（直接缓冲区）
+put()：向缓冲区中存储数据
+get(byte[] ds">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8244809-fcb728300855e16b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/8244809-7cb17b790f670380.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T05:57:58.197Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="java nio">
+<meta name="twitter:description" content="缓冲区（Buffer）
+负责数据的存取，实际上就是一个数组，用于存储不同的数据
+除了布尔类型之后，其他类型都有，最常用的就是ByteBuffer
+
+常用的方法
+allocate(int capacity)： 分配指定大小的缓冲区（非直接缓冲区）
+allocateDirect(int capacity)： 分配指定大小的缓冲区（直接缓冲区）
+put()：向缓冲区中存储数据
+get(byte[] ds">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/8244809-fcb728300855e16b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/12/01/java-nio/" title="java nio" itemprop="url">java nio</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-12-01T14:05:47.000Z" itemprop="datePublished"> 发表于 2018-12-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#缓冲区（Buffer）"><span class="toc-number">1.</span> <span class="toc-text">缓冲区（Buffer）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的方法"><span class="toc-number">1.1.</span> <span class="toc-text">常用的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#核心属性"><span class="toc-number">1.2.</span> <span class="toc-text">核心属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#直接缓冲区"><span class="toc-number">1.3.</span> <span class="toc-text">直接缓冲区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#非直接缓冲区"><span class="toc-number">1.4.</span> <span class="toc-text">非直接缓冲区</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通道（Channel）"><span class="toc-number">2.</span> <span class="toc-text">通道（Channel）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#获取通道"><span class="toc-number">2.1.</span> <span class="toc-text">获取通道</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例"><span class="toc-number">2.2.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通道之间指定进行数据传输"><span class="toc-number">2.3.</span> <span class="toc-text">通道之间指定进行数据传输</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分散读取"><span class="toc-number">2.4.</span> <span class="toc-text">分散读取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#聚集写入"><span class="toc-number">2.5.</span> <span class="toc-text">聚集写入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NIO阻塞式"><span class="toc-number">2.6.</span> <span class="toc-text">NIO阻塞式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Selector（选择器）"><span class="toc-number">3.</span> <span class="toc-text">Selector（选择器）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SelectionKey"><span class="toc-number">3.1.</span> <span class="toc-text">SelectionKey</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NIO非阻塞式"><span class="toc-number">3.2.</span> <span class="toc-text">NIO非阻塞式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">4.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">5.</span> <span class="toc-text">笔者有话说</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="缓冲区（Buffer）"><a href="#缓冲区（Buffer）" class="headerlink" title="缓冲区（Buffer）"></a>缓冲区（Buffer）</h2><ul>
+<li>负责数据的存取，实际上就是一个数组，用于存储不同的数据</li>
+<li>除了布尔类型之后，其他类型都有，最常用的就是<code>ByteBuffer</code></li>
+</ul>
+<h3 id="常用的方法"><a href="#常用的方法" class="headerlink" title="常用的方法"></a>常用的方法</h3><ul>
+<li><code>allocate(int capacity)</code>： 分配指定大小的缓冲区（非直接缓冲区）</li>
+<li><code>allocateDirect(int capacity)</code>： 分配指定大小的缓冲区（直接缓冲区）</li>
+<li><code>put()</code>：向缓冲区中存储数据</li>
+<li><code>get(byte[] dst)</code>：从缓冲区获取数据，这里的dst的容量必须和缓冲区的大小一致</li>
+<li><code>get(byte[] dst,int offest,int length)</code> ：读取指定长度的内容到dst中，这里的dst容量没有要求</li>
+<li><code>flip()</code>： 缓冲区从写模式切换到读模式</li>
+<li><code>clear()</code>：清空缓冲区，数据依然存在，只是处于一个“被遗忘”状态，改变的只是<code>limit</code>和<code>position</code></li>
+<li><code>array()</code> ：返回实现此缓冲区的 byte 数组 </li>
+<li><code>mark()</code>： 标记当前位置（position）</li>
+<li><code>reset()</code>：恢复到mark的位置</li>
+</ul>
+<h3 id="核心属性"><a href="#核心属性" class="headerlink" title="核心属性"></a>核心属性</h3><ul>
+<li><code>capacity</code>：容量，表示缓冲区的最大容量，一旦声明不能改变</li>
+<li><code>limit</code>： 界限，缓冲区中可以操作的数据的大小，实际存储数据的大小，limit之后的数据不能进行读写</li>
+<li><code>position</code>：位置，表示缓冲区中正在操作数据的位置</li>
+<li><code>position&lt;=limit&lt;=capacity</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test1</span><span class="params">()</span></span>&#123;</div><div class="line">	String str=<span class="string">"abcd"</span>;</div><div class="line">	ByteBuffer buffer=ByteBuffer.allocate(<span class="number">1024</span>);<span class="comment">//分配1024个字节大小的缓冲区</span></div><div class="line">	buffer.put(str.getBytes());  <span class="comment">//写入数据</span></div><div class="line">	System.out.println(buffer.capacity());  <span class="comment">//容量 1024</span></div><div class="line">	System.out.println(buffer.limit()); <span class="comment">//界限，1024</span></div><div class="line">	System.out.println(buffer.position());  <span class="comment">//正在操作数据的位置  0</span></div><div class="line">	</div><div class="line">	buffer.flip();   <span class="comment">//切换到读模式，读取数据的时候一定要切换，否则将会没有界限</span></div><div class="line">	</div><div class="line">	System.out.println(buffer.capacity());  <span class="comment">//容量 1024</span></div><div class="line">	System.out.println(buffer.limit()); <span class="comment">//界限，4，允许读取的位置只能到4，因为就存储了这么多的数据</span></div><div class="line">	System.out.println(buffer.position());  <span class="comment">//正在操作数据的位置  0</span></div><div class="line">	System.err.println(buffer.get(<span class="number">4</span>));   <span class="comment">//超出界限了，下标记从0开始，0&lt;=index&lt;limit</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>实例</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 读取缓冲区中的数据到指定的字节数组中</div><div class="line"> * 1、字节数组的大小一定要和buffer.limit()一样大小，否则会报错</div><div class="line"> */</div><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span></span>&#123;</div><div class="line">	String str=<span class="string">"abcdefg"</span>;</div><div class="line">	ByteBuffer buffer=ByteBuffer.allocate(<span class="number">1024</span>);  <span class="comment">//申请空间大小</span></div><div class="line">	buffer.put(str.getBytes());  <span class="comment">//存入数据</span></div><div class="line">	buffer.flip();   <span class="comment">//切换到读模式</span></div><div class="line">	<span class="comment">//申请一个字节数组和实际数据一样大,这里必须和缓冲区的实际数据大小一样，否则将会报错</span></div><div class="line">	<span class="keyword">byte</span>[] dst=<span class="keyword">new</span> <span class="keyword">byte</span>[buffer.limit()]; </div><div class="line">	buffer.get(dst);   <span class="comment">//读取缓冲区的数据到dst字节数组中</span></div><div class="line">	System.out.println(<span class="keyword">new</span> String(dst));</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 读取一个字节</div><div class="line"> */</div><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test3</span><span class="params">()</span></span>&#123;</div><div class="line">	String str=<span class="string">"abcdefg"</span>;</div><div class="line">	ByteBuffer buffer=ByteBuffer.allocate(<span class="number">10</span>);  <span class="comment">//申请空间大小</span></div><div class="line">	buffer.put(str.getBytes());  <span class="comment">//存入数据</span></div><div class="line">	buffer.flip();   <span class="comment">//切换到读模式</span></div><div class="line">	System.out.println((<span class="keyword">char</span>)buffer.get());</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>测试remark和reset</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">	 * 测试remark和rest</div><div class="line">	 */</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test1</span><span class="params">()</span></span>&#123;</div><div class="line">		ByteBuffer buffer=ByteBuffer.allocate(<span class="number">1024</span>);</div><div class="line">		String str=<span class="string">"abcdcdscdscds"</span>;</div><div class="line">		buffer.put(str.getBytes());   <span class="comment">//向缓冲区中写入数据</span></div><div class="line">		buffer.flip();  <span class="comment">//切换到读的模式</span></div><div class="line">		<span class="keyword">byte</span>[] dst=<span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];   <span class="comment">//创建byte数组</span></div><div class="line">		System.out.println(<span class="string">"---------------------读取两个字节的数据----------------------------"</span>);</div><div class="line">		buffer.get(dst,<span class="number">0</span>,<span class="number">2</span>);   <span class="comment">//读取两个字节长度的数据到dst中，此时的position的位置位2</span></div><div class="line">		System.out.println(<span class="keyword">new</span> String(dst));</div><div class="line">		System.out.println(<span class="string">"----------------------标记此时的位置------------------------------"</span>);</div><div class="line">		buffer.mark();  <span class="comment">//标记位置，此时的position的位置位2</span></div><div class="line">		System.out.println(<span class="string">"---------------------继续读取两个字节的数据----------------------------"</span>);</div><div class="line">		buffer.get(dst,buffer.position(),<span class="number">2</span>);  <span class="comment">//继续从当前位置读取两个字节到dst中</span></div><div class="line">		System.out.println(<span class="keyword">new</span> String(dst));</div><div class="line">		System.out.println(buffer.position());  <span class="comment">//此时的position的位置为4</span></div><div class="line">		</div><div class="line">		System.out.println(<span class="string">"---------------------重置缓冲区到remark的位置----------------------------"</span>);</div><div class="line">		buffer.reset();  <span class="comment">//重置缓冲区到rmark的位置</span></div><div class="line">		System.out.println(buffer.position());   <span class="comment">//此时的position为2</span></div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<h3 id="直接缓冲区"><a href="#直接缓冲区" class="headerlink" title="直接缓冲区"></a>直接缓冲区</h3><ul>
+<li>直接字节缓冲区可以通过调用此类的 <code>allocateDirect()</code>工厂方法 来创建。此方法返回的 缓冲区进行分配和取消分配所需成本通常高于非直接缓冲区 。直接缓冲区的内容可以驻留在常规的垃圾回收堆之外，因此，它们对应用程序的内存需求量造成的影响可能并不明显。所以，建议将直接缓冲区主要分配给那些易受基础系统的机 本机 I/O 操作影响的大型、持久的缓冲区。一般情况下，最好仅在直接缓冲区能在程序性能方面带来明显好处时分配它们。</li>
+<li><img src="http://upload-images.jianshu.io/upload_images/8244809-fcb728300855e16b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="直接缓冲区"></li>
+</ul>
+<h3 id="非直接缓冲区"><a href="#非直接缓冲区" class="headerlink" title="非直接缓冲区"></a>非直接缓冲区</h3><ul>
+<li>在JVM中内存中创建，在每次调用基础操作系统的一个本机IO之前或者之后，虚拟机都会将缓冲区的内容复制到中间缓冲区（或者从中间缓冲区复制内容），缓冲区的内容驻留在JVM内，因此销毁容易，但是占用JVM内存开销，处理过程中有复制操作。</li>
+<li><p><img src="http://upload-images.jianshu.io/upload_images/8244809-7cb17b790f670380.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="非直接缓冲区"></p>
+<ul>
+<li>写入步骤如下：<ol>
+<li>创建一个临时的直接ByteBuffer对象。</li>
+<li>将非直接缓冲区的内容复制到临时缓冲中。</li>
+<li>使用临时缓冲区执行低层次I/O操作。</li>
+<li>临时缓冲区对象离开作用域，并最终成为被回收的无用数据。</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="通道（Channel）"><a href="#通道（Channel）" class="headerlink" title="通道（Channel）"></a>通道（Channel）</h2><ul>
+<li>通道是双向的，流是单向的</li>
+<li>通道相当于输出和输入流</li>
+<li>主要的实现类如下：<ul>
+<li><code>FileChannel</code>：文件的操作</li>
+<li><code>SocketChannel</code>：TCP</li>
+<li><code>ServerSocketChannel</code>：TCP</li>
+<li><code>DatagramChannel</code>：UDP</li>
+</ul>
+</li>
+</ul>
+<h3 id="获取通道"><a href="#获取通道" class="headerlink" title="获取通道"></a>获取通道</h3><ol>
+<li>本地IO，提供了<code>getChannel()</code>方法获取通道<ol>
+<li><code>FileInputStream</code></li>
+<li><code>FileOutputStram</code></li>
+<li><code>RandomAccessFile</code></li>
+</ol>
+</li>
+<li>在JDK1.7中的NIO，针对各个通道提供了静态方法<code>open()</code></li>
+<li>在JDK1.7中的NIO的Files工具类的<code>newByteChannel()</code></li>
+</ol>
+<h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><ul>
+<li>利用通道实现文件的复制（非直接缓冲区）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 使用getChannel获取通道,实现文件的复制</div><div class="line"> * <span class="doctag">@throws</span> IOException </div><div class="line"> */</div><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test1</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>&#123;</div><div class="line">	FileInputStream inputStream=<span class="keyword">new</span> FileInputStream(<span class="keyword">new</span> File(<span class="string">"C:/images/lifecrystal.png"</span>));</div><div class="line">	FileOutputStream outputStream=<span class="keyword">new</span> FileOutputStream(<span class="keyword">new</span> File(<span class="string">"C:/images/2.png"</span>));</div><div class="line">	</div><div class="line">	FileChannel inchannel = inputStream.getChannel();  <span class="comment">//获取通道，用于读取</span></div><div class="line">	FileChannel outchannel=outputStream.getChannel();  <span class="comment">//获取通道，用于写入</span></div><div class="line">	</div><div class="line">	ByteBuffer buffer=ByteBuffer.allocate(<span class="number">1024</span>);  <span class="comment">//申请缓冲区</span></div><div class="line">	<span class="comment">//将通道中的数据写入缓冲区</span></div><div class="line">	<span class="keyword">while</span> (inchannel.read(buffer)!=-<span class="number">1</span>) &#123;</div><div class="line">		buffer.flip(); <span class="comment">//切换到读模式</span></div><div class="line">		<span class="comment">//将缓冲区中的数据写入通道</span></div><div class="line">		outchannel.write(buffer);  </div><div class="line">		buffer.clear();  <span class="comment">//清空缓冲区，继续读取数据</span></div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">//关闭通道</span></div><div class="line">	inchannel.close();</div><div class="line">	outchannel.close();</div><div class="line">	inputStream.close();</div><div class="line">	outchannel.close();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>使用直接缓冲区完成文件的复制，使用open()的方法获取通道</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">	 * 使用直接缓冲区完成文件的复制</div><div class="line">	 * 使用open()的方法获取通道</div><div class="line">	 * <span class="doctag">@throws</span> IOException</div><div class="line">	 */</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>&#123;</div><div class="line">		<span class="comment">//获取一个读取数据的通道，使用的读模式</span></div><div class="line">		FileChannel inchannel=FileChannel.open(Paths.get(<span class="string">"C:/images/2.png"</span>), StandardOpenOption.READ);</div><div class="line">		</div><div class="line">		<span class="comment">/**</span></div><div class="line">		 * StandardOpenOption.CREATE : 如果文件不存在，那么就创建，如果存在将会覆盖，不报错</div><div class="line">		 * StandardOpenOption.CREATE_NEW ： 如果不存在就创建，如果存在，将会报错</div><div class="line">		 */</div><div class="line">		FileChannel outchannel=FileChannel.open(Paths.get(<span class="string">"C:/images/3.png"</span>), StandardOpenOption.CREATE,StandardOpenOption.WRITE,StandardOpenOption.READ);</div><div class="line">		</div><div class="line">		<span class="comment">//创建一个内存映射文件，操作直接缓冲区，和allocatDirect()一样，MapMode.READ_ONLY表示只读的模式，用于读取</span></div><div class="line">		MappedByteBuffer inMappedBuff = inchannel.map(MapMode.READ_ONLY, <span class="number">0</span>, inchannel.size());</div><div class="line">		</div><div class="line">		<span class="comment">//创建一个内容映射文件，MapMode.READ_WRITE表示读写模式，可以读写</span></div><div class="line">		MappedByteBuffer outMappedBuffer = outchannel.map(MapMode.READ_WRITE, <span class="number">0</span>, inchannel.size());</div><div class="line">		</div><div class="line">		<span class="keyword">byte</span>[] dst=<span class="keyword">new</span> <span class="keyword">byte</span>[inMappedBuff.limit()];</div><div class="line">		<span class="comment">//将数据读入到dst中</span></div><div class="line">		inMappedBuff.get(dst);</div><div class="line">		</div><div class="line">		<span class="comment">//将数据从dst中读取到outMappedBuffer</span></div><div class="line">		outMappedBuffer.put(dst);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<h3 id="通道之间指定进行数据传输"><a href="#通道之间指定进行数据传输" class="headerlink" title="通道之间指定进行数据传输"></a>通道之间指定进行数据传输</h3><ul>
+<li><code>transferTo(long position,long count,WritableByteChannel target)</code>:将数据从通道写入可写的通道target中</li>
+<li><code>transferFrom(ReadableByteChannel from,long position,long count)</code>：将数据从通道from中读取到通道中</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 通道之间直接进行传输</div><div class="line">	 * 	1、transferTo(long position,long count,WritableByteChannel target):将数据从通道写入可写的通道target中</div><div class="line">	 * 	2、transferFrom(ReadableByteChannel from,long position,long count)：将数据从通道from中读取到通道中</div><div class="line">	 * <span class="doctag">@throws</span> IOException</div><div class="line">	 */</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test3</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>&#123;</div><div class="line">		<span class="comment">//获取一个读取数据的通道，使用的读模式</span></div><div class="line">		FileChannel inchannel = FileChannel.open(Paths.get(<span class="string">"C:/images/2.png"</span>),</div><div class="line">				StandardOpenOption.READ);</div><div class="line"></div><div class="line">		<span class="comment">/**</span></div><div class="line">		 * StandardOpenOption.CREATE : 如果文件不存在，那么就创建，如果存在将会覆盖，不报错</div><div class="line">		 * StandardOpenOption.CREATE_NEW ： 如果不存在就创建，如果存在，将会报错</div><div class="line">		 */</div><div class="line">		FileChannel outchannel=FileChannel.open(Paths.get(<span class="string">"C:/images/4.png"</span>), StandardOpenOption.CREATE,StandardOpenOption.WRITE,StandardOpenOption.READ);</div><div class="line">		</div><div class="line">		<span class="comment">//将通道inchannel中的数据直接写入outchannel中</span></div><div class="line">		inchannel.transferTo(<span class="number">0</span>, inchannel.size(), outchannel);</div><div class="line">		</div><div class="line">		<span class="comment">//和上面一样的效果</span></div><div class="line"><span class="comment">//		outchannel.transferFrom(inchannel, 0, inchannel.size());</span></div><div class="line">		</div><div class="line">		inchannel.close();</div><div class="line">		outchannel.close();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<h3 id="分散读取"><a href="#分散读取" class="headerlink" title="分散读取"></a>分散读取</h3><ul>
+<li>将通道中的数据分散到各个缓冲区中</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 分散读取：将通道中的数据写入各个缓冲区中，是按照顺序写入的，第一个缓冲区写满才会写入第二个缓冲区</div><div class="line"> * <span class="doctag">@throws</span> IOException </div><div class="line"> */</div><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test4</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>&#123;</div><div class="line">	<span class="comment">//创建读写模式的RandomAccessFile</span></div><div class="line">	RandomAccessFile accessFile=<span class="keyword">new</span> RandomAccessFile(<span class="keyword">new</span> File(<span class="string">"C:/images/2.png"</span>), <span class="string">"rw"</span>);</div><div class="line">	FileChannel inchannel=accessFile.getChannel(); <span class="comment">//读取</span></div><div class="line">	</div><div class="line">	ByteBuffer buffer1=ByteBuffer.allocate(<span class="number">10</span>); <span class="comment">//第一个缓冲区，10个字节大小</span></div><div class="line">	ByteBuffer buffer2=ByteBuffer.allocate(<span class="number">1024</span>);<span class="comment">//第二个缓冲区</span></div><div class="line">	</div><div class="line">	ByteBuffer[] dst=&#123;buffer1,buffer2&#125;;</div><div class="line">	</div><div class="line">	<span class="comment">//分散读取</span></div><div class="line">	inchannel.read(dst);</div><div class="line">	</div><div class="line">	<span class="keyword">for</span> (ByteBuffer byteBuffer : dst) &#123;</div><div class="line">		byteBuffer.flip();  <span class="comment">//切换到读的模式</span></div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">//输出第一个缓冲区的数据</span></div><div class="line">	System.out.println(<span class="keyword">new</span> String(buffer1.array()));</div><div class="line">	</div><div class="line">	<span class="comment">//输出第二个缓冲区中的数据</span></div><div class="line">	System.out.println(<span class="keyword">new</span> String(buffer2.array()));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="聚集写入"><a href="#聚集写入" class="headerlink" title="聚集写入"></a>聚集写入</h3><ul>
+<li>将各个缓冲区的数据读入到通道中</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test4</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>&#123;</div><div class="line">	<span class="comment">//创建读写模式的RandomAccessFile</span></div><div class="line">	RandomAccessFile accessFile=<span class="keyword">new</span> RandomAccessFile(<span class="keyword">new</span> File(<span class="string">"C:/images/2.png"</span>), <span class="string">"rw"</span>);</div><div class="line">	FileChannel inchannel=accessFile.getChannel(); <span class="comment">//读取</span></div><div class="line">	</div><div class="line">	ByteBuffer buffer1=ByteBuffer.allocate(<span class="number">10</span>); <span class="comment">//第一个缓冲区，10个字节大小</span></div><div class="line">	ByteBuffer buffer2=ByteBuffer.allocate(<span class="number">1024</span>);<span class="comment">//第二个缓冲区</span></div><div class="line">	</div><div class="line">	ByteBuffer[] dst=&#123;buffer1,buffer2&#125;;</div><div class="line">	</div><div class="line">	<span class="comment">//分散读取</span></div><div class="line">	inchannel.read(dst);</div><div class="line">	</div><div class="line">	<span class="keyword">for</span> (ByteBuffer byteBuffer : dst) &#123;</div><div class="line">		byteBuffer.flip();  <span class="comment">//切换到读的模式</span></div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">//输出第一个缓冲区的数据</span></div><div class="line">	System.out.println(<span class="keyword">new</span> String(buffer1.array()));</div><div class="line">	</div><div class="line">	<span class="comment">//输出第二个缓冲区中的数据</span></div><div class="line">	System.out.println(<span class="keyword">new</span> String(buffer2.array()));</div><div class="line">	</div><div class="line">	System.out.println(<span class="string">"---------------------聚集写入-------------------"</span>);</div><div class="line">	</div><div class="line">	RandomAccessFile accessFile2=<span class="keyword">new</span> RandomAccessFile(<span class="keyword">new</span> File(<span class="string">"C:/images/6.png"</span>), <span class="string">"rw"</span>);</div><div class="line">	FileChannel outChannel=accessFile2.getChannel();   <span class="comment">//写入数据的通道</span></div><div class="line">	<span class="comment">//聚集写入，将数据从各个缓冲区中写入到通道中</span></div><div class="line">	outChannel.write(dst); </div><div class="line">	</div><div class="line">	inchannel.close();</div><div class="line">	outChannel.close();</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="NIO阻塞式"><a href="#NIO阻塞式" class="headerlink" title="NIO阻塞式"></a>NIO阻塞式</h3><ul>
+<li>阻塞或者不阻塞是针对<code>SocketChannel</code>，<code>ServerSocketChannel</code></li>
+<li>NIO中的套接字可以轻松在阻塞和非阻塞之间切换，这里我们使用NIO实现阻塞式的TCP数据传输</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">	 * 客户端使用SocketChannel</div><div class="line">	 * 客户端使用SocketChannel中的write()方法向服务端发送数据，使用read()读取服务端返回的反馈</div><div class="line">	 * 在数据发送完成之后如果不调用shutdownOutput告知服务端数据已传送完成，那么将会一直阻塞下去</div><div class="line">	 * <span class="doctag">@throws</span> Exception</div><div class="line">	 */</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testClient</span><span class="params">()</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		<span class="comment">//获取通道</span></div><div class="line">		SocketChannel clientChannel = SocketChannel.open(<span class="keyword">new</span> InetSocketAddress(<span class="string">"127.0.0.1"</span>,<span class="number">9898</span>));</div><div class="line">		</div><div class="line">		FileChannel inchannel = FileChannel.open(Paths.get(<span class="string">"C:/images/2.png"</span>), StandardOpenOption.READ);</div><div class="line">		</div><div class="line">		ByteBuffer buffer=ByteBuffer.allocate(<span class="number">1024</span>);</div><div class="line">		</div><div class="line">		<span class="comment">//循环读取本地图片，并且发送到服务端</span></div><div class="line">		<span class="comment">//1、先使用FileChannel将数据读取到缓冲区中</span></div><div class="line">		<span class="comment">//2、再使用SocketChannel的write方法将缓冲区的数据发送到服务端</span></div><div class="line">		<span class="keyword">while</span>(inchannel.read(buffer)!=-<span class="number">1</span>)&#123;</div><div class="line">			buffer.flip(); <span class="comment">//切换读模式</span></div><div class="line">			clientChannel.write(buffer);  <span class="comment">//发送数据</span></div><div class="line">			buffer.clear(); <span class="comment">//清空缓冲区</span></div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		<span class="comment">//告诉服务端数据已经传送完成，否则将会一直阻塞</span></div><div class="line">		clientChannel.shutdownOutput();  </div><div class="line">		</div><div class="line">		<span class="comment">//接收服务端的反馈</span></div><div class="line">		<span class="comment">//使用read()方法接收服务端的反馈，将其读入到缓冲区中</span></div><div class="line">		<span class="keyword">while</span>(clientChannel.read(buffer)&gt;<span class="number">0</span>)&#123;</div><div class="line">			buffer.flip();  <span class="comment">//切换读模式</span></div><div class="line">			System.out.println(<span class="string">"服务端："</span>+<span class="keyword">new</span> String(buffer.array()));</div><div class="line">			buffer.clear();</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		<span class="comment">//关闭通道</span></div><div class="line">		inchannel.close();</div><div class="line">		clientChannel.close();</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 服务端使用ServerSocketChannel</div><div class="line">	 * 服务端使用SocketChannel的read()方法读取客户端发送的数据，使用write()方法向客户端返回数据</div><div class="line">	 * <span class="doctag">@throws</span> Exception</div><div class="line">	 */</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testServer</span><span class="params">()</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">		<span class="comment">//获取服务端的通道</span></div><div class="line">		ServerSocketChannel serverChannel = ServerSocketChannel.open();</div><div class="line">		</div><div class="line">		<span class="comment">//绑定连接</span></div><div class="line">		serverChannel.bind(<span class="keyword">new</span> InetSocketAddress(<span class="number">9898</span>));</div><div class="line">		</div><div class="line">		<span class="comment">//获取客户端的连接通道</span></div><div class="line">		SocketChannel clientChannel = serverChannel.accept();</div><div class="line">		</div><div class="line">		<span class="comment">//申请缓冲区</span></div><div class="line">		ByteBuffer byteBuffer=ByteBuffer.allocate(<span class="number">1024</span>);</div><div class="line">		</div><div class="line">		</div><div class="line">		FileChannel outChannel = FileChannel.open(Paths.get(<span class="string">"C:/images/12.png"</span>), StandardOpenOption.WRITE,StandardOpenOption.CREATE);</div><div class="line">		</div><div class="line">		<span class="comment">//循环接收客户端发送过来的数据，并且将其保存在本地</span></div><div class="line">		<span class="keyword">while</span>(clientChannel.read(byteBuffer)&gt;<span class="number">0</span>)&#123;</div><div class="line">			byteBuffer.flip(); <span class="comment">//切换读模式</span></div><div class="line">			outChannel.write(byteBuffer);  <span class="comment">//写入到本地</span></div><div class="line">			byteBuffer.clear(); <span class="comment">//清空缓冲区</span></div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		<span class="comment">//服务端发送反馈信息给客户端，使用的还是SocketChannel的write方法</span></div><div class="line">		byteBuffer.put(<span class="string">"服务端接收数据成功"</span>.getBytes());</div><div class="line">		byteBuffer.flip(); <span class="comment">//切换模式</span></div><div class="line">		clientChannel.write(byteBuffer);</div><div class="line">		clientChannel.shutdownOutput();  <span class="comment">//告知客户端传输完成</span></div><div class="line">		</div><div class="line">		<span class="comment">//关闭通道</span></div><div class="line">		outChannel.close();</div><div class="line">		clientChannel.close();</div><div class="line">		serverChannel.close();</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<h2 id="Selector（选择器）"><a href="#Selector（选择器）" class="headerlink" title="Selector（选择器）"></a>Selector（选择器）</h2><ul>
+<li>总的来说，选择器是对通道进行监听，这样就会避免阻塞的发生，实现了多路复用</li>
+</ul>
+<h3 id="SelectionKey"><a href="#SelectionKey" class="headerlink" title="SelectionKey"></a>SelectionKey</h3><ul>
+<li><p>某个Channel成功连接到另一个服务器称为“ <strong>连接就绪</strong> ”。一个Server Socket Channel准备好接收新进入的连接称为“ <strong>接收就绪</strong> ”。一个有数据可读的通道可以说是“ <strong>读就绪</strong> ”。等待写数据的通道可以说是“ <strong>写就绪</strong> ”。 </p>
+</li>
+<li><p>选择器是用来轮询监听通道的状态，其中有四种状态如下：</p>
+<ul>
+<li><code>SelectionKey.OP_CONNECT</code>：连接就绪</li>
+<li><code>SelectionKey.OP_ACCEPT</code>：接收就绪</li>
+<li><code>SelectionKey.OP_READ</code>：读就绪</li>
+<li><code>SelectionKey.OP_WRITE</code>：写就绪</li>
+</ul>
+</li>
+</ul>
+<h3 id="NIO非阻塞式"><a href="#NIO非阻塞式" class="headerlink" title="NIO非阻塞式"></a>NIO非阻塞式</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 客户端需要使用configureBlocking(false)设置成非阻塞模式的</div><div class="line"> * <span class="doctag">@throws</span> Exception</div><div class="line"> */</div><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testClient</span><span class="params">()</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">	<span class="comment">//获取通道</span></div><div class="line">	SocketChannel client = SocketChannel.open(<span class="keyword">new</span> InetSocketAddress(<span class="string">"127.0.0.1"</span>,<span class="number">9898</span>));</div><div class="line">	<span class="comment">//切换成非阻塞模式</span></div><div class="line">	client.configureBlocking(<span class="keyword">false</span>);</div><div class="line">	</div><div class="line">	ByteBuffer buf=ByteBuffer.allocate(<span class="number">1024</span>);  <span class="comment">//申请缓冲区</span></div><div class="line">	</div><div class="line">	Scanner scanner=<span class="keyword">new</span> Scanner(System.in);</div><div class="line">	<span class="keyword">while</span>(scanner.hasNext())&#123;</div><div class="line">		String line=scanner.next();  <span class="comment">//读取控制台输入的内容</span></div><div class="line">		buf.put((<span class="keyword">new</span> Date().toString()+<span class="string">"\n"</span>+line).getBytes());  <span class="comment">//向缓冲区写入数据</span></div><div class="line">		buf.flip(); <span class="comment">//切换到读模式</span></div><div class="line">		client.write(buf);  <span class="comment">//向服务端发送数据</span></div><div class="line">		buf.clear();  <span class="comment">//清空缓存区</span></div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	scanner.close();</div><div class="line">	client.close();</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 服务端</div><div class="line"> * 1、将通道注册到选择器中，并且指定监听的事件</div><div class="line"> * 2、程序每次都会轮询的从选择器中选择事件，可以选择不同状态的通道进行操作</div><div class="line"> * <span class="doctag">@throws</span> Exception</div><div class="line"> */</div><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testServer</span><span class="params">()</span><span class="keyword">throws</span> Exception</span>&#123;</div><div class="line">	<span class="comment">//获取通道</span></div><div class="line">	ServerSocketChannel server = ServerSocketChannel.open();</div><div class="line">	</div><div class="line">	<span class="comment">//绑定端口</span></div><div class="line">	server.bind(<span class="keyword">new</span> InetSocketAddress(<span class="number">9898</span>));</div><div class="line">	</div><div class="line">	<span class="comment">//配置非阻塞</span></div><div class="line">	server.configureBlocking(<span class="keyword">false</span>);</div><div class="line">	</div><div class="line">	<span class="comment">//获取选择器</span></div><div class="line">	Selector selector = Selector.open();</div><div class="line">	</div><div class="line">	<span class="comment">//将通道注册到选择器上，并且知道指定监听的事件为"接收就绪"</span></div><div class="line">	server.register(selector, SelectionKey.OP_ACCEPT);</div><div class="line">	</div><div class="line">	<span class="comment">//轮询式获取选择器上已经准备就绪的事件</span></div><div class="line">	<span class="keyword">while</span>(selector.select()&gt;<span class="number">0</span>)&#123;</div><div class="line">		<span class="comment">//获取当前选择器中所有的选择键(已经准备就绪的)</span></div><div class="line">		Set&lt;SelectionKey&gt; keys = selector.selectedKeys();</div><div class="line">		</div><div class="line">		<span class="comment">//获取迭代器</span></div><div class="line">		Iterator&lt;SelectionKey&gt; iterator = keys.iterator();</div><div class="line">		</div><div class="line">		<span class="comment">//迭代器遍历所有的选择键</span></div><div class="line">		<span class="keyword">while</span>(iterator.hasNext())&#123;</div><div class="line">			<span class="comment">//获取当前选择键</span></div><div class="line">			SelectionKey key = iterator.next();</div><div class="line">			iterator.remove(); <span class="comment">//删除选择键</span></div><div class="line">			</div><div class="line">			<span class="keyword">if</span> (key.isAcceptable()) &#123;  <span class="comment">//如果接收就绪了 </span></div><div class="line">				SocketChannel client = server.accept();  <span class="comment">//获取SocketChannel</span></div><div class="line">				client.configureBlocking(<span class="keyword">false</span>);  <span class="comment">//设置非阻塞模式</span></div><div class="line">				client.register(selector, SelectionKey.OP_READ);  <span class="comment">//将此通道注册到选择器中，指定监听的事件是读就绪</span></div><div class="line">			&#125;<span class="keyword">else</span> <span class="keyword">if</span>(key.isReadable())&#123;  <span class="comment">//如果读就绪</span></div><div class="line">				SocketChannel client = (SocketChannel) key.channel();  <span class="comment">//读就绪了，那么可以获取通道直接读取数据</span></div><div class="line">				ByteBuffer buf=ByteBuffer.allocate(<span class="number">1024</span>);  <span class="comment">//声明一个缓冲区</span></div><div class="line">				<span class="comment">//循环接收客户端的到缓冲区中</span></div><div class="line">				<span class="keyword">int</span> len=<span class="number">0</span>;</div><div class="line">				<span class="keyword">while</span>((len=client.read(buf))&gt;<span class="number">0</span>)&#123;</div><div class="line">					buf.flip();</div><div class="line">					System.out.println(<span class="keyword">new</span> String(buf.array(),<span class="number">0</span>,len));</div><div class="line">					buf.clear();</div><div class="line">				&#125;</div><div class="line">			&#125;<span class="keyword">else</span> <span class="keyword">if</span> (key.isWritable()) &#123;  <span class="comment">//如果写就绪</span></div><div class="line">				</div><div class="line">			&#125;<span class="keyword">else</span> <span class="keyword">if</span> (key.isConnectable()) &#123;  <span class="comment">//如果连接就绪</span></div><div class="line">				</div><div class="line">			&#125;</div><div class="line">			</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	server.close();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ul>
+<li><a href="https://www.cnblogs.com/tengpan-cn/p/5809273.html" target="_blank" rel="external">https://www.cnblogs.com/tengpan-cn/p/5809273.html</a></li>
+<li><a href="http://ifeve.com/overview/" target="_blank" rel="external">并发编程网</a></li>
+<li><a href="http://www.cnblogs.com/snailclimb/p/9086334.html" target="_blank" rel="external">http://www.cnblogs.com/snailclimb/p/9086334.html</a></li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/java学习/">java学习</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/java基础/">java基础</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/12/01/java-nio/" data-title="java nio | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/12/03/springBoot集成RestTemplate/" title="springBoot集成RestTemplate">
+  <strong>上一篇：</strong><br/>
+  <span>
+  springBoot集成RestTemplate</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/11/15/消息中间件之Rabbitmq/"  title="消息中间件之Rabbitmq">
+ <strong>下一篇：</strong><br/> 
+ <span>消息中间件之Rabbitmq
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#缓冲区（Buffer）"><span class="toc-number">1.</span> <span class="toc-text">缓冲区（Buffer）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的方法"><span class="toc-number">1.1.</span> <span class="toc-text">常用的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#核心属性"><span class="toc-number">1.2.</span> <span class="toc-text">核心属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#直接缓冲区"><span class="toc-number">1.3.</span> <span class="toc-text">直接缓冲区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#非直接缓冲区"><span class="toc-number">1.4.</span> <span class="toc-text">非直接缓冲区</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#通道（Channel）"><span class="toc-number">2.</span> <span class="toc-text">通道（Channel）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#获取通道"><span class="toc-number">2.1.</span> <span class="toc-text">获取通道</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例"><span class="toc-number">2.2.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#通道之间指定进行数据传输"><span class="toc-number">2.3.</span> <span class="toc-text">通道之间指定进行数据传输</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分散读取"><span class="toc-number">2.4.</span> <span class="toc-text">分散读取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#聚集写入"><span class="toc-number">2.5.</span> <span class="toc-text">聚集写入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NIO阻塞式"><span class="toc-number">2.6.</span> <span class="toc-text">NIO阻塞式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Selector（选择器）"><span class="toc-number">3.</span> <span class="toc-text">Selector（选择器）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SelectionKey"><span class="toc-number">3.1.</span> <span class="toc-text">SelectionKey</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#NIO非阻塞式"><span class="toc-number">3.2.</span> <span class="toc-text">NIO非阻塞式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">4.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">5.</span> <span class="toc-text">笔者有话说</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

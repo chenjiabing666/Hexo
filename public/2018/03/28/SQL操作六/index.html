@@ -1,0 +1,1027 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>SQL操作六 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="Day06视图视图概述
+什么是视图： 在数据库中存在多种对象，表和视图都是数据库中的对象，创建视图时视图名称不能和表名相同，实际上，视图就代表一个sql查询语句，也可以理解成视图是一张虚拟的表，但是虚拟表中的数据会随着原表数据的改变而改变
+
+为什么使用视图： 
+
+因为有些数据的查询需要书写大量的sql语句，每次书写比较麻烦，使用视图可起到重用sql语句的作用
+可以通过视图隐藏敏感信息，比如隐藏员工">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL操作六">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/03/28/SQL操作六/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="Day06视图视图概述
+什么是视图： 在数据库中存在多种对象，表和视图都是数据库中的对象，创建视图时视图名称不能和表名相同，实际上，视图就代表一个sql查询语句，也可以理解成视图是一张虚拟的表，但是虚拟表中的数据会随着原表数据的改变而改变
+
+为什么使用视图： 
+
+因为有些数据的查询需要书写大量的sql语句，每次书写比较麻烦，使用视图可起到重用sql语句的作用
+可以通过视图隐藏敏感信息，比如隐藏员工">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:17:11.796Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SQL操作六">
+<meta name="twitter:description" content="Day06视图视图概述
+什么是视图： 在数据库中存在多种对象，表和视图都是数据库中的对象，创建视图时视图名称不能和表名相同，实际上，视图就代表一个sql查询语句，也可以理解成视图是一张虚拟的表，但是虚拟表中的数据会随着原表数据的改变而改变
+
+为什么使用视图： 
+
+因为有些数据的查询需要书写大量的sql语句，每次书写比较麻烦，使用视图可起到重用sql语句的作用
+可以通过视图隐藏敏感信息，比如隐藏员工">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/03/28/SQL操作六/" title="SQL操作六" itemprop="url">SQL操作六</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-03-28T04:17:56.000Z" itemprop="datePublished"> 发表于 2018-03-28</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Day06"><span class="toc-number">1.</span> <span class="toc-text">Day06</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#视图"><span class="toc-number">1.1.</span> <span class="toc-text">视图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#视图概述"><span class="toc-number">1.1.1.</span> <span class="toc-text">视图概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#视图分类"><span class="toc-number">1.1.2.</span> <span class="toc-text">视图分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#视图数据污染"><span class="toc-number">1.1.3.</span> <span class="toc-text">视图数据污染</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#往视图中插入数据，删除数据，修改数据"><span class="toc-number">1.1.4.</span> <span class="toc-text">往视图中插入数据，删除数据，修改数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#避免视图数据污染-with-check-option"><span class="toc-number">1.1.5.</span> <span class="toc-text">避免视图数据污染(with check option)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改视图"><span class="toc-number">1.1.6.</span> <span class="toc-text">修改视图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除视图"><span class="toc-number">1.1.7.</span> <span class="toc-text">删除视图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#案例"><span class="toc-number">1.2.</span> <span class="toc-text">案例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#索引原理"><span class="toc-number">1.3.</span> <span class="toc-text">索引原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#索引概述"><span class="toc-number">1.3.1.</span> <span class="toc-text">索引概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建索引"><span class="toc-number">1.3.2.</span> <span class="toc-text">创建索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看索引"><span class="toc-number">1.3.3.</span> <span class="toc-text">查看索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除索引"><span class="toc-number">1.3.4.</span> <span class="toc-text">删除索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#索引是越多越好吗？有索引就一定好吗？"><span class="toc-number">1.3.5.</span> <span class="toc-text">索引是越多越好吗？有索引就一定好吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#复合索引"><span class="toc-number">1.3.6.</span> <span class="toc-text">复合索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建表的时候直接创建索引"><span class="toc-number">1.3.7.</span> <span class="toc-text">创建表的时候直接创建索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">1.3.8.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#约束"><span class="toc-number">1.4.</span> <span class="toc-text">约束</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#唯一约束-unique"><span class="toc-number">1.4.1.</span> <span class="toc-text">唯一约束 unique</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#主键约束-primary-key"><span class="toc-number">1.4.2.</span> <span class="toc-text">主键约束 (primary key)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自增约束-auto-increment"><span class="toc-number">1.4.3.</span> <span class="toc-text">自增约束(auto_increment)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#外键约束（foreign-key）"><span class="toc-number">1.4.4.</span> <span class="toc-text">外键约束（foreign key）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#创建外键约束"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">创建外键约束</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#外键总结"><span class="toc-number">1.4.4.2.</span> <span class="toc-text">外键总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#非空约束-not-null"><span class="toc-number">1.4.5.</span> <span class="toc-text">非空约束(not null)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#默认约束-default"><span class="toc-number">1.4.6.</span> <span class="toc-text">默认约束(default)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check-约束"><span class="toc-number">1.4.7.</span> <span class="toc-text">check 约束</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是事务"><span class="toc-number">1.4.8.</span> <span class="toc-text">什么是事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事务的ACID性质-重要，面试常考"><span class="toc-number">1.4.9.</span> <span class="toc-text">事务的ACID性质(重要，面试常考)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MySQL事务"><span class="toc-number">1.4.10.</span> <span class="toc-text">MySQL事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事务案例"><span class="toc-number">1.4.11.</span> <span class="toc-text">事务案例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.5.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Day06"><a href="#Day06" class="headerlink" title="Day06"></a>Day06</h1><h2 id="视图"><a href="#视图" class="headerlink" title="视图"></a>视图</h2><h3 id="视图概述"><a href="#视图概述" class="headerlink" title="视图概述"></a>视图概述</h3><ul>
+<li><p><strong>什么是视图</strong>： 在数据库中存在多种对象，表和视图都是数据库中的对象，创建视图时视图名称不能和表名相同，实际上，视图就代表一个sql查询语句，也可以理解成视图是一张虚拟的表，但是虚拟表中的数据会<em>随着原表数据的改变而改变</em></p>
+</li>
+<li><p><strong>为什么使用视图</strong>： </p>
+<ul>
+<li>因为有些数据的查询需要书写大量的sql语句，每次书写比较麻烦，使用视图可起到重用sql语句的作用</li>
+<li>可以通过视图隐藏敏感信息，比如隐藏员工工资的字段，那么我们可以创建一个视图，其中不包含工资这个字段</li>
+</ul>
+</li>
+<li><p><strong>创建视图的格式</strong>： create view 视图名 as  子查询</p>
+<ul>
+<li><code>create view view_emp_10 as(select * from emp where deptno=10);</code>  创建一个视图view_emp_10  （简单视图）</li>
+<li>create view view_dep_20 as(select * from EMP where deptno=20 and sal&lt;3000 ); 创建emp表部门是20，工资小于3000的视图</li>
+<li>create view view_emp_sum_max(select max(sal),sum(sal),min(sal) from EMP);  复杂视图，只能查看，不能删除修改插入</li>
+</ul>
+</li>
+<li><p><strong>如何查看视图</strong>： 查询的方式和表的查询方式一样(select)</p>
+</li>
+</ul>
+<h3 id="视图分类"><a href="#视图分类" class="headerlink" title="视图分类"></a>视图分类</h3><ul>
+<li>简单视图 ： 创建视图的子查询中 不包含去重，函数，聚合，关联查询的视图成为简单视图<ul>
+<li>简单视图可以实现增删改查</li>
+</ul>
+</li>
+<li>复杂视图 ： 和简单视图相反   <ul>
+<li>复杂视图是能查询</li>
+</ul>
+</li>
+</ul>
+<h3 id="视图数据污染"><a href="#视图数据污染" class="headerlink" title="视图数据污染"></a>视图数据污染</h3><ul>
+<li><strong>什么是数据污染</strong>： 在视图中插入一条数据，在视图中不显示，但是在原表中显示的数据，称为数据污染</li>
+</ul>
+<ul>
+<li>在视图中只要进行insert操作时才会造成数据污染，因为update和delete只能操作视图中存在的数据</li>
+</ul>
+<ul>
+<li>如果一旦执行插入语句，但是插入的数据不符合创建视图时的子查询条件，那么就会插入视图中失败，但是会插入到原表中，这个是我们不需要的，这个就叫做视图数据污染。</li>
+</ul>
+<h3 id="往视图中插入数据，删除数据，修改数据"><a href="#往视图中插入数据，删除数据，修改数据" class="headerlink" title="往视图中插入数据，删除数据，修改数据"></a>往视图中插入数据，删除数据，修改数据</h3><ul>
+<li><p>简单视图： </p>
+<ul>
+<li><strong>删除数据</strong>：  如果将视图中的数据删除了，那么原表中的数据也会删除掉</li>
+<li><p><strong>插入数据</strong>：  如果插入的数据符合创建视图的子查询的条件，那么就会将数据插入进视图和原表中，如果不符合创建视图时的子查询的条件，那么数据只会插入到原表中，不会插入进视图。</p>
+<ul>
+<li>比如上面创建的view_emp_10视图，子查询条件为deptno=10,如果插入视图的数据的的deptno字段为10，那么就会显示在视图和表中，如果不为10，那么只会显示在表中。</li>
+</ul>
+</li>
+<li><p><strong>更新数据</strong>： 如果更新后的数据不符合创建视图时子查询的条件的话，那么这些数据就会移除视图，但是原表中还会显示，只是不在视图中显示。 如果满足子查询的条件，那么就会成功更新在视图中，原表和视图的数据都会更新并且都会显示</p>
+<ul>
+<li>比如上面创建的view_emp_10的视图，如果我们将视图中的一条数据的deptno改为11，那么这条数据将不会显示在视图中，只会显示在原表中。</li>
+</ul>
+</li>
+<li><p><strong>总结</strong>：</p>
+<ul>
+<li>更新和删除都是对视图中已经存在的数据进行操作，如果存在就会直接删除和更新，并且原表中的数据也会同时被删除和更新，但是如果执行更新操作，更新后的条件不符合创建视图时子查询的条件，那么这些数据将不会显示在视图中，但是在表中还是存在的</li>
+<li>插入数据有可能会造成数据污染</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="避免视图数据污染-with-check-option"><a href="#避免视图数据污染-with-check-option" class="headerlink" title="避免视图数据污染(with check option)"></a>避免视图数据污染(with check option)</h3><ul>
+<li>我们在创建的视图的时候加上<code>with check option</code> 即可<ul>
+<li><code>create view v_emp_30 as(select * from EMP where deptno=30) with check option;</code></li>
+<li>现在我们在往v_emp_30的视图中插入数据，其中字段deptno不等于30，那么就会报错，因为不符合创建视图时的子查询条件</li>
+<li>但是如果我们没有使用<code>with check option</code>，那么我们就会插入成功，虽然不会在视图中显示，但是插入到原表中了，造成了视图数据污染</li>
+</ul>
+</li>
+</ul>
+<h3 id="修改视图"><a href="#修改视图" class="headerlink" title="修改视图"></a>修改视图</h3><ul>
+<li><p>我们创建一个视图</p>
+<ul>
+<li><code>create view view_emp_10 as(select * from emp where deptno=10);</code></li>
+</ul>
+</li>
+<li><p>现在我们需要为子查询加上一个条件 工资大于3000的，即是 创建一张视图，里面数据是部门号为10，工资大于3000的全部员工信息，那么我们就需要在原有的view_emp_10的基础上修改</p>
+<ul>
+<li><code>create  or replace view view_emp_10 as(select * from EMP where deptno=10 and sal&gt;3000);</code>直接在create后面加上<code>or replace</code>即可，有就替换</li>
+</ul>
+</li>
+</ul>
+<h3 id="删除视图"><a href="#删除视图" class="headerlink" title="删除视图"></a>删除视图</h3><ul>
+<li>格式 ：drop view 视图名称  </li>
+<li><p>drop view_emp_10;  删除视图view_emp_10，如果存在就删除，不存在就报错</p>
+</li>
+<li><p>加上关键字  <code>if exists</code> 如果存在就删除，不存在也不报错</p>
+<ul>
+<li><code>drop view if exists view_emp_10;</code></li>
+</ul>
+</li>
+<li><p><strong>如果创建视图的时候对视图中的字段使用了别名，那么以后对视图的操作只能使用别名来操作</strong></p>
+<ul>
+<li><code>create view view_1 as(select ename name from emp where deptno=10);</code>  这里面的子查询将字段ename起了别名，那么我们在以后操作的时候只能使用别名对这个字段操作</li>
+</ul>
+</li>
+</ul>
+<h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><ul>
+<li><p>创建视图显示每个部门对应的员工的名字</p>
+<ul>
+<li>`create view view_emp_dept as(select d.dname,e.ename from EMP e join Dept d on d.deptno=e.deptno);</li>
+</ul>
+</li>
+<li><p>修改上面的视图在上面题的前提下只显示工资在3000以内的</p>
+<ul>
+<li><code>create or replace  view view_emp_dept as(select d.dname,e.ename from EMP e join Dept d on d.deptno=e.deptno where e.sal&lt;3000);</code></li>
+</ul>
+</li>
+<li><p>删除上面的视图</p>
+<ul>
+<li><code>drop view if exists v_emp_dept;</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="索引原理"><a href="#索引原理" class="headerlink" title="索引原理"></a>索引原理</h2><h3 id="索引概述"><a href="#索引概述" class="headerlink" title="索引概述"></a>索引概述</h3><ul>
+<li><p><strong>什么是索引</strong>： </p>
+<ul>
+<li>索引是用来提高查询速度的技术，类似于一个目录，查询数据时会从索引中对数据进行定位，然后直接找到数据所在的位置</li>
+</ul>
+</li>
+<li><p><strong>为什么使用索引</strong> ： </p>
+<ul>
+<li>因为不使用索引的话，查询数据会按照磁盘块一块一块的去查，如果数据量很大，效率很低</li>
+</ul>
+</li>
+<li><p>索引分为聚集索引和非聚集索引</p>
+<ul>
+<li>在mysql中数据库会为主键自动创建聚集索引，聚集索引中数据是有序保存</li>
+</ul>
+</li>
+<li><p>索引内部实现原理 ：</p>
+<ul>
+<li>B+tree </li>
+</ul>
+</li>
+<li><p>数据库中创建索引的过程是数据库内部自己控制，然后使用索引的过程也是数据库自己操作的，不需要程序猿干涉</p>
+</li>
+</ul>
+<h3 id="创建索引"><a href="#创建索引" class="headerlink" title="创建索引"></a>创建索引</h3><ul>
+<li><p>格式： <code>create index 索引名 on 表名(字段名([长度]));</code></p>
+</li>
+<li><p>创建索引之前先查询title=’100’的数据，看看查询时间</p>
+<ul>
+<li>select * from item2 where title=’100’;</li>
+</ul>
+</li>
+<li><p>创建title索引</p>
+<ul>
+<li>create index index_title on item2(title);</li>
+</ul>
+</li>
+<li><p>再次查询，查看时间 </p>
+<ul>
+<li>select * from item2 where title=’100’;</li>
+</ul>
+</li>
+</ul>
+<h3 id="查看索引"><a href="#查看索引" class="headerlink" title="查看索引"></a>查看索引</h3><ul>
+<li>格式: <code>show index from 表名</code></li>
+<li>其中包含主键的索引，这个是自动创建的</li>
+</ul>
+<h3 id="删除索引"><a href="#删除索引" class="headerlink" title="删除索引"></a>删除索引</h3><ul>
+<li>格式：<code>drop index 索引名 on 表名</code></li>
+<li>drop index index_title on item2;</li>
+</ul>
+<h3 id="索引是越多越好吗？有索引就一定好吗？"><a href="#索引是越多越好吗？有索引就一定好吗？" class="headerlink" title="索引是越多越好吗？有索引就一定好吗？"></a>索引是越多越好吗？有索引就一定好吗？</h3><ul>
+<li>因为索引会占用磁盘空间，所以创建索引需谨慎，只创建查询需求的索引</li>
+<li>索引要建立在大量的数据的表中，如果数据量不够大，可能会降低查询效率</li>
+</ul>
+<h3 id="复合索引"><a href="#复合索引" class="headerlink" title="复合索引"></a>复合索引</h3><ul>
+<li><p>创建索引的时候指定多个字段，此时如果查询数据正好过滤条件为这多个字段的话，可以降低磁盘块的访问，从而提高查询效率</p>
+</li>
+<li><p>创建复合索引: create index index_title_price on item2(title,price);</p>
+</li>
+<li><p>执行查询语句</p>
+<ul>
+<li><code>select * from item2 where title=&#39;100&#39; and price &lt;100000;</code> 可以看出查询效率很高</li>
+</ul>
+</li>
+</ul>
+<h3 id="创建表的时候直接创建索引"><a href="#创建表的时候直接创建索引" class="headerlink" title="创建表的时候直接创建索引"></a>创建表的时候直接创建索引</h3><ul>
+<li><code>create table t_index(id int,age int ,index index index_age(age));</code></li>
+<li>直接在字段后面写入  <code>index 名字(字段)</code></li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li>索引会占磁盘空间，不是越多越好</li>
+<li>数据量小的表不要创建索引</li>
+<li>对于经常出现在<code>where</code> ，<code>order by</code>，<code>distinct</code> 后面的字段创建索引 ，效果更好</li>
+<li>不要在频繁修改的表中创建索引</li>
+</ul>
+<h2 id="约束"><a href="#约束" class="headerlink" title="约束"></a>约束</h2><ul>
+<li>什么是约束： 约束就是对表字段的数据进行限制的规则</li>
+</ul>
+<h3 id="唯一约束-unique"><a href="#唯一约束-unique" class="headerlink" title="唯一约束 unique"></a>唯一约束 unique</h3><ul>
+<li>添加唯一约束的字段，这个字段的值不能重复,否则报错</li>
+<li><code>crate table t(id int ,age int unique);</code></li>
+</ul>
+<h3 id="主键约束-primary-key"><a href="#主键约束-primary-key" class="headerlink" title="主键约束 (primary key)"></a>主键约束 (primary key)</h3><ul>
+<li><p>创建表时添加主键约束</p>
+<ul>
+<li><code>create table t(id int primary key auto_increment,age int);</code></li>
+</ul>
+</li>
+<li><p>创建表之后添加主键 (primary key(字段名) )</p>
+<ul>
+<li><code>alter table t add primary key(id);</code></li>
+</ul>
+</li>
+<li><p>删除主键约束</p>
+<ul>
+<li>格式： alter table 表名 drop primary key </li>
+<li><code>alter table t drop primary key;</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="自增约束-auto-increment"><a href="#自增约束-auto-increment" class="headerlink" title="自增约束(auto_increment)"></a>自增约束(auto_increment)</h3><ul>
+<li>当字段赋的值为null时，字段会自动增长</li>
+<li>如果删除了某条数据，自增数值不会减少</li>
+<li><p>自增的基础是根据字段的最大值来自增的</p>
+</li>
+<li><p><code>create table t(id int primary key auto_increment,age int);</code></p>
+</li>
+<li><p>如果使用delete清空表(<code>delete from t</code>) ,那么自增的值不会从头开始</p>
+</li>
+<li><p>如果使用<code>truncate table t</code> 的方式清空表，那么自增的值会从头开始，则从1开始</p>
+</li>
+</ul>
+<h3 id="外键约束（foreign-key）"><a href="#外键约束（foreign-key）" class="headerlink" title="外键约束（foreign key）"></a>外键约束（foreign key）</h3><ul>
+<li>外键约束是保证一个表或者两个表之间数据一致性和完整性的约束</li>
+<li>工作中除非特殊情况，一般不使用外键约束，通过代码逻辑进行限制，避免测试时不必要的麻烦</li>
+<li>外键的值通常是另外一张表的主键</li>
+<li>外键可以重复，可以为null，但不能是另外一张表中不存在的数据<br>-</li>
+<li>使用外键约束的<strong>条件</strong>：<ol>
+<li>必须保证两张表使用相同的引擎(engine)</li>
+<li>引擎必须是innodb,myisam不支持外键约束</li>
+</ol>
+</li>
+<li><p>外键和关联字段必须是相同的数据类型，比如一张表的主键id的外键，那么这个外键一定要是int类型</p>
+</li>
+<li><p><strong>外键所对应的关联字段如果不是主键，会自动为该字段创建索引</strong></p>
+</li>
+</ul>
+<h4 id="创建外键约束"><a href="#创建外键约束" class="headerlink" title="创建外键约束"></a>创建外键约束</h4><ul>
+<li><p>格式 ：</p>
+<ul>
+<li><code>create table t(id int primary key auto_increment,deptid int,constraint 约束名 foregin key(deptid) references 关联的表名(关联表的字段名))</code></li>
+</ul>
+</li>
+<li><p>创建两张表 t_emp 和 t_dept</p>
+<ul>
+<li>先创建部门表  <code>create table t_dept(id int primary key auto_increment,name varchar(10));</code></li>
+<li>创建t_emp  <code>create table t_emp(id int primary key auto_increment,name varchar(10),deptid int,constraint fk_dept foreign key(deptid) references t_dept(id));</code></li>
+</ul>
+</li>
+<li><p>测试：</p>
+<ul>
+<li>如果插入数据到t_emp中的时候，其中的deptid的值在t_dept中的id不存在的话，那么插入失败，因为两个是外键关联的</li>
+<li>如果想要删除t_dept的数据，但是在t_emp中的还有关联的数据(即是deptid)，那么删除失败，只有将t_emp中关联的数据字段deptid设置为null，此时在删除才会成功</li>
+</ul>
+</li>
+</ul>
+<h4 id="外键总结"><a href="#外键总结" class="headerlink" title="外键总结"></a>外键总结</h4><ul>
+<li>保证一个表或两个表之间的数据一致性和完整性，工作不怎用，外键的值是关联表的主键，值可以是null可以重复，不能是不存在的数据，使用外键必须两张表使用innodb引擎，数据类型要一致，会自动添加索引</li>
+</ul>
+<h3 id="非空约束-not-null"><a href="#非空约束-not-null" class="headerlink" title="非空约束(not null)"></a>非空约束(not null)</h3><ul>
+<li>该字段的值不能为null，否则报错</li>
+</ul>
+<h3 id="默认约束-default"><a href="#默认约束-default" class="headerlink" title="默认约束(default)"></a>默认约束(default)</h3><ul>
+<li>给字段设置默认值</li>
+<li><code>create table t(id int primary key auto_increment,age int not null default 0);</code>  设置字段age设置默认值为0 ，如果插入数据的时候没有插入age的值，那么默认赋值为0</li>
+</ul>
+<h3 id="check-约束"><a href="#check-约束" class="headerlink" title="check 约束"></a>check 约束</h3><ul>
+<li>在mysql中不生效，但是语法不报错</li>
+<li><code>create table t_check(id int,age int,check(age&gt;10));</code></li>
+</ul>
+<h3 id="什么是事务"><a href="#什么是事务" class="headerlink" title="什么是事务"></a>什么是事务</h3><ul>
+<li>事务是数据库执行sql语句的工作单元或者最小单元，写在事务里面的sql要么同时成功，要么同时失败</li>
+</ul>
+<h3 id="事务的ACID性质-重要，面试常考"><a href="#事务的ACID性质-重要，面试常考" class="headerlink" title="事务的ACID性质(重要，面试常考)"></a>事务的ACID性质(重要，面试常考)</h3><ul>
+<li>Automicity ： 原子性 ： 执行的sql语句要么同时成功，要么同时失败</li>
+<li>Consistency： 一致性  ： 无论事务是否执行成功，必须保证一个一致性的标准，比如转账，必须保证转账前后的总金额不变</li>
+<li>Isolation：   隔离性  ： 事务和事务之间互不影响</li>
+<li>Durablity ：  持久性 ： 事务执行完之后数据持久保存到数据库中</li>
+</ul>
+<h3 id="MySQL事务"><a href="#MySQL事务" class="headerlink" title="MySQL事务"></a>MySQL事务</h3><ul>
+<li>show variables lile “%autocommit%”</li>
+<li>set autocommit=0/1</li>
+<li>开启 begin</li>
+<li>commit  </li>
+<li>rollback</li>
+<li>savepoint  s1</li>
+<li>rollback to s1</li>
+</ul>
+<h3 id="事务案例"><a href="#事务案例" class="headerlink" title="事务案例"></a>事务案例</h3><ul>
+<li>转账</li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/数据库干货篇/">数据库干货篇</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/SQL/">SQL</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/03/28/SQL操作六/" data-title="SQL操作六 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/03/30/JDBC干货一/" title="JDBC干货一">
+  <strong>上一篇：</strong><br/>
+  <span>
+  JDBC干货一</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/03/28/SQL操作五/"  title="SQL操作五">
+ <strong>下一篇：</strong><br/> 
+ <span>SQL操作五
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Day06"><span class="toc-number">1.</span> <span class="toc-text">Day06</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#视图"><span class="toc-number">1.1.</span> <span class="toc-text">视图</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#视图概述"><span class="toc-number">1.1.1.</span> <span class="toc-text">视图概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#视图分类"><span class="toc-number">1.1.2.</span> <span class="toc-text">视图分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#视图数据污染"><span class="toc-number">1.1.3.</span> <span class="toc-text">视图数据污染</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#往视图中插入数据，删除数据，修改数据"><span class="toc-number">1.1.4.</span> <span class="toc-text">往视图中插入数据，删除数据，修改数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#避免视图数据污染-with-check-option"><span class="toc-number">1.1.5.</span> <span class="toc-text">避免视图数据污染(with check option)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改视图"><span class="toc-number">1.1.6.</span> <span class="toc-text">修改视图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除视图"><span class="toc-number">1.1.7.</span> <span class="toc-text">删除视图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#案例"><span class="toc-number">1.2.</span> <span class="toc-text">案例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#索引原理"><span class="toc-number">1.3.</span> <span class="toc-text">索引原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#索引概述"><span class="toc-number">1.3.1.</span> <span class="toc-text">索引概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建索引"><span class="toc-number">1.3.2.</span> <span class="toc-text">创建索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看索引"><span class="toc-number">1.3.3.</span> <span class="toc-text">查看索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除索引"><span class="toc-number">1.3.4.</span> <span class="toc-text">删除索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#索引是越多越好吗？有索引就一定好吗？"><span class="toc-number">1.3.5.</span> <span class="toc-text">索引是越多越好吗？有索引就一定好吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#复合索引"><span class="toc-number">1.3.6.</span> <span class="toc-text">复合索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建表的时候直接创建索引"><span class="toc-number">1.3.7.</span> <span class="toc-text">创建表的时候直接创建索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">1.3.8.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#约束"><span class="toc-number">1.4.</span> <span class="toc-text">约束</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#唯一约束-unique"><span class="toc-number">1.4.1.</span> <span class="toc-text">唯一约束 unique</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#主键约束-primary-key"><span class="toc-number">1.4.2.</span> <span class="toc-text">主键约束 (primary key)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#自增约束-auto-increment"><span class="toc-number">1.4.3.</span> <span class="toc-text">自增约束(auto_increment)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#外键约束（foreign-key）"><span class="toc-number">1.4.4.</span> <span class="toc-text">外键约束（foreign key）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#创建外键约束"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">创建外键约束</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#外键总结"><span class="toc-number">1.4.4.2.</span> <span class="toc-text">外键总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#非空约束-not-null"><span class="toc-number">1.4.5.</span> <span class="toc-text">非空约束(not null)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#默认约束-default"><span class="toc-number">1.4.6.</span> <span class="toc-text">默认约束(default)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#check-约束"><span class="toc-number">1.4.7.</span> <span class="toc-text">check 约束</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是事务"><span class="toc-number">1.4.8.</span> <span class="toc-text">什么是事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事务的ACID性质-重要，面试常考"><span class="toc-number">1.4.9.</span> <span class="toc-text">事务的ACID性质(重要，面试常考)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MySQL事务"><span class="toc-number">1.4.10.</span> <span class="toc-text">MySQL事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事务案例"><span class="toc-number">1.4.11.</span> <span class="toc-text">事务案例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.5.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

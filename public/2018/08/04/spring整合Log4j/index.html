@@ -1,0 +1,820 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>spring整合Log4j | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="spring使用Log4j常用日志框架介绍
+转载自https://blog.csdn.net/liupeifeng3514/article/details/79624446
+
+Log4j Apache Log4j是一个基于Java的日志记录工具。它是由Ceki Gülcü首创的，现在则是Apache软件基金会的一个项目。 Log4j是几种Java日志框架之一；
+
+Log4j 2 Apache Lo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="spring整合Log4j">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/08/04/spring整合Log4j/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="spring使用Log4j常用日志框架介绍
+转载自https://blog.csdn.net/liupeifeng3514/article/details/79624446
+
+Log4j Apache Log4j是一个基于Java的日志记录工具。它是由Ceki Gülcü首创的，现在则是Apache软件基金会的一个项目。 Log4j是几种Java日志框架之一；
+
+Log4j 2 Apache Lo">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:15:55.693Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="spring整合Log4j">
+<meta name="twitter:description" content="spring使用Log4j常用日志框架介绍
+转载自https://blog.csdn.net/liupeifeng3514/article/details/79624446
+
+Log4j Apache Log4j是一个基于Java的日志记录工具。它是由Ceki Gülcü首创的，现在则是Apache软件基金会的一个项目。 Log4j是几种Java日志框架之一；
+
+Log4j 2 Apache Lo">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/08/04/spring整合Log4j/" title="spring整合Log4j" itemprop="url">spring整合Log4j</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-08-04T15:46:43.000Z" itemprop="datePublished"> 发表于 2018-08-04</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#spring使用Log4j"><span class="toc-number">1.</span> <span class="toc-text">spring使用Log4j</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#常用日志框架介绍"><span class="toc-number">1.1.</span> <span class="toc-text">常用日志框架介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#日志切换"><span class="toc-number">1.2.</span> <span class="toc-text">日志切换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加依赖"><span class="toc-number">1.3.</span> <span class="toc-text">添加依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#日志配置"><span class="toc-number">1.4.</span> <span class="toc-text">日志配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#日志的输出级别的设置"><span class="toc-number">1.4.1.</span> <span class="toc-text">日志的输出级别的设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置日志的输出地"><span class="toc-number">1.4.2.</span> <span class="toc-text">配置日志的输出地</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置日志信息的输出格式（Layout）"><span class="toc-number">1.4.3.</span> <span class="toc-text">配置日志信息的输出格式（Layout）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Log4j比较全面的配置"><span class="toc-number">1.4.4.</span> <span class="toc-text">Log4j比较全面的配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring使用Log4j日志框架"><span class="toc-number">1.5.</span> <span class="toc-text">Spring使用Log4j日志框架</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.6.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.7.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="spring使用Log4j"><a href="#spring使用Log4j" class="headerlink" title="spring使用Log4j"></a>spring使用Log4j</h1><h2 id="常用日志框架介绍"><a href="#常用日志框架介绍" class="headerlink" title="常用日志框架介绍"></a>常用日志框架介绍</h2><ul>
+<li><p>转载自<a href="https://blog.csdn.net/liupeifeng3514/article/details/79624446" target="_blank" rel="external">https://blog.csdn.net/liupeifeng3514/article/details/79624446</a></p>
+</li>
+<li><p><strong>Log4j</strong> Apache Log4j是一个基于Java的日志记录工具。它是由Ceki Gülcü首创的，现在则是Apache软件基金会的一个项目。 Log4j是几种Java日志框架之一；</p>
+</li>
+<li><strong>Log4j 2</strong> Apache Log4j 2是apache开发的一款Log4j的升级产品；</li>
+<li><strong>Commons Logging</strong> Apache基金会所属的项目，是一套Java日志接口，之前叫Jakarta Commons Logging，后更名为Commons Logging；</li>
+<li><strong>Slf4j</strong> 类似于Commons Logging，是一套简易Java日志门面，本身并无日志的实现。（Simple Logging Facade for Java，缩写Slf4j）；</li>
+<li><strong>Logback</strong> 一套日志组件的实现（slf4j阵营）；</li>
+<li><strong>Jul</strong> （Java Util Logging）,自Java1.4以来的官方日志实现。</li>
+</ul>
+<h2 id="日志切换"><a href="#日志切换" class="headerlink" title="日志切换"></a>日志切换</h2><ul>
+<li>springBoot处切换</li>
+</ul>
+<h2 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.16<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="日志配置"><a href="#日志配置" class="headerlink" title="日志配置"></a>日志配置</h2><h3 id="日志的输出级别的设置"><a href="#日志的输出级别的设置" class="headerlink" title="日志的输出级别的设置"></a>日志的输出级别的设置</h3><p>​    1、<strong>OFF</strong>  - <strong>FATAL</strong>  - <strong>WARN</strong>  - <strong>INFO</strong>  - <strong>DEBUG</strong>  - <strong>TRACE</strong>  - <strong>ALL</strong>  </p>
+<p>​    2、Log4j建议只使用四个级别，优先级从高到低分别是ERROR、WARN、INFO、DEBUG。通过在这里定义的级别，您可以控制到应用程序中相应级别的日志信息的开关。  比如在这里定义了INFO级别，则应用程序中所有DEBUG级别的日志信息将不被打印出来。  程序会打印高于或等于所设置级别的日志，设置的日志等级越高，打印出来的日志就越少。  如果设置级别为INFO，则优先级高于等于INFO级别（如：INFO、WARN、  ERROR）的日志信息将可以被输出,小于该级别的如DEBUG将不会被输出。 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">## level：设定日志记录的最低级别，可设的值有OFF、FATAL、ERROR、WARN、INFO、DEBUG、ALL或者自定义的级别，Log4j建议只使用中间四个级别。通过在这里设定级别，您可以控制应用程序中相应级别的日志信息的开关，比如在这里设定了INFO级别，则应用程序中所有DEBUG级别的日志信息将不会被打印出来。</div><div class="line"></div><div class="line">## appenderName：就是指定日志信息要输出到哪里。可以同时指定多个输出目的地，用逗号隔开。例如：log4j.rootLogger＝INFO,A1,B2,C3</div><div class="line">log4j.rootLogger=[level],appenderName1,appenderName2</div></pre></td></tr></table></figure>
+<h3 id="配置日志的输出地"><a href="#配置日志的输出地" class="headerlink" title="配置日志的输出地"></a>配置日志的输出地</h3><p>​    1、<strong>appenderName</strong>：自定义appderName，在log4j.rootLogger设置中使用；</p>
+<p>​    2、<strong>className</strong>：可设值如下： </p>
+<p>​        (1) <strong>org.apache.log4j.ConsoleAppender</strong>（控制台）</p>
+<p>​        (2) <strong>org.apache.log4j.FileAppender</strong>（文件）</p>
+<p>​        (3) <strong>org.apache.log4j.DailyRollingFileAppender</strong>（每天产生一个日志文件）</p>
+<p>​        (4) <strong>org.apache.log4j.RollingFileAppender</strong>（文件大小到达指定尺寸的时候产生一个新的文件）</p>
+<p>​        (5) <strong>org.apache.log4j.WriterAppender</strong>（将日志信息以流格式发送到任意指定的地方）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">log4j.appender.appenderName = className</div></pre></td></tr></table></figure>
+<p>(1) ConsoleAppender选项：</p>
+<ul>
+<li>Threshold=WARN：指定日志信息的最低输出级别，默认为DEBUG。</li>
+<li>ImmediateFlush=true：表示所有消息都会被立即输出，设为false则不输出，默认值是true。</li>
+<li>Target=System.err：默认值是System.out。</li>
+</ul>
+<p>(2 )FileAppender选项：</p>
+<ul>
+<li>Threshold=WARN：指定日志信息的最低输出级别，默认为DEBUG。</li>
+<li>ImmediateFlush=true：表示所有消息都会被立即输出，设为false则不输出，默认值是true。</li>
+<li>Append=false：true表示消息增加到指定文件中，false则将消息覆盖指定的文件内容，默认值是true。</li>
+<li>File=D:/logs/logging.log4j：指定消息输出到logging.log4j文件中。</li>
+</ul>
+<p>(3) DailyRollingFileAppender选项：</p>
+<ul>
+<li>Threshold=WARN：指定日志信息的最低输出级别，默认为DEBUG。</li>
+<li>ImmediateFlush=true：表示所有消息都会被立即输出，设为false则不输出，默认值是true。</li>
+<li>Append=false：true表示消息增加到指定文件中，false则将消息覆盖指定的文件内容，默认值是true。</li>
+<li>File=D:/logs/logging.log4j：指定当前消息输出到logging.log4j文件中。</li>
+<li>DatePattern=’.’yyyy-MM：每月滚动一次日志文件，即每月产生一个新的日志文件。当前月的日志文件名为logging.log4j，前一个月的日志文件名为logging.log4j.yyyy-MM。<br>另外，也可以指定按周、天、时、分等来滚动日志文件，对应的格式如下： <ul>
+<li>1)’.’yyyy-MM：每月</li>
+<li>2)’.’yyyy-ww：每周</li>
+<li>3)’.’yyyy-MM-dd：每天</li>
+<li>4)’.’yyyy-MM-dd-a：每天两次</li>
+<li>5)’.’yyyy-MM-dd-HH：每小时</li>
+<li>6)’.’yyyy-MM-dd-HH-mm：每分钟</li>
+</ul>
+</li>
+</ul>
+<p>(4) RollingFileAppender选项：</p>
+<ul>
+<li>Threshold=WARN：指定日志信息的最低输出级别，默认为DEBUG。</li>
+<li>ImmediateFlush=true：表示所有消息都会被立即输出，设为false则不输出，默认值是true。</li>
+<li>Append=false：true表示消息增加到指定文件中，false则将消息覆盖指定的文件内容，默认值是true。</li>
+<li>File=D:/logs/logging.log4j：指定消息输出到logging.log4j文件中。</li>
+<li>MaxFileSize=100KB：后缀可以是KB, MB或者GB。在日志文件到达该大小时，将会自动滚动，即将原来的内容移到logging.log4j.1文件中。</li>
+<li>MaxBackupIndex=2：指定可以产生的滚动文件的最大数，例如，设为2则可以产生logging.log4j.1，logging.log4j.2两个滚动文件和一个logging.log4j文件。</li>
+</ul>
+<h3 id="配置日志信息的输出格式（Layout）"><a href="#配置日志信息的输出格式（Layout）" class="headerlink" title="配置日志信息的输出格式（Layout）"></a>配置日志信息的输出格式（Layout）</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">log4j.appender.appenderName.layout=className</div></pre></td></tr></table></figure>
+<p><strong>className</strong>：可设值如下：</p>
+<ul>
+<li>(1)org.apache.log4j.HTMLLayout（以HTML表格形式布局）</li>
+<li>(2)org.apache.log4j.PatternLayout（可以灵活地指定布局模式）</li>
+<li>(3)org.apache.log4j.SimpleLayout（包含日志信息的级别和信息字符串）</li>
+<li>(4)org.apache.log4j.TTCCLayout（包含日志产生的时间、线程、类别等等信息）</li>
+</ul>
+<p><strong>(1) HTMLLayout选项：</strong></p>
+<ul>
+<li>LocationInfo=true：输出java文件名称和行号，默认值是false。</li>
+<li>Title=My Logging： 默认值是Log4J Log Messages。</li>
+</ul>
+<p><strong>(2)PatternLayout选项：</strong></p>
+<ul>
+<li>ConversionPattern=%m%n：设定以怎样的格式显示消息。</li>
+<li>格式说明如下</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">%p：输出日志信息的优先级，即DEBUG，INFO，WARN，ERROR，FATAL。</div><div class="line">%d：输出日志时间点的日期或时间，默认格式为ISO8601，也可以在其后指定格式，如：%d&#123;yyyy/MM/dd HH:mm:ss,SSS&#125;。</div><div class="line">%r：输出自应用程序启动到输出该log信息耗费的毫秒数。</div><div class="line">%t：输出产生该日志事件的线程名。</div><div class="line">%l：输出日志事件的发生位置，相当于%c.%M(%F:%L)的组合，包括类全名、方法、文件名以及在代码中的行数。例如：test.TestLog4j.main(TestLog4j.java:10)。</div><div class="line">%c：输出日志信息所属的类目，通常就是所在类的全名。</div><div class="line">%M：输出产生日志信息的方法名。</div><div class="line">%F：输出日志消息产生时所在的文件名称。</div><div class="line">%L：输出代码中的行号。</div><div class="line">%m：输出代码中指定的具体日志信息。</div><div class="line">%n：输出一个回车换行符，Windows平台为"rn"，Unix平台为"n"。</div><div class="line">%x：输出和当前线程相关联的NDC(嵌套诊断环境)，尤其用到像java servlets这样的多客户多线程的应用中。</div><div class="line">%%：输出一个"%"字符。</div><div class="line"></div><div class="line">另外，还可以在%与格式字符之间加上修饰符来控制其最小长度、最大长度、和文本的对齐方式。如：</div><div class="line">1) c：指定输出category的名称，最小的长度是20，如果category的名称长度小于20的话，默认的情况下右对齐。</div><div class="line">2) %-20c："-"号表示左对齐。</div><div class="line">3) %.30c：指定输出category的名称，最大的长度是30，如果category的名称长度大于30的话，就会将左边多出的字符截掉，但小于30的话也不会补空格。</div></pre></td></tr></table></figure>
+<h3 id="Log4j比较全面的配置"><a href="#Log4j比较全面的配置" class="headerlink" title="Log4j比较全面的配置"></a>Log4j比较全面的配置</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div></pre></td><td class="code"><pre><div class="line">log4j.rootLogger=DEBUG,console,dailyFile,im</div><div class="line">log4j.additivity.org.apache=true</div><div class="line"># 控制台(console)</div><div class="line">log4j.appender.console=org.apache.log4j.ConsoleAppender</div><div class="line">log4j.appender.console.Threshold=DEBUG</div><div class="line">log4j.appender.console.ImmediateFlush=true</div><div class="line">log4j.appender.console.Target=System.err</div><div class="line">log4j.appender.console.layout=org.apache.log4j.PatternLayout</div><div class="line">log4j.appender.console.layout.ConversionPattern=[%-5p] %d(%r) --&gt; [%t] %l: %m %x %n</div><div class="line"></div><div class="line"># 日志文件(logFile)</div><div class="line">log4j.appender.logFile=org.apache.log4j.FileAppender</div><div class="line">log4j.appender.logFile.Threshold=DEBUG</div><div class="line">log4j.appender.logFile.ImmediateFlush=true</div><div class="line">log4j.appender.logFile.Append=true</div><div class="line">log4j.appender.logFile.File=D:/logs/log.log4j</div><div class="line">log4j.appender.logFile.layout=org.apache.log4j.PatternLayout</div><div class="line">log4j.appender.logFile.layout.ConversionPattern=[%-5p] %d(%r) --&gt; [%t] %l: %m %x %n</div><div class="line"># 回滚文件(rollingFile)</div><div class="line">log4j.appender.rollingFile=org.apache.log4j.RollingFileAppender</div><div class="line">log4j.appender.rollingFile.Threshold=DEBUG</div><div class="line">log4j.appender.rollingFile.ImmediateFlush=true</div><div class="line">log4j.appender.rollingFile.Append=true</div><div class="line">log4j.appender.rollingFile.File=D:/logs/log.log4j</div><div class="line">log4j.appender.rollingFile.MaxFileSize=200KB</div><div class="line">log4j.appender.rollingFile.MaxBackupIndex=50</div><div class="line">log4j.appender.rollingFile.layout=org.apache.log4j.PatternLayout</div><div class="line">log4j.appender.rollingFile.layout.ConversionPattern=[%-5p] %d(%r) --&gt; [%t] %l: %m %x %n</div><div class="line"># 定期回滚日志文件(dailyFile)</div><div class="line">log4j.appender.dailyFile=org.apache.log4j.DailyRollingFileAppender</div><div class="line">log4j.appender.dailyFile.Threshold=DEBUG</div><div class="line">log4j.appender.dailyFile.ImmediateFlush=true</div><div class="line">log4j.appender.dailyFile.Append=true</div><div class="line">log4j.appender.dailyFile.File=D:/logs/log.log4j</div><div class="line">log4j.appender.dailyFile.DatePattern=&apos;.&apos;yyyy-MM-dd</div><div class="line">log4j.appender.dailyFile.layout=org.apache.log4j.PatternLayout</div><div class="line">log4j.appender.dailyFile.layout.ConversionPattern=[%-5p] %d(%r) --&gt; [%t] %l: %m %x %n</div><div class="line"># 应用于socket</div><div class="line">log4j.appender.socket=org.apache.log4j.RollingFileAppender</div><div class="line">log4j.appender.socket.RemoteHost=localhost</div><div class="line">log4j.appender.socket.Port=5001</div><div class="line">log4j.appender.socket.LocationInfo=true</div><div class="line"># Set up for Log Factor 5</div><div class="line">log4j.appender.socket.layout=org.apache.log4j.PatternLayout</div><div class="line">log4j.appender.socket.layout.ConversionPattern=[%-5p] %d(%r) --&gt; [%t] %l: %m %x %n</div><div class="line"># Log Factor 5 Appender</div><div class="line">log4j.appender.LF5_APPENDER=org.apache.log4j.lf5.LF5Appender</div><div class="line">log4j.appender.LF5_APPENDER.MaxNumberOfRecords=2000</div><div class="line"># 发送日志到指定邮件</div><div class="line">log4j.appender.mail=org.apache.log4j.net.SMTPAppender</div><div class="line">log4j.appender.mail.Threshold=FATAL</div><div class="line">log4j.appender.mail.BufferSize=10</div><div class="line">log4j.appender.mail.From = xxx@mail.com</div><div class="line">log4j.appender.mail.SMTPHost=mail.com</div><div class="line">log4j.appender.mail.Subject=Log4J Message</div><div class="line">log4j.appender.mail.To= xxx@mail.com</div><div class="line">log4j.appender.mail.layout=org.apache.log4j.PatternLayout</div><div class="line">log4j.appender.mail.layout.ConversionPattern=[%-5p] %d(%r) --&gt; [%t] %l: %m %x %n</div><div class="line"># 应用于数据库</div><div class="line">log4j.appender.database=org.apache.log4j.jdbc.JDBCAppender</div><div class="line">log4j.appender.database.URL=jdbc:mysql://localhost:3306/test</div><div class="line">log4j.appender.database.driver=com.mysql.jdbc.Driver</div><div class="line">log4j.appender.database.user=root</div><div class="line">log4j.appender.database.password=</div><div class="line">log4j.appender.database.sql=INSERT INTO LOG4J (Message) VALUES(&apos;=[%-5p] %d(%r) --&gt; [%t] %l: %m %x %n&apos;)</div><div class="line">log4j.appender.database.layout=org.apache.log4j.PatternLayout</div><div class="line">log4j.appender.database.layout.ConversionPattern=[%-5p] %d(%r) --&gt; [%t] %l: %m %x %n</div><div class="line"></div><div class="line"># 自定义Appender</div><div class="line">log4j.appender.im = net.cybercorlin.util.logger.appender.IMAppender</div><div class="line">log4j.appender.im.host = mail.cybercorlin.net</div><div class="line">log4j.appender.im.username = username</div><div class="line">log4j.appender.im.password = password</div><div class="line">log4j.appender.im.recipient = corlin@cybercorlin.net</div><div class="line">log4j.appender.im.layout=org.apache.log4j.PatternLayout</div><div class="line">log4j.appender.im.layout.ConversionPattern=[%-5p] %d(%r) --&gt; [%t] %l: %m %x %n</div></pre></td></tr></table></figure>
+<h2 id="Spring使用Log4j日志框架"><a href="#Spring使用Log4j日志框架" class="headerlink" title="Spring使用Log4j日志框架"></a>Spring使用Log4j日志框架</h2><p>1、log4j框架指定日志输出文件只能使用绝对路径，但是我们的项目是跟着系统走的，因此我们需要将日志存放在项目的路径中，这样就需要获取到当前项目的路径，这里只需要在web.xml中添加一个Log4j的监听器即可实现，如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 设置根目录,必须每个项目的值都不相同，否则将会发生冲突如果一个tomcat部署多个项目的话 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">context-param</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">param-name</span>&gt;</span>webAppRootKey<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">param-value</span>&gt;</span>lifecrystal.root<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">context-param</span>&gt;</span></div><div class="line">	</div><div class="line">	<span class="comment">&lt;!-- 指定log4j配置文件的位置，项目路径下 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">context-param</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">param-name</span>&gt;</span>log4jConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">param-value</span>&gt;</span>classpath:log4j.properties<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">context-param</span>&gt;</span></div><div class="line">	</div><div class="line">	<span class="comment">&lt;!-- 3000表示 开一条watchdog线程每60秒扫描一下配置文件的变化;这样便于日志存放位置的改变 --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">context-param</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">param-name</span>&gt;</span>log4jRefreshInterval<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">param-value</span>&gt;</span>3000<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">context-param</span>&gt;</span></div><div class="line">	</div><div class="line">	<span class="comment">&lt;!-- 1、log4j监听器，将webAppRootKey设置的值加载到系统参数中，这样就可以在配置文件中引用项目的路径</span></div><div class="line">		 2、项目运行期间，每次改变配置文件中的值都会被监听到</div><div class="line">	 --&gt;</div><div class="line">	<span class="tag">&lt;<span class="name">listener</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>org.springframework.web.util.Log4jConfigListener<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">listener</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>2、此时我们就可以在log4j.properties中使用<code>${lifecrystal.root}</code>获取到项目的路径，实际使用的就是<strong>System.getProperty()</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line">#LOG 输出级别和输出的地方，分别为Console和File，这里到值可以随意改变，但是在下文一定要和这里的一样</div><div class="line">log4j.rootLogger=DEBUG,Console,File</div><div class="line"></div><div class="line">#################################输出到控制台，级别为DEBUG#############################################</div><div class="line">#输出目的地方为控制台</div><div class="line">log4j.appender.Console=org.apache.log4j.ConsoleAppender</div><div class="line">## 以system.out的格式输出，黑色的</div><div class="line">log4j.appender.Console.Target=System.out</div><div class="line">## 只有在DEBUG的模式下才会在控制台输出</div><div class="line">log4j.appender.console.Threshold=DEBUG</div><div class="line">#在控制台输出的格式  </div><div class="line">log4j.appender.Console.layout = org.apache.log4j.PatternLayout</div><div class="line">log4j.appender.Console.layout.ConversionPattern=[%p]:[%c]:[%d&#123;yyyy/MM/dd HH:mm:ss&#125;] - %m%n</div><div class="line"></div><div class="line"></div><div class="line">#################################输出到文件中，级别为DEBUG#############################################</div><div class="line"></div><div class="line">#文件大小到一定尺寸产生一个新文件</div><div class="line">log4j.appender.File = org.apache.log4j.RollingFileAppender</div><div class="line">#指定输出目录</div><div class="line">log4j.appender.File.File = $&#123;lifecrystal.root&#125;/logs/debug/logs.log</div><div class="line">#定义文件最大大小</div><div class="line">log4j.appender.File.MaxFileSize = 1000MB</div><div class="line">#DEBUG 日志</div><div class="line">log4j.appender.File.Threshold = DEBUG</div><div class="line">log4j.appender.File.layout = org.apache.log4j.PatternLayout</div><div class="line">log4j.appender.File.layout.ConversionPattern =[%p] [%d&#123;yyyy-MM-dd HH\:mm\:ss &#125;][%c]%m%n</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line">##################################Mybatis的sql语句的输出，DEBUG级别#####################################################</div><div class="line">log4j.logger.com.ibatis=DEBUG log4j.logger.com.ibatis.common.jdbc.SimpleDataSource=DEBUG </div><div class="line">log4j.logger.com.ibatis.common.jdbc.ScriptRunner=DEBUG</div><div class="line">log4j.logger.com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate=DEBUG</div><div class="line">log4j.logger.java.sql.Connection=DEBUG log4j.logger.java.sql.Statement=DEBUG </div><div class="line">log4j.logger.java.sql.PreparedStatement=DEBUG</div></pre></td></tr></table></figure>
+<p>3、在方法中使用Log4j调试一些内容，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Controller</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestController</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Logger logger=Logger.getLogger(TestController.class);   <span class="comment">//获取Logger对象</span></div><div class="line">	</div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/test/test"</span>)</div><div class="line">	<span class="meta">@ResponseBody</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">test</span><span class="params">()</span></span>&#123;</div><div class="line">		System.out.println(<span class="string">"这个是测试方法"</span>);</div><div class="line">		</div><div class="line">		logger.debug(<span class="string">"debug信息"</span>);</div><div class="line">		logger.info(<span class="string">"info信息"</span>);</div><div class="line">		</div><div class="line">		logger.error(<span class="string">"这个是error级别的信息"</span>);</div><div class="line">		System.out.println(<span class="number">10</span>/<span class="number">0</span>);</div><div class="line">		</div><div class="line">		<span class="keyword">return</span> <span class="string">"test"</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><p>1、<a href="https://blog.csdn.net/liupeifeng3514" target="_blank" rel="external">https://blog.csdn.net/qq_35029429/article/details/78826936</a></p>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Spring/">Spring</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Spring/">Spring</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/08/04/spring整合Log4j/" data-title="spring整合Log4j | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/08/04/StringUtils的源码解析/" title="StringUtils的源码解析">
+  <strong>上一篇：</strong><br/>
+  <span>
+  StringUtils的源码解析</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/08/04/spring加载properties属性/"  title="spring加载properties属性">
+ <strong>下一篇：</strong><br/> 
+ <span>spring加载properties属性
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#spring使用Log4j"><span class="toc-number">1.</span> <span class="toc-text">spring使用Log4j</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#常用日志框架介绍"><span class="toc-number">1.1.</span> <span class="toc-text">常用日志框架介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#日志切换"><span class="toc-number">1.2.</span> <span class="toc-text">日志切换</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#添加依赖"><span class="toc-number">1.3.</span> <span class="toc-text">添加依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#日志配置"><span class="toc-number">1.4.</span> <span class="toc-text">日志配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#日志的输出级别的设置"><span class="toc-number">1.4.1.</span> <span class="toc-text">日志的输出级别的设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置日志的输出地"><span class="toc-number">1.4.2.</span> <span class="toc-text">配置日志的输出地</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置日志信息的输出格式（Layout）"><span class="toc-number">1.4.3.</span> <span class="toc-text">配置日志信息的输出格式（Layout）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Log4j比较全面的配置"><span class="toc-number">1.4.4.</span> <span class="toc-text">Log4j比较全面的配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring使用Log4j日志框架"><span class="toc-number">1.5.</span> <span class="toc-text">Spring使用Log4j日志框架</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.6.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.7.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

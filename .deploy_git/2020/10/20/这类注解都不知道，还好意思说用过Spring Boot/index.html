@@ -1,0 +1,684 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>这类注解都不知道，还好意思说用过Spring Boot~ | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="前言不知道大家在使用Spring Boot开发的日常中有没有用过@Conditionalxxx注解，比如@ConditionalOnMissingBean。相信看过Spring Boot源码的朋友一定不陌生。
+@Conditionalxxx这类注解表示某种判断条件成立时才会执行相关操作。掌握该类注解，有助于日常开发，框架的搭建。
+今天这篇文章就从前世今生介绍一下该类注解。
+Spring Boot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="这类注解都不知道，还好意思说用过Spring Boot~">
+<meta property="og:url" content="http://chenjiabing666.github.io/2020/10/20/这类注解都不知道，还好意思说用过Spring Boot/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="前言不知道大家在使用Spring Boot开发的日常中有没有用过@Conditionalxxx注解，比如@ConditionalOnMissingBean。相信看过Spring Boot源码的朋友一定不陌生。
+@Conditionalxxx这类注解表示某种判断条件成立时才会执行相关操作。掌握该类注解，有助于日常开发，框架的搭建。
+今天这篇文章就从前世今生介绍一下该类注解。
+Spring Boot">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/BlogImage/raw/master/Spring%20Boot%20%E7%AC%AC%E5%8D%81%E4%B8%80%E5%BC%B9%EF%BC%8C%E8%BF%99%E4%B8%AA%E6%B3%A8%E8%A7%A3%E9%83%BD%E4%B8%8D%E6%87%82%EF%BC%8C%E5%A5%BD%E6%84%8F%E6%80%9D%E8%AF%B4%E4%BC%9ASpring%20Boot%EF%BC%9F/1.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/BlogImage/raw/master/myjszl_log.png">
+<meta property="og:updated_time" content="2020-10-21T09:10:09.984Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="这类注解都不知道，还好意思说用过Spring Boot~">
+<meta name="twitter:description" content="前言不知道大家在使用Spring Boot开发的日常中有没有用过@Conditionalxxx注解，比如@ConditionalOnMissingBean。相信看过Spring Boot源码的朋友一定不陌生。
+@Conditionalxxx这类注解表示某种判断条件成立时才会执行相关操作。掌握该类注解，有助于日常开发，框架的搭建。
+今天这篇文章就从前世今生介绍一下该类注解。
+Spring Boot">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/BlogImage/raw/master/Spring%20Boot%20%E7%AC%AC%E5%8D%81%E4%B8%80%E5%BC%B9%EF%BC%8C%E8%BF%99%E4%B8%AA%E6%B3%A8%E8%A7%A3%E9%83%BD%E4%B8%8D%E6%87%82%EF%BC%8C%E5%A5%BD%E6%84%8F%E6%80%9D%E8%AF%B4%E4%BC%9ASpring%20Boot%EF%BC%9F/1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/10/20/这类注解都不知道，还好意思说用过Spring Boot/" title="这类注解都不知道，还好意思说用过Spring Boot~" itemprop="url">这类注解都不知道，还好意思说用过Spring Boot~</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2020-10-20T08:44:24.000Z" itemprop="datePublished"> 发表于 2020-10-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Boot-版本"><span class="toc-number">2.</span> <span class="toc-text">Spring Boot 版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conditional"><span class="toc-number">3.</span> <span class="toc-text">@Conditional</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Condition接口"><span class="toc-number">4.</span> <span class="toc-text">Condition接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ConditionContext接口"><span class="toc-number">4.1.</span> <span class="toc-text">ConditionContext接口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何自定义Condition？"><span class="toc-number">5.</span> <span class="toc-text">如何自定义Condition？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#条件判断在什么时候执行？"><span class="toc-number">6.</span> <span class="toc-text">条件判断在什么时候执行？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ConfigurationCondition接口"><span class="toc-number">7.</span> <span class="toc-text">ConfigurationCondition接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多个Condition的执行顺序"><span class="toc-number">8.</span> <span class="toc-text">多个Condition的执行顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Boot中常用的一些注解"><span class="toc-number">9.</span> <span class="toc-text">Spring Boot中常用的一些注解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">10.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>不知道大家在使用Spring Boot开发的日常中有没有用过<code>@Conditionalxxx</code>注解，比如<code>@ConditionalOnMissingBean</code>。相信看过Spring Boot源码的朋友一定不陌生。</p>
+<p><code>@Conditionalxxx</code>这类注解表示某种判断条件成立时才会执行相关操作。掌握该类注解，有助于日常开发，框架的搭建。</p>
+<p>今天这篇文章就从前世今生介绍一下该类注解。</p>
+<h2 id="Spring-Boot-版本"><a href="#Spring-Boot-版本" class="headerlink" title="Spring Boot 版本"></a>Spring Boot 版本</h2><p>本文基于的Spring Boot的版本是<code>2.3.4.RELEASE</code>。</p>
+<h2 id="Conditional"><a href="#Conditional" class="headerlink" title="@Conditional"></a>@Conditional</h2><p><code>@Conditional</code>注解是从<code>Spring4.0</code>才有的，可以用在任何类型或者方法上面，通过<code>@Conditional</code>注解可以配置一些条件判断，当所有条件都满足的时候，被<code>@Conditional</code>标注的目标才会被<code>Spring容器</code>处理。</p>
+<p><code>@Conditional</code>的使用很广，比如控制某个<code>Bean</code>是否需要注册，在Spring Boot中的变形很多，比如<code>@ConditionalOnMissingBean</code>、<code>@ConditionalOnBean</code>等等，如下：</p>
+<p><img src="https://gitee.com/chenjiabing666/BlogImage/raw/master/Spring%20Boot%20%E7%AC%AC%E5%8D%81%E4%B8%80%E5%BC%B9%EF%BC%8C%E8%BF%99%E4%B8%AA%E6%B3%A8%E8%A7%A3%E9%83%BD%E4%B8%8D%E6%87%82%EF%BC%8C%E5%A5%BD%E6%84%8F%E6%80%9D%E8%AF%B4%E4%BC%9ASpring%20Boot%EF%BC%9F/1.png" alt=""></p>
+<p>该注解的源码其实很简单，只有一个属性<code>value</code>，表示判断的条件（一个或者多个），是<code>org.springframework.context.annotation.Condition</code>类型，源码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Target</span>(&#123;ElementType.TYPE, ElementType.METHOD&#125;)</div><div class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</div><div class="line"><span class="meta">@Documented</span></div><div class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Conditional &#123;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * All &#123;<span class="doctag">@link</span> Condition&#125; classes that must &#123;<span class="doctag">@linkplain</span> Condition#matches match&#125;</div><div class="line">	 * in order for the component to be registered.</div><div class="line">	 */</div><div class="line">	Class&lt;? extends Condition&gt;[] value();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>@Conditional</code>注解实现的原理很简单，就是通过<code>org.springframework.context.annotation.Condition</code>这个接口判断是否应该执行操作。</p>
+<h2 id="Condition接口"><a href="#Condition接口" class="headerlink" title="Condition接口"></a>Condition接口</h2><p><code>@Conditional</code>注解判断条件与否取决于<code>value</code>属性指定的<code>Condition</code>实现，其中有一个<code>matches()</code>方法，返回<code>true</code>表示条件成立，反之不成立，接口如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@FunctionalInterface</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Condition</span> </span>&#123;</div><div class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(ConditionContext context, AnnotatedTypeMetadata metadata)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong><code>matches</code>中的两个参数如下：</strong></p>
+<ol>
+<li><code>context</code>：条件上下文，<code>ConditionContext</code>接口类型的，可以用来获取容器中上下文信息。</li>
+<li><code>metadata</code>：用来获取被<code>@Conditional</code>标注的对象上的所有注解信息</li>
+</ol>
+<h3 id="ConditionContext接口"><a href="#ConditionContext接口" class="headerlink" title="ConditionContext接口"></a>ConditionContext接口</h3><p>这个接口很重要，能够从中获取Spring上下文的很多信息，比如<code>ConfigurableListableBeanFactory</code>，源码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ConditionContext</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 返回bean定义注册器，可以通过注册器获取bean定义的各种配置信息</div><div class="line">     */</div><div class="line">    <span class="function">BeanDefinitionRegistry <span class="title">getRegistry</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 返回ConfigurableListableBeanFactory类型的bean工厂，相当于一个ioc容器对象</div><div class="line">     */</div><div class="line">    <span class="meta">@Nullable</span></div><div class="line">    <span class="function">ConfigurableListableBeanFactory <span class="title">getBeanFactory</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 返回当前spring容器的环境配置信息对象</div><div class="line">     */</div><div class="line">    <span class="function">Environment <span class="title">getEnvironment</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 返回资源加载器</div><div class="line">     */</div><div class="line">    <span class="function">ResourceLoader <span class="title">getResourceLoader</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 返回类加载器</div><div class="line">     */</div><div class="line">    <span class="meta">@Nullable</span></div><div class="line">    <span class="function">ClassLoader <span class="title">getClassLoader</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="如何自定义Condition？"><a href="#如何自定义Condition？" class="headerlink" title="如何自定义Condition？"></a>如何自定义Condition？</h2><p>举个栗子：<strong>假设有这样一个需求，需要根据运行环境注入不同的<code>Bean</code>，<code>Windows</code>环境和<code>Linux</code>环境注入不同的<code>Bean</code>。</strong></p>
+<p>实现很简单，分别定义不同环境的判断条件，实现<code>org.springframework.context.annotation.Condition</code>即可。</p>
+<p><strong>windows环境的判断条件源码如下</strong>：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 操作系统的匹配条件，如果是windows系统，则返回true</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WindowsCondition</span> <span class="keyword">implements</span> <span class="title">Condition</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(ConditionContext conditionContext, AnnotatedTypeMetadata metadata)</span> </span>&#123;</div><div class="line">        <span class="comment">//获取当前环境信息</span></div><div class="line">        Environment environment = conditionContext.getEnvironment();</div><div class="line">        <span class="comment">//获得当前系统名</span></div><div class="line">        String property = environment.getProperty(<span class="string">"os.name"</span>);</div><div class="line">        <span class="comment">//包含Windows则说明是windows系统，返回true</span></div><div class="line">        <span class="keyword">if</span> (property.contains(<span class="string">"Windows"</span>))&#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>Linux环境判断源码如下</strong>：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 操作系统的匹配条件，如果是windows系统，则返回true</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LinuxCondition</span> <span class="keyword">implements</span> <span class="title">Condition</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(ConditionContext conditionContext, AnnotatedTypeMetadata metadata)</span> </span>&#123;</div><div class="line">        Environment environment = conditionContext.getEnvironment();</div><div class="line"></div><div class="line">        String property = environment.getProperty(<span class="string">"os.name"</span>);</div><div class="line">        <span class="keyword">if</span> (property.contains(<span class="string">"Linux"</span>))&#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>配置类中结合<code>@Bean</code>注入不同的Bean，如下</strong>：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomConfig</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 在Windows环境下注入的Bean为winP</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="meta">@Bean</span>(<span class="string">"winP"</span>)</div><div class="line">    <span class="meta">@Conditional</span>(value = &#123;WindowsCondition.class&#125;)</div><div class="line">    <span class="function"><span class="keyword">public</span> Person <span class="title">personWin</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Person();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 在Linux环境下注入的Bean为LinuxP</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="meta">@Bean</span>(<span class="string">"LinuxP"</span>)</div><div class="line">    <span class="meta">@Conditional</span>(value = &#123;LinuxCondition.class&#125;)</div><div class="line">    <span class="function"><span class="keyword">public</span> Person <span class="title">personLinux</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Person();</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p><strong>简单的测试一下，如下</strong>：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@SpringBootTest</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpringbootInterceptApplicationTests</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@Autowired</span>(required = <span class="keyword">false</span>)</div><div class="line">    <span class="meta">@Qualifier</span>(value = <span class="string">"winP"</span>)</div><div class="line">    <span class="keyword">private</span> Person winP;</div><div class="line"></div><div class="line">    <span class="meta">@Autowired</span>(required = <span class="keyword">false</span>)</div><div class="line">    <span class="meta">@Qualifier</span>(value = <span class="string">"LinuxP"</span>)</div><div class="line">    <span class="keyword">private</span> Person linP;</div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">contextLoads</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(winP);</div><div class="line">        System.out.println(linP);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>Windows环境下执行单元测试，输出如下</strong>：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">com.example.springbootintercept.domain.Person@<span class="number">885e7f</span>f</div><div class="line"><span class="keyword">null</span></div></pre></td></tr></table></figure></p>
+<p>很显然，判断生效了，Windows环境下只注入了<code>WINP</code>。</p>
+<h2 id="条件判断在什么时候执行？"><a href="#条件判断在什么时候执行？" class="headerlink" title="条件判断在什么时候执行？"></a>条件判断在什么时候执行？</h2><p>条件判断的执行分为两个阶段，如下：</p>
+<ol>
+<li><p><strong>配置类解析阶段(<code>ConfigurationPhase.PARSE_CONFIGURATION</code>)</strong>：在这个阶段会得到一批配置类的信息和一些需要注册的<code>Bean</code>。</p>
+</li>
+<li><p><strong>Bean注册阶段(<code>ConfigurationPhase.REGISTER_BEAN</code>)</strong>：将配置类解析阶段得到的配置类和需要注册的Bean注入到容器中。</p>
+</li>
+</ol>
+<p>默认都是配置解析阶段，其实也就够用了，但是在Spring Boot中使用了<code>ConfigurationCondition</code>，这个接口可以自定义执行阶段，比如<code>@ConditionalOnMissingBean</code>都是在Bean注册阶段执行，因为需要从容器中判断Bean。</p>
+<blockquote>
+<p><strong>这个两个阶段有什么不同呢？</strong>：其实很简单的，配置类解析阶段只是将需要加载配置类和一些Bean（被<code>@Conditional</code>注解过滤掉之后）收集起来，而Bean注册阶段是将的收集来的Bean和配置类注入到容器中，<strong>如果在配置类解析阶段执行<code>Condition</code>接口的<code>matches()</code>接口去判断某些Bean是否存在IOC容器中，这个显然是不行的，因为这些Bean还未注册到容器中</strong>。</p>
+<p><strong>什么是配置类，有哪些？</strong>：类上被<code>@Component</code>、 <code>@ComponentScan</code>、<code>@Import</code>、<code>@ImportResource</code>、<code>@Configuration</code>标注的以及类中方法有<code>@Bean</code>的方法。如何判断配置类，在源码中有单独的方法：<code>org.springframework.context.annotation.ConfigurationClassUtils#isConfigurationCandidate</code>。</p>
+</blockquote>
+<h2 id="ConfigurationCondition接口"><a href="#ConfigurationCondition接口" class="headerlink" title="ConfigurationCondition接口"></a>ConfigurationCondition接口</h2><p>这个接口相比于<code>@Condition</code>接口就多了一个<code>getConfigurationPhase()</code>方法，可以自定义执行阶段。源码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ConfigurationCondition</span> <span class="keyword">extends</span> <span class="title">Condition</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 条件判断的阶段，是在解析配置类的时候过滤还是在创建bean的时候过滤</div><div class="line">     */</div><div class="line">    <span class="function">ConfigurationPhase <span class="title">getConfigurationPhase</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 表示阶段的枚举：2个值</div><div class="line">     */</div><div class="line">    <span class="keyword">enum</span> ConfigurationPhase &#123;</div><div class="line"></div><div class="line">        <span class="comment">/**</span></div><div class="line">         * 配置类解析阶段，如果条件为false，配置类将不会被解析</div><div class="line">         */</div><div class="line">        PARSE_CONFIGURATION,</div><div class="line"></div><div class="line">        <span class="comment">/**</span></div><div class="line">         * bean注册阶段，如果为false，bean将不会被注册</div><div class="line">         */</div><div class="line">        REGISTER_BEAN</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个接口在需要指定执行阶段的时候可以实现，比如需要根据某个Bean是否在IOC容器中来注入指定的Bean，则需要指定执行阶段为<strong>Bean的注册阶段</strong>（<code>ConfigurationPhase.REGISTER_BEAN</code>）。</p>
+<h2 id="多个Condition的执行顺序"><a href="#多个Condition的执行顺序" class="headerlink" title="多个Condition的执行顺序"></a>多个Condition的执行顺序</h2><p><code>@Conditional</code>中的<code>Condition</code>判断条件可以指定多个，默认是按照先后顺序执行，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Condition1</span> <span class="keyword">implements</span> <span class="title">Condition</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>&#123;</div><div class="line">        System.out.println(<span class="keyword">this</span>.getClass().getName());</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Condition2</span> <span class="keyword">implements</span> <span class="title">Condition</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>&#123;</div><div class="line">        System.out.println(<span class="keyword">this</span>.getClass().getName());</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Condition3</span> <span class="keyword">implements</span> <span class="title">Condition</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>&#123;</div><div class="line">        System.out.println(<span class="keyword">this</span>.getClass().getName());</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="meta">@Conditional</span>(&#123;Condition1.class, Condition2.class, Condition3.class&#125;)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainConfig5</span> </span>&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>上述例子会依次按照<code>Condition1</code>、<code>Condition2</code>、<code>Condition3</code>执行。</strong></p>
+<p>默认按照先后顺序执行，但是当我们需要指定顺序呢？很简单，有如下三种方式：</p>
+<ol>
+<li>实现<code>PriorityOrdered</code>接口，指定优先级</li>
+<li>实现<code>Ordered</code>接口接口，指定优先级</li>
+<li>使用<code>@Order</code>注解来指定优先级</li>
+</ol>
+<p>例子如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Order</span>(<span class="number">1</span>) </div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Condition1</span> <span class="keyword">implements</span> <span class="title">Condition</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>&#123;</div><div class="line">        System.out.println(<span class="keyword">this</span>.getClass().getName());</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Condition2</span> <span class="keyword">implements</span> <span class="title">Condition</span>, <span class="title">Ordered</span> </span>&#123; </div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>&#123;</div><div class="line">        System.out.println(<span class="keyword">this</span>.getClass().getName());</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getOrder</span><span class="params">()</span> </span>&#123; </div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Condition3</span> <span class="keyword">implements</span> <span class="title">Condition</span>, <span class="title">PriorityOrdered</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>&#123;</div><div class="line">        System.out.println(<span class="keyword">this</span>.getClass().getName());</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getOrder</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="number">1000</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="meta">@Conditional</span>(&#123;Condition1.class, Condition2.class, Condition3.class&#125;)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainConfig6</span> </span>&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>根据排序的规则，<code>PriorityOrdered</code>的会排在前面，然后会再按照<code>order</code>升序，最后可以顺序是：<code>Condtion3-&gt;Condtion2-&gt;Condtion1</code></p>
+<h2 id="Spring-Boot中常用的一些注解"><a href="#Spring-Boot中常用的一些注解" class="headerlink" title="Spring Boot中常用的一些注解"></a>Spring Boot中常用的一些注解</h2><p>Spring Boot中大量使用了这些注解，常见的注解如下：</p>
+<ol>
+<li><code>@ConditionalOnBean</code>：当容器中有指定Bean的条件下进行实例化。</li>
+<li><code>@ConditionalOnMissingBean</code>：当容器里没有指定Bean的条件下进行实例化。</li>
+<li><code>@ConditionalOnClass</code>：当classpath类路径下有指定类的条件下进行实例化。</li>
+<li><code>@ConditionalOnMissingClass</code>：当类路径下没有指定类的条件下进行实例化。</li>
+<li><code>@ConditionalOnWebApplication</code>：当项目是一个Web项目时进行实例化。</li>
+<li><code>@ConditionalOnNotWebApplication</code>：当项目不是一个Web项目时进行实例化。</li>
+<li><code>@ConditionalOnProperty</code>：当指定的属性有指定的值时进行实例化。</li>
+<li><code>@ConditionalOnExpression</code>：基于SpEL表达式的条件判断。</li>
+<li><code>@ConditionalOnJava</code>：当JVM版本为指定的版本范围时触发实例化。</li>
+<li><code>@ConditionalOnResource</code>：当类路径下有指定的资源时触发实例化。</li>
+<li><code>@ConditionalOnJndi</code>：在JNDI存在的条件下触发实例化。</li>
+<li><code>@ConditionalOnSingleCandidate</code>：当指定的Bean在容器中只有一个，或者有多个但是指定了首选的Bean时触发实例化。</li>
+</ol>
+<p>比如在<code>WEB</code>模块的自动配置类<code>WebMvcAutoConfiguration</code>下有这样一段代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">  <span class="meta">@Bean</span></div><div class="line"><span class="meta">@ConditionalOnMissingBean</span></div><div class="line"><span class="function"><span class="keyword">public</span> InternalResourceViewResolver <span class="title">defaultViewResolver</span><span class="params">()</span> </span>&#123;</div><div class="line">	InternalResourceViewResolver resolver = <span class="keyword">new</span> InternalResourceViewResolver();</div><div class="line">	resolver.setPrefix(<span class="keyword">this</span>.mvcProperties.getView().getPrefix());</div><div class="line">	resolver.setSuffix(<span class="keyword">this</span>.mvcProperties.getView().getSuffix());</div><div class="line">	<span class="keyword">return</span> resolver;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>常见的<code>@Bean</code>和<code>@ConditionalOnMissingBean</code>注解结合使用，意思是当容器中没有<code>InternalResourceViewResolver</code>这种类型的Bean才会注入。这样写有什么好处呢？好处很明显，可以让开发者自定义需要的视图解析器，如果没有自定义，则使用默认的，这就是Spring Boot为自定义配置提供的便利。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>@Conditional</code>注解在Spring Boot中演变的注解很多，需要着重了解，特别是后期框架整合的时候会大量涉及。</p>
+<p><img src="https://gitee.com/chenjiabing666/BlogImage/raw/master/myjszl_log.png" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Spring-Boot-进阶/">Spring Boot 进阶</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Spring-Boot/">Spring Boot</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2020/10/20/这类注解都不知道，还好意思说用过Spring Boot/" data-title="这类注解都不知道，还好意思说用过Spring Boot~ | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/10/21/SpringBoot与多数据源的那点事儿/" title="Spring Boot 与多数据源的那点事儿~">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Spring Boot 与多数据源的那点事儿~</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/10/15/Spring Boot 第 十二弹，Spring Boot整合多点套路，少走点弯路！！！/"  title="Spring Boot整合多点套路，少走点弯路！！！">
+ <strong>下一篇：</strong><br/> 
+ <span>Spring Boot整合多点套路，少走点弯路！！！
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Boot-版本"><span class="toc-number">2.</span> <span class="toc-text">Spring Boot 版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Conditional"><span class="toc-number">3.</span> <span class="toc-text">@Conditional</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Condition接口"><span class="toc-number">4.</span> <span class="toc-text">Condition接口</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ConditionContext接口"><span class="toc-number">4.1.</span> <span class="toc-text">ConditionContext接口</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#如何自定义Condition？"><span class="toc-number">5.</span> <span class="toc-text">如何自定义Condition？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#条件判断在什么时候执行？"><span class="toc-number">6.</span> <span class="toc-text">条件判断在什么时候执行？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ConfigurationCondition接口"><span class="toc-number">7.</span> <span class="toc-text">ConfigurationCondition接口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多个Condition的执行顺序"><span class="toc-number">8.</span> <span class="toc-text">多个Condition的执行顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Boot中常用的一些注解"><span class="toc-number">9.</span> <span class="toc-text">Spring Boot中常用的一些注解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">10.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Mybatis进阶/" title="Mybatis进阶">Mybatis进阶<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring-Boot-进阶/" title="Spring Boot 进阶">Spring Boot 进阶<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/开发工具/" title="开发工具">开发工具<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring-Boot/" title="Spring Boot">Spring Boot<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mybatis/" title="Mybatis">Mybatis<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/破解/" title="破解">破解<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

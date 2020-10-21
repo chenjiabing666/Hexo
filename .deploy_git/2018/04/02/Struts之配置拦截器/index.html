@@ -1,0 +1,856 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Struts之配置拦截器 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="struts2之配置拦截器什么是拦截器
+java里的拦截器是动态拦截Action调用的对象。它提供了一种机制可以使开发者可以定义在一个action执行的前后执行的代码，也可以在一个action执行前阻止其执行，同时也提供了一种可以提取action中可重用部分的方式。在AOP（Aspect-Oriented Programming）中拦截器用于在某个方法或字段被访问之前，进行拦截然后在之前或之后加入">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Struts之配置拦截器">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/04/02/Struts之配置拦截器/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="struts2之配置拦截器什么是拦截器
+java里的拦截器是动态拦截Action调用的对象。它提供了一种机制可以使开发者可以定义在一个action执行的前后执行的代码，也可以在一个action执行前阻止其执行，同时也提供了一种可以提取action中可重用部分的方式。在AOP（Aspect-Oriented Programming）中拦截器用于在某个方法或字段被访问之前，进行拦截然后在之前或之后加入">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:19:06.055Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Struts之配置拦截器">
+<meta name="twitter:description" content="struts2之配置拦截器什么是拦截器
+java里的拦截器是动态拦截Action调用的对象。它提供了一种机制可以使开发者可以定义在一个action执行的前后执行的代码，也可以在一个action执行前阻止其执行，同时也提供了一种可以提取action中可重用部分的方式。在AOP（Aspect-Oriented Programming）中拦截器用于在某个方法或字段被访问之前，进行拦截然后在之前或之后加入">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/04/02/Struts之配置拦截器/" title="Struts之配置拦截器" itemprop="url">Struts之配置拦截器</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-04-02T03:06:24.000Z" itemprop="datePublished"> 发表于 2018-04-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#struts2之配置拦截器"><span class="toc-number">1.</span> <span class="toc-text">struts2之配置拦截器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是拦截器"><span class="toc-number">1.1.</span> <span class="toc-text">什么是拦截器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#拦截器的作用"><span class="toc-number">1.2.</span> <span class="toc-text">拦截器的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#拦截器的配置元素"><span class="toc-number">1.3.</span> <span class="toc-text">拦截器的配置元素</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内建的拦截器"><span class="toc-number">1.4.</span> <span class="toc-text">内建的拦截器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义拦截器"><span class="toc-number">1.5.</span> <span class="toc-text">自定义拦截器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#需求"><span class="toc-number">1.5.1.</span> <span class="toc-text">需求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现接口-com-opensymphony-xwork2-interceptor-Interceptor"><span class="toc-number">1.5.2.</span> <span class="toc-text">实现接口(com.opensymphony.xwork2.interceptor.Interceptor)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#接口中的方法"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">接口中的方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实现"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">实现</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#继承AbstractInterceptor（推荐）"><span class="toc-number">1.5.3.</span> <span class="toc-text">继承AbstractInterceptor（推荐）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置拦截器"><span class="toc-number">1.6.</span> <span class="toc-text">配置拦截器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置拦截器栈"><span class="toc-number">1.7.</span> <span class="toc-text">配置拦截器栈</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#拓展"><span class="toc-number">1.7.1.</span> <span class="toc-text">拓展</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义默认的拦截器栈"><span class="toc-number">1.8.</span> <span class="toc-text">自定义默认的拦截器栈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置拦截方法的拦截器"><span class="toc-number">1.9.</span> <span class="toc-text">配置拦截方法的拦截器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义拦截器类"><span class="toc-number">1.9.1.</span> <span class="toc-text">自定义拦截器类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#struts中配置"><span class="toc-number">1.9.2.</span> <span class="toc-text">struts中配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.10.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="struts2之配置拦截器"><a href="#struts2之配置拦截器" class="headerlink" title="struts2之配置拦截器"></a>struts2之配置拦截器</h1><h2 id="什么是拦截器"><a href="#什么是拦截器" class="headerlink" title="什么是拦截器"></a>什么是拦截器</h2><ul>
+<li><p>java里的拦截器是动态拦截Action调用的对象。它提供了一种机制可以使开发者可以定义在一个action执行的前后执行的代码，也可以在一个action执行前阻止其执行，同时也提供了一种可以提取action中可重用部分的方式。在AOP（Aspect-Oriented Programming）中拦截器用于在某个方法或字段被访问之前，进行拦截然后在之前或之后加入某些操作。</p>
+</li>
+<li><p>拦截器是可插拔式的，一旦出现了问题，可以不用改变软件的很多代码就可以实现修复，给维护工作带来方便，其实过滤器也是这样的。</p>
+</li>
+<li><p>Struts2其实就实现了很多的拦截器，可以在struts-default.xml中看到定义很多的拦截器，其中向类型转换，文件上传都是通过拦截器实现的。</p>
+</li>
+<li><p>Struts2拦截器实现原理与Servlet过滤器实现原理类似，它以链式执行，对真正要执行的方法（execute（））进行拦截。首先执行Action配置的拦截器，在Action和Result执行之后，拦截器会再次执行（与先前调用的顺序相反），在此链式执行的过程中，每一个拦截器都可以直接返回，从而终止余下的拦截器、Action及Result的执行。</p>
+</li>
+</ul>
+<h2 id="拦截器的作用"><a href="#拦截器的作用" class="headerlink" title="拦截器的作用"></a>拦截器的作用</h2><ul>
+<li>拦截器适合封一些通用处理，便于重复利用，比如日志的记录，访问权限的检查，事务处理等，拦截器通过配置方式调用，因此使用方法比较灵活，便于维护和扩展</li>
+</ul>
+<h2 id="拦截器的配置元素"><a href="#拦截器的配置元素" class="headerlink" title="拦截器的配置元素"></a>拦截器的配置元素</h2><ul>
+<li><p><code>&lt;interceptors&gt;</code><br>用来定义拦截器，所有的拦截器和拦截器栈都是在此元素中定义的，可以包含子元素<interceptor>,<interceptor-stack></interceptor-stack></interceptor></p>
+</li>
+<li><p><code>&lt;Interceptor&gt;</code><br>用来定义拦截器，需要指定两个属性，name属性指定了拦截器的名字，class指定了拦截器的实现的类。这个是在<interceptors>下定义的</interceptors></p>
+</li>
+<li><p><code>&lt;interceptor-stack&gt;</code><br>用来定义拦截器栈，其中的name属性指定了拦截器栈的名称。另外在此元素下可以指定<interceptor-ref>引入其他的拦截器或者拦截器栈</interceptor-ref></p>
+</li>
+<li><p><code>&lt;interceptor-ref&gt;</code><br>用来引用其他的拦截器或者拦截器栈，name属性指定了拦截器或者拦截栈的名称</p>
+</li>
+<li><p><code>&lt;param&gt;</code><br>用来为拦截器指定参数，可以作为<interceptor>或者<interceptor-ref>的子元素。并且可以定义多个。其中的name属性指定了参数的名称</interceptor-ref></interceptor></p>
+</li>
+<li><p><code>&lt;default-interceptor-ref&gt;</code><br>将某一个拦截器定义为默认拦截器</p>
+</li>
+</ul>
+<h2 id="内建的拦截器"><a href="#内建的拦截器" class="headerlink" title="内建的拦截器"></a>内建的拦截器</h2><ul>
+<li><p>struts2中提供了许多内建的拦截器，在struts-core.jar中，我们只需要在struts.xml中引用这个内建的拦截器即可</p>
+</li>
+<li><p>比如我们在实现文件上传的时候，使用的就是内建的拦截器</p>
+</li>
+<li><p>内建的拦截器使用的很少，通常我们都是使用自定义的拦截器，比如验证访问权限的拦截器</p>
+</li>
+</ul>
+<h2 id="自定义拦截器"><a href="#自定义拦截器" class="headerlink" title="自定义拦截器"></a>自定义拦截器</h2><ul>
+<li>实现自定义的拦截器有两种方法，一种是实现接口，一种是继承</li>
+</ul>
+<h3 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h3><ul>
+<li>我们需要将表单传递过来的数据转换成大写的，再传递给action</li>
+</ul>
+<h3 id="实现接口-com-opensymphony-xwork2-interceptor-Interceptor"><a href="#实现接口-com-opensymphony-xwork2-interceptor-Interceptor" class="headerlink" title="实现接口(com.opensymphony.xwork2.interceptor.Interceptor)"></a>实现接口(com.opensymphony.xwork2.interceptor.Interceptor)</h3><h4 id="接口中的方法"><a href="#接口中的方法" class="headerlink" title="接口中的方法"></a>接口中的方法</h4><ul>
+<li><p><code>void init()</code><br>初始化拦截器执行的方法</p>
+</li>
+<li><p><code>String intercept(ActionInvocation invocation) throws Exception</code><br>实现拦截器逻辑的主要方法。</p>
+<ul>
+<li><p><code>ActionInvocation</code>包含了Action的引用，因此使用这个对象可以对Action进行相应的操作，比如可以获取和设置Action类的成员变量</p>
+</li>
+<li><p><code>ActionInvocation</code>包含了Action的引用，可以调用其中的<code>invoke()</code>方法继续调用下一个拦截器，如果后面没有拦截器了，那么就会执行Action中对应的映射方法，如果有，那么就会继续执行下一个拦截器，直到执行完全部的拦截器才会执行对应的映射方法</p>
+</li>
+<li><p>invoke()方法将拦截器的作用分成了两个部分，在调用invoke()之前的实在Action方法执行之前的逻辑，在之后的代码是在Action执行result，跳转到指定视图之后执行的逻辑</p>
+</li>
+<li><p>这个方法返回的是一个字符串，对应的也是结果视图，如果在其中没有调用invoke()方法，那么返回的字符串就作为Action跳转的视图，因此在<result>一定要定义这个对应的视图。如果调用了invoke()方法，那么返回的字符串就会失效，就会以Action中方法返回的字符串为主</result></p>
+</li>
+</ul>
+</li>
+<li><p><code>void destroy()</code> 销毁拦截器开启的资源</p>
+</li>
+</ul>
+<h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><ul>
+<li>拦截器类<ul>
+<li>这里并没有在init和destroy方法中写什么逻辑，可以根据实际情况来定义其中的逻辑</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> com.jsnu.struts2.controller.SimpleAction;</div><div class="line"><span class="keyword">import</span> com.opensymphony.xwork2.ActionInvocation;</div><div class="line"><span class="keyword">import</span> com.opensymphony.xwork2.interceptor.Interceptor;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestInterceptor</span> <span class="keyword">implements</span> <span class="title">Interceptor</span></span>&#123;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="comment">// TODO Auto-generated method stub</span></div><div class="line"></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="comment">// TODO Auto-generated method stub</span></div><div class="line"></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">intercept</span><span class="params">(ActionInvocation invocation)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">		Object object=invocation.getAction();  <span class="comment">//获取当前调用拦截器的Action类的对象</span></div><div class="line">		<span class="comment">//如果不为null，就可以获取其中的属性，否则空指针</span></div><div class="line">		<span class="keyword">if</span> (object!=<span class="keyword">null</span>) &#123;</div><div class="line">			SimpleAction simpleAction=(SimpleAction)object;</div><div class="line">			<span class="comment">//将User属性全部转换成大写字母</span></div><div class="line">			simpleAction.getUser().setName(simpleAction.getUser().getName().toUpperCase());</div><div class="line">			simpleAction.getUser().setPassword(simpleAction.getUser().getPassword().toUpperCase());</div><div class="line">			String result=invocation.invoke();   <span class="comment">//调用下一个拦截器</span></div><div class="line">			System.out.println(<span class="string">"成功跳转视图后执行的逻辑"</span>);</div><div class="line">			<span class="keyword">return</span> result;</div><div class="line">		&#125;</div><div class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="继承AbstractInterceptor（推荐）"><a href="#继承AbstractInterceptor（推荐）" class="headerlink" title="继承AbstractInterceptor（推荐）"></a>继承AbstractInterceptor（推荐）</h3><ul>
+<li>继承<code>AbstractInterceptor</code>抽象类，里面只有一个抽象方法<code>String intercept(ActionInvocation invocation)</code>，只需要实现这个方法即可，如果你需要初始化和销毁，那么也可以覆盖其中的init()和destroy()方法</li>
+<li><p>继承抽象类的方式比实现接口对一个类的更加简洁，对这个类的污染更加小</p>
+</li>
+<li><p>其中的方法逻辑还是和上面的一样</p>
+</li>
+<li><p>还是完成上面的需求，把传递的请求参数转换成大写字母</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> com.jsnu.struts2.controller.SimpleAction;</div><div class="line"><span class="keyword">import</span> com.opensymphony.xwork2.ActionInvocation;</div><div class="line"><span class="keyword">import</span> com.opensymphony.xwork2.interceptor.AbstractInterceptor;</div><div class="line"><span class="comment">//继承类AbstractInterceptor</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AbstractInterceptorTest</span> <span class="keyword">extends</span> <span class="title">AbstractInterceptor</span> </span>&#123;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">intercept</span><span class="params">(ActionInvocation invocation)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">		Object object = invocation.getAction(); <span class="comment">// 获取当前调用拦截器的Action类的对象</span></div><div class="line">		<span class="comment">// 如果不为null，就可以获取其中的属性，否则空指针</span></div><div class="line">		<span class="keyword">if</span> (object != <span class="keyword">null</span>) &#123;</div><div class="line">			SimpleAction simpleAction = (SimpleAction) object;</div><div class="line">			<span class="comment">// 将User属性全部转换成大写字母</span></div><div class="line">			simpleAction.getUser().setName(</div><div class="line">					simpleAction.getUser().getName().toUpperCase());</div><div class="line">			simpleAction.getUser().setPassword(</div><div class="line">					simpleAction.getUser().getPassword().toUpperCase());</div><div class="line">			String result = invocation.invoke(); <span class="comment">// 调用下一个拦截器</span></div><div class="line">			System.out.println(<span class="string">"成功跳转视图后执行的逻辑"</span>);</div><div class="line">			<span class="keyword">return</span> result;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="配置拦截器"><a href="#配置拦截器" class="headerlink" title="配置拦截器"></a>配置拦截器</h2><ul>
+<li><p>因为struts2的很多功能都要依赖内建的拦截器，比如表单传值。这一系列的拦截器都定义在一个拦截器栈中，如果在一个<action>中引用了拦截器，那么这拦截器就会被覆盖，因此一定要在自定义的拦截器<strong>之前</strong>定义默认的拦截器栈<code>&lt;interceptor-ref name=&quot;defaultStack&quot;&gt;&lt;/interceptor-ref&gt;</code></action></p>
+</li>
+<li><p>配置拦截器只需要在<package>下定义拦截器即可，如果哪个action想要引用拦截器，使用<code>&lt;interceptor-ref &gt;</code>引用已经定义好的拦截器即可</package></p>
+</li>
+<li><p><strong>一个action中可以引用多个拦截器，在上面配置的拦截器先执行，因此默认的拦截器栈一定要在最上面</strong></p>
+</li>
+</ul>
+<ul>
+<li>在struts.xml中配置上面我们自定义的拦截器</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">package</span> <span class="attr">name</span>=<span class="string">"test"</span> <span class="attr">extends</span>=<span class="string">"struts-default"</span> <span class="attr">namespace</span>=<span class="string">"/"</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!--  定义拦截器 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">interceptors</span>&gt;</span></div><div class="line">			<span class="comment">&lt;!-- 实现接口的拦截器 --&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor</span> <span class="attr">name</span>=<span class="string">"testInterceptor"</span> <span class="attr">class</span>=<span class="string">"com.jsnu.struts2.Interceptor.TestInterceptor"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor</span>&gt;</span></div><div class="line"></div><div class="line">			<span class="comment">&lt;!-- 继承类的 --&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor</span> <span class="attr">name</span>=<span class="string">"abstractInterceptorTest"</span> <span class="attr">class</span>=<span class="string">"com.jsnu.struts2.Interceptor.AbstractInterceptorTest"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">interceptors</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="tag">&lt;<span class="name">action</span> <span class="attr">name</span>=<span class="string">"simple"</span> <span class="attr">class</span>=<span class="string">"com.jsnu.struts2.controller.SimpleAction"</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">result</span> <span class="attr">name</span>=<span class="string">"success"</span>&gt;</span>/jsp/success.jsp<span class="tag">&lt;/<span class="name">result</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">result</span> <span class="attr">name</span>=<span class="string">"input"</span>&gt;</span>/jsp/input.jsp<span class="tag">&lt;/<span class="name">result</span>&gt;</span></div><div class="line"></div><div class="line">			<span class="comment">&lt;!-- 在使用了自定的拦截器之后，那么系统默认的拦截器栈将会失去作用，因此这里需要重新指定拦截器栈--&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor-ref</span> <span class="attr">name</span>=<span class="string">"defaultStack"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor-ref</span>&gt;</span></div><div class="line"></div><div class="line">			<span class="comment">&lt;!-- 引用自定义的拦截器，在上面要定义	 --&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor-ref</span> <span class="attr">name</span>=<span class="string">"abstractInterceptorTest"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor-ref</span>&gt;</span></div><div class="line"></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor-ref</span> <span class="attr">name</span>=<span class="string">"testInterceptor"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor-ref</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">action</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">package</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="配置拦截器栈"><a href="#配置拦截器栈" class="headerlink" title="配置拦截器栈"></a>配置拦截器栈</h2><ul>
+<li><p>如果一个action中的需要用到的拦截器很多，或者同时引用几个相同的拦截器的action很多，那么我们此时在action一个一个的引用拦截器效率太低，此时我们就需要将这些拦截器定义在一个拦截器栈中，直接在action中引用了拦截器栈即可。</p>
+</li>
+<li><p>直接使用<interceptors>标签中使用<interceptor-stack name="">定义即可</interceptor-stack></interceptors></p>
+</li>
+<li><p>拦截器栈中的拦截器一定要在上面定义过的，否则将会引用出错</p>
+</li>
+<li><p>拦截器栈中的拦截器引用是有顺序的，在上面的拦截器最先执行</p>
+</li>
+<li><p>我们把上面自定义的两个拦截器放在拦截器栈中,并在action中引用拦截器栈，注意此时的默认的<code>default-stack</code>还是要放在最上面</p>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">package</span> <span class="attr">name</span>=<span class="string">"test"</span> <span class="attr">extends</span>=<span class="string">"struts-default"</span> <span class="attr">namespace</span>=<span class="string">"/"</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!--  定义拦截器 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">interceptors</span>&gt;</span></div><div class="line">			<span class="comment">&lt;!-- 实现接口的拦截器 --&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor</span> <span class="attr">name</span>=<span class="string">"testInterceptor"</span> <span class="attr">class</span>=<span class="string">"com.jsnu.struts2.Interceptor.TestInterceptor"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor</span>&gt;</span></div><div class="line"></div><div class="line">			<span class="comment">&lt;!-- 继承类的 --&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor</span> <span class="attr">name</span>=<span class="string">"abstractInterceptorTest"</span> <span class="attr">class</span>=<span class="string">"com.jsnu.struts2.Interceptor.AbstractInterceptorTest"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor</span>&gt;</span></div><div class="line"></div><div class="line">			<span class="comment">&lt;!-- 自定拦截器栈，其中引用了上面的两个拦截器 --&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor-stack</span> <span class="attr">name</span>=<span class="string">"myStack"</span>&gt;</span></div><div class="line">				<span class="comment">&lt;!-- 引用自定义的拦截器，在上面要定义 --&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">interceptor-ref</span> <span class="attr">name</span>=<span class="string">"abstractInterceptorTest"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor-ref</span>&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">interceptor-ref</span> <span class="attr">name</span>=<span class="string">"testInterceptor"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor-ref</span>&gt;</span></div><div class="line">			<span class="tag">&lt;/<span class="name">interceptor-stack</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">interceptors</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="tag">&lt;<span class="name">action</span> <span class="attr">name</span>=<span class="string">"simple"</span> <span class="attr">class</span>=<span class="string">"com.jsnu.struts2.controller.SimpleAction"</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">result</span> <span class="attr">name</span>=<span class="string">"success"</span>&gt;</span>/jsp/success.jsp<span class="tag">&lt;/<span class="name">result</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">result</span> <span class="attr">name</span>=<span class="string">"input"</span>&gt;</span>/jsp/input.jsp<span class="tag">&lt;/<span class="name">result</span>&gt;</span></div><div class="line"></div><div class="line">			<span class="comment">&lt;!-- 在使用了自定的拦截器之后，那么系统默认的拦截器栈将会失去作用，因此这里需要重新指定拦截器栈--&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor-ref</span> <span class="attr">name</span>=<span class="string">"defaultStack"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor-ref</span>&gt;</span></div><div class="line"></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor-ref</span> <span class="attr">name</span>=<span class="string">"myStack"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor-ref</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">action</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">package</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h3><ul>
+<li>拦截器中还可以包含其他的拦截器栈，那么此时我们就可以将struts2中内建的拦截器放在自己的拦截器栈顶，那么就不用在每个action中引用了，直接引用这个拦截器栈即可</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">package</span> <span class="attr">name</span>=<span class="string">"test"</span> <span class="attr">extends</span>=<span class="string">"struts-default"</span> <span class="attr">namespace</span>=<span class="string">"/"</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!--  定义拦截器 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">interceptors</span>&gt;</span></div><div class="line">			<span class="comment">&lt;!-- 实现接口的拦截器 --&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor</span> <span class="attr">name</span>=<span class="string">"testInterceptor"</span> <span class="attr">class</span>=<span class="string">"com.jsnu.struts2.Interceptor.TestInterceptor"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor</span>&gt;</span></div><div class="line"></div><div class="line">			<span class="comment">&lt;!-- 继承类的 --&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor</span> <span class="attr">name</span>=<span class="string">"abstractInterceptorTest"</span> <span class="attr">class</span>=<span class="string">"com.jsnu.struts2.Interceptor.AbstractInterceptorTest"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor</span>&gt;</span></div><div class="line"></div><div class="line">			<span class="comment">&lt;!-- 自定拦截器栈，其中引用了上面的两个拦截器 --&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor-stack</span> <span class="attr">name</span>=<span class="string">"myStack"</span>&gt;</span></div><div class="line">				<span class="comment">&lt;!-- 在使用了自定的拦截器之后，那么系统默认的拦截器栈将会失去作用，因此这里需要重新指定拦截器栈--&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">interceptor-ref</span> <span class="attr">name</span>=<span class="string">"defaultStack"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor-ref</span>&gt;</span></div><div class="line"></div><div class="line">				<span class="comment">&lt;!-- 引用自定义的拦截器，在上面要定义 --&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">interceptor-ref</span> <span class="attr">name</span>=<span class="string">"abstractInterceptorTest"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor-ref</span>&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">interceptor-ref</span> <span class="attr">name</span>=<span class="string">"testInterceptor"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor-ref</span>&gt;</span></div><div class="line">			<span class="tag">&lt;/<span class="name">interceptor-stack</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">interceptors</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="tag">&lt;<span class="name">action</span> <span class="attr">name</span>=<span class="string">"simple"</span> <span class="attr">class</span>=<span class="string">"com.jsnu.struts2.controller.SimpleAction"</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">result</span> <span class="attr">name</span>=<span class="string">"success"</span>&gt;</span>/jsp/success.jsp<span class="tag">&lt;/<span class="name">result</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">result</span> <span class="attr">name</span>=<span class="string">"input"</span>&gt;</span>/jsp/input.jsp<span class="tag">&lt;/<span class="name">result</span>&gt;</span></div><div class="line"></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor-ref</span> <span class="attr">name</span>=<span class="string">"myStack"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor-ref</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">action</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">package</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="自定义默认的拦截器栈"><a href="#自定义默认的拦截器栈" class="headerlink" title="自定义默认的拦截器栈"></a>自定义默认的拦截器栈</h2><ul>
+<li><p>在一个包中定义一个默认的拦截器栈后(使用<default-interceptor-ref>定义)，那么当<action>下没有显式的配置拦截器的时候，那么此时就会默认使用自定义的默认的拦截器或者默认的拦截器栈。</action></default-interceptor-ref></p>
+</li>
+<li><p>一个包中只能定义一个默认的拦截器，如果想要定义多个拦截器可以使用拦截器栈，定义一个默认的拦截器栈即可解决。</p>
+</li>
+<li><p>在定义了默认的拦截器之后一定要在每一个action都定义系统默认的拦截器栈defaultStack,前面已经说过如果action定义了拦截器(这里虽然不是显式的定义，但是实际上是定义了),那么就会失去defaultStack的作用，其实我们需要很多defaultStack的功能，因此还是要定义的。</p>
+</li>
+<li><p>比如登录检查的拦截器，这个是每一个action都需要用到的，那么我们可以设置一个默认的拦截器栈，栈顶引用的是struts2内建的默认的拦截器栈</p>
+</li>
+<li><p>使用<default-interceptor-ref name=""></default-interceptor-ref> 即可定义</p>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">struts</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">package</span> <span class="attr">name</span>=<span class="string">"test"</span> <span class="attr">extends</span>=<span class="string">"struts-default"</span> <span class="attr">namespace</span>=<span class="string">"/"</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!--  定义拦截器 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">interceptors</span>&gt;</span></div><div class="line">			<span class="comment">&lt;!-- 实现接口的拦截器 --&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor</span> <span class="attr">name</span>=<span class="string">"testInterceptor"</span> <span class="attr">class</span>=<span class="string">"com.jsnu.struts2.Interceptor.TestInterceptor"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor</span>&gt;</span></div><div class="line"></div><div class="line">			<span class="comment">&lt;!-- 继承类的 --&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor</span> <span class="attr">name</span>=<span class="string">"abstractInterceptorTest"</span> <span class="attr">class</span>=<span class="string">"com.jsnu.struts2.Interceptor.AbstractInterceptorTest"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor</span>&gt;</span></div><div class="line"></div><div class="line">			<span class="comment">&lt;!-- 自定拦截器栈，其中引用了上面的两个拦截器 --&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor-stack</span> <span class="attr">name</span>=<span class="string">"myStack"</span>&gt;</span></div><div class="line">				<span class="comment">&lt;!-- 在使用了自定的拦截器之后，那么系统默认的拦截器栈将会失去作用，因此这里需要重新指定拦截器栈--&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">interceptor-ref</span> <span class="attr">name</span>=<span class="string">"defaultStack"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor-ref</span>&gt;</span></div><div class="line">				<span class="comment">&lt;!-- 引用自定义的拦截器，在上面要定义 --&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">interceptor-ref</span> <span class="attr">name</span>=<span class="string">"abstractInterceptorTest"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor-ref</span>&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">interceptor-ref</span> <span class="attr">name</span>=<span class="string">"testInterceptor"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor-ref</span>&gt;</span></div><div class="line">			<span class="tag">&lt;/<span class="name">interceptor-stack</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">interceptors</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="comment">&lt;!-- 定义默认的拦截器栈，其中引用了上面定义的拦截器栈 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">default-interceptor-ref</span> <span class="attr">name</span>=<span class="string">"myStack"</span>&gt;</span><span class="tag">&lt;/<span class="name">default-interceptor-ref</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="tag">&lt;<span class="name">action</span> <span class="attr">name</span>=<span class="string">"simple"</span> <span class="attr">class</span>=<span class="string">"com.jsnu.struts2.controller.SimpleAction"</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">result</span> <span class="attr">name</span>=<span class="string">"success"</span>&gt;</span>/jsp/success.jsp<span class="tag">&lt;/<span class="name">result</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">result</span> <span class="attr">name</span>=<span class="string">"input"</span>&gt;</span>/jsp/input.jsp<span class="tag">&lt;/<span class="name">result</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">action</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">package</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">struts</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="配置拦截方法的拦截器"><a href="#配置拦截方法的拦截器" class="headerlink" title="配置拦截方法的拦截器"></a>配置拦截方法的拦截器</h2><ul>
+<li><p>一般我们的Action类中有很多的方法，但是我们在使用动态调用的时候会调用其中不同的方法，如果不想Action类中的某个方法不被拦截，此时就需要使用拦截方法的拦截器</p>
+</li>
+<li><p>其中可以设置拦截的方法，也可以设置不拦截的方法</p>
+</li>
+</ul>
+<h3 id="自定义拦截器类"><a href="#自定义拦截器类" class="headerlink" title="自定义拦截器类"></a>自定义拦截器类</h3><ul>
+<li>继承MethodFilterInterceptor</li>
+<li>其中的方法doIntercept是在执行其中指定方法之前执行，和前面的逻辑一样，也有invoke方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> com.opensymphony.xwork2.ActionInvocation;</div><div class="line"><span class="keyword">import</span> com.opensymphony.xwork2.interceptor.MethodFilterInterceptor;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleActionInteceptor</span> <span class="keyword">extends</span> <span class="title">MethodFilterInterceptor</span></span>&#123;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">protected</span> String <span class="title">doIntercept</span><span class="params">(ActionInvocation invocation)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">		System.out.println(<span class="string">"拦截方法的拦截器起了作用"</span>);</div><div class="line">		String result=invocation.invoke();</div><div class="line">		System.out.println(<span class="string">"执行之后"</span>);</div><div class="line">		<span class="keyword">return</span> result;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="struts中配置"><a href="#struts中配置" class="headerlink" title="struts中配置"></a>struts中配置</h3><ul>
+<li><code>&lt;param name=&quot;excludeMethods&quot;&gt;login&lt;/param&gt;</code> 用来定义不拦截的方法</li>
+<li><p><code>&lt;param name=&quot;includeMethods&quot;&gt;regist&lt;/param&gt;</code> 用来定义拦截的方法，如果有多个使用逗号隔开</p>
+</li>
+<li><p>这里使用的是动态调用的<code>method</code>的，但是我们也可以使用 <code>action!方法名</code></p>
+</li>
+<li><p><strong>假设我们的项目名称为web1，并且把method=“”去掉，那么我们开启<code>action!方法名</code>进行调用，具体方法前面有介绍，开启之后，我们在地址栏输入  <code>http://localhost:8080/web1/simple.regist</code>,将会成功被拦截器拦截器，但是我们输入<code>http://localhost:8080/web1/simple.login</code>，拦截器不起作用</strong></p>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">package</span> <span class="attr">name</span>=<span class="string">"test"</span> <span class="attr">extends</span>=<span class="string">"struts-default"</span> <span class="attr">namespace</span>=<span class="string">"/"</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!--  定义拦截器 --&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">interceptors</span>&gt;</span></div><div class="line">			<span class="comment">&lt;!-- 配置拦截方法的拦截器 --&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor</span> <span class="attr">name</span>=<span class="string">"simpleMethod"</span> <span class="attr">class</span>=<span class="string">"com.jsnu.struts2.Interceptor.SimpleActionInteceptor"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">interceptors</span>&gt;</span></div><div class="line"></div><div class="line">		<span class="tag">&lt;<span class="name">action</span> <span class="attr">name</span>=<span class="string">"simple"</span> <span class="attr">class</span>=<span class="string">"com.jsnu.struts2.controller.SimpleAction"</span> <span class="attr">method</span>=<span class="string">"regist"</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">result</span> <span class="attr">name</span>=<span class="string">"success"</span>&gt;</span>/jsp/success.jsp<span class="tag">&lt;/<span class="name">result</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">result</span> <span class="attr">name</span>=<span class="string">"input"</span>&gt;</span>/jsp/input.jsp<span class="tag">&lt;/<span class="name">result</span>&gt;</span></div><div class="line">			<span class="comment">&lt;!-- 在使用了自定的拦截器之后，那么系统默认的拦截器栈将会失去作用，因此这里需要重新指定拦截器栈--&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor-ref</span> <span class="attr">name</span>=<span class="string">"defaultStack"</span>&gt;</span><span class="tag">&lt;/<span class="name">interceptor-ref</span>&gt;</span></div><div class="line">			<span class="tag">&lt;<span class="name">interceptor-ref</span> <span class="attr">name</span>=<span class="string">"simpleMethod"</span>&gt;</span></div><div class="line">				<span class="comment">&lt;!-- 定义不拦截login方法 --&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">"excludeMethods"</span>&gt;</span>login<span class="tag">&lt;/<span class="name">param</span>&gt;</span></div><div class="line">				<span class="comment">&lt;!-- 定义需要拦截器的方法 --&gt;</span></div><div class="line">				<span class="tag">&lt;<span class="name">param</span> <span class="attr">name</span>=<span class="string">"includeMethods"</span>&gt;</span>regist<span class="tag">&lt;/<span class="name">param</span>&gt;</span></div><div class="line">			<span class="tag">&lt;/<span class="name">interceptor-ref</span>&gt;</span></div><div class="line">		<span class="tag">&lt;/<span class="name">action</span>&gt;</span></div><div class="line">	<span class="tag">&lt;/<span class="name">package</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Struts2/">Struts2</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Struts2/">Struts2</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/04/02/Struts之配置拦截器/" data-title="Struts之配置拦截器 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/04/02/Struts之OGNL使用/" title="Struts之OGNL使用">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Struts之OGNL使用</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/04/02/JDBC干货三/"  title="JDBC干货三">
+ <strong>下一篇：</strong><br/> 
+ <span>JDBC干货三
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#struts2之配置拦截器"><span class="toc-number">1.</span> <span class="toc-text">struts2之配置拦截器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是拦截器"><span class="toc-number">1.1.</span> <span class="toc-text">什么是拦截器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#拦截器的作用"><span class="toc-number">1.2.</span> <span class="toc-text">拦截器的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#拦截器的配置元素"><span class="toc-number">1.3.</span> <span class="toc-text">拦截器的配置元素</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#内建的拦截器"><span class="toc-number">1.4.</span> <span class="toc-text">内建的拦截器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义拦截器"><span class="toc-number">1.5.</span> <span class="toc-text">自定义拦截器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#需求"><span class="toc-number">1.5.1.</span> <span class="toc-text">需求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现接口-com-opensymphony-xwork2-interceptor-Interceptor"><span class="toc-number">1.5.2.</span> <span class="toc-text">实现接口(com.opensymphony.xwork2.interceptor.Interceptor)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#接口中的方法"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">接口中的方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#实现"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">实现</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#继承AbstractInterceptor（推荐）"><span class="toc-number">1.5.3.</span> <span class="toc-text">继承AbstractInterceptor（推荐）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置拦截器"><span class="toc-number">1.6.</span> <span class="toc-text">配置拦截器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置拦截器栈"><span class="toc-number">1.7.</span> <span class="toc-text">配置拦截器栈</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#拓展"><span class="toc-number">1.7.1.</span> <span class="toc-text">拓展</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义默认的拦截器栈"><span class="toc-number">1.8.</span> <span class="toc-text">自定义默认的拦截器栈</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置拦截方法的拦截器"><span class="toc-number">1.9.</span> <span class="toc-text">配置拦截方法的拦截器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#自定义拦截器类"><span class="toc-number">1.9.1.</span> <span class="toc-text">自定义拦截器类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#struts中配置"><span class="toc-number">1.9.2.</span> <span class="toc-text">struts中配置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.10.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

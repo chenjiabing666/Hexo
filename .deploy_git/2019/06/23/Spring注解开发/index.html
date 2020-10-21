@@ -1,0 +1,874 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Spring注解开发 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="@Configuration
+标注在类上，表明该类是一个配置类，相当于之前写的spring的xml文件，通常与@Bean结合使用
+该注解同时拥有了@Component的作用，将当前类注入ioc容器
+其中有一个value属性，指定注入ioc容器的名称，默认是类名首字母小写
+源码如下：12345@Target(ElementType.TYPE)@Retention(RetentionPolicy.RU">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring注解开发">
+<meta property="og:url" content="http://chenjiabing666.github.io/2019/06/23/Spring注解开发/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="@Configuration
+标注在类上，表明该类是一个配置类，相当于之前写的spring的xml文件，通常与@Bean结合使用
+该注解同时拥有了@Component的作用，将当前类注入ioc容器
+其中有一个value属性，指定注入ioc容器的名称，默认是类名首字母小写
+源码如下：12345@Target(ElementType.TYPE)@Retention(RetentionPolicy.RU">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:16:10.038Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring注解开发">
+<meta name="twitter:description" content="@Configuration
+标注在类上，表明该类是一个配置类，相当于之前写的spring的xml文件，通常与@Bean结合使用
+该注解同时拥有了@Component的作用，将当前类注入ioc容器
+其中有一个value属性，指定注入ioc容器的名称，默认是类名首字母小写
+源码如下：12345@Target(ElementType.TYPE)@Retention(RetentionPolicy.RU">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/06/23/Spring注解开发/" title="Spring注解开发" itemprop="url">Spring注解开发</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2019-06-23T03:17:49.000Z" itemprop="datePublished"> 发表于 2019-06-23</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Configuration"><span class="toc-number">1.</span> <span class="toc-text">@Configuration</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Bean"><span class="toc-number">2.</span> <span class="toc-text">@Bean</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#属性"><span class="toc-number">2.1.</span> <span class="toc-text">属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实例"><span class="toc-number">2.2.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Scope"><span class="toc-number">3.</span> <span class="toc-text">@Scope</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#四大作用域"><span class="toc-number">3.1.</span> <span class="toc-text">四大作用域</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Conditional"><span class="toc-number">4.</span> <span class="toc-text">@Conditional</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#ConditionContext"><span class="toc-number">4.1.</span> <span class="toc-text">ConditionContext</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AnnotatedTypeMetadata"><span class="toc-number">4.2.</span> <span class="toc-text">AnnotatedTypeMetadata</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PostConstruct"><span class="toc-number">5.</span> <span class="toc-text">@PostConstruct</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PreDestroy"><span class="toc-number">6.</span> <span class="toc-text">@PreDestroy</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Import"><span class="toc-number">7.</span> <span class="toc-text">@Import</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#直接导入类"><span class="toc-number">7.1.</span> <span class="toc-text">直接导入类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#导入配置类"><span class="toc-number">7.2.</span> <span class="toc-text">导入配置类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#指定ImportSelector"><span class="toc-number">7.3.</span> <span class="toc-text">指定ImportSelector</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AnnotationMetadata"><span class="toc-number">7.3.1.</span> <span class="toc-text">AnnotationMetadata</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用ImportBeanDefinitionRegistrar手动注册"><span class="toc-number">7.4.</span> <span class="toc-text">使用ImportBeanDefinitionRegistrar手动注册</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Primary"><span class="toc-number">8.</span> <span class="toc-text">@Primary</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Autowired"><span class="toc-number">9.</span> <span class="toc-text">@Autowired</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#属性-1"><span class="toc-number">9.1.</span> <span class="toc-text">属性</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Qualifier"><span class="toc-number">10.</span> <span class="toc-text">@Qualifier</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PropertySource"><span class="toc-number">11.</span> <span class="toc-text">@PropertySource</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#属性-2"><span class="toc-number">11.1.</span> <span class="toc-text">属性</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Value"><span class="toc-number">12.</span> <span class="toc-text">@Value()</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#获取配置文件中的值为属性赋值"><span class="toc-number">12.1.</span> <span class="toc-text">获取配置文件中的值为属性赋值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用指定的值"><span class="toc-number">12.2.</span> <span class="toc-text">使用指定的值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#表达式赋值"><span class="toc-number">12.3.</span> <span class="toc-text">表达式赋值</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Profile"><span class="toc-number">13.</span> <span class="toc-text">@Profile</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">13.1.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Configuration"><a href="#Configuration" class="headerlink" title="@Configuration"></a>@Configuration</h1><ul>
+<li>标注在类上，表明该类是一个配置类，相当于之前写的spring的xml文件，通常与<code>@Bean</code>结合使用</li>
+<li>该注解同时拥有了<code>@Component</code>的作用，将当前类注入ioc容器<ul>
+<li>其中有一个<code>value</code>属性，指定注入ioc容器的名称，默认是类名首字母小写</li>
+<li>源码如下：<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Target</span>(ElementType.TYPE)</div><div class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</div><div class="line"><span class="meta">@Documented</span></div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Configuration &#123;&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="Bean"><a href="#Bean" class="headerlink" title="@Bean"></a>@Bean</h1><ul>
+<li>在配置类中使用该注解</li>
+<li>标注在方法上，默认将方法的返回对象注入到ioc容器，名称默认使用的是方法名<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 配置类</div><div class="line"> */</div><div class="line"><span class="meta">@Configuration</span>(value = <span class="string">"MyConfiguration"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyConfiguration</span> </span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 注入一个User对象，ioc容器中的name是user，类型是User类型</div><div class="line">     */</div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">user</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> User(<span class="number">1</span>,<span class="string">"name"</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h2><ul>
+<li><code>name</code>：指定注入ioc容器中的名称</li>
+<li><code>value</code>：同name</li>
+<li><code>autowireCandidate</code>：是否能够自动注入，默认是true，如果指定了属性为false，那么不能使用<code>@Autowired</code>或者<code>@Resource</code>自动注入</li>
+<li><code>initMethod</code>：指定初始化方法，在构造方法之后执行</li>
+<li><code>destroyMethod</code>：指定销毁方法，在容器关闭的时候执行</li>
+</ul>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 配置类</div><div class="line"> */</div><div class="line"><span class="meta">@Configuration</span>(value = <span class="string">"MyConfiguration"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyConfiguration</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 注入一个User对象，ioc容器中的name是user，类型是User类型</div><div class="line">     * init是User类中的init方法，destory是User类中的destory方法</div><div class="line">     */</div><div class="line">    <span class="meta">@Bean</span>(initMethod = <span class="string">"init"</span>,destroyMethod = <span class="string">"destory"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">user1</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> User(<span class="number">1</span>,<span class="string">"name"</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* User类</div><div class="line">*/</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> Integer id;</div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(Integer id, String name)</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"执行构造方法"</span>);</div><div class="line">        <span class="keyword">this</span>.id = id;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</div><div class="line">        System.out.println(<span class="string">"初始化方法"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destory</span><span class="params">()</span></span>&#123;</div><div class="line">        System.out.println(<span class="string">"销毁方法"</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="Scope"><a href="#Scope" class="headerlink" title="@Scope"></a>@Scope</h1><ul>
+<li>指定对象的作用域名，标注在类上或者方法上，默认是单实例</li>
+</ul>
+<h2 id="四大作用域"><a href="#四大作用域" class="headerlink" title="四大作用域"></a>四大作用域</h2><ul>
+<li><code>singleton</code>：单例，默认值，当容器启动的时候会创建对象放入ioc容器中，后续获取只是从容器中创建，并不会再次调用构造方法new出来</li>
+<li><code>prototype</code>：多实例，容器启动的时候并不会创建该对象，而是当需要用到的才调用构造方法new出来（不放入ioc容器，每次用到就new一个）</li>
+<li><code>request</code>：该属性仅对HTTP请求产生作用，使用该属性定义Bean时，每次HTTP请求都会创建一个新的Bean，适用于WebApplicationContext环境。</li>
+<li><code>session</code>：该属性仅用于HTTP Session，同一个Session共享一个Bean实例。不同Session使用不同的实例。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">    * 指定多实例，每次用到都会调用</div><div class="line">    */</div><div class="line">   <span class="meta">@Bean</span>(initMethod = <span class="string">"init"</span>,destroyMethod = <span class="string">"destory"</span>)</div><div class="line">   <span class="meta">@Scope</span>(value = <span class="string">"prototype"</span>)</div><div class="line">   <span class="function"><span class="keyword">public</span> User <span class="title">user1</span><span class="params">()</span></span>&#123;</div><div class="line">       <span class="keyword">return</span> <span class="keyword">new</span> User(<span class="number">1</span>,<span class="string">"name"</span>);</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<h1 id="Conditional"><a href="#Conditional" class="headerlink" title="@Conditional"></a>@Conditional</h1><ul>
+<li>标注在方法或者在类上，只有在满足其中的匹配条件才会将对象注入到ioc容器中。</li>
+<li>只有一个属性value，是一个<code>Condition</code>数组，要向实现相应的功能，可以自定义一个类，实现<code>Condition</code>这个接口即可。</li>
+<li><p>这个注解在SpringBoot中将会有很多的扩展，这里就不多说了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">     * 指定多实例，每次用到都会调用</div><div class="line">     * <span class="doctag">@Conditional</span> 只有里面全部都匹配才会正常注入到容器中</div><div class="line">     */</div><div class="line">    <span class="meta">@Bean</span>(initMethod = <span class="string">"init"</span>,destroyMethod = <span class="string">"destory"</span>)</div><div class="line">    <span class="meta">@Conditional</span>(value = &#123;FirstCondition.class&#125;)</div><div class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">user1</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> User(<span class="number">1</span>,<span class="string">"name"</span>);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>下面看看<code>FirstCondition</code>这个类具体实现</p>
+<ul>
+<li>只需要实现接口中的<code>matches</code>方法即可，返回true表示符合条件，否则不满足条件，只有满足条件才会注入到ioc容器中<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 自定义的条件判断，实现Condition接口</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FirstCondition</span> <span class="keyword">implements</span> <span class="title">Condition</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 如果返回true表示符合条件，反之不符合条件</div><div class="line">     * <span class="doctag">@param</span> context ConditionContext对象，可以获取上下文的信息</div><div class="line">     * <span class="doctag">@param</span> metadata AnnotatedTypeMetadata对象，可以获取标注在该方法上面的注解信息</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(ConditionContext context, AnnotatedTypeMetadata metadata)</span> </span>&#123;</div><div class="line">        <span class="comment">//获取Environment，用来获取运行环境中的一些变量</span></div><div class="line">        Environment environment = context.getEnvironment();</div><div class="line">        <span class="comment">//获取在properties文件中配置的参数，表示是否注入相关属性</span></div><div class="line">        Boolean isAutowired = environment.&lt;Boolean&gt;getProperty(<span class="string">"isAutowired"</span>, Boolean.class);</div><div class="line">        <span class="keyword">return</span> isAutowired;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="ConditionContext"><a href="#ConditionContext" class="headerlink" title="ConditionContext"></a>ConditionContext</h2><ul>
+<li>主要的功能是获取上下文的对象，比如BeanFactory<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ConditionContext</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	* 获取 BeanDefinitionRegistry，可以自己手动注册对象到ioc容器中</div><div class="line">    */</div><div class="line">	<span class="function">BeanDefinitionRegistry <span class="title">getRegistry</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 获取BeanFacotory，操作ioc容器，比如获取对应的Bean，判断ioc中是否已经注入   </div><div class="line">	 */</div><div class="line">	<span class="meta">@Nullable</span></div><div class="line">	<span class="function">ConfigurableListableBeanFactory <span class="title">getBeanFactory</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 返回当前的运行环境，可以获取运行环境中的一下参数，或者一些配置文件中的数据</div><div class="line">	 */</div><div class="line">	<span class="function">Environment <span class="title">getEnvironment</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 获取资源加载器</div><div class="line">	 */</div><div class="line">	<span class="function">ResourceLoader <span class="title">getResourceLoader</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 获取类加载器 </div><div class="line">	 */</div><div class="line">	<span class="meta">@Nullable</span></div><div class="line">	<span class="function">ClassLoader <span class="title">getClassLoader</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="AnnotatedTypeMetadata"><a href="#AnnotatedTypeMetadata" class="headerlink" title="AnnotatedTypeMetadata"></a>AnnotatedTypeMetadata</h2><ul>
+<li>主要的作用就是获取标注了<code>@Conditional</code>这个注解的方法上的注解和对应的参数等信息<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">AnnotatedTypeMetadata</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	* 判断方法上是否有对应的注解 </div><div class="line">    * <span class="doctag">@param</span> annotationName 注解类的全类名，getName()</div><div class="line">    */</div><div class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">isAnnotated</span><span class="params">(String annotationName)</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	*  获取对应注解的全部属性的值，key是属性，value是属性的值</div><div class="line">    * <span class="doctag">@param</span> annotationName 注解类的全类名，getName()</div><div class="line">    */</div><div class="line">	<span class="meta">@Nullable</span></div><div class="line">	<span class="function">Map&lt;String, Object&gt; <span class="title">getAnnotationAttributes</span><span class="params">(String annotationName)</span></span>;</div><div class="line"></div><div class="line">	<span class="meta">@Nullable</span></div><div class="line">	<span class="function">Map&lt;String, Object&gt; <span class="title">getAnnotationAttributes</span><span class="params">(String annotationName, <span class="keyword">boolean</span> classValuesAsString)</span></span>;</div><div class="line"></div><div class="line">	<span class="meta">@Nullable</span></div><div class="line">	<span class="function">MultiValueMap&lt;String, Object&gt; <span class="title">getAllAnnotationAttributes</span><span class="params">(String annotationName)</span></span>;</div><div class="line"></div><div class="line">	<span class="meta">@Nullable</span></div><div class="line">	<span class="function">MultiValueMap&lt;String, Object&gt; <span class="title">getAllAnnotationAttributes</span><span class="params">(String annotationName, <span class="keyword">boolean</span> classValuesAsString)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="PostConstruct"><a href="#PostConstruct" class="headerlink" title="@PostConstruct"></a>@PostConstruct</h1><ul>
+<li>标注在方法上，用来在类加载并且属性赋值之后调用，通常用来初始化，和<code>@Bean</code>中的<code>init-menthd</code>指定的作用相同<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@PostConstruct</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</div><div class="line">        System.out.println(<span class="string">"初始化方法"</span>);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="PreDestroy"><a href="#PreDestroy" class="headerlink" title="@PreDestroy"></a>@PreDestroy</h1><ul>
+<li>标注在方法上，容器销毁执行，相当于<code>@Bean</code>中的<code>destroy-method</code>属性<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@PreDestroy</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destory</span><span class="params">()</span></span>&#123;</div><div class="line">        System.out.println(<span class="string">"销毁方法"</span>);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="Import"><a href="#Import" class="headerlink" title="@Import"></a>@Import</h1><ul>
+<li>用来形式化的注入，主要形式有：<ul>
+<li>直接导入类</li>
+<li>导入配置类</li>
+<li>指定ImportSelector</li>
+<li>使用ImportBeanDefinitionRegistrar手动注册</li>
+</ul>
+</li>
+</ul>
+<h2 id="直接导入类"><a href="#直接导入类" class="headerlink" title="直接导入类"></a>直接导入类</h2><ul>
+<li>直接在 <code>value</code>属性中指定需要导入的类即可，如下：<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Configuration</span>(value = <span class="string">"MyConfiguration"</span>)</div><div class="line"><span class="meta">@Import</span>(value = &#123;Person.class&#125;)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyConfiguration</span> </span>&#123;&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="导入配置类"><a href="#导入配置类" class="headerlink" title="导入配置类"></a>导入配置类</h2><ul>
+<li><p>新建一个配置类，但是不用<code>@Configuration</code>标注，使用<code>@Import</code>在另外一个配置类上引入即可</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 这是一个配置，但是并没有使用<span class="doctag">@Configuration</span>这个注解，因此不会生效</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SecondConfiguration</span> </span>&#123;</div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Person <span class="title">person</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Person();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>在另外一个配置类使用<code>@Import</code>注解引入上面的配置类，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Configuration</span>(value = <span class="string">"MyConfiguration"</span>)</div><div class="line"><span class="meta">@Import</span>(value = &#123;SecondConfiguration.class&#125;)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyConfiguration</span> </span>&#123;&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="指定ImportSelector"><a href="#指定ImportSelector" class="headerlink" title="指定ImportSelector"></a>指定ImportSelector</h2><ul>
+<li><p>使用ImportSelector需要自定义一个实现类，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 自定义Selector，需要实现ImportSelector</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FirstSelector</span> <span class="keyword">implements</span> <span class="title">ImportSelector</span> </span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 筛选逻辑，返回的是String数组（需要注入到容器中的类的全类名）</div><div class="line">     * <span class="doctag">@param</span> importingClassMetadata AnnotationMetadata对象，对标注了<span class="doctag">@Import</span>这个注解的类中的所有注解信息，比如获取标注指定注解的方法</div><div class="line">     * <span class="doctag">@return</span> 返回的是需要注入的字符串数组（类的全类名）</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="keyword">public</span> String[] selectImports(AnnotationMetadata importingClassMetadata) &#123;</div><div class="line">        <span class="comment">//获取@Import标注的类中被@Bean标注的方法元数据</span></div><div class="line">        Set&lt;MethodMetadata&gt; annotatedMethods = importingClassMetadata.getAnnotatedMethods(Bean.class.getName());</div><div class="line">        annotatedMethods.forEach(o-&gt;&#123;</div><div class="line">            System.out.println(o.getMethodName());</div><div class="line">        &#125;);</div><div class="line">        <span class="comment">//将Person类返回去，那么将会自动注入Person</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> String[]&#123;Person.class.getName()&#125;;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>在配置类上使用<code>@Import</code>注解引入即可，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="meta">@Import</span>(value = &#123;FirstSelector.class&#125;)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyConfiguration</span> </span>&#123;&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="AnnotationMetadata"><a href="#AnnotationMetadata" class="headerlink" title="AnnotationMetadata"></a>AnnotationMetadata</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">AnnotationMetadata</span> <span class="keyword">extends</span> <span class="title">ClassMetadata</span>, <span class="title">AnnotatedTypeMetadata</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="comment">//拿到Class上标注的所有注解，依赖于Class#getAnnotations</span></div><div class="line">	<span class="function">Set&lt;String&gt; <span class="title">getAnnotationTypes</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">	<span class="comment">// 拿到所有的元注解信息AnnotatedElementUtils#getMetaAnnotationTypes</span></div><div class="line">	<span class="comment">//annotationName:注解类型的全类名</span></div><div class="line">	<span class="function">Set&lt;String&gt; <span class="title">getMetaAnnotationTypes</span><span class="params">(String annotationName)</span></span>;</div><div class="line">	<span class="comment">// 是否包含指定注解 （annotationName：全类名）</span></div><div class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">hasAnnotation</span><span class="params">(String annotationName)</span></span>;</div><div class="line">	<span class="comment">//这个厉害了，依赖于AnnotatedElementUtils#hasMetaAnnotationTypes</span></div><div class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">hasMetaAnnotation</span><span class="params">(String metaAnnotationName)</span></span>;</div><div class="line">	<span class="comment">// 类里面只有有一个方法标注有指定注解，就返回true</span></div><div class="line">	<span class="comment">//getDeclaredMethods获得所有方法， AnnotatedElementUtils.isAnnotated是否标注有指定注解</span></div><div class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">hasAnnotatedMethods</span><span class="params">(String annotationName)</span></span>;</div><div class="line">	<span class="comment">// 注意返回的是MethodMetadata 原理基本同上</span></div><div class="line">	<span class="comment">// .getDeclaredMethods和AnnotatedElementUtils.isAnnotated  最后吧Method转为MethodMetadata</span></div><div class="line">	<span class="function">Set&lt;MethodMetadata&gt; <span class="title">getAnnotatedMethods</span><span class="params">(String annotationName)</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="使用ImportBeanDefinitionRegistrar手动注册"><a href="#使用ImportBeanDefinitionRegistrar手动注册" class="headerlink" title="使用ImportBeanDefinitionRegistrar手动注册"></a>使用ImportBeanDefinitionRegistrar手动注册</h2><ul>
+<li><p>需要自定义一个类实现<code>ImportBeanDefinitionRegistrar</code>，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 自定义的FirstBeanDefinitionRegistrar，需要实现ImportBeanDefinitionRegistrar</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FirstBeanDefinitionRegistrar</span> <span class="keyword">implements</span> <span class="title">ImportBeanDefinitionRegistrar</span> </span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 自己手动注册Bean到ioc容器中</div><div class="line">     * <span class="doctag">@param</span> importingClassMetadata 获取<span class="doctag">@Import</span>标注的类上的注解信息，比如获取被指定注解标注的方法信息</div><div class="line">     * <span class="doctag">@param</span> registry  注册中心，可以获取指定bean的信息和手动注册bean</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerBeanDefinitions</span><span class="params">(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry)</span> </span>&#123;</div><div class="line">        <span class="comment">//如果容器中没有Person这个Bean，就创建一个</span></div><div class="line">        <span class="keyword">if</span> (!registry.containsBeanDefinition(Person.class.getName()))&#123;</div><div class="line">            GenericBeanDefinition beanDefinition=<span class="keyword">new</span> GenericBeanDefinition();</div><div class="line">            beanDefinition.setBeanClass(Person.class);</div><div class="line">            <span class="comment">//手动注册</span></div><div class="line">            registry.registerBeanDefinition(<span class="string">"person"</span>,beanDefinition);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p>在配置类上使用<code>@Import</code>注解引入即可，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="meta">@Import</span>(value = &#123;FirstBeanDefinitionRegistrar.class&#125;)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyConfiguration</span> </span>&#123;&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="Primary"><a href="#Primary" class="headerlink" title="@Primary"></a>@Primary</h1><ul>
+<li>在spring 中使用注解，常使用@Autowired， 默认是根据类型Type来自动注入的。但有些特殊情况，对同一个接口，可能会有几种不同的实现类，而默认只会采取其中一种的情况下 @Primary 的作用就出来了。</li>
+<li>有两种使用方式，一种是结合<code>@Bean</code>，另外一种是结合<code>@Service,@Component,@Controller.....</code><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Bean</span></div><div class="line"><span class="meta">@Primary</span></div><div class="line"><span class="function"><span class="keyword">public</span> User <span class="title">user1</span><span class="params">()</span></span>&#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">new</span> User(<span class="number">1</span>,<span class="string">"user1"</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//第二种</span></div><div class="line"><span class="meta">@Primary</span></div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line">    <span class="keyword">private</span> Integer age;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="Autowired"><a href="#Autowired" class="headerlink" title="@Autowired"></a>@Autowired</h1><ul>
+<li>标注在方法和属性上，用来自动为成员变量赋值</li>
+<li>默认先根据属性的类型从ioc容器中查找，如果ioc容器中存在多个类型相同的属性，将会根据<strong>变量名</strong>从ioc容器中查找。<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Controller</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span> </span>&#123;</div><div class="line">    <span class="meta">@Autowired</span></div><div class="line">    <span class="keyword">private</span> UserService userService;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="属性-1"><a href="#属性-1" class="headerlink" title="属性"></a>属性</h2><ul>
+<li><code>required</code>：指定该属性是否是必须的，默认为true，表示一定要为属性赋值，如果ioc容器中没有对应的Bean，那个将会报错，如果为false，会先从ioc容器中查找对应的Bean，如果存在就进行赋值，不存在就不赋值，不会报错。</li>
+</ul>
+<h1 id="Qualifier"><a href="#Qualifier" class="headerlink" title="@Qualifier"></a>@Qualifier</h1><ul>
+<li>和<code>@Autowired</code>结合使用，用来从容器中注入指定名字的Bean</li>
+<li>使用场景：容器中存在多个类型相同的Bean,那么此时仅仅使用<code>@Autowired</code>就不太适用了，此时就要结合该注解，指定需要注入的name。（当然除了<code>@Autowired</code>还是可以根据成员变量的名称进行注入的）<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Controller</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span> </span>&#123;</div><div class="line">    <span class="meta">@Autowired</span></div><div class="line">    <span class="meta">@Qualifier</span>(value = <span class="string">"userService"</span>)</div><div class="line">    <span class="keyword">private</span> UserService userService;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="PropertySource"><a href="#PropertySource" class="headerlink" title="@PropertySource"></a>@PropertySource</h1><ul>
+<li>从配置文件中读取相关配置注入到指定的成员属性中<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="meta">@PropertySource</span>(value = &#123;<span class="string">"classpath:user.properties"</span>&#125;)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> String name;</div><div class="line">    <span class="keyword">private</span> Integer age;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">()</span></span>&#123;&#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(String name, Integer age)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.name = name;</div><div class="line">        <span class="keyword">this</span>.age = age;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="属性-2"><a href="#属性-2" class="headerlink" title="属性"></a>属性</h2><ul>
+<li><code>value</code>：指定资源文件的位置</li>
+<li><code>ignoreResourceNotFound</code>：是否忽略资源文件不存在，默认为false，表示如果资源文件不存在，那么将会抛出异常，如果为true，资源文件不存在的话，程序正常运行</li>
+</ul>
+<h1 id="Value"><a href="#Value" class="headerlink" title="@Value()"></a>@Value()</h1><ul>
+<li>有三个典型的使用场景：<ul>
+<li>获取配置文件中对应的值，为指定属性赋值</li>
+<li>使用指定的值为属性赋值</li>
+<li>通过表达式计算得到的值为属性赋值</li>
+</ul>
+</li>
+</ul>
+<h2 id="获取配置文件中的值为属性赋值"><a href="#获取配置文件中的值为属性赋值" class="headerlink" title="获取配置文件中的值为属性赋值"></a>获取配置文件中的值为属性赋值</h2><ul>
+<li>使用<code>${}</code>的方式获取配置文件中设置的值<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Value</span>(<span class="string">"$&#123;name&#125;"</span>)</div><div class="line"><span class="keyword">private</span> String name;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="使用指定的值"><a href="#使用指定的值" class="headerlink" title="使用指定的值"></a>使用指定的值</h2><ul>
+<li>其中的<code>value</code>属性可以是自己随便指定的值，如下：<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Value</span>(<span class="string">"陈加兵"</span>)</div><div class="line"><span class="keyword">private</span> String name;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="表达式赋值"><a href="#表达式赋值" class="headerlink" title="表达式赋值"></a>表达式赋值</h2><ul>
+<li>表达式的计算需要使用<code>#{}</code><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Value</span>(<span class="string">"#&#123;10+22&#125;"</span>)</div><div class="line"><span class="keyword">private</span> Integer age;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="Profile"><a href="#Profile" class="headerlink" title="@Profile"></a>@Profile</h1><ul>
+<li>未完待续。。。。。。</li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Spring/">Spring</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Spring/">Spring</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2019/06/23/Spring注解开发/" data-title="Spring注解开发 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2019/06/23/Bean的后置处理器/" title="Bean的后置处理器">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Bean的后置处理器</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2019/06/12/Spring中的Aware解析/"  title="Spring中的Aware解析">
+ <strong>下一篇：</strong><br/> 
+ <span>Spring中的Aware解析
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Configuration"><span class="toc-number">1.</span> <span class="toc-text">@Configuration</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Bean"><span class="toc-number">2.</span> <span class="toc-text">@Bean</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#属性"><span class="toc-number">2.1.</span> <span class="toc-text">属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实例"><span class="toc-number">2.2.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Scope"><span class="toc-number">3.</span> <span class="toc-text">@Scope</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#四大作用域"><span class="toc-number">3.1.</span> <span class="toc-text">四大作用域</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Conditional"><span class="toc-number">4.</span> <span class="toc-text">@Conditional</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#ConditionContext"><span class="toc-number">4.1.</span> <span class="toc-text">ConditionContext</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AnnotatedTypeMetadata"><span class="toc-number">4.2.</span> <span class="toc-text">AnnotatedTypeMetadata</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PostConstruct"><span class="toc-number">5.</span> <span class="toc-text">@PostConstruct</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PreDestroy"><span class="toc-number">6.</span> <span class="toc-text">@PreDestroy</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Import"><span class="toc-number">7.</span> <span class="toc-text">@Import</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#直接导入类"><span class="toc-number">7.1.</span> <span class="toc-text">直接导入类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#导入配置类"><span class="toc-number">7.2.</span> <span class="toc-text">导入配置类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#指定ImportSelector"><span class="toc-number">7.3.</span> <span class="toc-text">指定ImportSelector</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#AnnotationMetadata"><span class="toc-number">7.3.1.</span> <span class="toc-text">AnnotationMetadata</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用ImportBeanDefinitionRegistrar手动注册"><span class="toc-number">7.4.</span> <span class="toc-text">使用ImportBeanDefinitionRegistrar手动注册</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Primary"><span class="toc-number">8.</span> <span class="toc-text">@Primary</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Autowired"><span class="toc-number">9.</span> <span class="toc-text">@Autowired</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#属性-1"><span class="toc-number">9.1.</span> <span class="toc-text">属性</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Qualifier"><span class="toc-number">10.</span> <span class="toc-text">@Qualifier</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PropertySource"><span class="toc-number">11.</span> <span class="toc-text">@PropertySource</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#属性-2"><span class="toc-number">11.1.</span> <span class="toc-text">属性</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Value"><span class="toc-number">12.</span> <span class="toc-text">@Value()</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#获取配置文件中的值为属性赋值"><span class="toc-number">12.1.</span> <span class="toc-text">获取配置文件中的值为属性赋值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用指定的值"><span class="toc-number">12.2.</span> <span class="toc-text">使用指定的值</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#表达式赋值"><span class="toc-number">12.3.</span> <span class="toc-text">表达式赋值</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Profile"><span class="toc-number">13.</span> <span class="toc-text">@Profile</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">13.1.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

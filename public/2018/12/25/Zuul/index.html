@@ -1,0 +1,872 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Chenjiabing">
+    
+
+    
+    <meta name="description" content="title: Zuuldate: 2018-12-25 00:22:19categories: 分布式
+tags: 分布式Zuul简介
+Zuul包含了对请求的路由和过滤两个主要的功能，其中路由功能负责将外部的请求转发到具体的微服务实例上，是实现外部访问统一入口的基础上，而过滤功能则负责对请求的处理过程进行干预，是实现请求校验，服务聚合等功能的基础。
+Zuul和Eureka进行整合，将Zuul自身">
+<meta property="og:type" content="article">
+<meta property="og:title" content="爱撒谎的男孩">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/12/25/Zuul/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="title: Zuuldate: 2018-12-25 00:22:19categories: 分布式
+tags: 分布式Zuul简介
+Zuul包含了对请求的路由和过滤两个主要的功能，其中路由功能负责将外部的请求转发到具体的微服务实例上，是实现外部访问统一入口的基础上，而过滤功能则负责对请求的处理过程进行干预，是实现请求校验，服务聚合等功能的基础。
+Zuul和Eureka进行整合，将Zuul自身">
+<meta property="og:image" content="https://ws2.sinaimg.cn/large/006tNc79ly1fqmg1wtyhdj30pl0fqdgt.jpg">
+<meta property="og:updated_time" content="2018-12-24T16:22:52.540Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="爱撒谎的男孩">
+<meta name="twitter:description" content="title: Zuuldate: 2018-12-25 00:22:19categories: 分布式
+tags: 分布式Zuul简介
+Zuul包含了对请求的路由和过滤两个主要的功能，其中路由功能负责将外部的请求转发到具体的微服务实例上，是实现外部访问统一入口的基础上，而过滤功能则负责对请求的处理过程进行干预，是实现请求校验，服务聚合等功能的基础。
+Zuul和Eureka进行整合，将Zuul自身">
+<meta name="twitter:image" content="https://ws2.sinaimg.cn/large/006tNc79ly1fqmg1wtyhdj30pl0fqdgt.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">一只程序猿</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/12/25/Zuul/" title="" itemprop="url"></a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Chenjiabing" target="_blank" itemprop="author">Chenjiabing</a>
+		
+  <p class="article-time">
+    <time datetime="2018-12-24T16:22:19.349Z" itemprop="datePublished"> 发表于 2018-12-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#tags-分布式"><span class="toc-number">1.</span> <span class="toc-text">tags: 分布式</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Zuul"><span class="toc-number"></span> <span class="toc-text">Zuul</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用"><span class="toc-number">2.</span> <span class="toc-text">使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#路由映射规则"><span class="toc-number">3.</span> <span class="toc-text">路由映射规则</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#代理名称"><span class="toc-number">3.1.</span> <span class="toc-text">代理名称</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置统一前缀"><span class="toc-number">4.</span> <span class="toc-text">设置统一前缀</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#某个uri取消路由"><span class="toc-number">5.</span> <span class="toc-text">某个uri取消路由</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#传递敏感头信息"><span class="toc-number">6.</span> <span class="toc-text">传递敏感头信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#过滤器"><span class="toc-number">7.</span> <span class="toc-text">过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#生命周期"><span class="toc-number">7.1.</span> <span class="toc-text">生命周期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前置过滤器的使用"><span class="toc-number">7.2.</span> <span class="toc-text">前置过滤器的使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#后置过滤器的使用"><span class="toc-number">7.3.</span> <span class="toc-text">后置过滤器的使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#禁用某种过滤器"><span class="toc-number">8.</span> <span class="toc-text">禁用某种过滤器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#限流"><span class="toc-number">9.</span> <span class="toc-text">限流</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#令牌桶算法"><span class="toc-number">9.1.</span> <span class="toc-text">令牌桶算法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实现"><span class="toc-number">9.1.1.</span> <span class="toc-text">实现</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多维度限流"><span class="toc-number">9.2.</span> <span class="toc-text">多维度限流</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#鉴权"><span class="toc-number">10.</span> <span class="toc-text">鉴权</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实现-1"><span class="toc-number">10.1.</span> <span class="toc-text">实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#跨域"><span class="toc-number">11.</span> <span class="toc-text">跨域</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#超时时间设置"><span class="toc-number">12.</span> <span class="toc-text">超时时间设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务熔断"><span class="toc-number">13.</span> <span class="toc-text">服务熔断</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zuul的重试"><span class="toc-number">14.</span> <span class="toc-text">zuul的重试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zuul的高可用"><span class="toc-number">15.</span> <span class="toc-text">Zuul的高可用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#完整的配置"><span class="toc-number">16.</span> <span class="toc-text">完整的配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消费端的使用"><span class="toc-number">17.</span> <span class="toc-text">消费端的使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#源码"><span class="toc-number">18.</span> <span class="toc-text">源码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">19.</span> <span class="toc-text">参考文章</span></a></li></ol>
+		
+		</div>
+		
+		<hr>
+<p>title: Zuul<br>date: 2018-12-25 00:22:19<br>categories: 分布式</p>
+<h2 id="tags-分布式"><a href="#tags-分布式" class="headerlink" title="tags: 分布式"></a>tags: 分布式</h2><h1 id="Zuul"><a href="#Zuul" class="headerlink" title="Zuul"></a>Zuul</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><ul>
+<li>Zuul包含了对请求的路由和过滤两个主要的功能，其中路由功能负责将外部的请求转发到具体的微服务实例上，是实现外部访问统一入口的基础上，而过滤功能则负责对请求的处理过程进行干预，是实现请求校验，服务聚合等功能的基础。</li>
+<li>Zuul和Eureka进行整合，将Zuul自身注册为Eureka服务治理下的应用，同时从Eureka中获取其他微服务的信息，也即以后访问微服务都是通过Zuul跳转后获得</li>
+<li>代理+路由+过滤三大功能</li>
+</ul>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><ul>
+<li>需要和Eureka客户端结合使用，依赖如下：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="comment">&lt;!--zuul的依赖--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-zuul<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>添加配置，将其注册到eureka中，如下：</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="attr">server:</span></div><div class="line"><span class="attr">  port:</span> <span class="number">9001</span></div><div class="line"><span class="attr">eureka:</span></div><div class="line"><span class="attr">  client:</span></div><div class="line"><span class="attr">    serviceUrl:</span></div><div class="line"><span class="attr">      defaultZone:</span> <span class="attr">http://localhost:7001/eureka</span>  <span class="comment"># eureka的暴露地址，直接注册</span></div><div class="line"><span class="attr">  instance:</span></div><div class="line"><span class="attr">    instance-id:</span> <span class="string">zuul.com</span></div><div class="line"><span class="attr">    prefer-ip-address:</span> <span class="literal">true</span></div><div class="line"><span class="attr">spring:</span></div><div class="line"><span class="attr">  application:</span></div><div class="line"><span class="attr">    name:</span> <span class="string">zuul</span>   <span class="comment">#应用的名称，在同一个eureka中必须不重复</span></div></pre></td></tr></table></figure>
+<ul>
+<li>在主启动类上添加<code>@EnableZuulProxy</code>这个注解，如下:</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@SpringBootApplication</span></div><div class="line"><span class="meta">@EnableEurekaClient</span>  <span class="comment">//开启eurkea客户端</span></div><div class="line"><span class="meta">@EnableZuulProxy</span>   <span class="comment">//开启zuul</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeptGetWayZuul9001Application</span> </span>&#123;</div></pre></td></tr></table></figure>
+<ul>
+<li>启动即可，在eureka中看到注册进入即可</li>
+<li><strong>之后只需要通过zuul访问其他的微服务提供者即可，比如服务提供者的实例名称为<code>dept-provider</code>，那么通过zuul访问的路径为<code>http://localhost:9001/dept-provider/dept/1</code></strong></li>
+</ul>
+<h2 id="路由映射规则"><a href="#路由映射规则" class="headerlink" title="路由映射规则"></a>路由映射规则</h2><h3 id="代理名称"><a href="#代理名称" class="headerlink" title="代理名称"></a>代理名称</h3><ul>
+<li>之前的配置访问的还是需要带上微服务的实例名称，但是我们不想微服务的实例名称暴露，那么此时就需要使用代理名称替代，配置如下:<ul>
+<li>使用<code>ignored-services</code>忽略真实的服务名称访问，可以同时指定多个，其中服务名称必须和服务配置文件中一样，不能使用和</li>
+<li>在routes下指定多个路由映射规则</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="attr">zuul:</span></div><div class="line">  <span class="comment"># 忽略真实的服务名称实例访问，是一个Set集合，可以指定多个，取消全部使用 "*"即可</span></div><div class="line"><span class="attr">  ignored-services:</span></div><div class="line"><span class="bullet">  -</span> <span class="string">order-provider</span></div><div class="line">  <span class="comment">#routes下面指定代理规则，可以同时指定多个</span></div><div class="line"><span class="attr">  routes:</span></div><div class="line">    <span class="comment">#指定第一个规则，这里的名称任意</span></div><div class="line"><span class="attr">    api-order:</span></div><div class="line">      <span class="comment">#指定的实例名称</span></div><div class="line"><span class="attr">      serviceId:</span> <span class="string">order-provider</span></div><div class="line">      <span class="comment">#指定可以访问的路由</span></div><div class="line"><span class="attr">      path:</span> <span class="string">/api-order/**</span></div></pre></td></tr></table></figure>
+<ul>
+<li>按照上面的配置完成之后就可以直接使用映射的路由访问即可，如：<code>http://zuul.com:9001/api-dept/dept/1</code></li>
+</ul>
+<h2 id="设置统一前缀"><a href="#设置统一前缀" class="headerlink" title="设置统一前缀"></a>设置统一前缀</h2><ul>
+<li>我们可以在所有的访问uri前面加上统一的前缀，配置如下:<ul>
+<li>使用<code>zuul.prefix</code>加上统一的前缀即可</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="attr">zuul:</span></div><div class="line">  <span class="comment">#加上统一的前缀，那么访问的时候一定要加上这个前缀才可以访问到</span></div><div class="line"><span class="attr">  prefix:</span> <span class="string">/chenjiabing</span></div><div class="line">  <span class="comment"># 忽略真实的服务名称实例访问，是一个Set集合，可以指定多个，取消全部使用 "*"即可</span></div><div class="line"><span class="attr">  ignored-services:</span></div><div class="line"><span class="bullet">  -</span> <span class="string">dept-provider</span></div><div class="line">  <span class="comment">#routes下面指定代理规则，可以同时指定多个</span></div><div class="line"><span class="attr">  routes:</span></div><div class="line">    <span class="comment">#指定第一个规则，这里的名称任意</span></div><div class="line"><span class="attr">    api-dept:</span></div><div class="line">      <span class="comment">#指定的实例名称</span></div><div class="line"><span class="attr">      serviceId:</span> <span class="string">dept-provider</span></div><div class="line">      <span class="comment">#指定可以访问的路由</span></div><div class="line"><span class="attr">      path:</span> <span class="string">/api-dept/**</span></div></pre></td></tr></table></figure>
+<ul>
+<li>通过上面的配置，此时的访问路径变成<code>http://zuul.com:9001/chenjiabing/api-dept/dept/1</code></li>
+</ul>
+<h2 id="某个uri取消路由"><a href="#某个uri取消路由" class="headerlink" title="某个uri取消路由"></a>某个uri取消路由</h2><ul>
+<li><p>使用<code>zuul.ignored-services</code>是忽略一个或者多个微服务的全部接口，但是如果我们可以更细化</p>
+</li>
+<li><p>如果我们需要隐藏一些敏感的接口不给访问，我们可以在yml文件中配置，如下:</p>
+</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="attr">zuul:</span></div><div class="line"><span class="attr">  ignored-patterns:</span></div><div class="line"><span class="bullet">  -</span> <span class="string">/api-order/order/list</span>   <span class="comment"># 取消指定的一个</span></div><div class="line"><span class="bullet">  -</span> <span class="string">/api-order/order/**</span>     <span class="comment"># 使用通配符去掉order下的全部接口</span></div></pre></td></tr></table></figure>
+<h2 id="传递敏感头信息"><a href="#传递敏感头信息" class="headerlink" title="传递敏感头信息"></a>传递敏感头信息</h2><ul>
+<li>默认zuul是不能传递头信息的，比如cookie，默认的设置了三个字段，如下:</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> Set&lt;String&gt; sensitiveHeaders = <span class="keyword">new</span> LinkedHashSet&lt;&gt;(</div><div class="line">			Arrays.asList(<span class="string">"Cookie"</span>, <span class="string">"Set-Cookie"</span>, <span class="string">"Authorization"</span>));</div></pre></td></tr></table></figure>
+<ul>
+<li>如果我们想让它不过滤，只需要将其设置为空，或者不配置其他的，如下：<ul>
+<li>将<code>sensitive-headers</code>这个值设置为空即可</li>
+<li><strong>这个配置只是针对<code>order-provider</code>这个微服务起作用</strong></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="attr">zuul:</span></div><div class="line"><span class="attr">  routes:</span></div><div class="line">    <span class="comment">#指定第一个规则，这里的名称任意</span></div><div class="line"><span class="attr">    api-order:</span></div><div class="line">      <span class="comment">#指定的实例名称</span></div><div class="line"><span class="attr">      serviceId:</span> <span class="string">order-provider</span></div><div class="line">      <span class="comment">#指定可以访问的路由</span></div><div class="line"><span class="attr">      path:</span> <span class="string">/api-order/**</span></div><div class="line"><span class="attr">      sensitive-headers:</span>   <span class="comment"># 设置为空即可，那么就可以传递敏感头信息了</span></div></pre></td></tr></table></figure>
+<ul>
+<li>上面的配置是针对单个服务的设置，我们也可以配置针对所有的服务，如下：</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="attr">zuul:</span></div><div class="line"><span class="attr">  sensitive-headers:</span>   <span class="comment"># 设置所有的服务都取消敏感头信息</span></div></pre></td></tr></table></figure>
+<h2 id="过滤器"><a href="#过滤器" class="headerlink" title="过滤器"></a>过滤器</h2><h3 id="生命周期"><a href="#生命周期" class="headerlink" title="生命周期"></a>生命周期</h3><ul>
+<li>Filter 的生命周期有 4 个，分别是 “PRE”、“ROUTING”、“POST” 和“ERROR”，整个生命周期可以用下图来表示 </li>
+<li><img src="https://ws2.sinaimg.cn/large/006tNc79ly1fqmg1wtyhdj30pl0fqdgt.jpg" alt=""></li>
+<li>生命周期解释如下：<ul>
+<li><strong><code>PRE</code>：</strong>这种过滤器在请求被路由之前调用。我们可利用这种过滤器实现<strong>身份验证、鉴权、限流、参数校验、请求转发</strong>，在集群中选择请求的微服务、记录调试信息等。</li>
+<li><strong><code>ROUTING</code>：</strong>这种过滤器将请求路由到微服务。这种过滤器用于构建发送给微服务的请求，并使用 Apache HttpClient 或 Netfilx Ribbon 请求微服务。</li>
+<li><strong><code>POST</code>：</strong>这种过滤器在路由到微服务以后执行。这种过滤器可用来为<strong>响应添加标准的 HTTP Header、收集统计信息和指标、将响应从微服务发送给客户端</strong>等。</li>
+<li><strong><code>ERROR</code>：</strong>在其他阶段发生错误时执行该过滤器。 除了默认的过滤器类型，Zuul 还允许我们创建自定义的过滤器类型。例如，我们可以定制一种 STATIC 类型的过滤器，直接在 Zuul 中生成响应，而不将请求转发到后端的微服务。</li>
+</ul>
+</li>
+</ul>
+<h3 id="前置过滤器的使用"><a href="#前置过滤器的使用" class="headerlink" title="前置过滤器的使用"></a>前置过滤器的使用</h3><ul>
+<li>利用前置过滤器实现检测token是否正确，如果不正确，那么直接返回权限不足401状态码，不路由微服务</li>
+<li>继承<code>ZuulFilter</code></li>
+<li>注入到ioc容器中</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 	自定义过滤器，用于实现鉴权，前置过滤器</div><div class="line"> *  	继承ZuulFilter</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span>  <span class="comment">//一定要注入到ioc容器中</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TokenFilter</span> <span class="keyword">extends</span> <span class="title">ZuulFilter</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 	判断过滤器是否被执行，返回true表示被会被执</div><div class="line">	 * 	 在这里我们可以限制过滤器的执行范围，可以根据指定的条件判断这个请求是否被过滤</div><div class="line">	 */</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">shouldFilter</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 *	 过滤器的具体实现逻辑</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 * <span class="doctag">@throws</span> ZuulException</div><div class="line">	 */</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> Object <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> ZuulException </span>&#123;</div><div class="line">		RequestContext requestContext = RequestContext.getCurrentContext();  <span class="comment">//获取请求上下文</span></div><div class="line">		HttpServletRequest request = requestContext.getRequest();  <span class="comment">//获取HttpServletRequest</span></div><div class="line">		String token = request.getParameter(<span class="string">"token"</span>);  <span class="comment">//获取传递过来的请求参数</span></div><div class="line">		<span class="comment">//如果token是空的，返回权限不足，一般返回的状态码是401</span></div><div class="line">		<span class="keyword">if</span> (StringUtils.isEmpty(token)) &#123;</div><div class="line">			requestContext.setSendZuulResponse(<span class="keyword">false</span>);  <span class="comment">//设置false，此时的zuul不对此路由</span></div><div class="line">			requestContext.setResponseStatusCode(HttpStatus.UNAUTHORIZED.value());  <span class="comment">//设置401</span></div><div class="line"><span class="comment">//			requestContext.setResponseBody("no power");  //设置响应的消息</span></div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 	指定过滤器的类型，前置，后置.................</div><div class="line">	 * 1、其中FilterConstants这个常量类中定义了过滤器常用的变量</div><div class="line">	 * 	    public static final String ERROR_TYPE = "error";</div><div class="line">			public static final String POST_TYPE = "post";</div><div class="line">			public static final String PRE_TYPE = "pre";</div><div class="line">			public static final String ROUTE_TYPE = "route";	</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">filterType</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> FilterConstants.PRE_TYPE;    <span class="comment">//前置过滤器 pre</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 	过滤器执行的顺序，数字越小优先级越高</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">filterOrder</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="comment">//一般前置过滤器放在org.springframework.cloud.netflix.zuul.filters.pre.PreDecorationFilter这个过滤器之前即可，只需要将其对应的顺序-1</span></div><div class="line">		<span class="keyword">return</span> FilterConstants.PRE_DECORATION_FILTER_ORDER-<span class="number">1</span>; </div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="后置过滤器的使用"><a href="#后置过滤器的使用" class="headerlink" title="后置过滤器的使用"></a>后置过滤器的使用</h3><ul>
+<li>利用后置过滤器在响应头中添加内容，和前置过滤器的使用一样，只是使用的过滤器的类型不用，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 后置过滤器，在响应头中添加一些内容</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span> <span class="comment">//注入</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AddResponseHeaderFilter</span> <span class="keyword">extends</span> <span class="title">ZuulFilter</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">shouldFilter</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> Object <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> ZuulException </span>&#123;</div><div class="line">		RequestContext requestContext = RequestContext.getCurrentContext();  <span class="comment">//获取请求上下文</span></div><div class="line">		HttpServletResponse response = requestContext.getResponse();  <span class="comment">//获取HttpServletResponse</span></div><div class="line">		response.addHeader(<span class="string">"X-Foo"</span>, <span class="string">"add header"</span>);  <span class="comment">//添加头信息</span></div><div class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">filterType</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> FilterConstants.POST_TYPE; <span class="comment">//后置过滤器</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">filterOrder</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="comment">//在org.springframework.cloud.netflix.zuul.filters.post.SendResponseFilter#filterOrder()这个过滤一起之前执行即可</span></div><div class="line">		<span class="keyword">return</span> FilterConstants.SEND_RESPONSE_FILTER_ORDER-<span class="number">1</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="禁用某种过滤器"><a href="#禁用某种过滤器" class="headerlink" title="禁用某种过滤器"></a>禁用某种过滤器</h2><ul>
+<li>如果我们想要禁用某种过滤器（自定义或者zuul自身的），我们可以在配置中设置，格式：<code>zuul.&lt;SimpleClassName&gt;.&lt;filterType&gt;.disable=true</code>，比如禁用我们TokenFilter，如下：</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="attr">zuul:</span></div><div class="line"><span class="attr">  TokenFilter:</span>  <span class="comment"># 类的名字</span></div><div class="line"><span class="attr">    pre:</span>        <span class="comment"># 类型</span></div><div class="line"><span class="attr">      disable:</span> <span class="literal">true</span></div></pre></td></tr></table></figure>
+<h2 id="限流"><a href="#限流" class="headerlink" title="限流"></a>限流</h2><h3 id="令牌桶算法"><a href="#令牌桶算法" class="headerlink" title="令牌桶算法"></a>令牌桶算法</h3><ul>
+<li><a href="https://blog.csdn.net/tianyaleixiaowu/article/details/74942405" target="_blank" rel="external">https://blog.csdn.net/tianyaleixiaowu/article/details/74942405</a></li>
+<li><a href="https://baike.baidu.com/item/%E4%BB%A4%E7%89%8C%E6%A1%B6%E7%AE%97%E6%B3%95/6597000?fr=aladdin" target="_blank" rel="external">https://baike.baidu.com/item/%E4%BB%A4%E7%89%8C%E6%A1%B6%E7%AE%97%E6%B3%95/6597000?fr=aladdin</a></li>
+<li>系统按照恒定的速率往指定大小的桶里添加令牌，每来一个请求就消耗一个令牌，如果桶内没有令牌表示此事的请求流量已经超过设置的大小了，应该做出相应的响应或者直接抛出异常</li>
+</ul>
+<h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><ul>
+<li>使用前置过滤器，在请求被转发之前调用，<strong>限流的过滤器应该是所有过滤器中优先级最大的</strong></li>
+<li>使用google开源的组件<code>Guava</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;</div><div class="line"><span class="keyword">import</span> org.springframework.http.HttpStatus;</div><div class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</div><div class="line"><span class="keyword">import</span> com.google.common.util.concurrent.RateLimiter;</div><div class="line"><span class="keyword">import</span> com.netflix.zuul.ZuulFilter;</div><div class="line"><span class="keyword">import</span> com.netflix.zuul.context.RequestContext;</div><div class="line"><span class="keyword">import</span> com.netflix.zuul.exception.ZuulException;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 	限流	，前置过滤器</div><div class="line"> * 	限流的过滤器的优先级应该是最高，数字最小</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RateFilter</span> <span class="keyword">extends</span> <span class="title">ZuulFilter</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> RateLimiter RATE_LIMITER=RateLimiter.create(<span class="number">100</span>);  <span class="comment">//程每秒钟往桶里放置100个令牌</span></div><div class="line">	</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">shouldFilter</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> Object <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> ZuulException </span>&#123;</div><div class="line">		</div><div class="line">		<span class="comment">/**</span></div><div class="line">		 * 	tryAcquire()：如果获取不到一个令牌,表示流量超时了，没有等待时间</div><div class="line">		 *  tryAcquire(int permits, long timeout, TimeUnit unit)：获取permits个令牌，如果在指定的时间timeout内，还是没有获取到指定的permits个令牌，那么就返回false</div><div class="line">		 */</div><div class="line">		<span class="keyword">if</span> (!RATE_LIMITER.tryAcquire()) &#123;</div><div class="line">			RequestContext requestContext = RequestContext.getCurrentContext();</div><div class="line">			requestContext.setSendZuulResponse(<span class="keyword">false</span>);  <span class="comment">//不路由</span></div><div class="line">			requestContext.setResponseStatusCode(HttpStatus.FORBIDDEN.value());  <span class="comment">//403拒绝访问</span></div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		<span class="comment">//也可以直接抛出异常</span></div><div class="line"><span class="comment">//		if (!RATE_LIMITER.tryAcquire()) &#123;</span></div><div class="line"><span class="comment">//			throw new RuntimeException();  //抛出异常</span></div><div class="line"><span class="comment">//		&#125;</span></div><div class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">filterType</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> FilterConstants.PRE_TYPE;  <span class="comment">//前置</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">filterOrder</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="comment">//org.springframework.cloud.netflix.zuul.filters.pre.ServletDetectionFilter#filterOrder()这个过滤器的优先级是最高的，只需要-1即可</span></div><div class="line">		<span class="keyword">return</span> FilterConstants.SERVLET_DETECTION_FILTER_ORDER-<span class="number">1</span>;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="多维度限流"><a href="#多维度限流" class="headerlink" title="多维度限流"></a>多维度限流</h3><ul>
+<li><a href="https://segmentfault.com/a/1190000012252677" target="_blank" rel="external">https://segmentfault.com/a/1190000012252677</a></li>
+</ul>
+<h2 id="鉴权"><a href="#鉴权" class="headerlink" title="鉴权"></a>鉴权</h2><ul>
+<li><a href="https://www.jianshu.com/p/f89f5557990f" target="_blank" rel="external">https://www.jianshu.com/p/f89f5557990f</a></li>
+<li>一些api只有具有某些权限的时候才可以被调用，比如用户的一些相关信息，只有在用户登录之后才可以调用，否则将会提示没有权限</li>
+</ul>
+<h3 id="实现-1"><a href="#实现-1" class="headerlink" title="实现"></a>实现</h3><ul>
+<li>我们在用户登录成功之后会在返回头中添加cookie的值为<code>openId=random(随机数)</code>，并且将其保存在<code>redis</code>中（key=openId_userId，value=random）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 登录的方法，登录成功响应头返回添加cookie</div><div class="line"> * <span class="doctag">@param</span> response</div><div class="line"> * <span class="doctag">@return</span></div><div class="line"> */</div><div class="line"><span class="meta">@GetMapping</span>(<span class="string">"/user/login"</span>)</div><div class="line"><span class="function"><span class="keyword">public</span> String <span class="title">login</span><span class="params">(HttpServletResponse response)</span> </span>&#123;</div><div class="line">	<span class="comment">//登录的逻辑。。。。。</span></div><div class="line">	 </div><div class="line">	<span class="comment">//设置cookie的值</span></div><div class="line">	Cookie cookie=<span class="keyword">new</span> Cookie(<span class="string">"openId"</span>, UUID.randomUUID().toString());  </div><div class="line">	cookie.setMaxAge(<span class="number">60</span>*<span class="number">60</span>);  </div><div class="line">	response.addCookie(cookie);  <span class="comment">//添加到响应头中</span></div><div class="line">	</div><div class="line">	<span class="comment">//添加到redis中，key=openId_userId,value=uuid的值</span></div><div class="line">	</div><div class="line">	<span class="keyword">return</span> <span class="string">"登录成功"</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>我们事先将指定权限的接口uri存放在数据库中，在zuul中定义一个鉴权的过滤器，如果请求过来了，判断这个uri是否需要某种权限才能调用，如果不需要直接路由即可，如果需要那么判断<code>cookie</code>中是否有openId，如果没有表示没有登录，权限不够，如果有，需要判断和redis中的值是否相同，如果相同，表示有权限，直接路由到服务即可<ul>
+<li><strong>这里将部分逻辑写在<code>shouldFilter()</code>方法中，限制范围（判断请求的uri是否需要鉴权），<code>run()</code>方法中只需要判断是否具有权限即可</strong></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 	自定义过滤器，用于实现鉴权，前置过滤器</div><div class="line"> *  	继承ZuulFilter</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span>  <span class="comment">//一定要注入到ioc容器中</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TokenFilter</span> <span class="keyword">extends</span> <span class="title">ZuulFilter</span> </span>&#123;</div><div class="line">	</div><div class="line">	<span class="meta">@Resource</span>   </div><div class="line">	<span class="keyword">private</span> UriService uriservice;   <span class="comment">//注入</span></div><div class="line">    </div><div class="line">    <span class="meta">@Resource</span></div><div class="line">    <span class="keyword">private</span> RedisTemplate redisTemplate; <span class="comment">//redis</span></div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 	判断过滤器是否被执行，返回true表示被会被执行（经过run方法）</div><div class="line">	 * 	只需要判断请求的uri是存在数据库中即可</div><div class="line">	 */</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">shouldFilter</span><span class="params">()</span> </span>&#123;</div><div class="line">		RequestContext context=RequestContext.getCurrentContext();  <span class="comment">//获取上下文</span></div><div class="line">		HttpServletRequest request = context.getRequest();  <span class="comment">//获取request</span></div><div class="line">		String uri=request.getRequestURI();  <span class="comment">//获取请求的uri</span></div><div class="line">		<span class="comment">/**</span></div><div class="line">		 * 	伪代码如下：</div><div class="line">		 *		1、List&lt;URL&gt; uriList=uriservice.getUrlList();  //获取需要权限访问的uri列表</div><div class="line">		 *		2、判断请求的uri是否在uriList中</div><div class="line">		 *			1、如果不存在，return false，表示不用执行过滤的逻辑（run方法）直接路由到指定的服务即可</div><div class="line">		 *			2、如果不存在返回true，表示执行过滤的逻辑（run方法）</div><div class="line">		 */</div><div class="line">		<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 *  	过滤器的具体实现逻辑，经过shouldFilter方法之后，能够执行到这里的表示这个请求的uri需要验证权限</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 * <span class="doctag">@throws</span> ZuulException</div><div class="line">	 */</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> Object <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> ZuulException </span>&#123;</div><div class="line">		RequestContext requestContext = RequestContext.getCurrentContext();  <span class="comment">//获取请求上下文</span></div><div class="line">		HttpServletRequest request = requestContext.getRequest();  <span class="comment">//获取HttpServletRequest</span></div><div class="line">		Cookie[] cookies = request.getCookies();   <span class="comment">//获取cookie</span></div><div class="line">		</div><div class="line">		<span class="comment">/**</span></div><div class="line">		 *  伪代码如下：</div><div class="line">		 *			1、判断cookie中是否存在openId</div><div class="line">		 *				1、如果不存在，返回权限不足的提示信息</div><div class="line">		 *				2、如果存在，需要判断redis中存储的openId的值是否和携带过来的cookie值相同</div><div class="line">		 *					1、如果不相同，返回权限不足的提示信息</div><div class="line">		 *					2、如果相同，表示这个请求具有相应的权限</div><div class="line">		 */</div><div class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">filterType</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> FilterConstants.PRE_TYPE;    <span class="comment">//前置过滤器 pre</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">filterOrder</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="comment">//一般前置过滤器放在org.springframework.cloud.netflix.zuul.filters.pre.PreDecorationFilter这个过滤器之前即可，只需要将其对应的顺序-1</span></div><div class="line">		<span class="keyword">return</span> FilterConstants.PRE_DECORATION_FILTER_ORDER-<span class="number">1</span>; </div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="跨域"><a href="#跨域" class="headerlink" title="跨域"></a>跨域</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.Arrays;</div><div class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</div><div class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</div><div class="line"><span class="keyword">import</span> org.springframework.web.cors.CorsConfiguration;</div><div class="line"><span class="keyword">import</span> org.springframework.web.cors.UrlBasedCorsConfigurationSource;</div><div class="line"><span class="keyword">import</span> org.springframework.web.filter.CorsFilter;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 跨域的配置类</div><div class="line"> */</div><div class="line"><span class="meta">@Configuration</span>   <span class="comment">//配置类</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CorsConfig</span> </span>&#123;</div><div class="line">	<span class="meta">@Bean</span></div><div class="line">	<span class="function"><span class="keyword">public</span> CorsFilter <span class="title">corsFilter</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">final</span> UrlBasedCorsConfigurationSource source=<span class="keyword">new</span> UrlBasedCorsConfigurationSource();</div><div class="line">		<span class="keyword">final</span> CorsConfiguration config=<span class="keyword">new</span> CorsConfiguration();</div><div class="line">		config.setAllowCredentials(<span class="keyword">true</span>);   <span class="comment">//支持cookie跨域</span></div><div class="line">		config.setAllowedOrigins(Arrays.asList(<span class="string">"*"</span>));  <span class="comment">//配置允许跨域访问的域名，这里*表示全部</span></div><div class="line">		config.setAllowedHeaders(Arrays.asList(<span class="string">"*"</span>));  <span class="comment">//设置允许的头</span></div><div class="line">		config.setAllowedMethods(Arrays.asList(<span class="string">"*"</span>)); <span class="comment">//设置允许跨域的方法，GET,POST....,这里表示允许全部</span></div><div class="line">		config.setMaxAge(<span class="number">300l</span>);  <span class="comment">//缓存时间，在指定的时间内，对于相同的请求就不需要再次检查了</span></div><div class="line">		source.registerCorsConfiguration(<span class="string">"/**"</span>, config);</div><div class="line">		<span class="keyword">return</span> <span class="keyword">new</span> CorsFilter(source);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="超时时间设置"><a href="#超时时间设置" class="headerlink" title="超时时间设置"></a>超时时间设置</h2><ul>
+<li>我们在使用zuul访问服务的时候，一旦服务超过很短的时间没有响应，那么zuul就会自动熔断，默认的时间是<strong>2秒</strong>，但是可以通过配置修改，如下：<ul>
+<li>由于zuul使用ribbon实现负载均衡，因此这里还需要配置ribbon的超时时间，否则配置将不会生效</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="attr">zuul:</span></div><div class="line"><span class="attr">    host:</span>  <span class="comment"># 配置zuul的超时时间</span></div><div class="line"><span class="attr">        connect-timeout-millis:</span> <span class="number">60000</span>  <span class="comment"># 默认2秒，  </span></div><div class="line"><span class="attr">        socket-timeout-millis:</span> <span class="number">60000</span></div><div class="line">    </div><div class="line"><span class="attr">ribbon:</span>   <span class="comment"># zuul使用服务发现的时候，要想让上面的配置生效，必须配置ribbon的超时时间</span></div><div class="line"><span class="attr">  ReadTimeout:</span> <span class="number">60000</span>     <span class="comment"># 请求处理时间。</span></div><div class="line"><span class="attr">  ConnectTimeout:</span> <span class="number">60000</span>   <span class="comment"># 请求连接时间。</span></div></pre></td></tr></table></figure>
+<h2 id="服务熔断"><a href="#服务熔断" class="headerlink" title="服务熔断"></a>服务熔断</h2><ul>
+<li><strong>当请求的服务响应时间超时或者服务不可用的时候zuul会直接响应异常</strong>，我们可以设置熔断，只需要在zuul的服务中配置即可，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> cn.tedu.zuul.hystrix;</div><div class="line"><span class="keyword">import</span> java.io.ByteArrayInputStream;</div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"><span class="keyword">import</span> java.io.InputStream;</div><div class="line"><span class="keyword">import</span> org.springframework.cloud.netflix.zuul.filters.route.FallbackProvider;</div><div class="line"><span class="keyword">import</span> org.springframework.http.HttpHeaders;</div><div class="line"><span class="keyword">import</span> org.springframework.http.HttpStatus;</div><div class="line"><span class="keyword">import</span> org.springframework.http.MediaType;</div><div class="line"><span class="keyword">import</span> org.springframework.http.client.ClientHttpResponse;</div><div class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 设置zuul的熔断</div><div class="line"> * 实现FallbackProvider接口</div><div class="line"> * 出现熔断的情况如下：</div><div class="line"> * 	1、当请求的服务响应超时</div><div class="line"> * 	2、当请求的服务不能正常提供服务</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span>  <span class="comment">//注入到IOC容器</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderFallback</span> <span class="keyword">implements</span> <span class="title">FallbackProvider</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 这个方法返回的是serviceId，如果返回的单个服务，那么只针对一个服务熔断</div><div class="line">	 * 如果想要针对所有的服务进行配置熔断，只需要返回*即可</div><div class="line">	 */</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getRoute</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"order-provider"</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 发生熔断的响应方法</div><div class="line">	 */</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> ClientHttpResponse <span class="title">fallbackResponse</span><span class="params">(String route, Throwable cause)</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">new</span> ClientHttpResponse() &#123;</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> HttpStatus <span class="title">getStatusCode</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">				<span class="keyword">return</span> HttpStatus.OK;</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getRawStatusCode</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">				<span class="keyword">return</span> <span class="number">200</span>;</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> String <span class="title">getStatusText</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">				<span class="keyword">return</span> <span class="string">"OK"</span>;</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> </span>&#123;</div><div class="line"></div><div class="line">			&#125;</div><div class="line">			</div><div class="line">			<span class="comment">//设置响应的内容</span></div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> InputStream <span class="title">getBody</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">				<span class="keyword">return</span> <span class="keyword">new</span> ByteArrayInputStream(<span class="string">"fallback"</span>.getBytes());</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> HttpHeaders <span class="title">getHeaders</span><span class="params">()</span> </span>&#123;</div><div class="line">				HttpHeaders headers = <span class="keyword">new</span> HttpHeaders();</div><div class="line">				headers.setContentType(MediaType.APPLICATION_JSON);</div><div class="line">				<span class="keyword">return</span> headers;</div><div class="line">			&#125;</div><div class="line">		&#125;;</div><div class="line"></div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="zuul的重试"><a href="#zuul的重试" class="headerlink" title="zuul的重试"></a>zuul的重试</h2><ul>
+<li>有时候因为网络或者其它原因，服务可能会暂时的不可用，这个时候我们希望可以再次对服务进行重试，Zuul也帮我们实现了此功能，需要结合Spring Retry 一起来实现</li>
+<li>依赖：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!-- 超时重试 --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.retry<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-retry<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>在配置文件中配置如下：<ul>
+<li><strong>在zuul中开启重试机制</strong></li>
+<li><strong>配置ribbon的重试次数</strong></li>
+<li><em>默认请求超时时间很短，还可以配置ribbon的超时时间</em></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="attr">zuul:</span></div><div class="line"><span class="attr">  retryable:</span> <span class="literal">true</span>  <span class="comment"># 开启重试机制</span></div><div class="line"></div><div class="line"><span class="attr">ribbon:</span>    <span class="comment"># zuul内部使用的是ribbon实现负载均衡的，因此配置ribbon的重试次数</span></div><div class="line"><span class="attr">  MaxAutoRetries:</span> <span class="number">2</span>   <span class="comment"># 同一个服务的最大重试次数</span></div><div class="line"><span class="attr">  MaxAutoRetriesNextServer:</span> <span class="number">2</span>   <span class="comment"># 对于切换的下一个实例的重试次数</span></div></pre></td></tr></table></figure>
+<h2 id="Zuul的高可用"><a href="#Zuul的高可用" class="headerlink" title="Zuul的高可用"></a>Zuul的高可用</h2><ul>
+<li>将多个zuul的微服务注册到Eureka中的（集群）</li>
+<li>Nginx和Zuul混搭的方式，可以将Nginx的请求转发到多个zuul中，zuul再路由给指定的微服务</li>
+</ul>
+<h2 id="完整的配置"><a href="#完整的配置" class="headerlink" title="完整的配置"></a>完整的配置</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="attr">zuul:</span></div><div class="line"><span class="comment">#  TokenFilter:</span></div><div class="line"><span class="comment">#    pre:</span></div><div class="line"><span class="comment">#      disable: true</span></div><div class="line">  <span class="comment"># 忽略真实的服务名称实例访问，是一个Set集合，可以指定多个，取消全部使用 "*"即可</span></div><div class="line"><span class="attr">  sensitive-headers:</span>   <span class="comment"># 设置所有的服务都取消敏感头信息</span></div><div class="line"><span class="attr">  ignored-services:</span></div><div class="line"><span class="bullet">  -</span> <span class="string">order-provider</span></div><div class="line"><span class="comment">#  ignored-patterns:</span></div><div class="line"><span class="comment">#  - /api-order/order/list   # 取消指定的一个</span></div><div class="line"><span class="comment">#  - /api-order/order/**     # 使用通配符去掉order下的全部接口</span></div><div class="line">  <span class="comment">#routes下面指定代理规则，可以同时指定多个</span></div><div class="line"><span class="attr">  routes:</span></div><div class="line">    <span class="comment">#指定第一个规则，这里的名称任意</span></div><div class="line"><span class="attr">    api-order:</span></div><div class="line">      <span class="comment">#指定的实例名称</span></div><div class="line"><span class="attr">      serviceId:</span> <span class="string">order-provider</span></div><div class="line">      <span class="comment">#指定可以访问的路由</span></div><div class="line"><span class="attr">      path:</span> <span class="string">/api-order/**</span></div></pre></td></tr></table></figure>
+<h2 id="消费端的使用"><a href="#消费端的使用" class="headerlink" title="消费端的使用"></a>消费端的使用</h2><ul>
+<li>前提：<ul>
+<li>zuul微服务（zuul-server）注册到eureka注册中心</li>
+<li>微服务提供者注册到Eureka注册中心，zuul-server配置的路由是api-order</li>
+<li>服务消费者注册到Eureka中</li>
+</ul>
+</li>
+<li>那么如果消费者想用通过zuul-server访问到服务提供者，那么可以直接写<code>http://zuul-server/api-order/order/{id}</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RestController</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderController</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String URI_PRFIX=<span class="string">"http://zuul-server/api-order"</span>;  <span class="comment">//直接使用zuul网管连接订单的服务提供者</span></div><div class="line">	</div><div class="line">	<span class="meta">@Resource</span></div><div class="line">	<span class="keyword">private</span> RestTemplate restTemplate;</div><div class="line">	</div><div class="line">	<span class="meta">@GetMapping</span>(<span class="string">"/order/&#123;id&#125;"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> Order <span class="title">getOrder</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span>Integer id) </span>&#123;</div><div class="line">		<span class="keyword">return</span> restTemplate.getForObject(URI_PRFIX+<span class="string">"/order/"</span>+id, Order.class);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><ul>
+<li><a href="https://gitee.com/chenjiabing666/zuul-server.git" target="_blank" rel="external">https://gitee.com/chenjiabing666/zuul-server.git</a></li>
+</ul>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ul>
+<li><a href="https://mp.weixin.qq.com/s/FsvZgkvpI0S6rposacGiiQ" target="_blank" rel="external">https://mp.weixin.qq.com/s/FsvZgkvpI0S6rposacGiiQ</a></li>
+<li><a href="https://windmt.com/2018/04/23/spring-cloud-11-zuul-filter/" target="_blank" rel="external">https://windmt.com/2018/04/23/spring-cloud-11-zuul-filter/</a></li>
+<li><a href="https://cloud.spring.io/spring-cloud-netflix/2.0.x/single/spring-cloud-netflix.html#_router_and_filter_zuul" target="_blank" rel="external">https://cloud.spring.io/spring-cloud-netflix/2.0.x/single/spring-cloud-netflix.html#_router_and_filter_zuul</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/12/25/Zuul/" data-title="爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/12/25/spring-sleuth-服务追踪/" title="spring sleuth 服务追踪">
+  <strong>上一篇：</strong><br/>
+  <span>
+  spring sleuth 服务追踪</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/12/25/Hystrix断路器、熔断器/"  title="Hystrix断路器、熔断器">
+ <strong>下一篇：</strong><br/> 
+ <span>Hystrix断路器、熔断器
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#tags-分布式"><span class="toc-number">1.</span> <span class="toc-text">tags: 分布式</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Zuul"><span class="toc-number"></span> <span class="toc-text">Zuul</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用"><span class="toc-number">2.</span> <span class="toc-text">使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#路由映射规则"><span class="toc-number">3.</span> <span class="toc-text">路由映射规则</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#代理名称"><span class="toc-number">3.1.</span> <span class="toc-text">代理名称</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置统一前缀"><span class="toc-number">4.</span> <span class="toc-text">设置统一前缀</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#某个uri取消路由"><span class="toc-number">5.</span> <span class="toc-text">某个uri取消路由</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#传递敏感头信息"><span class="toc-number">6.</span> <span class="toc-text">传递敏感头信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#过滤器"><span class="toc-number">7.</span> <span class="toc-text">过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#生命周期"><span class="toc-number">7.1.</span> <span class="toc-text">生命周期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#前置过滤器的使用"><span class="toc-number">7.2.</span> <span class="toc-text">前置过滤器的使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#后置过滤器的使用"><span class="toc-number">7.3.</span> <span class="toc-text">后置过滤器的使用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#禁用某种过滤器"><span class="toc-number">8.</span> <span class="toc-text">禁用某种过滤器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#限流"><span class="toc-number">9.</span> <span class="toc-text">限流</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#令牌桶算法"><span class="toc-number">9.1.</span> <span class="toc-text">令牌桶算法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实现"><span class="toc-number">9.1.1.</span> <span class="toc-text">实现</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#多维度限流"><span class="toc-number">9.2.</span> <span class="toc-text">多维度限流</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#鉴权"><span class="toc-number">10.</span> <span class="toc-text">鉴权</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实现-1"><span class="toc-number">10.1.</span> <span class="toc-text">实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#跨域"><span class="toc-number">11.</span> <span class="toc-text">跨域</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#超时时间设置"><span class="toc-number">12.</span> <span class="toc-text">超时时间设置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务熔断"><span class="toc-number">13.</span> <span class="toc-text">服务熔断</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#zuul的重试"><span class="toc-number">14.</span> <span class="toc-text">zuul的重试</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Zuul的高可用"><span class="toc-number">15.</span> <span class="toc-text">Zuul的高可用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#完整的配置"><span class="toc-number">16.</span> <span class="toc-text">完整的配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#消费端的使用"><span class="toc-number">17.</span> <span class="toc-text">消费端的使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#源码"><span class="toc-number">18.</span> <span class="toc-text">源码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">19.</span> <span class="toc-text">参考文章</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>26</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>34</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>15</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>5</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>8</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>26</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>20</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coolshell.cn/" target="_blank" title="酷壳网">酷壳网</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 人前显贵人后受罪 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="Chenjiabing">Chenjiabing</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

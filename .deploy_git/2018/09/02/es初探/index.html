@@ -1,0 +1,811 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>es初探 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="ES初探文档元数据1、_index ：文档在哪存放
+2、_type ：文档表示的对象类别
+3、_id ：文档唯一标识
+自动生成Id1、如果在Put数据的时候没有指定Id，那么会自动生成一个唯一的ID，如下：
+12345678910111213141516171819202122POST /website/blog/&amp;#123;  &quot;title&quot;: &quot;My second blog entry&quot;,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="es初探">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/09/02/es初探/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="ES初探文档元数据1、_index ：文档在哪存放
+2、_type ：文档表示的对象类别
+3、_id ：文档唯一标识
+自动生成Id1、如果在Put数据的时候没有指定Id，那么会自动生成一个唯一的ID，如下：
+12345678910111213141516171819202122POST /website/blog/&amp;#123;  &quot;title&quot;: &quot;My second blog entry&quot;,">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T05:53:31.953Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="es初探">
+<meta name="twitter:description" content="ES初探文档元数据1、_index ：文档在哪存放
+2、_type ：文档表示的对象类别
+3、_id ：文档唯一标识
+自动生成Id1、如果在Put数据的时候没有指定Id，那么会自动生成一个唯一的ID，如下：
+12345678910111213141516171819202122POST /website/blog/&amp;#123;  &quot;title&quot;: &quot;My second blog entry&quot;,">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/09/02/es初探/" title="es初探" itemprop="url">es初探</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-09-02T11:35:01.000Z" itemprop="datePublished"> 发表于 2018-09-02</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ES初探"><span class="toc-number">1.</span> <span class="toc-text">ES初探</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#文档元数据"><span class="toc-number">1.1.</span> <span class="toc-text">文档元数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自动生成Id"><span class="toc-number">1.2.</span> <span class="toc-text">自动生成Id</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#版本号-version"><span class="toc-number">1.3.</span> <span class="toc-text">版本号 _version</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检索文档的部分字段"><span class="toc-number">1.4.</span> <span class="toc-text">检索文档的部分字段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#判断文档是否存在"><span class="toc-number">1.5.</span> <span class="toc-text">判断文档是否存在</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建新文档"><span class="toc-number">1.6.</span> <span class="toc-text">创建新文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#批量获取文档"><span class="toc-number">1.7.</span> <span class="toc-text">批量获取文档</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#批量获取不同的文档"><span class="toc-number">1.7.1.</span> <span class="toc-text">批量获取不同的文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#批量获取单个文档的值"><span class="toc-number">1.7.2.</span> <span class="toc-text">批量获取单个文档的值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代价较小的批量操作"><span class="toc-number">1.8.</span> <span class="toc-text">代价较小的批量操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#空搜索"><span class="toc-number">1.9.</span> <span class="toc-text">空搜索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多索引，多文档的搜索"><span class="toc-number">1.10.</span> <span class="toc-text">多索引，多文档的搜索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分页查询【超过1000条的分页数据不推荐】"><span class="toc-number">1.11.</span> <span class="toc-text">分页查询【超过1000条的分页数据不推荐】</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#轻量搜索【不推荐使用】"><span class="toc-number">1.12.</span> <span class="toc-text">轻量搜索【不推荐使用】</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#倒排索引"><span class="toc-number">1.13.</span> <span class="toc-text">倒排索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析与分析器"><span class="toc-number">1.14.</span> <span class="toc-text">分析与分析器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#映射"><span class="toc-number">1.15.</span> <span class="toc-text">映射</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#copy-to"><span class="toc-number">1.16.</span> <span class="toc-text">copy_to</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#字符串排序"><span class="toc-number">1.17.</span> <span class="toc-text">字符串排序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.18.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="ES初探"><a href="#ES初探" class="headerlink" title="ES初探"></a>ES初探</h1><h2 id="文档元数据"><a href="#文档元数据" class="headerlink" title="文档元数据"></a>文档元数据</h2><p>1、<code>_index</code> ：文档在哪存放</p>
+<p>2、<code>_type</code> ：文档表示的对象类别</p>
+<p>3、<code>_id</code> ：文档唯一标识</p>
+<h2 id="自动生成Id"><a href="#自动生成Id" class="headerlink" title="自动生成Id"></a>自动生成Id</h2><p>1、如果在Put数据的时候没有指定Id，那么会自动生成一个唯一的ID，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">POST /website/blog/</div><div class="line">&#123;</div><div class="line">  <span class="string">"title"</span>: <span class="string">"My second blog entry"</span>,</div><div class="line">  <span class="string">"text"</span>:  <span class="string">"Still trying this out..."</span>,</div><div class="line">  <span class="string">"date"</span>:  <span class="string">"2014/01/01"</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">//生成的数据如下：</span></div><div class="line">&#123;</div><div class="line">  <span class="string">"_index"</span>: <span class="string">"website"</span>,</div><div class="line">  <span class="string">"_type"</span>: <span class="string">"blog"</span>,</div><div class="line">  <span class="string">"_id"</span>: <span class="string">"AWVlzX7Ur7Pz0UFcO81u"</span>,   <span class="comment">//自动生成的Id</span></div><div class="line">  <span class="string">"_version"</span>: <span class="number">1</span>,</div><div class="line">  <span class="string">"result"</span>: <span class="string">"created"</span>,</div><div class="line">  <span class="string">"_shards"</span>: &#123;</div><div class="line">    <span class="string">"total"</span>: <span class="number">2</span>,</div><div class="line">    <span class="string">"successful"</span>: <span class="number">1</span>,</div><div class="line">    <span class="string">"failed"</span>: <span class="number">0</span></div><div class="line">  &#125;,</div><div class="line">  <span class="string">"created"</span>: <span class="keyword">true</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="版本号-version"><a href="#版本号-version" class="headerlink" title="版本号 _version"></a>版本号 _version</h2><p>1、ElasticSearch为了实现并发访问，每次实行更新、删除、添加之后都会为版本号自增1。</p>
+<p>2、在删除，更新的之前会保存这个版本号，更新删除操作执行完成之后会自动比较此时的version的值，如果不同，表示被别的进程改变了，一次保证并发的安全性</p>
+<h2 id="检索文档的部分字段"><a href="#检索文档的部分字段" class="headerlink" title="检索文档的部分字段"></a>检索文档的部分字段</h2><p>1、当我们检索字段的时候，默认会为我们查询全部的文档字段，但是我们 可以使用<code>_source</code>指定返回的字段，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">GET /website/blog/<span class="number">123</span>?_source=title,text</div></pre></td></tr></table></figure>
+<h2 id="判断文档是否存在"><a href="#判断文档是否存在" class="headerlink" title="判断文档是否存在"></a>判断文档是否存在</h2><p>1、使用<code>HEAD</code>风格的请求方式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">HEAD /website/blog/<span class="number">123</span></div></pre></td></tr></table></figure>
+<h2 id="创建新文档"><a href="#创建新文档" class="headerlink" title="创建新文档"></a>创建新文档</h2><p>1、文档的确定有三个元数据指定：index,type,id</p>
+<p>2、创建文档的时候，如果想不覆盖原来的文档，那么需要检查文档是否存在，如果存在就不插入，有两种方式，如下：</p>
+<p>​    1、使用<code>op_type=create</code>，如果文档已经存在了，那么返回409状态码。如果创建成功了，那么会返回<code>201 Created</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">PUT /website/blog/<span class="number">123</span>?op_type=create</div><div class="line">&#123;</div><div class="line">  <span class="string">"title"</span>: <span class="string">"My first blog entry"</span>,</div><div class="line">  <span class="string">"text"</span>:  <span class="string">"Just trying this out..."</span>,</div><div class="line">  <span class="string">"date"</span>:  <span class="string">"2014/01/02"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>​    2、使用<code>_create</code>，如果失败返回409,如果创建成功了，那么会返回<code>201 Created</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">PUT /website/blog/<span class="number">123</span>/_create</div><div class="line">&#123;</div><div class="line">  <span class="string">"title"</span>: <span class="string">"My first blog entry"</span>,</div><div class="line">  <span class="string">"text"</span>:  <span class="string">"Just trying this out..."</span>,</div><div class="line">  <span class="string">"date"</span>:  <span class="string">"2014/01/02"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="批量获取文档"><a href="#批量获取文档" class="headerlink" title="批量获取文档"></a>批量获取文档</h2><p>1、ElasticSearch可以批量获取多个文档中的数据，也可以批量获单个文档中的多条数据</p>
+<h3 id="批量获取不同的文档"><a href="#批量获取不同的文档" class="headerlink" title="批量获取不同的文档"></a>批量获取不同的文档</h3><p>1、使用<code>mgetAPI</code>批量获取文档</p>
+<p>​    1、<code>docs</code>：指定了要获取的文档</p>
+<p>​    2、<code>_source</code>：指定需要返回的字段，不指定，默认返回全部的字段</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">GET /_mget</div><div class="line">&#123;</div><div class="line">   <span class="string">"docs"</span> : [</div><div class="line">      &#123;</div><div class="line">         <span class="string">"_index"</span> : <span class="string">"website"</span>,   <span class="comment">//文档的索引</span></div><div class="line">         <span class="string">"_type"</span> :  <span class="string">"blog"</span>,      <span class="comment">//文档类型</span></div><div class="line">         <span class="string">"_id"</span> :    <span class="number">2</span>             <span class="comment">// Id</span></div><div class="line">      &#125;,</div><div class="line">      &#123;</div><div class="line">         <span class="string">"_index"</span> : <span class="string">"website"</span>,</div><div class="line">         <span class="string">"_type"</span> :  <span class="string">"pageviews"</span>,</div><div class="line">         <span class="string">"_id"</span> :    <span class="number">1</span>,</div><div class="line">         <span class="string">"_source"</span>: <span class="string">"views"</span>        </div><div class="line">      &#125;</div><div class="line">   ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>2、响应的内容也是和请求的顺序一致，如下：</p>
+<p>​    1、查询到的数据存储在<code>docs</code>数组中，字段封装在<code>_source</code>中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">   <span class="string">"docs"</span> : [</div><div class="line">      &#123;</div><div class="line">         <span class="string">"_index"</span> :   <span class="string">"website"</span>,</div><div class="line">         <span class="string">"_id"</span> :      <span class="string">"2"</span>,</div><div class="line">         <span class="string">"_type"</span> :    <span class="string">"blog"</span>,</div><div class="line">         <span class="string">"found"</span> :    <span class="keyword">true</span>,</div><div class="line">         <span class="string">"_source"</span> : &#123;</div><div class="line">            <span class="string">"text"</span> :  <span class="string">"This is a piece of cake..."</span>,</div><div class="line">            <span class="string">"title"</span> : <span class="string">"My first external blog entry"</span></div><div class="line">         &#125;,</div><div class="line">         <span class="string">"_version"</span> : <span class="number">10</span></div><div class="line">      &#125;,</div><div class="line">      &#123;</div><div class="line">         <span class="string">"_index"</span> :   <span class="string">"website"</span>,</div><div class="line">         <span class="string">"_id"</span> :      <span class="string">"1"</span>,</div><div class="line">         <span class="string">"_type"</span> :    <span class="string">"pageviews"</span>,</div><div class="line">         <span class="string">"found"</span> :    <span class="keyword">true</span>,</div><div class="line">         <span class="string">"_version"</span> : <span class="number">2</span>,</div><div class="line">         <span class="string">"_source"</span> : &#123;</div><div class="line">            <span class="string">"views"</span> : <span class="number">2</span></div><div class="line">         &#125;</div><div class="line">      &#125;</div><div class="line">   ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="批量获取单个文档的值"><a href="#批量获取单个文档的值" class="headerlink" title="批量获取单个文档的值"></a>批量获取单个文档的值</h3><p>1、如果只是获取单个文档中的多条数据，那么只需要在GET请求中指定index和type即可，此时只需要传入不同数据的Id即可，如下：</p>
+<p>​    1、其中<code>ids</code>是一个数组，用来封装数据的Id</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">GET /website/blog/_mget</div><div class="line">&#123;</div><div class="line">   <span class="string">"ids"</span> : [ <span class="string">"2"</span>, <span class="string">"1"</span> ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>​    2、请求成功的顺序是按照ids数组中的Id返回的，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="string">"docs"</span>: [</div><div class="line">    &#123;</div><div class="line">      <span class="string">"_index"</span>: <span class="string">"website"</span>,</div><div class="line">      <span class="string">"_type"</span>: <span class="string">"blog"</span>,</div><div class="line">      <span class="string">"_id"</span>: <span class="string">"123"</span>,</div><div class="line">      <span class="string">"_version"</span>: <span class="number">1</span>,</div><div class="line">      <span class="string">"found"</span>: <span class="keyword">true</span>,</div><div class="line">      <span class="string">"_source"</span>: &#123;</div><div class="line">        <span class="string">"title"</span>: <span class="string">"My first blog entry"</span>,</div><div class="line">        <span class="string">"text"</span>: <span class="string">"Just trying this out..."</span>,</div><div class="line">        <span class="string">"date"</span>: <span class="string">"2014/01/01"</span></div><div class="line">      &#125;</div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      <span class="string">"_index"</span>: <span class="string">"website"</span>,</div><div class="line">      <span class="string">"_type"</span>: <span class="string">"blog"</span>,</div><div class="line">      <span class="string">"_id"</span>: <span class="string">"1"</span>,</div><div class="line">      <span class="string">"_version"</span>: <span class="number">2</span>,</div><div class="line">      <span class="string">"found"</span>: <span class="keyword">true</span>,</div><div class="line">      <span class="string">"_source"</span>: &#123;</div><div class="line">        <span class="string">"title"</span>: <span class="string">"My first blog entry"</span>,</div><div class="line">        <span class="string">"text"</span>: <span class="string">"Starting to get the hang of this..."</span></div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>2、<strong>即使在GET请求中指定了index和type的值，但是我们也可以在下面覆盖他们的值，这样就可以查询不同文档或者不同索引中的数据了，如下：</strong></p>
+<p>​    1、不想覆盖的可以不用自定index和type的值，只需要指定的<code>id</code>的值即可</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">GET /website/blog/_mget</div><div class="line">&#123;</div><div class="line">   <span class="string">"docs"</span> : [</div><div class="line">      &#123; <span class="string">"_id"</span> : <span class="number">2</span> &#125;,</div><div class="line">      &#123; <span class="string">"_type"</span> : <span class="string">"pageviews"</span>, <span class="string">"_id"</span> :   <span class="number">1</span> &#125;</div><div class="line">   ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="代价较小的批量操作"><a href="#代价较小的批量操作" class="headerlink" title="代价较小的批量操作"></a>代价较小的批量操作</h2><p>1、<a href="https://elasticsearch.cn/book/elasticsearch_definitive_guide_2.x/bulk.html" target="_blank" rel="external">https://elasticsearch.cn/book/elasticsearch_definitive_guide_2.x/bulk.html</a></p>
+<h2 id="空搜索"><a href="#空搜索" class="headerlink" title="空搜索"></a>空搜索</h2><p>1、返回集群下的所有的索引和文档，不需要指定索引、文档、id。默认只是返回前10条</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">GET /_search</div></pre></td></tr></table></figure>
+<p>2、返回结果中的各个值的含义参见：<a href="https://elasticsearch.cn/book/elasticsearch_definitive_guide_2.x/empty-search.html#_shards" target="_blank" rel="external">https://elasticsearch.cn/book/elasticsearch_definitive_guide_2.x/empty-search.html#_shards</a></p>
+<h2 id="多索引，多文档的搜索"><a href="#多索引，多文档的搜索" class="headerlink" title="多索引，多文档的搜索"></a>多索引，多文档的搜索</h2><p>1、<code>/_search</code> ：在所有的索引中搜索所有的类型</p>
+<p>2、<code>/gb/_search</code> ：在 <code>gb</code> 索引中搜索所有的类型</p>
+<p>3、<code>/gb,us/_search</code>：在 <code>gb</code> 和 <code>us</code> 索引中搜索所有的文档</p>
+<p>4、<code>/g*,u*/_search</code>：在任何以 <code>g</code> 或者 <code>u</code> 开头的索引中搜索所有的类型</p>
+<p>5、<code>/gb/user/_search</code>：在 <code>gb</code> 索引中搜索 <code>user</code> 类型</p>
+<p>6、<code>/gb,us/user,tweet/_search</code>：在 <code>gb</code> 和 <code>us</code> 索引中搜索 <code>user</code> 和 <code>tweet</code> 类型</p>
+<p>7、<code>/_all/user,tweet/_search</code>：在所有的索引中搜索 <code>user</code> 和 <code>tweet</code> 类型</p>
+<h2 id="分页查询【超过1000条的分页数据不推荐】"><a href="#分页查询【超过1000条的分页数据不推荐】" class="headerlink" title="分页查询【超过1000条的分页数据不推荐】"></a>分页查询【超过1000条的分页数据不推荐】</h2><p>1、<a href="https://elasticsearch.cn/book/elasticsearch_definitive_guide_2.x/pagination.html#pagination" target="_blank" rel="external">https://elasticsearch.cn/book/elasticsearch_definitive_guide_2.x/pagination.html#pagination</a></p>
+<p>2、<code>size</code> ：显示应该返回的结果数量，默认是 <code>10</code></p>
+<p>3、<code>from</code> ：显示应该跳过的初始结果数量，默认是 <code>0</code></p>
+<p>4、实例如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">GET /_search?size=<span class="number">5</span>     <span class="comment">//查询前5条的数据</span></div><div class="line">GET /_search?size=<span class="number">5</span>&amp;from=<span class="number">5</span>  <span class="comment">//查询第2页，每页显示5条数据</span></div><div class="line">GET /_search?size=<span class="number">5</span>&amp;from=<span class="number">10</span>  <span class="comment">//查询第3页的数据，每页显示5条数据</span></div></pre></td></tr></table></figure>
+<p>5、分布式中的深度分页的问题，可以在文档中查看详细信息。总之分页请求的数据不要超过1000条</p>
+<p>6、<strong>在 <a href="https://elasticsearch.cn/book/elasticsearch_definitive_guide_2.x/reindex.html" target="_blank" rel="external">重新索引你的数据</a> 中解释了如何 <em>能够</em> 有效获取大量的文档。</strong> </p>
+<h2 id="轻量搜索【不推荐使用】"><a href="#轻量搜索【不推荐使用】" class="headerlink" title="轻量搜索【不推荐使用】"></a>轻量搜索【不推荐使用】</h2><p>0、<a href="https://elasticsearch.cn/book/elasticsearch_definitive_guide_2.x/search-lite.html#query-string-query" target="_blank" rel="external">https://elasticsearch.cn/book/elasticsearch_definitive_guide_2.x/search-lite.html#query-string-query</a></p>
+<p>1、返回group索引中文档类型为<code>employee</code>中的内容，筛选条件为：文档中的所有字段的值只要有等于<code>Smith</code>的都返回，如下：</p>
+<p>​    1、<code>_all</code>：用于指定对文档中的所有字段进行筛选，只要有一个字段成立，那么这个文档就会被选中，但是返回的结果中有相关度的分析</p>
+<p>​    2、如果不指定任何字段，那么默认就是使用<code>_all</code>进行筛选</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">GET /group/employee/_search?q=Smith</div><div class="line"></div><div class="line"><span class="comment">//这条语句的效果和上面的语句一样</span></div><div class="line">GET /_all/employee/_search?q=_all:Smith</div></pre></td></tr></table></figure>
+<p>2、查询一个文档中指定字段的值等于<code>Smith</code>，如下我们查询文档中的字段<code>last_name</code>这个值等于Smith的所有文档内容</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">GET /group/employee/_search?q=last_name:Smith</div></pre></td></tr></table></figure>
+<h2 id="倒排索引"><a href="#倒排索引" class="headerlink" title="倒排索引"></a>倒排索引</h2><p>1、<a href="https://elasticsearch.cn/book/elasticsearch_definitive_guide_2.x/inverted-index.html" target="_blank" rel="external">https://elasticsearch.cn/book/elasticsearch_definitive_guide_2.x/inverted-index.html</a></p>
+<p>2、创建规范：</p>
+<p>​    1、单词不区分大小写</p>
+<p>​    2、不区分单复数，将单数和复数的单词一律提取出来单数即可</p>
+<p>​    3、意思相近的词只提取一个</p>
+<p>​    </p>
+<h2 id="分析与分析器"><a href="#分析与分析器" class="headerlink" title="分析与分析器"></a>分析与分析器</h2><p>1、<a href="https://elasticsearch.cn/book/elasticsearch_definitive_guide_2.x/analysis-intro.html" target="_blank" rel="external">https://elasticsearch.cn/book/elasticsearch_definitive_guide_2.x/analysis-intro.html</a></p>
+<p>2、什么时候使用分词器？</p>
+<p>​    1、查找全文域的时候使用，比如使用轻量搜索中的<code>_all</code></p>
+<p>​    2、精确查找不使用分词器，比如Date类型的数据，默认将其看成单独的一个词条</p>
+<p>3、测试分词器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">GET /_analyze</div><div class="line">&#123;</div><div class="line">  <span class="string">"analyzer"</span>: <span class="string">"standard"</span>,   <span class="comment">//指定分词器</span></div><div class="line">  <span class="string">"text"</span>: <span class="string">"Text to analyze"</span>   <span class="comment">//指定需要分割的字符串</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>返回结果如下：</p>
+<p>​    1、<code>token</code> 是实际存储到索引中的词条。 <code>position</code> 指明词条在原始文本中出现的位置。 <code>start_offset</code> 和 <code>end_offset</code> 指明字符在原始字符串中的位置。 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  <span class="string">"tokens"</span>: [</div><div class="line">    &#123;</div><div class="line">      <span class="string">"token"</span>: <span class="string">"text"</span>,</div><div class="line">      <span class="string">"start_offset"</span>: <span class="number">0</span>,</div><div class="line">      <span class="string">"end_offset"</span>: <span class="number">4</span>,</div><div class="line">      <span class="string">"type"</span>: <span class="string">"&lt;ALPHANUM&gt;"</span>,</div><div class="line">      <span class="string">"position"</span>: <span class="number">0</span></div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      <span class="string">"token"</span>: <span class="string">"to"</span>,</div><div class="line">      <span class="string">"start_offset"</span>: <span class="number">5</span>,</div><div class="line">      <span class="string">"end_offset"</span>: <span class="number">7</span>,</div><div class="line">      <span class="string">"type"</span>: <span class="string">"&lt;ALPHANUM&gt;"</span>,</div><div class="line">      <span class="string">"position"</span>: <span class="number">1</span></div><div class="line">    &#125;,</div><div class="line">    &#123;</div><div class="line">      <span class="string">"token"</span>: <span class="string">"analyze"</span>,</div><div class="line">      <span class="string">"start_offset"</span>: <span class="number">8</span>,</div><div class="line">      <span class="string">"end_offset"</span>: <span class="number">15</span>,</div><div class="line">      <span class="string">"type"</span>: <span class="string">"&lt;ALPHANUM&gt;"</span>,</div><div class="line">      <span class="string">"position"</span>: <span class="number">2</span></div><div class="line">    &#125;</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="映射"><a href="#映射" class="headerlink" title="映射"></a>映射</h2><p>1、<a href="https://elasticsearch.cn/book/elasticsearch_definitive_guide_2.x/mapping-intro.html" target="_blank" rel="external">https://elasticsearch.cn/book/elasticsearch_definitive_guide_2.x/mapping-intro.html</a></p>
+<p>2、Elasticsearch 支持 如下简单域类型：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">字符串: string</div><div class="line">整数 : <span class="keyword">byte</span>, <span class="keyword">short</span>, integer, <span class="keyword">long</span></div><div class="line">浮点数: <span class="keyword">float</span>, <span class="keyword">double</span></div><div class="line">布尔型: <span class="keyword">boolean</span></div><div class="line">日期: date</div></pre></td></tr></table></figure>
+<p>3、如果我们在添加数据的时候使用双引号包裹起来的，那么会被动态映射为字符串类型。</p>
+<h2 id="copy-to"><a href="#copy-to" class="headerlink" title="copy_to"></a>copy_to</h2><p>1、我们在查询文本的时候可能会同时会对多个文本中的内容进行查询匹配，那么就需要对多个字段进行筛选了，比如我们需要对name和address这两个字段同时进行匹配，那么效率肯定会比对一个字段进行筛选的低，因此可以使用copy_to字段将这两个字段中的内容存储在同一个字段中，那么就可以实现对一个字段的查询等同于对两个字段的查询，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">PUT lib/user/_mapping</div><div class="line">&#123;</div><div class="line">  <span class="string">"properties"</span>: &#123;</div><div class="line">    <span class="string">"name"</span>:&#123;</div><div class="line">      <span class="string">"type"</span>: <span class="string">"text"</span>,</div><div class="line">      <span class="string">"copy_to"</span>: <span class="string">"name_address"</span>    <span class="comment">//将name这个字段的文本内容复制到name_address中</span></div><div class="line">    &#125;,</div><div class="line">    <span class="string">"age"</span>:&#123;</div><div class="line">      <span class="string">"type"</span>: <span class="string">"integer"</span></div><div class="line">    &#125;,</div><div class="line">    <span class="string">"address"</span>:&#123;</div><div class="line">      <span class="string">"type"</span>: <span class="string">"text"</span>,</div><div class="line">      <span class="string">"copy_to"</span>: <span class="string">"name_address"</span>   <span class="comment">// //将address这个字段的文本内容复制到name_address中</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>2、此时就可以使用query查询了，如下：查询名字为Jack，address为jiangsusheng的</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"match"</span>: &#123;</div><div class="line">      <span class="string">"name_address"</span>: <span class="string">"Jack,jiangsusheng"</span>   <span class="comment">//直接使用name_address即可</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//等同于</span></div><div class="line"></div><div class="line">GET /lib/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"bool"</span>: &#123;</div><div class="line">      <span class="string">"must"</span>: [</div><div class="line">        &#123;<span class="string">"term"</span>:&#123;<span class="string">"name"</span>:<span class="string">"Jack"</span>&#125;&#125;,</div><div class="line">        &#123;<span class="string">"match"</span>:&#123;<span class="string">"address"</span>:<span class="string">"jiangsusheng"</span>&#125;&#125;</div><div class="line">      ]</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="字符串排序"><a href="#字符串排序" class="headerlink" title="字符串排序"></a>字符串排序</h2><ul>
+<li>默认字符串是不能排序的，因为自动创建的映射将字符串映射为<code>text</code>类型，将会被分词，因此不能进行排序，但是我们知道字符串类型中有一个<code>keyword</code>类型不会被分词，因此我们可以再为需要排序的字符串字段指定一个<code>keyword</code>类型的字段用于排序，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">PUT /lib4</div><div class="line">&#123;</div><div class="line">  <span class="string">"settings"</span>:&#123;</div><div class="line">    <span class="string">"number_of_shards"</span>:<span class="number">5</span>,   <span class="comment">//主分片的数量</span></div><div class="line">    <span class="string">"number_of_replicas"</span>:<span class="number">0</span>   <span class="comment">//副本分片的数量</span></div><div class="line">  &#125;,</div><div class="line">    <span class="string">"mappings"</span>:&#123;</div><div class="line">      <span class="string">"user"</span>:&#123;</div><div class="line">        <span class="string">"properties"</span>: &#123;</div><div class="line">    <span class="string">"name"</span>:&#123;</div><div class="line">      <span class="string">"type"</span>: <span class="string">"text"</span>,</div><div class="line">      <span class="string">"copy_to"</span>: <span class="string">"name_address"</span>,</div><div class="line">      <span class="string">"fields"</span>: &#123;    <span class="comment">//使用fields指定另外一个字段raw</span></div><div class="line">        <span class="string">"raw"</span>:&#123;    </div><div class="line">          <span class="string">"type"</span>: <span class="string">"keyword"</span>     <span class="comment">//类型为keyword</span></div><div class="line">        &#125;</div><div class="line">      &#125;，</div><div class="line">      <span class="string">"fielddata"</span>: <span class="keyword">true</span>   <span class="comment">//将fielddata指定为true</span></div><div class="line">    &#125;,</div><div class="line">    <span class="string">"age"</span>:&#123;</div><div class="line">      <span class="string">"type"</span>: <span class="string">"integer"</span></div><div class="line">    &#125;,</div><div class="line">    <span class="string">"address"</span>:&#123;</div><div class="line">      <span class="string">"type"</span>: <span class="string">"text"</span>,</div><div class="line">      <span class="string">"copy_to"</span>: <span class="string">"name_address"</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  </div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment">//排序如下：</span></div><div class="line"></div><div class="line">GET /lib4/user/_search</div><div class="line">&#123;</div><div class="line">  <span class="string">"query"</span>: &#123;</div><div class="line">    <span class="string">"match"</span>: &#123;</div><div class="line">      <span class="string">"age"</span>:<span class="number">22</span></div><div class="line">    &#125;</div><div class="line">  &#125;,</div><div class="line">  </div><div class="line">  <span class="string">"sort"</span>: [</div><div class="line">    &#123;</div><div class="line">      <span class="string">"name"</span>: &#123;    <span class="comment">//对字符串类型的name进行排序</span></div><div class="line">        <span class="string">"order"</span>: <span class="string">"desc"</span></div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  ]</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Elasticsearch/">Elasticsearch</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Elasticsearch/">Elasticsearch</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/09/02/es初探/" data-title="es初探 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/09/02/es中的mapping/" title="es中的mapping">
+  <strong>上一篇：</strong><br/>
+  <span>
+  es中的mapping</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/09/02/es的crud/"  title="es的crud">
+ <strong>下一篇：</strong><br/> 
+ <span>es的crud
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ES初探"><span class="toc-number">1.</span> <span class="toc-text">ES初探</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#文档元数据"><span class="toc-number">1.1.</span> <span class="toc-text">文档元数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自动生成Id"><span class="toc-number">1.2.</span> <span class="toc-text">自动生成Id</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#版本号-version"><span class="toc-number">1.3.</span> <span class="toc-text">版本号 _version</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#检索文档的部分字段"><span class="toc-number">1.4.</span> <span class="toc-text">检索文档的部分字段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#判断文档是否存在"><span class="toc-number">1.5.</span> <span class="toc-text">判断文档是否存在</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建新文档"><span class="toc-number">1.6.</span> <span class="toc-text">创建新文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#批量获取文档"><span class="toc-number">1.7.</span> <span class="toc-text">批量获取文档</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#批量获取不同的文档"><span class="toc-number">1.7.1.</span> <span class="toc-text">批量获取不同的文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#批量获取单个文档的值"><span class="toc-number">1.7.2.</span> <span class="toc-text">批量获取单个文档的值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代价较小的批量操作"><span class="toc-number">1.8.</span> <span class="toc-text">代价较小的批量操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#空搜索"><span class="toc-number">1.9.</span> <span class="toc-text">空搜索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多索引，多文档的搜索"><span class="toc-number">1.10.</span> <span class="toc-text">多索引，多文档的搜索</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分页查询【超过1000条的分页数据不推荐】"><span class="toc-number">1.11.</span> <span class="toc-text">分页查询【超过1000条的分页数据不推荐】</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#轻量搜索【不推荐使用】"><span class="toc-number">1.12.</span> <span class="toc-text">轻量搜索【不推荐使用】</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#倒排索引"><span class="toc-number">1.13.</span> <span class="toc-text">倒排索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分析与分析器"><span class="toc-number">1.14.</span> <span class="toc-text">分析与分析器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#映射"><span class="toc-number">1.15.</span> <span class="toc-text">映射</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#copy-to"><span class="toc-number">1.16.</span> <span class="toc-text">copy_to</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#字符串排序"><span class="toc-number">1.17.</span> <span class="toc-text">字符串排序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.18.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

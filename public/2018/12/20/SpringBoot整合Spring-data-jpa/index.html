@@ -1,0 +1,965 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>SpringBoot整合Spring-data-jpa | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="SpringBoot整合Spring data jpa依赖1234567891011121314151617&amp;lt;dependency&amp;gt;	&amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;	&amp;lt;artifactId&amp;gt;spring-boot-starter-data-jpa&amp;lt;/artifactId&amp;gt;&amp;lt;/d">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot整合Spring-data-jpa">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/12/20/SpringBoot整合Spring-data-jpa/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="SpringBoot整合Spring data jpa依赖1234567891011121314151617&amp;lt;dependency&amp;gt;	&amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;	&amp;lt;artifactId&amp;gt;spring-boot-starter-data-jpa&amp;lt;/artifactId&amp;gt;&amp;lt;/d">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:11:40.752Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SpringBoot整合Spring-data-jpa">
+<meta name="twitter:description" content="SpringBoot整合Spring data jpa依赖1234567891011121314151617&amp;lt;dependency&amp;gt;	&amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt;	&amp;lt;artifactId&amp;gt;spring-boot-starter-data-jpa&amp;lt;/artifactId&amp;gt;&amp;lt;/d">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/12/20/SpringBoot整合Spring-data-jpa/" title="SpringBoot整合Spring-data-jpa" itemprop="url">SpringBoot整合Spring-data-jpa</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-12-20T15:50:34.000Z" itemprop="datePublished"> 发表于 2018-12-20</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SpringBoot整合Spring-data-jpa"><span class="toc-number">1.</span> <span class="toc-text">SpringBoot整合Spring data jpa</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#依赖"><span class="toc-number">1.1.</span> <span class="toc-text">依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#主键生成策略"><span class="toc-number">1.2.</span> <span class="toc-text">主键生成策略</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置"><span class="toc-number">1.3.</span> <span class="toc-text">配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一个实体类"><span class="toc-number">1.4.</span> <span class="toc-text">创建一个实体类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本的查询"><span class="toc-number">1.5.</span> <span class="toc-text">基本的查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义查询-Query"><span class="toc-number">1.6.</span> <span class="toc-text">自定义查询@Query</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用HQL语句查询"><span class="toc-number">1.6.1.</span> <span class="toc-text">使用HQL语句查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用sql语句查询"><span class="toc-number">1.6.2.</span> <span class="toc-text">使用sql语句查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除和修改"><span class="toc-number">1.6.3.</span> <span class="toc-text">删除和修改</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复杂条件查询"><span class="toc-number">1.7.</span> <span class="toc-text">复杂条件查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分页查询"><span class="toc-number">1.8.</span> <span class="toc-text">分页查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PageRequest"><span class="toc-number">1.8.1.</span> <span class="toc-text">PageRequest</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Page"><span class="toc-number">1.8.2.</span> <span class="toc-text">Page</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#简单查询"><span class="toc-number">1.8.3.</span> <span class="toc-text">简单查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#简单条件分页查询"><span class="toc-number">1.8.4.</span> <span class="toc-text">简单条件分页查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#复杂条件分页查询"><span class="toc-number">1.8.5.</span> <span class="toc-text">复杂条件分页查询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查找关键字"><span class="toc-number">1.9.</span> <span class="toc-text">查找关键字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.10.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.11.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="SpringBoot整合Spring-data-jpa"><a href="#SpringBoot整合Spring-data-jpa" class="headerlink" title="SpringBoot整合Spring data jpa"></a>SpringBoot整合Spring data jpa</h1><h2 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-jpa<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="comment">&lt;!--mysql驱动--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line"></div><div class="line"><span class="comment">&lt;!-- 添加数据库连接池 druid --&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>druid-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>1.1.9<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="主键生成策略"><a href="#主键生成策略" class="headerlink" title="主键生成策略"></a>主键生成策略</h2><ul>
+<li><code>@GeneratedValue(strategy=GenerationType.xxx)</code>指定主键的生成策略<ul>
+<li><strong><code>IDENTITY</code>：根据数据库的主键自增长策略</strong></li>
+<li><code>GenerationType.TABLE</code>：使用一个特定的数据库表格来保存主键</li>
+<li><code>GenerationType.SEQUENCE</code>：在某些数据库中,不支持主键自增长,比如Oracle,其提供了一种叫做”序列(sequence)”的机制生成主键。此时,GenerationType.SEQUENCE就可以作为主键生成策略。该策略的不足之处正好与TABLE相反,由于只有部分数据库(Oracle,PostgreSQL,DB2)支持序列对象,所以该策略一般不应用于其他数据库。类似的,该策略一般与另外一个注解一起使用@SequenceGenerator,@SequenceGenerator注解指定了生成主键的序列.然后JPA会根据注解内容创建一个序列(或使用一个现有的序列)。如果不指定序列,则会自动生成一个序列SEQ_GEN_SEQUENCE</li>
+<li><code>GenerationType.AUTO</code>：把主键生成策略交给持久化引擎(persistence engine),持久化引擎会根据数据库在以上三种主键生成策略中选择其中一种。此种主键生成策略比较常用,由于JPA默认的生成策略就是GenerationType.AUTO,所以使用此种策略时.可以显式的指定@GeneratedValue(strategy = GenerationType.AUTO)也可以直接@GeneratedValue</li>
+</ul>
+</li>
+<li>实例如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Id</span></div><div class="line"><span class="meta">@GeneratedValue</span>(strategy=GenerationType.IDENTITY)  <span class="comment">//数据库自增</span></div><div class="line"><span class="keyword">private</span> Integer id;</div></pre></td></tr></table></figure>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="attr">spring:</span></div><div class="line"><span class="attr">  datasource:</span>                <span class="comment">## 配置数据源</span></div><div class="line"><span class="attr">    type:</span> <span class="string">com.alibaba.druid.pool.DruidDataSource</span></div><div class="line"><span class="attr">    url:</span> <span class="attr">jdbc:mysql://118.31.15.108:3306/jpa?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull&amp;useSSL=false</span></div><div class="line"><span class="attr">    driver-class-name:</span> <span class="string">com.mysql.jdbc.Driver</span></div><div class="line"><span class="attr">    username:</span> <span class="string">root</span></div><div class="line"><span class="attr">    password:</span> <span class="string">****</span></div><div class="line"><span class="attr">    initialSize:</span> <span class="number">5</span></div><div class="line"><span class="attr">    minIdle:</span> <span class="number">5</span></div><div class="line"><span class="attr">    maxActive:</span> <span class="number">20</span></div><div class="line"><span class="attr">    maxWait:</span> <span class="number">6000</span></div><div class="line"><span class="attr">    timeBetweenEvictionRunsMillis:</span> <span class="number">6000</span></div><div class="line"><span class="attr">    minEvictableIdleTimeMillis:</span> <span class="number">25200000</span></div><div class="line"><span class="attr">    testWhileIdle:</span> <span class="literal">true</span></div><div class="line"><span class="attr">    testOnBorrow:</span> <span class="literal">false</span></div><div class="line"><span class="attr">    testOnReturn:</span> <span class="literal">false</span></div><div class="line"><span class="attr">    validationQuery:</span> <span class="string">SELECT</span> <span class="number">1</span> <span class="string">FROM</span> <span class="string">DUAL</span></div><div class="line"><span class="attr">    RemoveAbandanded:</span> <span class="literal">true</span></div><div class="line"><span class="attr">    removeAbandonedTimeout:</span> <span class="number">1800</span></div><div class="line"><span class="attr">    logAbandoned:</span> <span class="literal">true</span></div><div class="line"><span class="attr">  jpa:</span></div><div class="line"><span class="attr">    show-sql:</span> <span class="literal">true</span>    <span class="comment">#控制台打印sql语句</span></div><div class="line"><span class="attr">    database:</span> <span class="string">MYSQL</span>   <span class="comment"># 指定数据库的类型，不填会默认检测</span></div><div class="line"><span class="attr">    generate-ddl:</span> <span class="literal">false</span>  <span class="comment">## 是否自动生成表,默认是false</span></div><div class="line"><span class="comment">#    hibernate:</span></div><div class="line"><span class="comment">#      ddl-auto: update</span></div></pre></td></tr></table></figure>
+<h2 id="创建一个实体类"><a href="#创建一个实体类" class="headerlink" title="创建一个实体类"></a>创建一个实体类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 用户的实体类，其中的变量和数据库默认是以驼峰形式对应的，比如industryId,那么在表中的字段一定要是industry_id，否则将会报错</div><div class="line"> */</div><div class="line"><span class="meta">@Table</span>(name=<span class="string">"t_user"</span>)  <span class="comment">//指定对应数据库对应的表名</span></div><div class="line"><span class="meta">@Entity</span>    <span class="comment">//标记这是一个实体类</span></div><div class="line"><span class="meta">@Data</span>    	<span class="comment">//lombook的自动生成set，get</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</div><div class="line">	<span class="meta">@Id</span>    <span class="comment">//标记主键</span></div><div class="line">	<span class="meta">@GeneratedValue</span>(strategy=GenerationType.IDENTITY)</div><div class="line">	<span class="keyword">private</span> Integer id;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> String name;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> Integer age;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> String address;</div><div class="line">	</div><div class="line">	<span class="keyword">private</span> Integer industryId;   <span class="comment">//在数据库中的对应字段一定要是industry_id</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="基本的查询"><a href="#基本的查询" class="headerlink" title="基本的查询"></a>基本的查询</h2><ul>
+<li>定义一个<code>UserRepository</code>，相当于Mybatis中的Mapper，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.List;</div><div class="line"><span class="keyword">import</span> org.springframework.data.jpa.repository.JpaRepository;</div><div class="line"><span class="keyword">import</span> cn.tedu.jpa.domain.User;</div><div class="line"><span class="keyword">import</span> java.lang.String;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * JpaRepository的接口，相当于mapper</div><div class="line"> * 泛型：JpaRepository&lt;User, Integer&gt; ：第一个是实体类的类型，第二个是主键的类型</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserRepository</span> <span class="keyword">extends</span> <span class="title">JpaRepository</span>&lt;<span class="title">User</span>, <span class="title">Integer</span>&gt;</span>&#123;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 根据指定条件查询 Byxxx(where xxx=xxx)，除了根据主键查询，否则返回的都是List</div><div class="line">	 * 	其中查询的条件对应的类型必须相同</div><div class="line">	 */</div><div class="line">	<span class="function">List&lt;User&gt; <span class="title">findByName</span><span class="params">(String name)</span></span>;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 并列条件查询 ，相当于where name=xxx and age=xxx</div><div class="line">	 */</div><div class="line">	<span class="function">List&lt;User&gt; <span class="title">findByNameAndAge</span><span class="params">(String name,Integer age)</span></span>;</div><div class="line">	</div><div class="line">	<span class="comment">/*</span></div><div class="line">	 * 三个条件的并列查询 where xxx and xxx and xxx</div><div class="line">	 */</div><div class="line">	<span class="function">List&lt;User&gt; <span class="title">findByNameAndAgeAndIndustryId</span><span class="params">(String name,Integer age,Integer industryId)</span></span>;</div><div class="line">	</div><div class="line">	<span class="comment">/*</span></div><div class="line">	 * Top或者First指定返回结果数量,默认返回第一个，相当于limit 1</div><div class="line">	 */</div><div class="line">	<span class="function">User <span class="title">findTopByNameAndAge</span><span class="params">(String name,Integer age)</span></span>;</div><div class="line">	</div><div class="line">	<span class="comment">/*</span></div><div class="line">	 * Topn或者Firstn指定返回结果数量,这里的n表示返回的数量，相当于limit n</div><div class="line">	 */</div><div class="line">	<span class="function">List&lt;User&gt; <span class="title">findTop2ByNameAndAge</span><span class="params">(String name,Integer age)</span></span>;</div><div class="line">	</div><div class="line">	<span class="comment">/*</span></div><div class="line">	 * In 相当于where age in(....) 其中的变量类型可以数组、List、Set只要是Collection即可，泛型必须和查询条件的类型一致</div><div class="line">	 */</div><div class="line">	<span class="function">List&lt;User&gt; <span class="title">findByAgeIn</span><span class="params">(Integer[] ages)</span></span>;</div><div class="line">	</div><div class="line">	<span class="comment">/*</span></div><div class="line">	 * 统计数据  相当于select count(*) where age=xxx</div><div class="line">	 */</div><div class="line">	<span class="function">Long <span class="title">countByAge</span><span class="params">(Integer age)</span></span>;</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>测试类如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@RunWith</span>(SpringRunner.class)</div><div class="line"><span class="meta">@SpringBootTest</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JpaServerApplicationTests</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="meta">@Resource</span></div><div class="line">	<span class="keyword">private</span> UserRepository userRepository;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 新增数据（单个）</div><div class="line">	 */</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addUser</span><span class="params">()</span> </span>&#123;</div><div class="line">		User user=<span class="keyword">new</span> User();</div><div class="line">		user.setAge(<span class="number">22</span>);</div><div class="line">		user.setName(<span class="string">"陈加兵"</span>);</div><div class="line">		User user2 = userRepository.save(user);  <span class="comment">//自增主键的返回</span></div><div class="line">		System.out.println(user);  </div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 批量插入</div><div class="line">	 */</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">saveAll</span><span class="params">()</span> </span>&#123;</div><div class="line">		User user1=<span class="keyword">new</span> User();</div><div class="line">		user1.setAge(<span class="number">22</span>);</div><div class="line">		user1.setName(<span class="string">"陈加兵"</span>);</div><div class="line">		User user2=<span class="keyword">new</span> User();</div><div class="line">		user2.setAge(<span class="number">22</span>);</div><div class="line">		user2.setName(<span class="string">"陈加兵"</span>);</div><div class="line">		</div><div class="line">		List&lt;User&gt; users=<span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">		users.add(user1);</div><div class="line">		users.add(user2);</div><div class="line">		List&lt;User&gt; usersResturn=userRepository.saveAll(users);   <span class="comment">//返回列表，自增主键的返回</span></div><div class="line">		<span class="keyword">for</span> (User user : usersResturn) &#123;</div><div class="line">			System.out.println(user);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 更新数据，使用的仍然是save方法，如果其中包含id，那么就是更新数据，否则就是添加</div><div class="line">	 * 	1、如果有数据不更新，那么就出入null即可</div><div class="line">	 */</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">()</span> </span>&#123;</div><div class="line">		User user1=<span class="keyword">new</span> User();</div><div class="line">		user1.setId(<span class="number">1</span>);</div><div class="line">		user1.setAge(<span class="number">22</span>);</div><div class="line">		user1.setName(<span class="string">"郑元梅"</span>);</div><div class="line">		User user = userRepository.save(user1);</div><div class="line">		System.out.println(user);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 统计数据</div><div class="line">	 */</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">count</span><span class="params">()</span> </span>&#123;</div><div class="line">		System.out.println(userRepository.count());</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 统计数据</div><div class="line">	 */</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">countByAge</span><span class="params">()</span> </span>&#123;</div><div class="line">		System.out.println(userRepository.countByAge(<span class="number">23</span>));</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">findByName</span><span class="params">()</span> </span>&#123;</div><div class="line">		List&lt;User&gt; users=userRepository.findTop2ByNameAndAge(<span class="string">"陈加兵"</span>, <span class="number">22</span>);</div><div class="line">		<span class="keyword">for</span> (User user : users) &#123;</div><div class="line">			System.out.println(user);</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">findByAgeIn</span><span class="params">()</span> </span>&#123;</div><div class="line">		Integer[] ages= &#123;<span class="number">22</span>,<span class="number">23</span>&#125;;</div><div class="line">		List&lt;User&gt; users=userRepository.findByAgeIn(ages);</div><div class="line">		<span class="keyword">for</span> (User user : users) &#123;</div><div class="line">			System.out.println(user);</div><div class="line">		&#125;</div><div class="line">		</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="自定义查询-Query"><a href="#自定义查询-Query" class="headerlink" title="自定义查询@Query"></a>自定义查询@Query</h2><h3 id="使用HQL语句查询"><a href="#使用HQL语句查询" class="headerlink" title="使用HQL语句查询"></a>使用HQL语句查询</h3><ul>
+<li>默认使用的就是HQL语句查询的，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 使用hql表达式查询，其中?1表示对应第一个参数，不能直接使用?作为占位符</div><div class="line"> */</div><div class="line"><span class="meta">@Query</span>(value=<span class="string">"select u from User u where u.age=?1 and u.name=?2"</span>)</div><div class="line"><span class="function">List&lt;User&gt; <span class="title">findUserList</span><span class="params">(Integer age,String name)</span></span>;</div></pre></td></tr></table></figure>
+<h3 id="使用sql语句查询"><a href="#使用sql语句查询" class="headerlink" title="使用sql语句查询"></a>使用sql语句查询</h3><ul>
+<li>需要指定<code>nativeQuery=true</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 使用sql语句查询，其中nativeQuery表示使用本地查询，即是sql语句查询</div><div class="line"> */</div><div class="line"><span class="meta">@Query</span>(value=<span class="string">"select * from t_user where age=?1 order by industry_id desc"</span>,nativeQuery=<span class="keyword">true</span>)</div><div class="line"><span class="function">List&lt;User&gt; <span class="title">findUserListByAge</span><span class="params">(Integer age)</span></span>;</div></pre></td></tr></table></figure>
+<h3 id="删除和修改"><a href="#删除和修改" class="headerlink" title="删除和修改"></a>删除和修改</h3><ul>
+<li>使用自定义sql的时候，如果涉及到删除和修改的sql需要满足两个条件才能执行，如下：<ul>
+<li>使用<code>@Modifying</code>标注</li>
+<li>在事务中执行</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">	 * 删除和修改信息，必须同时使用<span class="doctag">@Modifying</span>注解标注</div><div class="line">	 */</div><div class="line">	<span class="meta">@Modifying</span></div><div class="line">	<span class="meta">@Query</span>(value=<span class="string">"delete from t_user where industry_id=?1"</span>,nativeQuery=<span class="keyword">true</span>)</div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">deleteByIndustryId</span><span class="params">(Integer industryId)</span></span>;</div></pre></td></tr></table></figure>
+<h2 id="复杂条件查询"><a href="#复杂条件查询" class="headerlink" title="复杂条件查询"></a>复杂条件查询</h2><ul>
+<li>Repository接口需要继承<code>JpaSpecificationExecutor</code>，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserRepository</span> <span class="keyword">extends</span> <span class="title">JpaRepository</span>&lt;<span class="title">User</span>, <span class="title">Integer</span>&gt;,<span class="title">JpaSpecificationExecutor</span>&lt;<span class="title">User</span>&gt;</span>&#123;</div></pre></td></tr></table></figure>
+<ul>
+<li>查询如下:</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">	 *   结果筛选</div><div class="line">	 * <span class="doctag">@param</span> user  封装了查询的条件</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> List&lt;User&gt; <span class="title">findAll_2</span><span class="params">(User user)</span> </span>&#123;</div><div class="line">		List&lt;User&gt; users = userRepository.findAll(<span class="keyword">new</span> Specification&lt;User&gt;() &#123;</div><div class="line">			<span class="comment">/**</span></div><div class="line">			 * <span class="doctag">@param</span> root 根对象，用于封装查询的条件，比如name,jack、age 10等</div><div class="line">			 * <span class="doctag">@param</span> query  封装查询关键字  比如group by order by</div><div class="line">			 * <span class="doctag">@param</span> criteriaBuilder  封装对象条件</div><div class="line">			 * <span class="doctag">@return</span> 返回null表示没有查询条件</div><div class="line">			 */</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> Predicate <span class="title">toPredicate</span><span class="params">(Root&lt;User&gt; root, CriteriaQuery&lt;?&gt; query, CriteriaBuilder criteriaBuilder)</span> </span>&#123;</div><div class="line">				<span class="comment">//new 一个集合，存放所有的查询条件</span></div><div class="line">				List&lt;Predicate&gt; predicates=<span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">				</div><div class="line">				<span class="keyword">if</span> (!StringUtils.isEmpty(user.getName())) &#123;  <span class="comment">//如果name不是null，就填入到筛选条件中</span></div><div class="line">					<span class="comment">//第一个参数是表达式，第二个参数是值,相当于where name=%name%</span></div><div class="line">					Predicate predicate = criteriaBuilder.like(root.get(<span class="string">"name"</span>).as(String.class),<span class="string">"%"</span>+user.getName()+<span class="string">"%"</span>);</div><div class="line">					predicates.add(predicate);   <span class="comment">//加入到条件集合中</span></div><div class="line">				&#125;</div><div class="line">				</div><div class="line">				<span class="keyword">if</span> (!StringUtils.isEmpty(user.getAddress())) &#123; <span class="comment">//如果地址不为空，填入筛选条件</span></div><div class="line">					<span class="comment">//where address=xxx</span></div><div class="line">					Predicate predicate = criteriaBuilder.equal(root.get(<span class="string">"address"</span>).as(String.class), user.getAddress());</div><div class="line">					predicates.add(predicate);</div><div class="line">				&#125;</div><div class="line">				</div><div class="line">				<span class="keyword">if</span> (user.getAge()!=<span class="keyword">null</span>) &#123; <span class="comment">//如果年龄不为空</span></div><div class="line">					<span class="comment">//where age&lt;=xxx</span></div><div class="line">					Predicate predicate = criteriaBuilder.le(root.get(<span class="string">"age"</span>).as(Integer.class), user.getAge());</div><div class="line">					predicates.add(predicate);</div><div class="line">				&#125;</div><div class="line">				</div><div class="line">				Predicate[] parray=<span class="keyword">new</span> Predicate[predicates.size()];</div><div class="line">				<span class="comment">//返回，这里的使用的and条件，将上面所有的条件用and连接</span></div><div class="line">				<span class="keyword">return</span> criteriaBuilder.and(predicates.toArray(parray));</div><div class="line">		&#125;</div><div class="line">		&#125;);</div><div class="line">	<span class="keyword">return</span> users;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 测试</div><div class="line">	 */</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test1</span><span class="params">()</span> </span>&#123;</div><div class="line">		User user=<span class="keyword">new</span> User();</div><div class="line">		user.setName(<span class="string">"a"</span>);  <span class="comment">//封装name</span></div><div class="line">		List&lt;User&gt; users = findAll_2(user);</div><div class="line">		<span class="keyword">for</span> (User user2 : users) &#123;</div><div class="line">			System.out.println(user2);</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<h2 id="分页查询"><a href="#分页查询" class="headerlink" title="分页查询"></a>分页查询</h2><h3 id="PageRequest"><a href="#PageRequest" class="headerlink" title="PageRequest"></a>PageRequest</h3><ul>
+<li>构造方法如下：<ul>
+<li><code>public PageRequest(int page, int size)</code><ul>
+<li><code>size</code>：每页查询的大小</li>
+<li><code>page</code>：从第几页开始，从0开始，0 表示第一页</li>
+</ul>
+</li>
+<li><code>public PageRequest(int page, int size, Direction direction, String... properties)</code><ul>
+<li><code>direction</code>： 排序的方式，枚举类，其中有ASC，DESC</li>
+<li><code>properties</code>： 进行排序的字段，可以指定多个</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Page"><a href="#Page" class="headerlink" title="Page"></a>Page</h3><ul>
+<li><code>int getTotalPages()</code>：返回共有多少页数</li>
+<li><code>long getTotalElements()</code>：获取总数</li>
+<li><code>boolean hasContent();</code>： 当前分页是否有数据</li>
+<li><code>List&lt;T&gt; getContent();</code>： 返回当前页所有的数据</li>
+<li><code>boolean isFirst();</code>：判断当前的页数是否是第一页</li>
+<li><code>boolean isLast();</code>： 是否是最后页</li>
+<li><code>boolean hasNext();</code>： 是否还有下一页</li>
+<li><code>boolean hasPrevious();</code>： 是否还有前一页</li>
+<li><code>Pageable nextPageable();</code>： 获取下一页</li>
+<li><code>Pageable previousPageable();</code>：获取前一页</li>
+</ul>
+<h3 id="简单查询"><a href="#简单查询" class="headerlink" title="简单查询"></a>简单查询</h3><ul>
+<li>以相同的排序方式查询</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">findAll</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="comment">//构造分页数据，查找第二页，每页2条记录，order by age,industryId desc</span></div><div class="line">	Pageable pageable=<span class="keyword">new</span> PageRequest(<span class="number">1</span>, <span class="number">2</span>,Direction.DESC,<span class="string">"age"</span>,<span class="string">"industryId"</span>);</div><div class="line">	Page&lt;User&gt; pages = userRepository.findAll(pageable);  <span class="comment">//执行分页查询的方法</span></div><div class="line">	<span class="keyword">if</span> (pages.hasContent()) &#123;  <span class="comment">//如果查询到了内容</span></div><div class="line">		List&lt;User&gt; users = pages.getContent();  <span class="comment">//获取查询到的结果</span></div><div class="line">		<span class="keyword">long</span> total = pages.getTotalElements();   <span class="comment">//获取总数</span></div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>不同的排序方式查询</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">findAll</span><span class="params">()</span> </span>&#123;</div><div class="line">	Order order1=<span class="keyword">new</span> Order(Direction.DESC, <span class="string">"age"</span>);  <span class="comment">//创建排序方式</span></div><div class="line">	Order order2=<span class="keyword">new</span> Order(Direction.ASC, <span class="string">"industryId"</span>);</div><div class="line">	List&lt;Order&gt; orders=<span class="keyword">new</span> ArrayList&lt;&gt;();  <span class="comment">//放入集合</span></div><div class="line">	orders.add(order1);</div><div class="line">	orders.add(order2);</div><div class="line">	</div><div class="line">	Sort sort=<span class="keyword">new</span> Sort(orders);  <span class="comment">//创建Sort</span></div><div class="line">	</div><div class="line">	<span class="comment">//构造分页数据，查找第二页，每页2条记录，order by age desc,industryId asc</span></div><div class="line">	Pageable pageable=<span class="keyword">new</span> PageRequest(<span class="number">0</span>, <span class="number">2</span>,sort);</div><div class="line">	Page&lt;User&gt; pages = userRepository.findAll(pageable);  <span class="comment">//执行分页查询的方法</span></div><div class="line">	<span class="keyword">if</span> (pages.hasContent()) &#123;  <span class="comment">//如果查询到了内容</span></div><div class="line">		List&lt;User&gt; users = pages.getContent();  <span class="comment">//获取查询到的结果</span></div><div class="line">		<span class="keyword">long</span> total = pages.getTotalElements();   <span class="comment">//获取总数</span></div><div class="line">		<span class="keyword">for</span> (User user : users) &#123;</div><div class="line">			System.out.println(user);</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="简单条件分页查询"><a href="#简单条件分页查询" class="headerlink" title="简单条件分页查询"></a>简单条件分页查询</h3><ul>
+<li>方法如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"> * 根据条件查询的结果分页，相当于select * from user where name=xxx limit #,#</div><div class="line"> */</div><div class="line"><span class="function">List&lt;User&gt; <span class="title">findByName</span><span class="params">(String name,Pageable pageable)</span></span>;</div></pre></td></tr></table></figure>
+<h3 id="复杂条件分页查询"><a href="#复杂条件分页查询" class="headerlink" title="复杂条件分页查询"></a>复杂条件分页查询</h3><ul>
+<li>Repository接口需要继承<code>JpaSpecificationExecutor</code>，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserRepository</span> <span class="keyword">extends</span> <span class="title">JpaRepository</span>&lt;<span class="title">User</span>, <span class="title">Integer</span>&gt;,<span class="title">JpaSpecificationExecutor</span>&lt;<span class="title">User</span>&gt;</span>&#123;</div></pre></td></tr></table></figure>
+<ul>
+<li>和复杂条件查询一样，只是多了一个分页</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">	 *   结果筛选</div><div class="line">	 * <span class="doctag">@param</span> user  封装了查询的条件</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> List&lt;User&gt; <span class="title">findAll_3</span><span class="params">(User user,Integer pageNum,Integer pageSize)</span> </span>&#123;</div><div class="line">		 </div><div class="line">		Pageable pageable=<span class="keyword">new</span> PageRequest(pageNum-<span class="number">1</span>, pageSize);   <span class="comment">//分页的查询</span></div><div class="line">		 </div><div class="line">		Page&lt;User&gt; pages = userRepository.findAll(<span class="keyword">new</span> Specification&lt;User&gt;() &#123;</div><div class="line">			<span class="comment">/**</span></div><div class="line">			 * <span class="doctag">@param</span> root 根对象，用于封装查询的条件，比如name,jack、age 10等</div><div class="line">			 * <span class="doctag">@param</span> query  封装查询关键字  比如group by order by</div><div class="line">			 * <span class="doctag">@param</span> criteriaBuilder  封装对象条件</div><div class="line">			 * <span class="doctag">@return</span> 返回null表示没有查询条件</div><div class="line">			 */</div><div class="line">			<span class="meta">@Override</span></div><div class="line">			<span class="function"><span class="keyword">public</span> Predicate <span class="title">toPredicate</span><span class="params">(Root&lt;User&gt; root, CriteriaQuery&lt;?&gt; query, CriteriaBuilder criteriaBuilder)</span> </span>&#123;</div><div class="line">				<span class="comment">//new 一个集合，存放所有的查询条件</span></div><div class="line">				List&lt;Predicate&gt; predicates=<span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">				</div><div class="line">				<span class="keyword">if</span> (!StringUtils.isEmpty(user.getName())) &#123;  <span class="comment">//如果name不是null，就填入到筛选条件中</span></div><div class="line">					<span class="comment">//第一个参数是表达式，第二个参数是值,相当于where name=%name%</span></div><div class="line">					Predicate predicate = criteriaBuilder.like(root.get(<span class="string">"name"</span>).as(String.class),<span class="string">"%"</span>+user.getName()+<span class="string">"%"</span>);</div><div class="line">					predicates.add(predicate);   <span class="comment">//加入到条件集合中</span></div><div class="line">				&#125;</div><div class="line">				</div><div class="line">				<span class="keyword">if</span> (!StringUtils.isEmpty(user.getAddress())) &#123; <span class="comment">//如果地址不为空，填入筛选条件</span></div><div class="line">					<span class="comment">//where address=xxx</span></div><div class="line">					Predicate predicate = criteriaBuilder.equal(root.get(<span class="string">"address"</span>).as(String.class), user.getAddress());</div><div class="line">					predicates.add(predicate);</div><div class="line">				&#125;</div><div class="line">				</div><div class="line">				<span class="keyword">if</span> (user.getAge()!=<span class="keyword">null</span>) &#123; <span class="comment">//如果年龄不为空</span></div><div class="line">					<span class="comment">//where age&lt;=xxx</span></div><div class="line">					Predicate predicate = criteriaBuilder.le(root.get(<span class="string">"age"</span>).as(Integer.class), user.getAge());</div><div class="line">					predicates.add(predicate);</div><div class="line">				&#125;</div><div class="line">				</div><div class="line">				Predicate[] parray=<span class="keyword">new</span> Predicate[predicates.size()];</div><div class="line">				<span class="comment">//返回，这里的使用的and条件，将上面所有的条件用and连接</span></div><div class="line">				<span class="keyword">return</span> criteriaBuilder.and(predicates.toArray(parray));</div><div class="line">		&#125;</div><div class="line">		&#125;,pageable);</div><div class="line">		</div><div class="line">		<span class="keyword">return</span> pages.getContent();  <span class="comment">//返回结果</span></div><div class="line">&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 测试</div><div class="line">	 */</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span> </span>&#123;</div><div class="line">		User user=<span class="keyword">new</span> User();</div><div class="line">		user.setName(<span class="string">"a"</span>);  <span class="comment">//封装name</span></div><div class="line">		List&lt;User&gt; users = findAll_3(user,<span class="number">1</span>,<span class="number">10</span>);</div><div class="line">		<span class="keyword">for</span> (User user2 : users) &#123;</div><div class="line">			System.out.println(user2);</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<h2 id="查找关键字"><a href="#查找关键字" class="headerlink" title="查找关键字"></a>查找关键字</h2><table>
+<thead>
+<tr>
+<th>关键词</th>
+<th>样品</th>
+<th>JPQL代码段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>And</code></td>
+<td><code>findByLastnameAndFirstname</code></td>
+<td><code>… where x.lastname = ?1 and x.firstname = ?2</code></td>
+</tr>
+<tr>
+<td><code>Or</code></td>
+<td><code>findByLastnameOrFirstname</code></td>
+<td><code>… where x.lastname = ?1 or x.firstname = ?2</code></td>
+</tr>
+<tr>
+<td><code>Is,Equals</code></td>
+<td><code>findByFirstname</code>，<code>findByFirstnameIs</code>，<code>findByFirstnameEquals</code></td>
+<td><code>… where x.firstname = ?1</code></td>
+</tr>
+<tr>
+<td><code>Between</code></td>
+<td><code>findByStartDateBetween</code></td>
+<td><code>… where x.startDate between ?1 and ?2</code></td>
+</tr>
+<tr>
+<td><code>LessThan</code></td>
+<td><code>findByAgeLessThan</code></td>
+<td><code>… where x.age &lt; ?1</code></td>
+</tr>
+<tr>
+<td><code>LessThanEqual</code></td>
+<td><code>findByAgeLessThanEqual</code></td>
+<td><code>… where x.age &lt;= ?1</code></td>
+</tr>
+<tr>
+<td><code>GreaterThan</code></td>
+<td><code>findByAgeGreaterThan</code></td>
+<td><code>… where x.age &gt; ?1</code></td>
+</tr>
+<tr>
+<td><code>GreaterThanEqual</code></td>
+<td><code>findByAgeGreaterThanEqual</code></td>
+<td><code>… where x.age &gt;= ?1</code></td>
+</tr>
+<tr>
+<td><code>After</code></td>
+<td><code>findByStartDateAfter</code></td>
+<td><code>… where x.startDate &gt; ?1</code></td>
+</tr>
+<tr>
+<td><code>Before</code></td>
+<td><code>findByStartDateBefore</code></td>
+<td><code>… where x.startDate &lt; ?1</code></td>
+</tr>
+<tr>
+<td><code>IsNull</code></td>
+<td><code>findByAgeIsNull</code></td>
+<td><code>… where x.age is null</code></td>
+</tr>
+<tr>
+<td><code>IsNotNull,NotNull</code></td>
+<td><code>findByAge(Is)NotNull</code></td>
+<td><code>… where x.age not null</code></td>
+</tr>
+<tr>
+<td><code>Like</code></td>
+<td><code>findByFirstnameLike</code></td>
+<td><code>… where x.firstname like ?1</code></td>
+</tr>
+<tr>
+<td><code>NotLike</code></td>
+<td><code>findByFirstnameNotLike</code></td>
+<td><code>… where x.firstname not like ?1</code></td>
+</tr>
+<tr>
+<td><code>StartingWith</code></td>
+<td><code>findByFirstnameStartingWith</code></td>
+<td><code>… where x.firstname like ?1</code>（附加参数绑定<code>%</code>）</td>
+</tr>
+<tr>
+<td><code>EndingWith</code></td>
+<td><code>findByFirstnameEndingWith</code></td>
+<td><code>… where x.firstname like ?1</code>（与前置绑定的参数<code>%</code>）</td>
+</tr>
+<tr>
+<td><code>Containing</code></td>
+<td><code>findByFirstnameContaining</code></td>
+<td><code>… where x.firstname like ?1</code>（参数绑定包装<code>%</code>）</td>
+</tr>
+<tr>
+<td><code>OrderBy</code></td>
+<td><code>findByAgeOrderByLastnameDesc</code></td>
+<td><code>… where x.age = ?1 order by x.lastname desc</code></td>
+</tr>
+<tr>
+<td><code>Not</code></td>
+<td><code>findByLastnameNot</code></td>
+<td><code>… where x.lastname &lt;&gt; ?1</code></td>
+</tr>
+<tr>
+<td><code>In</code></td>
+<td><code>findByAgeIn(Collection&lt;Age&gt; ages)</code></td>
+<td><code>… where x.age in ?1</code></td>
+</tr>
+<tr>
+<td><code>NotIn</code></td>
+<td><code>findByAgeNotIn(Collection&lt;Age&gt; ages)</code></td>
+<td><code>… where x.age not in ?1</code></td>
+</tr>
+<tr>
+<td><code>True</code></td>
+<td><code>findByActiveTrue()</code></td>
+<td><code>… where x.active = true</code></td>
+</tr>
+<tr>
+<td><code>False</code></td>
+<td><code>findByActiveFalse()</code></td>
+<td><code>… where x.active = false</code></td>
+</tr>
+<tr>
+<td><code>IgnoreCase</code></td>
+<td><code>findByFirstnameIgnoreCase</code></td>
+<td><code>… where UPPER(x.firstame) = UPPER(?1)</code></td>
+</tr>
+<tr>
+<td><code>Top或者First</code></td>
+<td><code>findTopByNameAndAge</code>，<code>findFirstByNameAndAge</code></td>
+<td>where … limit 1</td>
+</tr>
+<tr>
+<td><code>Topn或者Firstn</code></td>
+<td><code>findTop2ByNameAndAge</code>，<code>findFirst2ByNameAndAge</code></td>
+<td>where … limit 2</td>
+</tr>
+<tr>
+<td><code>Distinct</code></td>
+<td><code>findDistinctPeopleByLastnameOrFirstname</code></td>
+<td>select distinct ….</td>
+</tr>
+<tr>
+<td><code>count</code></td>
+<td><code>countByAge</code>，<code>count</code></td>
+<td>select count(*)</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ul>
+<li><a href="https://docs.spring.io/spring-data/jpa/docs/2.1.3.RELEASE/reference/html/" target="_blank" rel="external">https://docs.spring.io/spring-data/jpa/docs/2.1.3.RELEASE/reference/html/</a></li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/SpringBoot/">SpringBoot</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/SpringBoot/">SpringBoot</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/12/20/SpringBoot整合Spring-data-jpa/" data-title="SpringBoot整合Spring-data-jpa | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/12/22/springBoot整合spring-data-redis/" title="springBoot整合spring-data-redis">
+  <strong>上一篇：</strong><br/>
+  <span>
+  springBoot整合spring-data-redis</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/12/20/SpringBoot集成lombok/"  title="SpringBoot集成lombok">
+ <strong>下一篇：</strong><br/> 
+ <span>SpringBoot集成lombok
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#SpringBoot整合Spring-data-jpa"><span class="toc-number">1.</span> <span class="toc-text">SpringBoot整合Spring data jpa</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#依赖"><span class="toc-number">1.1.</span> <span class="toc-text">依赖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#主键生成策略"><span class="toc-number">1.2.</span> <span class="toc-text">主键生成策略</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置"><span class="toc-number">1.3.</span> <span class="toc-text">配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建一个实体类"><span class="toc-number">1.4.</span> <span class="toc-text">创建一个实体类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#基本的查询"><span class="toc-number">1.5.</span> <span class="toc-text">基本的查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义查询-Query"><span class="toc-number">1.6.</span> <span class="toc-text">自定义查询@Query</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用HQL语句查询"><span class="toc-number">1.6.1.</span> <span class="toc-text">使用HQL语句查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用sql语句查询"><span class="toc-number">1.6.2.</span> <span class="toc-text">使用sql语句查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除和修改"><span class="toc-number">1.6.3.</span> <span class="toc-text">删除和修改</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#复杂条件查询"><span class="toc-number">1.7.</span> <span class="toc-text">复杂条件查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分页查询"><span class="toc-number">1.8.</span> <span class="toc-text">分页查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PageRequest"><span class="toc-number">1.8.1.</span> <span class="toc-text">PageRequest</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Page"><span class="toc-number">1.8.2.</span> <span class="toc-text">Page</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#简单查询"><span class="toc-number">1.8.3.</span> <span class="toc-text">简单查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#简单条件分页查询"><span class="toc-number">1.8.4.</span> <span class="toc-text">简单条件分页查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#复杂条件分页查询"><span class="toc-number">1.8.5.</span> <span class="toc-text">复杂条件分页查询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查找关键字"><span class="toc-number">1.9.</span> <span class="toc-text">查找关键字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.10.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.11.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

@@ -1,0 +1,958 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>用户管理模块之用户注册 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="Chenjiabing">
+    
+
+    
+    <meta name="description" content="用户管理模块之用户注册实现的功能
+注册
+验证用户名是否已经存在
+验证邮箱
+验证电话号码
+
+
+登录
+个人信息修改
+
+创建数据库和表
+创建数据库和表
+需要注意的是：一些字段不能为空，但是我们在设计表的时候不需要设计，只需要在前端设计表单的时候检查字段是否为空即可。
+字段修改的人，修改的时间，创建的人，创建的时间这四个字段建议创建，便于后面管理
+
+
+
+12345678910111213create da">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用户管理模块之用户注册">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/05/09/用户管理模块之用户注册/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="用户管理模块之用户注册实现的功能
+注册
+验证用户名是否已经存在
+验证邮箱
+验证电话号码
+
+
+登录
+个人信息修改
+
+创建数据库和表
+创建数据库和表
+需要注意的是：一些字段不能为空，但是我们在设计表的时候不需要设计，只需要在前端设计表单的时候检查字段是否为空即可。
+字段修改的人，修改的时间，创建的人，创建的时间这四个字段建议创建，便于后面管理
+
+
+
+12345678910111213create da">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/storeUser.png">
+<meta property="og:updated_time" content="2018-05-09T07:04:05.984Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="用户管理模块之用户注册">
+<meta name="twitter:description" content="用户管理模块之用户注册实现的功能
+注册
+验证用户名是否已经存在
+验证邮箱
+验证电话号码
+
+
+登录
+个人信息修改
+
+创建数据库和表
+创建数据库和表
+需要注意的是：一些字段不能为空，但是我们在设计表的时候不需要设计，只需要在前端设计表单的时候检查字段是否为空即可。
+字段修改的人，修改的时间，创建的人，创建的时间这四个字段建议创建，便于后面管理
+
+
+
+12345678910111213create da">
+<meta name="twitter:image" content="http://ono60m7tl.bkt.clouddn.com/storeUser.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">一只程序猿</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/05/09/用户管理模块之用户注册/" title="用户管理模块之用户注册" itemprop="url">用户管理模块之用户注册</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="Chenjiabing" target="_blank" itemprop="author">Chenjiabing</a>
+		
+  <p class="article-time">
+    <time datetime="2018-05-09T00:47:43.000Z" itemprop="datePublished"> 发表于 2018-05-09</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#用户管理模块之用户注册"><span class="toc-number">1.</span> <span class="toc-text">用户管理模块之用户注册</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#实现的功能"><span class="toc-number">1.1.</span> <span class="toc-text">实现的功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建数据库和表"><span class="toc-number">1.2.</span> <span class="toc-text">创建数据库和表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建实体类"><span class="toc-number">1.3.</span> <span class="toc-text">创建实体类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注册"><span class="toc-number">1.4.</span> <span class="toc-text">注册</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#规定"><span class="toc-number">1.4.1.</span> <span class="toc-text">规定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#功能"><span class="toc-number">1.4.2.</span> <span class="toc-text">功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行顺序"><span class="toc-number">1.4.3.</span> <span class="toc-text">执行顺序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#开发顺序"><span class="toc-number">1.4.4.</span> <span class="toc-text">开发顺序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#持久层-mapper或者dao"><span class="toc-number">1.4.5.</span> <span class="toc-text">持久层(mapper或者dao)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#在cn-tedu-store-mapper包下创建UsreMapper接口"><span class="toc-number">1.4.5.1.</span> <span class="toc-text">在cn.tedu.store.mapper包下创建UsreMapper接口</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在src-main-resource-mapper文件夹新建UserMapper-xml"><span class="toc-number">1.4.5.2.</span> <span class="toc-text">在src/main/resource/mapper文件夹新建UserMapper.xml</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#测试"><span class="toc-number">1.4.5.3.</span> <span class="toc-text">测试</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#业务层-service"><span class="toc-number">1.4.6.</span> <span class="toc-text">业务层(service)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#逻辑"><span class="toc-number">1.4.6.1.</span> <span class="toc-text">逻辑</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在cn-tedu-store-service-ex包中新建异常类UserNameAlreadyExistException"><span class="toc-number">1.4.6.2.</span> <span class="toc-text">在cn.tedu.store.service.ex包中新建异常类UserNameAlreadyExistException</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在cn-tedu-store-service中新建接口IUserService"><span class="toc-number">1.4.6.3.</span> <span class="toc-text">在cn.tedu.store.service中新建接口IUserService</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在cn-tedu-store-service中新建IUserService接口的实现类UserServiceImpl"><span class="toc-number">1.4.6.4.</span> <span class="toc-text">在cn.tedu.store.service中新建IUserService接口的实现类UserServiceImpl</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#测试service"><span class="toc-number">1.4.6.5.</span> <span class="toc-text">测试service</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#控制层-controller"><span class="toc-number">1.4.7.</span> <span class="toc-text">控制层(controller)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#功能-1"><span class="toc-number">1.4.7.1.</span> <span class="toc-text">功能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在cn-tedu-store-bean包中新建ResponseResult"><span class="toc-number">1.4.7.2.</span> <span class="toc-text">在cn.tedu.store.bean包中新建ResponseResult</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在cn-tedu-store-controller中创建UserController类"><span class="toc-number">1.4.7.3.</span> <span class="toc-text">在cn.tedu.store.controller中创建UserController类</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Regist-jsp页面设计"><span class="toc-number">1.4.8.</span> <span class="toc-text">Regist.jsp页面设计</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#功能-2"><span class="toc-number">1.4.8.1.</span> <span class="toc-text">功能</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">1.5.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="用户管理模块之用户注册"><a href="#用户管理模块之用户注册" class="headerlink" title="用户管理模块之用户注册"></a>用户管理模块之用户注册</h1><h2 id="实现的功能"><a href="#实现的功能" class="headerlink" title="实现的功能"></a>实现的功能</h2><ul>
+<li>注册<ul>
+<li>验证用户名是否已经存在</li>
+<li>验证邮箱</li>
+<li>验证电话号码</li>
+</ul>
+</li>
+<li>登录</li>
+<li>个人信息修改</li>
+</ul>
+<h2 id="创建数据库和表"><a href="#创建数据库和表" class="headerlink" title="创建数据库和表"></a>创建数据库和表</h2><ul>
+<li>创建数据库和表<ul>
+<li>需要注意的是：一些字段不能为空，但是我们在设计表的时候不需要设计，只需要在前端设计表单的时候检查字段是否为空即可。</li>
+<li>字段<code>修改的人</code>，<code>修改的时间</code>，<code>创建的人</code>，<code>创建的时间</code>这四个字段建议创建，便于后面管理</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">create</span> <span class="keyword">database</span> tedu_store;</div><div class="line"></div><div class="line"><span class="keyword">create</span> <span class="keyword">table</span> t_user(<span class="keyword">id</span> <span class="built_in">int</span> primary <span class="keyword">key</span> auto_increment,</div><div class="line">                    username <span class="built_in">varchar</span>(<span class="number">50</span>) <span class="keyword">unique</span>,</div><div class="line">                   	<span class="keyword">password</span> <span class="built_in">varchar</span>(<span class="number">50</span>),email <span class="built_in">varchar</span>(<span class="number">50</span>),</div><div class="line">                   	phone <span class="built_in">varchar</span>(<span class="number">32</span>),</div><div class="line">                   	image <span class="built_in">varchar</span>(<span class="number">100</span>),        </div><div class="line">                    gender <span class="built_in">int</span>(<span class="number">1</span>),             //<span class="number">0</span>表示男，<span class="number">1</span>表示女</div><div class="line">                    created_user <span class="built_in">varchar</span>(<span class="number">50</span>),  //创建表的人</div><div class="line">                    created_time <span class="built_in">date</span>,         //创建的时间</div><div class="line">                    modified_user <span class="built_in">varchar</span>(<span class="number">50</span>),   //修改的人</div><div class="line">                    modified_time <span class="built_in">date</span>           //修改的时间</div><div class="line">                   )<span class="keyword">default</span> <span class="keyword">charset</span>=utf8;</div></pre></td></tr></table></figure>
+<p><img src="http://ono60m7tl.bkt.clouddn.com/storeUser.png" alt="User表"></p>
+<h2 id="创建实体类"><a href="#创建实体类" class="headerlink" title="创建实体类"></a>创建实体类</h2><ul>
+<li>变量类型应该是使用<code>包装类型</code>，比如<code>Integer</code></li>
+<li>变量应该是<code>驼峰式</code>的，即不应该使用<code>下划线</code></li>
+<li><code>无参</code>，<code>全参</code>构造方法</li>
+<li><code>set</code>,<code>get</code>方法</li>
+<li><code>hashCode</code> ,<code>equals</code>方法重写</li>
+<li>实现序列化接口,生成安全码</li>
+<li>重写<code>toString</code>方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 用户的实体类</div><div class="line"> * 无参，全参构造方法</div><div class="line"> * set,get方法</div><div class="line"> * hashCode equals方法重写</div><div class="line"> * 实现序列化接口</div><div class="line"> * <span class="doctag">@author</span> chenjiabing</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</div><div class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">5260484517511749238L</span>;  <span class="comment">//安全码</span></div><div class="line">	<span class="keyword">private</span> Integer id;  <span class="comment">//id主键</span></div><div class="line">	<span class="keyword">private</span> String username;  <span class="comment">//用户名</span></div><div class="line">	<span class="keyword">private</span> String password;  <span class="comment">//密码</span></div><div class="line">	<span class="keyword">private</span> String email;   <span class="comment">//邮箱</span></div><div class="line">	<span class="keyword">private</span> String phone;   <span class="comment">//电话号码</span></div><div class="line">	<span class="keyword">private</span> String image;   <span class="comment">//图片的地址</span></div><div class="line">	<span class="keyword">private</span> Integer  gender;  <span class="comment">//性别</span></div><div class="line">	<span class="keyword">private</span> String createdUser;  <span class="comment">//创建表的人</span></div><div class="line">	<span class="keyword">private</span> Date createdTime;   <span class="comment">//创建表的时间</span></div><div class="line">	<span class="keyword">private</span> String modifiedUser;   <span class="comment">//修改表的人</span></div><div class="line">	<span class="keyword">private</span> Date modifiedTime;   <span class="comment">//修改表的时间</span></div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> Integer <span class="title">getId</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> id;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(Integer id)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.id = id;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getUsername</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> username;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUsername</span><span class="params">(String username)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.username = username;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getPassword</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> password;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPassword</span><span class="params">(String password)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.password = password;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getEmail</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> email;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setEmail</span><span class="params">(String email)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.email = email;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getPhone</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> phone;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPhone</span><span class="params">(String phone)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.phone = phone;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getImage</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> image;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setImage</span><span class="params">(String image)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.image = image;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> Integer <span class="title">getGender</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> gender;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setGender</span><span class="params">(Integer gender)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.gender = gender;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getCreatedUser</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> createdUser;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCreatedUser</span><span class="params">(String createdUser)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.createdUser = createdUser;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> Date <span class="title">getCreatedTime</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> createdTime;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setCreatedTime</span><span class="params">(Date createdTime)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.createdTime = createdTime;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getModifiedUser</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> modifiedUser;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setModifiedUser</span><span class="params">(String modifiedUser)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.modifiedUser = modifiedUser;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> Date <span class="title">getModifiedTime</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> modifiedTime;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setModifiedTime</span><span class="params">(Date modifiedTime)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.modifiedTime = modifiedTime;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">final</span> <span class="keyword">int</span> prime = <span class="number">31</span>;</div><div class="line">		<span class="keyword">int</span> result = <span class="number">1</span>;</div><div class="line">		result = prime * result</div><div class="line">				+ ((createdTime == <span class="keyword">null</span>) ? <span class="number">0</span> : createdTime.hashCode());</div><div class="line">		result = prime * result</div><div class="line">				+ ((createdUser == <span class="keyword">null</span>) ? <span class="number">0</span> : createdUser.hashCode());</div><div class="line">		result = prime * result + ((email == <span class="keyword">null</span>) ? <span class="number">0</span> : email.hashCode());</div><div class="line">		result = prime * result + ((gender == <span class="keyword">null</span>) ? <span class="number">0</span> : gender.hashCode());</div><div class="line">		result = prime * result + ((id == <span class="keyword">null</span>) ? <span class="number">0</span> : id.hashCode());</div><div class="line">		result = prime * result + ((image == <span class="keyword">null</span>) ? <span class="number">0</span> : image.hashCode());</div><div class="line">		result = prime * result</div><div class="line">				+ ((modifiedTime == <span class="keyword">null</span>) ? <span class="number">0</span> : modifiedTime.hashCode());</div><div class="line">		result = prime * result</div><div class="line">				+ ((modifiedUser == <span class="keyword">null</span>) ? <span class="number">0</span> : modifiedUser.hashCode());</div><div class="line">		result = prime * result</div><div class="line">				+ ((password == <span class="keyword">null</span>) ? <span class="number">0</span> : password.hashCode());</div><div class="line">		result = prime * result + ((phone == <span class="keyword">null</span>) ? <span class="number">0</span> : phone.hashCode());</div><div class="line">		result = prime * result</div><div class="line">				+ ((username == <span class="keyword">null</span>) ? <span class="number">0</span> : username.hashCode());</div><div class="line">		<span class="keyword">return</span> result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (<span class="keyword">this</span> == obj)</div><div class="line">			<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">		<span class="keyword">if</span> (obj == <span class="keyword">null</span>)</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">if</span> (getClass() != obj.getClass())</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		User other = (User) obj;</div><div class="line">		<span class="keyword">if</span> (createdTime == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (other.createdTime != <span class="keyword">null</span>)</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!createdTime.equals(other.createdTime))</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">if</span> (createdUser == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (other.createdUser != <span class="keyword">null</span>)</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!createdUser.equals(other.createdUser))</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">if</span> (email == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (other.email != <span class="keyword">null</span>)</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!email.equals(other.email))</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">if</span> (gender == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (other.gender != <span class="keyword">null</span>)</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!gender.equals(other.gender))</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">if</span> (id == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (other.id != <span class="keyword">null</span>)</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!id.equals(other.id))</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">if</span> (image == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (other.image != <span class="keyword">null</span>)</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!image.equals(other.image))</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">if</span> (modifiedTime == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (other.modifiedTime != <span class="keyword">null</span>)</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!modifiedTime.equals(other.modifiedTime))</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">if</span> (modifiedUser == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (other.modifiedUser != <span class="keyword">null</span>)</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!modifiedUser.equals(other.modifiedUser))</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">if</span> (password == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (other.password != <span class="keyword">null</span>)</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!password.equals(other.password))</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">if</span> (phone == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (other.phone != <span class="keyword">null</span>)</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!phone.equals(other.phone))</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">if</span> (username == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (other.username != <span class="keyword">null</span>)</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!username.equals(other.username))</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"User [id="</span> + id + <span class="string">", username="</span> + username + <span class="string">", password="</span></div><div class="line">				+ password + <span class="string">", email="</span> + email + <span class="string">", phone="</span> + phone</div><div class="line">				+ <span class="string">", image="</span> + image + <span class="string">", gender="</span> + gender + <span class="string">", createdUser="</span></div><div class="line">				+ createdUser + <span class="string">", createdTime="</span> + createdTime</div><div class="line">				+ <span class="string">", modifiedUser="</span> + modifiedUser + <span class="string">", modifiedTime="</span></div><div class="line">				+ modifiedTime + <span class="string">"]"</span>;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="注册"><a href="#注册" class="headerlink" title="注册"></a>注册</h2><h3 id="规定"><a href="#规定" class="headerlink" title="规定"></a>规定</h3><ul>
+<li>提交的<code>username</code>，<code>password</code>，<code>email</code>，<code>phone</code>，其中<code>username</code>不能重复，因此需要判断用户名是否存在</li>
+<li>上面的四个字段都不能为<code>空</code>，虽然在表中没有设计，但是在<code>JSP</code>页面使用了<code>js</code>控制了</li>
+</ul>
+<h3 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h3><ol>
+<li><p>验证用户名是否存在(异步Ajax)</p>
+<ol>
+<li>持久层需要定义一个方法：根据用户名查找用户信息，如果返回的值不为<code>null</code>表示用户名已经存在，如果不存在表示可以注册</li>
+<li><code>service层</code>需要验证查询的结果是否为<code>null</code>，如果为空，返回<code>true</code>，表示用户名不存在，那么可以使用这个用户名注册，如果不为<code>null</code>，返回<code>false</code>，那么不可以使用这个用户名注册</li>
+</ol>
+</li>
+<li><p>验证邮箱是否存在(异步Ajax)</p>
+<ol>
+<li>持久层需要定义一个方法：根据邮箱查询人数，那么如果<code>人数 &gt;=1</code>表示已经存在该邮箱，否则不存在，可以注册</li>
+<li><code>service层</code>需要验证返回的<code>人数是否等于0</code>,如果不是，返回<code>false</code>表示邮箱已经存在，不能使用，如果返回<code>true</code>表示邮箱不存在，可以使用该邮箱注册</li>
+</ol>
+</li>
+<li><p>验证电话号码是否存在(异步Ajax)</p>
+<ol>
+<li>持久层定义一个方法： 根据电话号码查询人数，那么如果<code>人数 &gt;=1</code>表示已经存在该号码，否则不存在，可以注册</li>
+<li><code>service</code>层需要验证返回的<code>人数是否等于0</code>，如果不是，返回<code>false</code>表示电话号码已经存在，不能使用这个号码注册，如果返回<code>true</code>表示号码不存在，可以使用这个号码注册</li>
+</ol>
+<p>​</p>
+</li>
+</ol>
+<h3 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h3><ul>
+<li><code>regist.jsp</code>表单提交  ———&gt; <code>Controller</code>中对应的处理请求的方法 ———–&gt; <code>service</code>层中业务逻辑   ——–&gt; <code>持久</code>层，操作数据库，返回数据给<code>service</code> </li>
+</ul>
+<h3 id="开发顺序"><a href="#开发顺序" class="headerlink" title="开发顺序"></a>开发顺序</h3><ul>
+<li>我们开发的顺序应该是和执行顺序相反，这样便于编写代码</li>
+<li>即是： <code>持久层mapper</code>操作数据库 ———&gt; <code>Service层</code>业务逻辑层 —————-&gt; <code>Controller层</code> ———————&gt; <code>JSP</code></li>
+</ul>
+<h3 id="持久层-mapper或者dao"><a href="#持久层-mapper或者dao" class="headerlink" title="持久层(mapper或者dao)"></a>持久层(mapper或者dao)</h3><h4 id="在cn-tedu-store-mapper包下创建UsreMapper接口"><a href="#在cn-tedu-store-mapper包下创建UsreMapper接口" class="headerlink" title="在cn.tedu.store.mapper包下创建UsreMapper接口"></a>在<code>cn.tedu.store.mapper</code>包下创建UsreMapper接口</h4><ul>
+<li>其中实现<code>插入用户</code>的功能</li>
+<li>其中需要保证<code>用户名</code>唯一，因此需要验证用户名是否存在，那么需要一个方法根据用户名查找用户</li>
+<li><strong>注意：如果表中的字段和实体类中的字段不一致，那么在查询返回字段的时候一定要起一个别名，这个别名要和实体类中的字段相同，否则不能成功调用<code>set</code>方法为指定字段赋值</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**	</span></div><div class="line"> * 用户类的mapper层</div><div class="line"> * <span class="doctag">@author</span> chenjiabing</div><div class="line"> *</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserMapper</span> </span>&#123;</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 添加用户信息</div><div class="line">	 * <span class="doctag">@param</span> user User对象 其中封装的是用户的信息</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">insertUser</span><span class="params">(User user)</span></span>;</div><div class="line">    </div><div class="line">    <span class="comment">/**</span></div><div class="line">	 * 根据用户名查找对象</div><div class="line">	 * <span class="doctag">@param</span> username  用户名</div><div class="line">	 * <span class="doctag">@return</span>  如果存在返回User对象，否则返回null</div><div class="line">	 */</div><div class="line">	<span class="function">User <span class="title">selectUserByUserName</span><span class="params">(String username)</span></span>;</div><div class="line">	</div><div class="line">    <span class="comment">/**</span></div><div class="line">	 * 通过邮箱查询</div><div class="line">	 * <span class="doctag">@param</span> email  邮箱地址</div><div class="line">	 * <span class="doctag">@return</span> 如果返回的数&gt;=1表示已经存在，返回0表示没有</div><div class="line">	 */</div><div class="line">	<span class="function">Integer <span class="title">selectByEmail</span><span class="params">(String email)</span></span>;</div><div class="line">    </div><div class="line">    <span class="comment">/**</span></div><div class="line">	 * 通过电话号码查询</div><div class="line">	 * <span class="doctag">@param</span> phone 电话号码</div><div class="line">	 * <span class="doctag">@return</span>  如果返回的数&gt;=1表示已经存在这个电话号码，如果返回0表示不存在这个电话号码可以注册</div><div class="line">	 * 	 */</div><div class="line">	<span class="function">Integer <span class="title">selectByPhone</span><span class="params">(String phone)</span></span>;</div><div class="line">    </div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="在src-main-resource-mapper文件夹新建UserMapper-xml"><a href="#在src-main-resource-mapper文件夹新建UserMapper-xml" class="headerlink" title="在src/main/resource/mapper文件夹新建UserMapper.xml"></a>在<code>src/main/resource/mapper</code>文件夹新建<code>UserMapper.xml</code></h4><ul>
+<li><code>&lt;mapper namespace=&quot;&quot;&gt;</code>写的是<code>UserMapper</code>的全类名</li>
+</ul>
+<ul>
+<li>在其中添加一个<code>insert</code>节点，用于执行插入语句</li>
+<li>添加一个<code>select</code>用于根据用户名查询用户信息，<strong>其中返回的结果字段如果和实体类属性不一致，那么需要起别名和实体类属性对应</strong></li>
+<li>添加一个<code>select</code>语句根据邮箱<code>email</code>查询，返回的是<code>人数</code>，用于验证邮箱</li>
+<li>添加一个<code>select</code>语句根据电话号码<code>phone</code>查询，返回的是人数，用于验证电话号码</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"><span class="meta">&lt;!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      </span></div><div class="line"> "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd"&gt;</div><div class="line"> </div><div class="line"> <span class="comment">&lt;!-- namespace指定的UserMapper接口的全类名 --&gt;</span></div><div class="line"> <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">"cn.tedu.store.mapper.UserMapper"</span>&gt;</span></div><div class="line"> </div><div class="line"> <span class="comment">&lt;!-- </span></div><div class="line"> 		对应的方法： void insertUser(User user);</div><div class="line"> 		功能 ： 添加用户信息</div><div class="line"> 		返回值： 默认返回的是受影响的行数，不需要写返回类型，除非是select语句一定要写返回类型resultType或者resultMap</div><div class="line"> 		id ： 是UserMapper.java接口中的方法名称</div><div class="line"> 		parameterType ： 参数类型，写的是全类名。这里如果是基本类型，比如String,Integer可以不用写，如果是实体类对象最好是写上</div><div class="line">  --&gt;</div><div class="line"> <span class="tag">&lt;<span class="name">insert</span> <span class="attr">id</span>=<span class="string">"insertUser"</span> <span class="attr">parameterType</span>=<span class="string">"cn.tedu.store.bean.User"</span>&gt;</span></div><div class="line"> 	insert into 			t_user(username,password,email,phone,image,gender,created_user,created_time,modified_user,modified_time)</div><div class="line"> 	values(#&#123;username&#125;,#&#123;password&#125;,#&#123;email&#125;,#&#123;phone&#125;,#&#123;image&#125;,#&#123;gender&#125;,#&#123;createdUser&#125;,#&#123;createdTime&#125;,#&#123;modifiedUser&#125;,#&#123;modifiedTime&#125;)</div><div class="line"> <span class="tag">&lt;/<span class="name">insert</span>&gt;</span></div><div class="line"> </div><div class="line"> </div><div class="line">  <span class="comment">&lt;!-- </span></div><div class="line"> 	User selectUserByUserName(String username);</div><div class="line"> 	根据用户名查询用户信息，如果存在返回对象，否则返回null</div><div class="line"> 	resultType：返回值类型</div><div class="line"> 	如果表中的字段和实体类中的字段不相同，那么需要指定别名，否则不能成功赋值</div><div class="line">  --&gt;</div><div class="line">  <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"selectUserByUserName"</span> <span class="attr">resultType</span>=<span class="string">"cn.tedu.store.bean.User"</span>&gt;</span></div><div class="line">  	select id,username,password,email,gender,image,</div><div class="line">  	phone,created_user as createdUser,</div><div class="line">  	created_time as createdTime,</div><div class="line">  	modified_user as modifiedUser,</div><div class="line">  	modified_time as modifiedTime</div><div class="line">  	from t_user where username=#&#123;username&#125;</div><div class="line">  <span class="tag">&lt;/<span class="name">select</span>&gt;</span></div><div class="line">     </div><div class="line">     </div><div class="line">  <span class="comment">&lt;!-- </span></div><div class="line">  	Integer selectByEmail(String email);</div><div class="line">  	功能： 通过邮箱查找</div><div class="line">  	resultType : 返回的是Integer类型的，需要写全类名，在select语句中必须定义返回值类型</div><div class="line">   --&gt;</div><div class="line">  <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"selectByEmail"</span> <span class="attr">resultType</span>=<span class="string">"java.lang.Integer"</span>&gt;</span></div><div class="line">  	select count(*) from t_user where email=#&#123;email&#125;</div><div class="line">  <span class="tag">&lt;/<span class="name">select</span>&gt;</span></div><div class="line">     </div><div class="line">   </div><div class="line">   <span class="comment">&lt;!-- </span></div><div class="line">  	Integer selectByPhone(String phone);</div><div class="line">  	功能： 通过电话号码查询，返回的是人数</div><div class="line">   --&gt;</div><div class="line">   <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">"selectByPhone"</span> <span class="attr">resultType</span>=<span class="string">"java.lang.Integer"</span>&gt;</span></div><div class="line">   		select count(*) from t_user where phone=#&#123;phone&#125;</div><div class="line">   <span class="tag">&lt;/<span class="name">select</span>&gt;</span></div><div class="line">     </div><div class="line"> <span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></div></pre></td></tr></table></figure>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserMapperTest</span> </span>&#123;</div><div class="line">	<span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testInsertUser</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="comment">//加载Spring的配置文件</span></div><div class="line">		AbstractApplicationContext ac</div><div class="line">			= <span class="keyword">new</span> ClassPathXmlApplicationContext(</div><div class="line">				<span class="string">"spring-mvc.xml"</span>,</div><div class="line">				<span class="string">"spring-dao.xml"</span>);</div><div class="line">		</div><div class="line">		<span class="comment">//获取UserMapper的bean，这个是spring通过扫描mapper.xml文件自动为mybatis自动创建的，首字母小写</span></div><div class="line">		UserMapper userMapper</div><div class="line">			= ac.getBean(</div><div class="line">				<span class="string">"userMapper"</span>, UserMapper.class);</div><div class="line">		</div><div class="line">		User user =<span class="keyword">new</span> User();</div><div class="line">		user.setUsername(<span class="string">"郑元梅"</span>);</div><div class="line">		user.setPassword(<span class="string">"123456"</span>);</div><div class="line">		user.setEmail(<span class="string">"1836581289@163.com"</span>);</div><div class="line">		user.setPhone(<span class="string">"1836581289"</span>);		</div><div class="line">		ac.close();</div><div class="line">	&#125;</div><div class="line">    </div><div class="line">    </div><div class="line">    <span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSelectUserByUserName</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="comment">//加载Spring的配置文件</span></div><div class="line">				AbstractApplicationContext ac</div><div class="line">					= <span class="keyword">new</span> ClassPathXmlApplicationContext(</div><div class="line">						<span class="string">"spring-mvc.xml"</span>,</div><div class="line">						<span class="string">"spring-dao.xml"</span>);</div><div class="line">				</div><div class="line">				<span class="comment">//获取UserMapper的bean，这个是spring通过扫描mapper.xml文件自动为mybatis自动创建的，首字母小写</span></div><div class="line">				UserMapper userMapper</div><div class="line">					= ac.getBean(</div><div class="line">						<span class="string">"userMapper"</span>, UserMapper.class);</div><div class="line">			</div><div class="line">				User user=userMapper.selectUserByUserName(<span class="string">"陈加兵"</span>);</div><div class="line">				System.out.println(user);</div><div class="line">	&#125;</div><div class="line">    </div><div class="line">    </div><div class="line">    <span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSelectByEmail</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="comment">//加载Spring的配置文件</span></div><div class="line">				AbstractApplicationContext ac</div><div class="line">					= <span class="keyword">new</span> ClassPathXmlApplicationContext(</div><div class="line">						<span class="string">"spring-mvc.xml"</span>,</div><div class="line">						<span class="string">"spring-dao.xml"</span>);</div><div class="line">				</div><div class="line">				<span class="comment">//获取UserMapper的bean，这个是spring通过扫描mapper.xml文件自动为mybatis自动创建的，首字母小写</span></div><div class="line">				UserMapper userMapper</div><div class="line">					= ac.getBean(</div><div class="line">						<span class="string">"userMapper"</span>, UserMapper.class);</div><div class="line">			</div><div class="line">				Integer count=userMapper.selectByEmail(<span class="string">"1836581289@163.com"</span>);</div><div class="line">				System.out.println(count);</div><div class="line">	&#125;</div><div class="line">    </div><div class="line">    </div><div class="line">    <span class="meta">@Test</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSelectByPhone</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="comment">// 加载Spring的配置文件</span></div><div class="line">		AbstractApplicationContext ac = <span class="keyword">new</span> ClassPathXmlApplicationContext(</div><div class="line">				<span class="string">"spring-mvc.xml"</span>, <span class="string">"spring-dao.xml"</span>);</div><div class="line"></div><div class="line">		<span class="comment">// 获取UserMapper的bean，这个是spring通过扫描mapper.xml文件自动为mybatis自动创建的，首字母小写</span></div><div class="line">		UserMapper userMapper = ac.getBean(<span class="string">"userMapper"</span>, UserMapper.class);</div><div class="line"></div><div class="line">		Integer count = userMapper.selectByPhone(<span class="string">"1836581289"</span>);</div><div class="line">		System.out.println(count);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<h3 id="业务层-service"><a href="#业务层-service" class="headerlink" title="业务层(service)"></a>业务层(service)</h3><h4 id="逻辑"><a href="#逻辑" class="headerlink" title="逻辑"></a>逻辑</h4><ul>
+<li>在业务层中调用持久层的方法，如果此时的<code>username</code>已经存在了，那么抛出<code>异常</code>，如果不存在就添加即可。</li>
+<li>具体的逻辑：<ol>
+<li>调用<code>selectUserByUserName(User user)</code>方法判断用户名是否存在，返回对象<code>u</code></li>
+<li>判断u是否为<code>null</code></li>
+<li>如果为<code>null</code>，调用<code>insertUser(user)</code>方法添加</li>
+<li>如果不为null，抛出异常提示<code>controller</code>用户名存在(<code>UserNameAlreadyExistException</code>)</li>
+</ol>
+</li>
+</ul>
+<ul>
+<li><p>业务层通过<code>抛出异常的信息</code>提示<code>Controller</code>应该处理怎样的结果</p>
+<p>​</p>
+<p>​</p>
+</li>
+</ul>
+<h4 id="在cn-tedu-store-service-ex包中新建异常类UserNameAlreadyExistException"><a href="#在cn-tedu-store-service-ex包中新建异常类UserNameAlreadyExistException" class="headerlink" title="在cn.tedu.store.service.ex包中新建异常类UserNameAlreadyExistException"></a>在<code>cn.tedu.store.service.ex</code>包中新建异常类<code>UserNameAlreadyExistException</code></h4><ul>
+<li>用户名存在的异常</li>
+</ul>
+<ul>
+<li><strong>继承<code>Exception</code>，重写其中的构造方法，那么会在调用的时候会要求捕捉或者抛出，会提示开发者处理。如果继承了<code>RuntimeException</code>,这个是运行时异常，那么在调用的时候是不会提醒开发者捕捉或者抛出异常，因此我们这里要继承<code>Exception</code>这个父类</strong></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 用户名存在抛出的异常</div><div class="line"> * 继承Exception，实现其中的构造方法</div><div class="line"> * <span class="doctag">@author</span> chenjiabing</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserNameAlreadyExistException</span> <span class="keyword">extends</span> <span class="title">Exception</span> </span>&#123;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">UserNameAlreadyExistException</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>();</div><div class="line">		<span class="comment">// TODO Auto-generated constructor stub</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">UserNameAlreadyExistException</span><span class="params">(String message, Throwable cause,</span></span></div><div class="line">			<span class="keyword">boolean</span> enableSuppression, <span class="keyword">boolean</span> writableStackTrace) &#123;</div><div class="line">		<span class="keyword">super</span>(message, cause, enableSuppression, writableStackTrace);</div><div class="line">		<span class="comment">// TODO Auto-generated constructor stub</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">UserNameAlreadyExistException</span><span class="params">(String message, Throwable cause)</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>(message, cause);</div><div class="line">		<span class="comment">// TODO Auto-generated constructor stub</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">UserNameAlreadyExistException</span><span class="params">(String message)</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>(message);</div><div class="line">		<span class="comment">// TODO Auto-generated constructor stub</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="title">UserNameAlreadyExistException</span><span class="params">(Throwable cause)</span> </span>&#123;</div><div class="line">		<span class="keyword">super</span>(cause);</div><div class="line">		<span class="comment">// TODO Auto-generated constructor stub</span></div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="在cn-tedu-store-service中新建接口IUserService"><a href="#在cn-tedu-store-service中新建接口IUserService" class="headerlink" title="在cn.tedu.store.service中新建接口IUserService"></a>在<code>cn.tedu.store.service</code>中新建接口<code>IUserService</code></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 处理用户业务逻辑的接口</div><div class="line"> * <span class="doctag">@author</span> chenjiabing</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IUserService</span> </span>&#123;</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 注册</div><div class="line">	 * <span class="doctag">@param</span> user User对象</div><div class="line">	 * <span class="doctag">@throws</span> UserNameAlreadyExistException   用户名已经存在抛出的异常</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">void</span> <span class="title">register</span><span class="params">(User user)</span> <span class="keyword">throws</span> UserNameAlreadyExistException</span>;</div><div class="line">    </div><div class="line">    <span class="comment">/**</span></div><div class="line">	 * 验证邮箱是否存在</div><div class="line">	 * <span class="doctag">@param</span> email  邮箱地址</div><div class="line">	 * <span class="doctag">@return</span> 如果=0返回true，邮箱可以使用。如果 &gt;=1返回false，邮箱不可以使用</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">checkEmail</span><span class="params">(String email)</span></span>;</div><div class="line">    </div><div class="line">    <span class="comment">/**</span></div><div class="line">	 * 验证电话号码是否存在</div><div class="line">	 * <span class="doctag">@param</span> phone 电话号码</div><div class="line">	 * <span class="doctag">@return</span> 如果返回true表示电话号码可以使用，如果返回false表示电话号码不可以使用</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">checkPhone</span><span class="params">(String phone)</span></span>;</div><div class="line">    </div><div class="line">    <span class="comment">/**</span></div><div class="line">	 * 验证用户名是否存在</div><div class="line">	 * <span class="doctag">@param</span> userName  用户名</div><div class="line">	 * <span class="doctag">@return</span>  返回true表示用户名不存在，可以注册，返回false表示用户名已经存在，不可使用</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">checkUserName</span><span class="params">(String userName)</span></span>;</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="在cn-tedu-store-service中新建IUserService接口的实现类UserServiceImpl"><a href="#在cn-tedu-store-service中新建IUserService接口的实现类UserServiceImpl" class="headerlink" title="在cn.tedu.store.service中新建IUserService接口的实现类UserServiceImpl"></a>在<code>cn.tedu.store.service</code>中新建<code>IUserService</code>接口的实现类<code>UserServiceImpl</code></h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * IUserService接口的实现类</div><div class="line"> * <span class="doctag">@author</span> chenjiabing</div><div class="line"> */ </div><div class="line"><span class="meta">@Service</span>   <span class="comment">//注解标记，用于spring自动创建对象，类名首字母小写</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserServiceImpl</span> <span class="keyword">implements</span> <span class="title">IUserService</span></span>&#123;</div><div class="line">	<span class="meta">@Resource</span>  <span class="comment">//自动注入对象，自动创建UserMapper对象</span></div><div class="line">	<span class="keyword">private</span> UserMapper userMapper;  <span class="comment">//UseMapper的对象，用于调用操作数据库的方法</span></div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 注册</div><div class="line">	 * 1. 调用selectUserByUserName(User user)方法判断用户名是否存在，返回对象u</div><div class="line">	 * 2. 判断u是否为null，</div><div class="line">	 * 3. 如果为null，调用insertUser(user)方法添加</div><div class="line">	 * 4. 如果不为null，抛出异常提示controller用户名存在(UserNameAlreadyExistException)</div><div class="line">	 */</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">register</span><span class="params">(User user)</span> <span class="keyword">throws</span> UserNameAlreadyExistException </span>&#123;</div><div class="line">		User u=userMapper.selectUserByUserName(user.getUsername());  <span class="comment">//调用usermapper中的方法</span></div><div class="line">		<span class="keyword">if</span> (u!=<span class="keyword">null</span>) &#123;  <span class="comment">//如果u不为null，表示用户名已经存在与数据库中，不可以再次注册了，因此抛出异常</span></div><div class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> UserNameAlreadyExistException(<span class="string">"用户名已经存在，请重新输入!!!"</span>);</div><div class="line">		&#125;<span class="keyword">else</span> &#123;   <span class="comment">//如果u==null，表示用户名不存在，可以添加</span></div><div class="line">			userMapper.insertUser(user);  <span class="comment">//直接调用持久层方法插入数据即可</span></div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">    </div><div class="line">    </div><div class="line">    <span class="comment">//验证邮箱是否存在，返回true表示邮箱可以使用</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">checkEmail</span><span class="params">(String email)</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> userMapper.selectByEmail(email)==<span class="number">0</span>;</div><div class="line">	&#125;</div><div class="line">    </div><div class="line">    <span class="comment">//验证电话号码是否可用，如果返回true表示可用，false表示不可用</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">checkPhone</span><span class="params">(String phone)</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> userMapper.selectByPhone(phone)==<span class="number">0</span>;</div><div class="line">	&#125;</div><div class="line">    </div><div class="line">    <span class="comment">//验证用户名是否存在，返回true表示不存在，可用</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">checkUserName</span><span class="params">(String userName)</span> </span>&#123;</div><div class="line">		User user=userMapper.selectUserByUserName(userName);</div><div class="line">		<span class="keyword">return</span> user==<span class="keyword">null</span>;</div><div class="line">	&#125;</div><div class="line">    </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="测试service"><a href="#测试service" class="headerlink" title="测试service"></a>测试service</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testRegistService</span><span class="params">()</span></span>&#123;</div><div class="line">			<span class="comment">//加载Spring的配置文件</span></div><div class="line">			AbstractApplicationContext ac</div><div class="line">				= <span class="keyword">new</span> ClassPathXmlApplicationContext(</div><div class="line">					<span class="string">"spring-dao.xml"</span>,</div><div class="line">					<span class="string">"spring-service.xml"</span>);</div><div class="line">			</div><div class="line">			IUserService userService=ac.getBean(<span class="string">"userServiceImpl"</span>,IUserService.class);</div><div class="line">			</div><div class="line">			User user=<span class="keyword">new</span> User();</div><div class="line">			user.setUsername(<span class="string">"郑元梅"</span>);</div><div class="line">			user.setPassword(<span class="string">"12345678"</span>);</div><div class="line">			user.setEmail(<span class="string">"1879626@163.com"</span>);</div><div class="line">			user.setPhone(<span class="string">"138525855"</span>);</div><div class="line">			</div><div class="line">			<span class="keyword">try</span> &#123;</div><div class="line">				userService.register(user);  <span class="comment">//调用service中的注册方法</span></div><div class="line">			&#125; <span class="keyword">catch</span> (UserNameAlreadyExistException e) &#123;</div><div class="line">				System.out.println(e.getMessage());  <span class="comment">//输出错误提示信息</span></div><div class="line">			&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testCheckEmailService</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="comment">// 加载Spring的配置文件</span></div><div class="line">	AbstractApplicationContext ac = <span class="keyword">new</span> ClassPathXmlApplicationContext(</div><div class="line">			<span class="string">"spring-dao.xml"</span>, <span class="string">"spring-service.xml"</span>);</div><div class="line"></div><div class="line">	IUserService userService = ac.getBean(<span class="string">"userServiceImpl"</span>,</div><div class="line">			IUserService.class);</div><div class="line"></div><div class="line">	<span class="keyword">if</span> (userService.checkEmail(<span class="string">"187962@163.com"</span>)) &#123;</div><div class="line">		System.out.println(<span class="string">"邮箱不存在，可以注册"</span>);</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">		System.out.println(<span class="string">"邮箱存在，不可以注册"</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testCheckPhoneService</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="comment">// 加载Spring的配置文件</span></div><div class="line">	AbstractApplicationContext ac = <span class="keyword">new</span> ClassPathXmlApplicationContext(</div><div class="line">			<span class="string">"spring-dao.xml"</span>, <span class="string">"spring-service.xml"</span>);</div><div class="line"></div><div class="line">	IUserService userService = ac.getBean(<span class="string">"userServiceImpl"</span>,</div><div class="line">			IUserService.class);</div><div class="line"></div><div class="line">	<span class="keyword">if</span> (userService.checkPhone(<span class="string">"1836581289"</span>)) &#123;</div><div class="line">		System.out.println(<span class="string">"电话号码不存在，可以注册"</span>);</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">		System.out.println(<span class="string">"电话号码存在，不可以注册"</span>);</div><div class="line">	&#125;</div><div class="line">       </div><div class="line">   <span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testCheckUserNameService</span><span class="params">()</span> </span>&#123;</div><div class="line">	<span class="comment">// 加载Spring的配置文件</span></div><div class="line">	AbstractApplicationContext ac = <span class="keyword">new</span> ClassPathXmlApplicationContext(</div><div class="line">			<span class="string">"spring-dao.xml"</span>, <span class="string">"spring-service.xml"</span>);</div><div class="line"></div><div class="line">	IUserService userService = ac.getBean(<span class="string">"userServiceImpl"</span>,</div><div class="line">			IUserService.class);</div><div class="line"></div><div class="line">	<span class="keyword">if</span> (userService.checkUserName(<span class="string">"Jack"</span>)) &#123;</div><div class="line">		System.out.println(<span class="string">"用户名不存在，，可以使用"</span>);</div><div class="line">	&#125; <span class="keyword">else</span> &#123;</div><div class="line">		System.out.println(<span class="string">"用户名已经已经存在，不可用"</span>);</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line">       </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="控制层-controller"><a href="#控制层-controller" class="headerlink" title="控制层(controller)"></a>控制层(controller)</h3><h4 id="功能-1"><a href="#功能-1" class="headerlink" title="功能"></a>功能</h4><ol>
+<li>异步验证用户名(文本框失去焦点发出异步请求)<ol>
+<li><code>/user/checkUserName.do</code></li>
+</ol>
+</li>
+<li>异步验证电话号码(文本框失去焦点发出异步请求)<ol>
+<li><code>/user/checkPhone.do</code></li>
+</ol>
+</li>
+<li>异步验证邮箱(文本框失去焦点发出异步请求)<ol>
+<li><code>/user/checkEmail.do</code></li>
+</ol>
+</li>
+<li>显示注册页面 <ol>
+<li><code>/user/showRegister.do</code></li>
+</ol>
+</li>
+<li>点击注册按钮，实现注册(异步提交)<ol>
+<li><code>/user/register.do</code></li>
+<li>在其中还是要检测用户名是否存在，因为当你在前面输入的时候可能检测到的用户名不存在，但是如果另外一个人也用的和你一样的用户名，并且他先提交了，那么此时如果不检查，就会发生冲突了</li>
+</ol>
+</li>
+</ol>
+<h4 id="在cn-tedu-store-bean包中新建ResponseResult"><a href="#在cn-tedu-store-bean包中新建ResponseResult" class="headerlink" title="在cn.tedu.store.bean包中新建ResponseResult"></a>在<code>cn.tedu.store.bean</code>包中新建ResponseResult</h4><ul>
+<li>封装异步请求结果</li>
+<li>其中的<code>T</code>是用来指定<code>泛型</code>的，如果使用<code>ResponseResult&lt;List&lt;User&gt;&gt; responseResult=new ResponseResult&lt;List&lt;User&gt;&gt;();</code>创建对象，那么这个<code>T</code>的泛型就是<code>List&lt;User&gt;</code></li>
+<li>如果不需要指定泛型，那么可以使用<code>Void</code>指定即可，那么就不能为<code>data</code>赋值了，因为你的泛型指定了<code>Void</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 封装异步请求的返回的结果类型</div><div class="line"> * <span class="doctag">@author</span> chenjiabing</div><div class="line"> * <span class="doctag">@param</span> &lt;T&gt;  泛型，</div><div class="line"> 				用于封装返回数据，如果创建对象为这样ResponseResult&lt;List&lt;User&gt;&gt; 								responseResult=new ResponseResult&lt;List&lt;User&gt;&gt;();</div><div class="line"> * 				那么此时的data类型是List&lt;User&gt;类型的</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ResponseResult</span>&lt;<span class="title">T</span>&gt; </span>&#123;</div><div class="line">	<span class="keyword">private</span> Integer state;  <span class="comment">//响应状态码</span></div><div class="line">	<span class="keyword">private</span> String message;   <span class="comment">//响应信息</span></div><div class="line">	<span class="keyword">private</span> T data;  <span class="comment">//响应的数据</span></div><div class="line">	</div><div class="line">	<span class="function"><span class="keyword">public</span> Integer <span class="title">getState</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> state;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setState</span><span class="params">(Integer state)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.state = state;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getMessage</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> message;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setMessage</span><span class="params">(String message)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.message = message;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> T <span class="title">getData</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> data;</div><div class="line">	&#125;</div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setData</span><span class="params">(T data)</span> </span>&#123;</div><div class="line">		<span class="keyword">this</span>.data = data;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">final</span> <span class="keyword">int</span> prime = <span class="number">31</span>;</div><div class="line">		<span class="keyword">int</span> result = <span class="number">1</span>;</div><div class="line">		result = prime * result + ((data == <span class="keyword">null</span>) ? <span class="number">0</span> : data.hashCode());</div><div class="line">		result = prime * result + ((message == <span class="keyword">null</span>) ? <span class="number">0</span> : message.hashCode());</div><div class="line">		result = prime * result + ((state == <span class="keyword">null</span>) ? <span class="number">0</span> : state.hashCode());</div><div class="line">		<span class="keyword">return</span> result;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span> </span>&#123;</div><div class="line">		<span class="keyword">if</span> (<span class="keyword">this</span> == obj)</div><div class="line">			<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">		<span class="keyword">if</span> (obj == <span class="keyword">null</span>)</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">if</span> (getClass() != obj.getClass())</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		ResponseResult other = (ResponseResult) obj;</div><div class="line">		<span class="keyword">if</span> (data == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (other.data != <span class="keyword">null</span>)</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!data.equals(other.data))</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">if</span> (message == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (other.message != <span class="keyword">null</span>)</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!message.equals(other.message))</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">if</span> (state == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (other.state != <span class="keyword">null</span>)</div><div class="line">				<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> (!state.equals(other.state))</div><div class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="meta">@Override</span></div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"ResponseResult [state="</span> + state + <span class="string">", message="</span> + message</div><div class="line">				+ <span class="string">", data="</span> + data + <span class="string">"]"</span>;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="在cn-tedu-store-controller中创建UserController类"><a href="#在cn-tedu-store-controller中创建UserController类" class="headerlink" title="在cn.tedu.store.controller中创建UserController类"></a>在<code>cn.tedu.store.controller</code>中创建<code>UserController</code>类</h4><ul>
+<li>添加<code>@Controller</code>注解</li>
+<li>使用<code>@RequestMapping(&quot;/user&quot;)</code>添加一个二级路径</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Controller</span></div><div class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/user"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span> </span>&#123;</div><div class="line">	<span class="meta">@Resource</span></div><div class="line">	<span class="comment">// 创建Service对象，自动注入</span></div><div class="line">	<span class="keyword">private</span> IUserService userservice;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 显示注册视图 register.jsp</div><div class="line">	 * </div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/showRegister.do"</span>)</div><div class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">showRegister</span><span class="params">()</span> </span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="string">"register"</span>; <span class="comment">// 直接返回一个视图名称即可</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 验证用用户名，异步请求, 用户名失去焦点发出异步请求</div><div class="line">	 * <span class="doctag">@param</span> userName  用户名</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/checkUserName.do"</span>)</div><div class="line">	<span class="meta">@ResponseBody</span></div><div class="line">	<span class="function"><span class="keyword">public</span> ResponseResult&lt;Void&gt; <span class="title">checkUserName</span><span class="params">(</span></span></div><div class="line">			@RequestParam(<span class="string">"username"</span>) String userName) &#123;</div><div class="line">		System.out.println(userName);</div><div class="line">		ResponseResult&lt;Void&gt; result = <span class="keyword">new</span> ResponseResult&lt;Void&gt;(); <span class="comment">// 创建结果集对象</span></div><div class="line">		<span class="keyword">boolean</span> flag = userservice.checkUserName(userName); <span class="comment">// 调用service验证方法</span></div><div class="line">		<span class="comment">// 如果falg==true,表示用户名可用</span></div><div class="line">		<span class="keyword">if</span> (flag) &#123;</div><div class="line">			result.setState(<span class="number">1</span>);   <span class="comment">//设置响应码</span></div><div class="line">			result.setMessage(<span class="string">"用户名可以使用"</span>);</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			result.setState(<span class="number">0</span>);</div><div class="line">			result.setMessage(<span class="string">"用户名不可以使用"</span>);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> result;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 验证电话号码，文本框失去焦点发出异步请求</div><div class="line">	 * <span class="doctag">@param</span> phone 电话号码</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/checkPhone.do"</span>)</div><div class="line">	<span class="meta">@ResponseBody</span></div><div class="line">	<span class="function"><span class="keyword">public</span> ResponseResult&lt;Void&gt; <span class="title">checkPhone</span><span class="params">(String phone)</span> </span>&#123;</div><div class="line">		ResponseResult&lt;Void&gt; result = <span class="keyword">new</span> ResponseResult&lt;Void&gt;(); <span class="comment">// 创建结果集对象</span></div><div class="line">		<span class="keyword">boolean</span> flag = userservice.checkPhone(phone);</div><div class="line">		<span class="comment">// 如果falg==true,表示电话号码可用</span></div><div class="line">		<span class="keyword">if</span> (flag) &#123;</div><div class="line">			result.setState(<span class="number">1</span>);  <span class="comment">//设置响应码</span></div><div class="line">			result.setMessage(<span class="string">"电话号码可以使用"</span>);</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			result.setState(<span class="number">0</span>);</div><div class="line">			result.setMessage(<span class="string">"电话号码不可以使用"</span>);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> result;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 验证邮箱地址，文本框失去焦点发出异步请求</div><div class="line">	 * <span class="doctag">@param</span> email  邮箱地址</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/checkEmail.do"</span>)</div><div class="line">	<span class="meta">@ResponseBody</span></div><div class="line">	<span class="function"><span class="keyword">public</span> ResponseResult&lt;Void&gt; <span class="title">checkEmail</span><span class="params">(String email)</span> </span>&#123;</div><div class="line">		ResponseResult&lt;Void&gt; result = <span class="keyword">new</span> ResponseResult&lt;Void&gt;(); <span class="comment">// 创建结果集对象</span></div><div class="line">		<span class="keyword">boolean</span> flag = userservice.checkEmail(email);</div><div class="line">		<span class="comment">// 如果falg==true,表示邮箱可用</span></div><div class="line">		<span class="keyword">if</span> (flag) &#123;</div><div class="line">			result.setState(<span class="number">1</span>);  <span class="comment">//设置响应码</span></div><div class="line">			result.setMessage(<span class="string">"邮箱地址可以使用"</span>);</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			result.setState(<span class="number">0</span>);</div><div class="line">			result.setMessage(<span class="string">"邮箱地址不可以使用"</span>);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> result;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	 * 点击提交按异步请求注册</div><div class="line">	 * <span class="doctag">@param</span> userName  用户名</div><div class="line">	 * <span class="doctag">@param</span> password  密码</div><div class="line">	 * <span class="doctag">@param</span> email  邮箱地址</div><div class="line">	 * <span class="doctag">@param</span> phone  电话号码</div><div class="line">	 * <span class="doctag">@return</span></div><div class="line">	 */</div><div class="line">	<span class="meta">@RequestMapping</span>(<span class="string">"/register.do"</span>)</div><div class="line">	<span class="meta">@ResponseBody</span></div><div class="line">	<span class="function"><span class="keyword">public</span> ResponseResult&lt;Void&gt; <span class="title">register</span><span class="params">(@RequestParam(<span class="string">"uname"</span>)</span>String userName,@<span class="title">RequestParam</span><span class="params">(<span class="string">"upwd"</span>)</span>String password,String email,String phone)</span>&#123;</div><div class="line">		ResponseResult&lt;Void&gt; result = <span class="keyword">new</span> ResponseResult&lt;Void&gt;(); <span class="comment">// 创建结果集对象</span></div><div class="line">		</div><div class="line">		User user=<span class="keyword">new</span> User();   <span class="comment">//创建User对象</span></div><div class="line">		user.setUsername(userName);</div><div class="line">		user.setPassword(password);</div><div class="line">		user.setEmail(email);</div><div class="line">		user.setPhone(phone);</div><div class="line">		</div><div class="line">		<span class="keyword">try</span> &#123;</div><div class="line">			userservice.register(user);  <span class="comment">//调用业务层的注册方法</span></div><div class="line">			result.setState(<span class="number">1</span>);  <span class="comment">//设置注册成功的状态吗</span></div><div class="line">			result.setMessage(<span class="string">"注册成功"</span>);</div><div class="line">		&#125; <span class="keyword">catch</span> (UserNameAlreadyExistException e) &#123;</div><div class="line">			result.setState(<span class="number">0</span>);  <span class="comment">//设置注册失败的状态吗</span></div><div class="line">			result.setMessage(e.getMessage());</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> result;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="Regist-jsp页面设计"><a href="#Regist-jsp页面设计" class="headerlink" title="Regist.jsp页面设计"></a>Regist.jsp页面设计</h3><h4 id="功能-2"><a href="#功能-2" class="headerlink" title="功能"></a>功能</h4><ul>
+<li>文本框失去焦点发出异步请求验证用户名</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**发起异步GET请求，询问服务器用户名是否已经存在**/</span></div><div class="line">  		 $.get(<span class="string">"&lt;%=request.getContextPath()%&gt;/user/checkUserName.do?username="</span>+data,<span class="function"><span class="keyword">function</span>(<span class="params">d,status,xhr</span>)</span>&#123;</div><div class="line">    	  <span class="comment">//如果响应成功</span></div><div class="line">    	  <span class="keyword">if</span>(status==<span class="string">"success"</span>)&#123;</div><div class="line">    		  $(<span class="string">"#unamespan"</span>).text(d.message);  <span class="comment">//设置提示内容</span></div><div class="line">    		  <span class="comment">//根据返回的不同的状态码设置不同的颜色进行提示，红色和绿色</span></div><div class="line">    		  <span class="keyword">if</span>(d.state==<span class="number">0</span>)&#123;</div><div class="line">    			  $(<span class="string">"#unamespan"</span>).attr(<span class="string">"class"</span>,<span class="string">"msg-error"</span>);</div><div class="line">    		  &#125;<span class="keyword">else</span>&#123;</div><div class="line">    			  $(<span class="string">"#unamespan"</span>).attr(<span class="string">"class"</span>,<span class="string">"msg-success"</span>);</div><div class="line">    		  &#125;</div><div class="line">    	  &#125;</div><div class="line">      &#125;);</div></pre></td></tr></table></figure>
+<ul>
+<li>发出异步请求验证邮箱</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**发起异步GET请求，询问服务器邮箱是否已经存在**/</span></div><div class="line">      $.get(<span class="string">"&lt;%=request.getContextPath()%&gt;/user/checkEmail.do?email="</span>+data,<span class="function"><span class="keyword">function</span>(<span class="params">d,status,xhr</span>)</span>&#123;</div><div class="line">    	  <span class="comment">//如果响应成功</span></div><div class="line">    	  <span class="keyword">if</span>(status==<span class="string">"success"</span>)&#123;</div><div class="line">    		  $(<span class="string">"#emailspan"</span>).text(d.message);  <span class="comment">//设置提示内容</span></div><div class="line">    		  <span class="comment">//根据返回的不同的状态码设置不同的颜色进行提示，红色和绿色</span></div><div class="line">    		  <span class="keyword">if</span>(d.state==<span class="number">0</span>)&#123;</div><div class="line">    			  $(<span class="string">"#emailspan"</span>).attr(<span class="string">"class"</span>,<span class="string">"msg-error"</span>);</div><div class="line">    		  &#125;<span class="keyword">else</span>&#123;</div><div class="line">    			  $(<span class="string">"#emailspan"</span>).attr(<span class="string">"class"</span>,<span class="string">"msg-success"</span>);</div><div class="line">    		  &#125;</div><div class="line">    	  &#125;</div><div class="line">      &#125;);</div></pre></td></tr></table></figure>
+<ul>
+<li>发出异步请求验证电话号码</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**发起异步GET请求，询问服务器电话号码是否已经存在**/</span></div><div class="line">      $.get(<span class="string">"&lt;%=request.getContextPath()%&gt;/user/checkPhone.do?phone="</span>+data,<span class="function"><span class="keyword">function</span>(<span class="params">d,status,xhr</span>)</span>&#123;</div><div class="line">    	  <span class="comment">//如果响应成功</span></div><div class="line">    	  <span class="keyword">if</span>(status==<span class="string">"success"</span>)&#123;</div><div class="line">    		  $(<span class="string">"#phonespan"</span>).text(d.message);  <span class="comment">//设置提示内容</span></div><div class="line">    		  <span class="comment">//根据返回的不同的状态码设置不同的颜色进行提示，红色和绿色</span></div><div class="line">    		  <span class="keyword">if</span>(d.state==<span class="number">0</span>)&#123;</div><div class="line">    			  $(<span class="string">"#phonespan"</span>).attr(<span class="string">"class"</span>,<span class="string">"msg-error"</span>);</div><div class="line">    		  &#125;<span class="keyword">else</span>&#123;</div><div class="line">    			  $(<span class="string">"#phonespan"</span>).attr(<span class="string">"class"</span>,<span class="string">"msg-success"</span>);</div><div class="line">    		  &#125;</div><div class="line">    	  &#125;</div><div class="line">      &#125;);</div></pre></td></tr></table></figure>
+<ul>
+<li>发出异步请求实现注册</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//发出异步请求</span></div><div class="line">  	 $.ajax(&#123;</div><div class="line">  		 <span class="attr">url</span>:<span class="string">"&lt;%=request.getContextPath()%&gt;/user/register.do"</span>,</div><div class="line">  		 <span class="attr">type</span>:<span class="string">"POST"</span>,</div><div class="line">  		 <span class="attr">data</span>: $(<span class="string">"#form-register"</span>).serialize(),   <span class="comment">//提交表单中的所有数据</span></div><div class="line">  		 dataType:<span class="string">"json"</span>,</div><div class="line">  		 <span class="attr">success</span>:<span class="function"><span class="keyword">function</span>(<span class="params">obj</span>)</span>&#123;</div><div class="line">  			 <span class="comment">//判断状态码，如果用户已经存在</span></div><div class="line">  			<span class="keyword">if</span>(obj.state==<span class="number">0</span>)&#123;	</div><div class="line">  			<span class="comment">//设置提示语句	</span></div><div class="line">  			$(<span class="string">"#unamespan"</span>).text(obj.message);</div><div class="line">  			$(<span class="string">"#unamespan"</span>).attr(<span class="string">"class"</span>,<span class="string">"msg-error"</span>);</div><div class="line">  			&#125;<span class="keyword">else</span>&#123;</div><div class="line">  			 	<span class="comment">//注册成功跳转到登录界面</span></div><div class="line">  			 	<span class="comment">// showLogin.do</span></div><div class="line">  			&#125;</div><div class="line">  		 &#125;</div><div class="line">  	 &#125;);</div></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>新建的异常类最好继承<code>Exception</code>，那么在调用带有抛出异常的信息的service方法会在编辑提示捕捉或者抛出，便于提示开发者完成相应的逻辑</li>
+<li><strong>数据库表中的字段是以<code>下划线</code>形式定义的，比如<code>created_user</code>,但是java中的实体类定义的字段的形式是<code>驼峰式</code>的，比如<code>createdUser</code>，那么这样的话，表中的字段和实体类类的属性就不是一一对应了，因此在查询数据的时候，需要对返回结果起和实体类字段一样的别名，否则将不能成功赋值</strong></li>
+<li>在写<code>XXMapper.xml</code>文件的时候,<code>select</code>节点是一定要有返回值类型的<code>resultType</code>或者<code>resultMap</code>的，即使是基本类型</li>
+<li>在<code>service</code>中，如果逻辑比较简单，比如验证邮箱，验证号码等，那么不需要抛出异常，只需要定义返回值提示<code>Controller层</code>即可</li>
+</ol>
+<ul>
+<li>我的博客即将搬运同步至腾讯云+社区，邀请大家一同入驻：<a href="https://cloud.tencent.com/developer/support-plan?invite_code=35idjy1iqdk4g" target="_blank" rel="external">https://cloud.tencent.com/developer/support-plan?invite_code=35idjy1iqdk4g</a></li>
+</ul>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/商城网站/">商城网站</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/商城网站/">商城网站</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/05/09/用户管理模块之用户注册/" data-title="用户管理模块之用户注册 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/05/21/拦截器拦截Ajax请求/" title="Springmvc拦截器拦截Ajax请求">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Springmvc拦截器拦截Ajax请求</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/05/09/搭建工程/"  title="搭建工程">
+ <strong>下一篇：</strong><br/> 
+ <span>搭建工程
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#用户管理模块之用户注册"><span class="toc-number">1.</span> <span class="toc-text">用户管理模块之用户注册</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#实现的功能"><span class="toc-number">1.1.</span> <span class="toc-text">实现的功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建数据库和表"><span class="toc-number">1.2.</span> <span class="toc-text">创建数据库和表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建实体类"><span class="toc-number">1.3.</span> <span class="toc-text">创建实体类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注册"><span class="toc-number">1.4.</span> <span class="toc-text">注册</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#规定"><span class="toc-number">1.4.1.</span> <span class="toc-text">规定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#功能"><span class="toc-number">1.4.2.</span> <span class="toc-text">功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行顺序"><span class="toc-number">1.4.3.</span> <span class="toc-text">执行顺序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#开发顺序"><span class="toc-number">1.4.4.</span> <span class="toc-text">开发顺序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#持久层-mapper或者dao"><span class="toc-number">1.4.5.</span> <span class="toc-text">持久层(mapper或者dao)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#在cn-tedu-store-mapper包下创建UsreMapper接口"><span class="toc-number">1.4.5.1.</span> <span class="toc-text">在cn.tedu.store.mapper包下创建UsreMapper接口</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在src-main-resource-mapper文件夹新建UserMapper-xml"><span class="toc-number">1.4.5.2.</span> <span class="toc-text">在src/main/resource/mapper文件夹新建UserMapper.xml</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#测试"><span class="toc-number">1.4.5.3.</span> <span class="toc-text">测试</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#业务层-service"><span class="toc-number">1.4.6.</span> <span class="toc-text">业务层(service)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#逻辑"><span class="toc-number">1.4.6.1.</span> <span class="toc-text">逻辑</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在cn-tedu-store-service-ex包中新建异常类UserNameAlreadyExistException"><span class="toc-number">1.4.6.2.</span> <span class="toc-text">在cn.tedu.store.service.ex包中新建异常类UserNameAlreadyExistException</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在cn-tedu-store-service中新建接口IUserService"><span class="toc-number">1.4.6.3.</span> <span class="toc-text">在cn.tedu.store.service中新建接口IUserService</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在cn-tedu-store-service中新建IUserService接口的实现类UserServiceImpl"><span class="toc-number">1.4.6.4.</span> <span class="toc-text">在cn.tedu.store.service中新建IUserService接口的实现类UserServiceImpl</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#测试service"><span class="toc-number">1.4.6.5.</span> <span class="toc-text">测试service</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#控制层-controller"><span class="toc-number">1.4.7.</span> <span class="toc-text">控制层(controller)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#功能-1"><span class="toc-number">1.4.7.1.</span> <span class="toc-text">功能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在cn-tedu-store-bean包中新建ResponseResult"><span class="toc-number">1.4.7.2.</span> <span class="toc-text">在cn.tedu.store.bean包中新建ResponseResult</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在cn-tedu-store-controller中创建UserController类"><span class="toc-number">1.4.7.3.</span> <span class="toc-text">在cn.tedu.store.controller中创建UserController类</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Regist-jsp页面设计"><span class="toc-number">1.4.8.</span> <span class="toc-text">Regist.jsp页面设计</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#功能-2"><span class="toc-number">1.4.8.1.</span> <span class="toc-text">功能</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">1.5.</span> <span class="toc-text">总结</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Ajax/" title="Ajax">Ajax<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/BootStrap学习/" title="BootStrap学习">BootStrap学习<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Dubbo/" title="Dubbo">Dubbo<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Git/" title="Git">Git<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/JQuery学习/" title="JQuery学习">JQuery学习<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Lucene/" title="Lucene">Lucene<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Maven/" title="Maven">Maven<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Scrapy学习/" title="Scrapy学习">Scrapy学习<sup>10</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Servlet/" title="Servlet">Servlet<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>25</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>30</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python数据挖掘与分析/" title="python数据挖掘与分析">python数据挖掘与分析<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/商城网站/" title="商城网站">商城网站<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/学习资源/" title="学习资源">学习资源<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>15</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>8</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>25</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/scrapy/" title="scrapy">scrapy<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Servlet/" title="Servlet">Servlet<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/商城网站/" title="商城网站">商城网站<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>6</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JSP/" title="JSP">JSP<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/swing/" title="swing">swing<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/JDBC/" title="JDBC">JDBC<sup>4</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coolshell.cn/" target="_blank" title="酷壳网">酷壳网</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 人前显贵人后受罪 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="Chenjiabing">Chenjiabing</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

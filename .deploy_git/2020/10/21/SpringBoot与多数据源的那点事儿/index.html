@@ -1,0 +1,720 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Spring Boot 与多数据源的那点事儿~ | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="前言大约在19年的这个时候，老同事公司在做医疗系统，需要和HIS系统对接一些信息，比如患者、医护、医嘱、科室等信息。但是起初并不知道如何与HIS无缝对接，于是向我取经。
+最终经过讨论采用了视图对接的方式，大致就是HIS系统提供视图，他们进行对接。
+写这篇文章的目的这篇文章将会涉及到Spring Boot 与Mybatis、数据库整合，类似于整合Mybatis与数据库的文章其实网上很多，作者此前也写">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot 与多数据源的那点事儿~">
+<meta property="og:url" content="http://chenjiabing666.github.io/2020/10/21/SpringBoot与多数据源的那点事儿/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="前言大约在19年的这个时候，老同事公司在做医疗系统，需要和HIS系统对接一些信息，比如患者、医护、医嘱、科室等信息。但是起初并不知道如何与HIS无缝对接，于是向我取经。
+最终经过讨论采用了视图对接的方式，大致就是HIS系统提供视图，他们进行对接。
+写这篇文章的目的这篇文章将会涉及到Spring Boot 与Mybatis、数据库整合，类似于整合Mybatis与数据库的文章其实网上很多，作者此前也写">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/BlogImage/raw/master/Spring%20Boot%E7%AC%AC%E5%8D%81%E4%B8%89%E5%BC%B9%EF%BC%8C%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E6%95%B4%E5%90%88/1.jpg">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/BlogImage/raw/master/myjszl_log.png">
+<meta property="og:updated_time" content="2020-10-21T08:57:11.379Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Boot 与多数据源的那点事儿~">
+<meta name="twitter:description" content="前言大约在19年的这个时候，老同事公司在做医疗系统，需要和HIS系统对接一些信息，比如患者、医护、医嘱、科室等信息。但是起初并不知道如何与HIS无缝对接，于是向我取经。
+最终经过讨论采用了视图对接的方式，大致就是HIS系统提供视图，他们进行对接。
+写这篇文章的目的这篇文章将会涉及到Spring Boot 与Mybatis、数据库整合，类似于整合Mybatis与数据库的文章其实网上很多，作者此前也写">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/BlogImage/raw/master/Spring%20Boot%E7%AC%AC%E5%8D%81%E4%B8%89%E5%BC%B9%EF%BC%8C%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E6%95%B4%E5%90%88/1.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/10/21/SpringBoot与多数据源的那点事儿/" title="Spring Boot 与多数据源的那点事儿~" itemprop="url">Spring Boot 与多数据源的那点事儿~</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2020-10-21T08:44:24.000Z" itemprop="datePublished"> 发表于 2020-10-21</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#写这篇文章的目的"><span class="toc-number">2.</span> <span class="toc-text">写这篇文章的目的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是多数据源？"><span class="toc-number">3.</span> <span class="toc-text">什么是多数据源？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#何时用到多数据源？"><span class="toc-number">4.</span> <span class="toc-text">何时用到多数据源？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#整合单一的数据源"><span class="toc-number">5.</span> <span class="toc-text">整合单一的数据源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#整合Mybatis"><span class="toc-number">6.</span> <span class="toc-text">整合Mybatis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多数据源如何整合？"><span class="toc-number">7.</span> <span class="toc-text">多数据源如何整合？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是动态数据源？"><span class="toc-number">7.1.</span> <span class="toc-text">什么是动态数据源？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据源切换如何保证线程隔离？"><span class="toc-number">7.2.</span> <span class="toc-text">数据源切换如何保证线程隔离？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何构造一个动态数据源？"><span class="toc-number">7.3.</span> <span class="toc-text">如何构造一个动态数据源？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#定义一个注解"><span class="toc-number">7.4.</span> <span class="toc-text">定义一个注解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何与Mybatis整合？"><span class="toc-number">7.5.</span> <span class="toc-text">如何与Mybatis整合？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#演示"><span class="toc-number">7.6.</span> <span class="toc-text">演示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>大约在19年的这个时候，老同事公司在做医疗系统，需要和<code>HIS</code>系统对接一些信息，比如患者、医护、医嘱、科室等信息。但是起初并不知道如何与HIS无缝对接，于是向我取经。</p>
+<p>最终经过讨论采用了<code>视图对接</code>的方式，大致就是HIS系统提供视图，他们进行对接。</p>
+<h2 id="写这篇文章的目的"><a href="#写这篇文章的目的" class="headerlink" title="写这篇文章的目的"></a>写这篇文章的目的</h2><p>这篇文章将会涉及到Spring Boot 与Mybatis、数据库整合，类似于整合Mybatis与数据库的文章其实网上很多，作者此前也写过一篇文章详细的介绍了一些整合的套路：<a href="https://mp.weixin.qq.com/s/USXciK7mWB2-sud3-g19PA" target="_blank" rel="external">Spring Boot 整合多点套路，少走点弯路~</a>，有兴趣的可以看看。</p>
+<h2 id="什么是多数据源？"><a href="#什么是多数据源？" class="headerlink" title="什么是多数据源？"></a>什么是多数据源？</h2><p>最常见的单一应用中最多涉及到一个数据库，即是一个数据源（<code>Datasource</code>）。那么顾名思义，多数据源就是在一个单一应用中涉及到了两个及以上的数据库了。</p>
+<p>其实在配置数据源的时候就已经很明确这个定义了，如以下代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Bean</span>(name = <span class="string">"dataSource"</span>)</div><div class="line"><span class="function"><span class="keyword">public</span> DataSource <span class="title">dataSource</span><span class="params">()</span> </span>&#123;</div><div class="line">    DruidDataSource druidDataSource = <span class="keyword">new</span> DruidDataSource();</div><div class="line">    druidDataSource.setUrl(url);</div><div class="line">    druidDataSource.setUsername(username);</div><div class="line">    druidDataSource.setDriverClassName(driverClassName);</div><div class="line">    druidDataSource.setPassword(password);</div><div class="line">    <span class="keyword">return</span> druidDataSource;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p><code>url</code>、<code>username</code>、<code>password</code>这三个属性已经唯一确定了一个数据库了，<code>DataSource</code>则是依赖这三个创建出来的。则多数据源即是配置多个<code>DataSource</code>（暂且这么理解）。</p>
+</blockquote>
+<h2 id="何时用到多数据源？"><a href="#何时用到多数据源？" class="headerlink" title="何时用到多数据源？"></a>何时用到多数据源？</h2><p>正如前言介绍到的一个场景，相信大多数做过医疗系统的都会和<code>HIS</code>打交道，为了简化护士以及医生的操作流程，必须要将必要的信息从<code>HIS</code>系统对接过来，据我了解的大致有两种方案如下：</p>
+<ol>
+<li><code>HIS</code>提供视图，比如医护视图、患者视图等，而此时其他系统只需要定时的从<code>HIS</code>视图中读取数据同步到自己数据库中即可。</li>
+<li><code>HIS</code>提供接口，无论是<code>webService</code>还是<code>HTTP</code>形式都是可行的，此时其他系统只需要按照要求调接口即可。</li>
+</ol>
+<blockquote>
+<p>很明显第一种方案涉及到了至少两个数据库了，一个是<code>HIS</code>数据库，一个自己系统的数据库，在单一应用中必然需要用到<strong>多数据源的切换</strong>才能达到目的。</p>
+</blockquote>
+<p>当然多数据源的使用场景还是有很多的，以上只是简单的一个场景。</p>
+<h2 id="整合单一的数据源"><a href="#整合单一的数据源" class="headerlink" title="整合单一的数据源"></a>整合单一的数据源</h2><p>本文使用阿里的数据库连接池<code>druid</code>，添加依赖如下：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--druid连接池--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>druid-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.1.9<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>阿里的数据库连接池非常强大，比如<code>数据监控</code>、<code>数据库加密</code>等等内容，本文仅仅演示与Spring Boot整合的过程，一些其他的功能后续可以自己研究添加。</p>
+<p>Druid连接池的<code>starter</code>的自动配置类是<code>DruidDataSourceAutoConfigure</code>，类上标注如下一行注解：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@EnableConfigurationProperties</span>(&#123;DruidStatProperties.class, DataSourceProperties.class&#125;)</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p><code>@EnableConfigurationProperties</code>这个注解使得配置文件中的配置生效并且映射到指定类的属性。</p>
+</blockquote>
+<p><code>DruidStatProperties</code>中指定的前缀是<code>spring.datasource.druid</code>，这个配置主要是用来设置连接池的一些参数。</p>
+<p><code>DataSourceProperties</code>中指定的前缀是<code>spring.datasource</code>，这个主要是用来设置数据库的<code>url</code>、<code>username</code>、<code>password</code>等信息。</p>
+<p>因此我们只需要在全局配置文件中指定<strong>数据库的一些配置</strong>以及<strong>连接池的一些配置</strong>信息即可，前缀分别是<code>spring.datasource.druid</code>、<code>spring.datasource</code>，以下是个人随便配置的(<code>application.properties</code>)：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">spring.datasource.url=jdbc\:mysql\://120.26.101.xxx\:3306/xxx?useUnicode\=true&amp;characterEncoding\=UTF-8&amp;zeroDateTimeBehavior\=convertToNull&amp;useSSL\=false&amp;allowMultiQueries\=true&amp;serverTimezone=Asia/Shanghai</div><div class="line">spring.datasource.username=root</div><div class="line">spring.datasource.password=xxxx</div><div class="line">spring.datasource.type=com.alibaba.druid.pool.DruidDataSource</div><div class="line">spring.datasource.driver-class-name=com.mysql.jdbc.Driver</div><div class="line">#初始化连接大小</div><div class="line">spring.datasource.druid.initial-size=0</div><div class="line">#连接池最大使用连接数量</div><div class="line">spring.datasource.druid.max-active=20</div><div class="line">#连接池最小空闲</div><div class="line">spring.datasource.druid.min-idle=0</div><div class="line">#获取连接最大等待时间</div><div class="line">spring.datasource.druid.max-wait=6000</div><div class="line">spring.datasource.druid.validation-query=SELECT 1</div><div class="line">#spring.datasource.druid.validation-query-timeout=6000</div><div class="line">spring.datasource.druid.test-on-borrow=false</div><div class="line">spring.datasource.druid.test-on-return=false</div><div class="line">spring.datasource.druid.test-while-idle=true</div><div class="line">#配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒</div><div class="line">spring.datasource.druid.time-between-eviction-runs-millis=60000</div><div class="line">#置一个连接在池中最小生存的时间，单位是毫秒</div><div class="line">spring.datasource.druid.min-evictable-idle-time-millis=25200000</div><div class="line">#spring.datasource.druid.max-evictable-idle-time-millis=</div><div class="line">#打开removeAbandoned功能,多少时间内必须关闭连接</div><div class="line">spring.datasource.druid.removeAbandoned=true</div><div class="line">#1800秒，也就是30分钟</div><div class="line">spring.datasource.druid.remove-abandoned-timeout=1800</div><div class="line">#&lt;!-- 1800秒，也就是30分钟 --&gt;</div><div class="line">spring.datasource.druid.log-abandoned=true</div><div class="line">spring.datasource.druid.filters=mergeStat</div></pre></td></tr></table></figure>
+<blockquote>
+<p>在全局配置文件<code>application.properties</code>文件中配置以上的信息即可注入一个数据源到Spring Boot中。其实这仅仅是一种方式，下面介绍另外一种方式。</p>
+</blockquote>
+<p>在自动配置类中<code>DruidDataSourceAutoConfigure</code>中有如下一段代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Bean</span>(initMethod = <span class="string">"init"</span>)</div><div class="line">  <span class="meta">@ConditionalOnMissingBean</span></div><div class="line">  <span class="function"><span class="keyword">public</span> DataSource <span class="title">dataSource</span><span class="params">()</span> </span>&#123;</div><div class="line">      LOGGER.info(<span class="string">"Init DruidDataSource"</span>);</div><div class="line">      <span class="keyword">return</span> <span class="keyword">new</span> DruidDataSourceWrapper();</div><div class="line">  &#125;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p><code>@ConditionalOnMissingBean</code>和<code>@Bean</code>这两个注解的结合，意味着我们可以覆盖，只需要提前在<code>IOC</code>中注入一个<code>DataSource</code>类型的<code>Bean</code>即可。</p>
+</blockquote>
+<p>因此我们在自定义的配置类中定义如下配置即可：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">     * <span class="doctag">@Bean</span>：向IOC容器中注入一个Bean</div><div class="line">     * <span class="doctag">@ConfigurationProperties</span>：使得配置文件中以spring.datasource为前缀的属性映射到Bean的属性中</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="meta">@ConfigurationProperties</span>(prefix = <span class="string">"spring.datasource"</span>)</div><div class="line">    <span class="meta">@Bean</span></div><div class="line">    <span class="function"><span class="keyword">public</span> DataSource <span class="title">dataSource</span><span class="params">()</span></span>&#123;</div><div class="line">        <span class="comment">//做一些其他的自定义配置，比如密码加密等......</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> DruidDataSource();</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>以上介绍了两种数据源的配置方式，第一种比较简单，第二种适合扩展，按需选择。</p>
+</blockquote>
+<h2 id="整合Mybatis"><a href="#整合Mybatis" class="headerlink" title="整合Mybatis"></a>整合Mybatis</h2><p>Spring Boot 整合Mybatis其实很简单，简单的几步就搞定，首先添加依赖：<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mybatis.spring.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">     <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.0.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>第二步找到自动配置类<code>MybatisAutoConfiguration</code>，有如下一行代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@EnableConfigurationProperties</span>(MybatisProperties.class)</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>老套路了，全局配置文件中配置前缀为<code>mybatis</code>的配置将会映射到该类中的属性。</p>
+</blockquote>
+<p>可配置的东西很多，比如<code>XML文件的位置</code>、<code>类型处理器</code>等等，如下简单的配置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mybatis.type-handlers-package=com.demo.typehandler</div><div class="line">mybatis.configuration.map-underscore-to-camel-case=true</div></pre></td></tr></table></figure></p>
+<p>如果需要通过包扫描的方式注入Mapper，则需要在配置类上加入一个注解：<code>@MapperScan</code>，其中的value属性指定需要扫描的包。</p>
+<blockquote>
+<p>直接在全局配置文件配置各种属性是一种比较简单的方式，其实的任何组件的整合都有不少于两种的配置方式，下面来介绍下配置类如何配置。</p>
+</blockquote>
+<p><code>MybatisAutoConfiguration</code>自动配置类有如下一断代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Bean</span></div><div class="line"><span class="meta">@ConditionalOnMissingBean</span></div><div class="line"><span class="function"><span class="keyword">public</span> SqlSessionFactory <span class="title">sqlSessionFactory</span><span class="params">(DataSource dataSource)</span> <span class="keyword">throws</span> Exception </span>&#123;&#125;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p><code>@ConditionalOnMissingBean</code>和<code>@Bean</code>真是老搭档了，意味着我们又可以覆盖，只需要在IOC容器中注入<code>SqlSessionFactory（Mybatis六剑客之一生产者）</code>。</p>
+</blockquote>
+<p>在自定义配置类中注入即可，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">    * 注入SqlSessionFactory</div><div class="line">    */</div><div class="line">   <span class="meta">@Bean</span>(<span class="string">"sqlSessionFactory1"</span>)</div><div class="line">   <span class="function"><span class="keyword">public</span> SqlSessionFactory <span class="title">sqlSessionFactory</span><span class="params">(DataSource dataSource)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">       SqlSessionFactoryBean sqlSessionFactoryBean = <span class="keyword">new</span> SqlSessionFactoryBean();</div><div class="line">       sqlSessionFactoryBean.setDataSource(dataSource);</div><div class="line">       sqlSessionFactoryBean.setMapperLocations(<span class="keyword">new</span> PathMatchingResourcePatternResolver().getResources(<span class="string">"classpath*:/mapper/**/*.xml"</span>));</div><div class="line">       org.apache.ibatis.session.Configuration configuration = <span class="keyword">new</span> org.apache.ibatis.session.Configuration();</div><div class="line">       <span class="comment">// 自动将数据库中的下划线转换为驼峰格式</span></div><div class="line">       configuration.setMapUnderscoreToCamelCase(<span class="keyword">true</span>);</div><div class="line">       configuration.setDefaultFetchSize(<span class="number">100</span>);</div><div class="line">       configuration.setDefaultStatementTimeout(<span class="number">30</span>);</div><div class="line">       sqlSessionFactoryBean.setConfiguration(configuration);</div><div class="line">       <span class="keyword">return</span> sqlSessionFactoryBean.getObject();</div><div class="line">   &#125;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>以上介绍了配置Mybatis的两种方式，其实在大多数场景中使用第一种已经够用了，至于为什么介绍第二种呢？当然是为了多数据源的整合而做准备了。</p>
+</blockquote>
+<p>在<code>MybatisAutoConfiguration</code>中有一行很重要的代码，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ConditionalOnSingleCandidate</span>(DataSource.class)</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p><code>@ConditionalOnSingleCandidate</code>这个注解的意思是当IOC容器中只有一个候选Bean的实例才会生效。</p>
+</blockquote>
+<p>这行代码标注在Mybatis的自动配置类中有何含义呢？下面介绍，哈哈哈~<br><img src="https://gitee.com/chenjiabing666/BlogImage/raw/master/Spring%20Boot%E7%AC%AC%E5%8D%81%E4%B8%89%E5%BC%B9%EF%BC%8C%E5%A4%9A%E6%95%B0%E6%8D%AE%E6%BA%90%E6%95%B4%E5%90%88/1.jpg" alt=""></p>
+<h2 id="多数据源如何整合？"><a href="#多数据源如何整合？" class="headerlink" title="多数据源如何整合？"></a>多数据源如何整合？</h2><p>上文留下的问题：为什么的Mybatis自动配置上标注如下一行代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ConditionalOnSingleCandidate</span>(DataSource.class)</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>以上这行代码的言外之意：当IOC容器中只有一个数据源DataSource，这个自动配置类才会生效。</p>
+</blockquote>
+<p><strong>哦？照这样搞，多数据源是不能用Mybatis吗？</strong></p>
+<p>可能大家会有一个误解，认为多数据源就是多个的<code>DataSource</code>并存的，当然这样说也不是不正确。</p>
+<blockquote>
+<p>多数据源的情况下并不是多个数据源并存的，Spring提供了<code>AbstractRoutingDataSource</code>这样一个抽象类，使得能够在多数据源的情况下任意切换，相当于一个<strong>动态路由</strong>的作用，作者称之为<code>动态数据源</code>。因此Mybatis只需要配置这个动态数据源即可。</p>
+</blockquote>
+<h3 id="什么是动态数据源？"><a href="#什么是动态数据源？" class="headerlink" title="什么是动态数据源？"></a>什么是动态数据源？</h3><p>动态数据源简单的说就是能够自由切换的数据源，类似于一个动态路由的感觉，Spring 提供了一个抽象类<code>AbstractRoutingDataSource</code>，这个抽象类中哟一个属性，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> Map&lt;Object, Object&gt; targetDataSources;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p><code>targetDataSources</code>是一个<code>Map</code>结构，所有需要切换的数据源都存放在其中，根据指定的<code>KEY</code>进行切换。当然还有一个默认的数据源。</p>
+</blockquote>
+<p><code>AbstractRoutingDataSource</code>这个抽象类中有一个抽象方法需要子类实现，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> Object <span class="title">determineCurrentLookupKey</span><span class="params">()</span></span>;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p><code>determineCurrentLookupKey()</code>这个方法的返回值决定了需要切换的数据源的<code>KEY</code>，就是根据这个<code>KEY</code>从<code>targetDataSources</code>取值（数据源）。</p>
+</blockquote>
+<h3 id="数据源切换如何保证线程隔离？"><a href="#数据源切换如何保证线程隔离？" class="headerlink" title="数据源切换如何保证线程隔离？"></a>数据源切换如何保证线程隔离？</h3><p>数据源属于一个公共的资源，在多线程的情况下如何保证线程隔离呢？不能我这边切换了影响其他线程的执行。</p>
+<blockquote>
+<p>说到线程隔离，自然会想到<code>ThreadLocal</code>了，将切换数据源的<code>KEY</code>（用于从<code>targetDataSources</code>中取值）存储在<code>ThreadLocal</code>中，执行结束之后清除即可。</p>
+</blockquote>
+<p>单独封装了一个<code>DataSourceHolder</code>，内部使用<code>ThreadLocal</code>隔离线程，代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 使用ThreadLocal存储切换数据源后的KEY</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DataSourceHolder</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">//线程  本地环境</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;String&gt; dataSources = <span class="keyword">new</span> InheritableThreadLocal();</div><div class="line"></div><div class="line">    <span class="comment">//设置数据源</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setDataSource</span><span class="params">(String datasource)</span> </span>&#123;</div><div class="line">        dataSources.set(datasource);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//获取数据源</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getDataSource</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> dataSources.get();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//清除数据源</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">clearDataSource</span><span class="params">()</span> </span>&#123;</div><div class="line">        dataSources.remove();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="如何构造一个动态数据源？"><a href="#如何构造一个动态数据源？" class="headerlink" title="如何构造一个动态数据源？"></a>如何构造一个动态数据源？</h3><p>上文说过只需继承一个抽象类<code>AbstractRoutingDataSource</code>，重写其中的一个方法<code>determineCurrentLookupKey()</code>即可。代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 动态数据源，继承AbstractRoutingDataSource</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DynamicDataSource</span> <span class="keyword">extends</span> <span class="title">AbstractRoutingDataSource</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 返回需要使用的数据源的key，将会按照这个KEY从Map获取对应的数据源（切换）</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> Object <span class="title">determineCurrentLookupKey</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="comment">//从ThreadLocal中取出KEY</span></div><div class="line">        <span class="keyword">return</span> DataSourceHolder.getDataSource();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 构造方法填充Map，构建多数据源</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DynamicDataSource</span><span class="params">(DataSource defaultTargetDataSource, Map&lt;Object, Object&gt; targetDataSources)</span> </span>&#123;</div><div class="line">        <span class="comment">//默认的数据源，可以作为主数据源</span></div><div class="line">        <span class="keyword">super</span>.setDefaultTargetDataSource(defaultTargetDataSource);</div><div class="line">        <span class="comment">//目标数据源</span></div><div class="line">        <span class="keyword">super</span>.setTargetDataSources(targetDataSources);</div><div class="line">        <span class="comment">//执行afterPropertiesSet方法，完成属性的设置</span></div><div class="line">        <span class="keyword">super</span>.afterPropertiesSet();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上述代码很简单，分析如下：</p>
+<ol>
+<li>一个多参的构造方法，指定了默认的数据源和目标数据源。</li>
+<li>重写<code>determineCurrentLookupKey()</code>方法，返回数据源对应的<code>KEY</code>，这里是直接从<code>ThreadLocal</code>中取值，就是上文封装的<code>DataSourceHolder</code>。</li>
+</ol>
+<h3 id="定义一个注解"><a href="#定义一个注解" class="headerlink" title="定义一个注解"></a>定义一个注解</h3><p>为了操作方便且低耦合，不能每次需要切换的数据源的时候都要手动调一下接口吧，可以定义一个切换数据源的注解，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 切换数据源的注解</div><div class="line"> */</div><div class="line"><span class="meta">@Target</span>(value = ElementType.METHOD)</div><div class="line"><span class="meta">@Retention</span>(value = RetentionPolicy.RUNTIME)</div><div class="line"><span class="meta">@Documented</span></div><div class="line"><span class="keyword">public</span> <span class="meta">@interface</span> SwitchSource &#123;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 默认切换的数据源KEY</div><div class="line">     */</div><div class="line">    String DEFAULT_NAME = <span class="string">"hisDataSource"</span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 需要切换到数据的KEY</div><div class="line">     */</div><div class="line">    <span class="function">String <span class="title">value</span><span class="params">()</span> <span class="keyword">default</span> DEFAULT_NAME</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>注解中只有一个<code>value</code>属性，指定了需要切换数据源的<code>KEY</code>。</p>
+<p>有注解还不行，当然还要有切面，代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Aspect</span></div><div class="line"><span class="comment">//优先级设置到最高</span></div><div class="line"><span class="meta">@Order</span>(Ordered.HIGHEST_PRECEDENCE)</div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="meta">@Slf</span>4j</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DataSourceAspect</span> </span>&#123;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="meta">@Pointcut</span>(<span class="string">"@annotation(SwitchSource)"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pointcut</span><span class="params">()</span> </span>&#123;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 在方法执行之前切换到指定的数据源</div><div class="line">     * <span class="doctag">@param</span> joinPoint</div><div class="line">     */</div><div class="line">    <span class="meta">@Before</span>(value = <span class="string">"pointcut()"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">beforeOpt</span><span class="params">(JoinPoint joinPoint)</span> </span>&#123;</div><div class="line">        <span class="comment">/*因为是对注解进行切面，所以这边无需做过多判定，直接获取注解的值，进行环绕，将数据源设置成远方，然后结束后，清楚当前线程数据源*/</span></div><div class="line">        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();</div><div class="line">        SwitchSource switchSource = method.getAnnotation(SwitchSource.class);</div><div class="line">        log.info(<span class="string">"[Switch DataSource]:"</span> + switchSource.value());</div><div class="line">        DataSourceHolder.setDataSource(switchSource.value());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 方法执行之后清除掉ThreadLocal中存储的KEY，这样动态数据源会使用默认的数据源</div><div class="line">     */</div><div class="line">    <span class="meta">@After</span>(value = <span class="string">"pointcut()"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterOpt</span><span class="params">()</span> </span>&#123;</div><div class="line">        DataSourceHolder.clearDataSource();</div><div class="line">        log.info(<span class="string">"[Switch Default DataSource]"</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个<code>ASPECT</code>很容易理解，<code>beforeOpt()</code>在方法之前执行，取值<code>@SwitchSource</code>中value属性设置到<code>ThreadLocal</code>中;<code>afterOpt()</code>方法在方法执行之后执行，清除掉<code>ThreadLocal</code>中的<code>KEY</code>，保证了如果不切换数据源，则用默认的数据源。</p>
+<h3 id="如何与Mybatis整合？"><a href="#如何与Mybatis整合？" class="headerlink" title="如何与Mybatis整合？"></a>如何与Mybatis整合？</h3><p>单一数据源与Mybatis整合上文已经详细讲解了，数据源<code>DataSource</code>作为参数构建了<code>SqlSessionFactory</code>，同样的思想，只需要把这个数据源换成动态数据源即可。注入的代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">     * 创建动态数据源的SqlSessionFactory，传入的是动态数据源</div><div class="line">     * <span class="doctag">@Primary</span>这个注解很重要，如果项目中存在多个SqlSessionFactory，这个注解一定要加上</div><div class="line">     */</div><div class="line">    <span class="meta">@Primary</span></div><div class="line">    <span class="meta">@Bean</span>(<span class="string">"sqlSessionFactory2"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> SqlSessionFactory <span class="title">sqlSessionFactoryBean</span><span class="params">(DynamicDataSource dynamicDataSource)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        SqlSessionFactoryBean sqlSessionFactoryBean = <span class="keyword">new</span> SqlSessionFactoryBean();</div><div class="line">        sqlSessionFactoryBean.setDataSource(dynamicDataSource);</div><div class="line">        org.apache.ibatis.session.Configuration configuration = <span class="keyword">new</span> org.apache.ibatis.session.Configuration();</div><div class="line">        configuration.setMapUnderscoreToCamelCase(<span class="keyword">true</span>);</div><div class="line">        configuration.setDefaultFetchSize(<span class="number">100</span>);</div><div class="line">        configuration.setDefaultStatementTimeout(<span class="number">30</span>);</div><div class="line">        sqlSessionFactoryBean.setConfiguration(configuration);</div><div class="line">        <span class="keyword">return</span> sqlSessionFactoryBean.getObject();</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>与Mybatis整合很简单，只需要把数据源替换成自定义的动态数据源<code>DynamicDataSource</code>。</p>
+</blockquote>
+<p>那么动态数据源如何注入到IOC容器中呢？看上文自定义的<code>DynamicDataSource</code>构造方法，肯定需要两个数据源了，因此必须先注入两个或者多个数据源到IOC容器中，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">    * <span class="doctag">@Bean</span>：向IOC容器中注入一个Bean</div><div class="line">    * <span class="doctag">@ConfigurationProperties</span>：使得配置文件中以spring.datasource为前缀的属性映射到Bean的属性中</div><div class="line">    */</div><div class="line">   <span class="meta">@ConfigurationProperties</span>(prefix = <span class="string">"spring.datasource"</span>)</div><div class="line">   <span class="meta">@Bean</span>(<span class="string">"dataSource"</span>)</div><div class="line">   <span class="function"><span class="keyword">public</span> DataSource <span class="title">dataSource</span><span class="params">()</span></span>&#123;</div><div class="line">       <span class="keyword">return</span> <span class="keyword">new</span> DruidDataSource();</div><div class="line">   &#125;</div><div class="line"></div><div class="line">   <span class="comment">/**</span></div><div class="line">    * 向IOC容器中注入另外一个数据源</div><div class="line">    * 全局配置文件中前缀是spring.datasource.his</div><div class="line">    */</div><div class="line">   <span class="meta">@Bean</span>(name = SwitchSource.DEFAULT_NAME)</div><div class="line">   <span class="meta">@ConfigurationProperties</span>(prefix = <span class="string">"spring.datasource.his"</span>)</div><div class="line">   <span class="function"><span class="keyword">public</span> DataSource <span class="title">hisDataSource</span><span class="params">()</span> </span>&#123;</div><div class="line">       <span class="keyword">return</span> DataSourceBuilder.create().build();</div><div class="line">   &#125;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>以上构建的两个数据源，一个是<strong>默认的数据源</strong>，一个是需要<strong>切换到的数据源（<code>targetDataSources</code>）</strong>，这样就组成了动态数据源了。数据源的一些信息，比如<code>url</code>，<code>username</code>需要自己在全局配置文件中根据指定的前缀配置即可，代码不再贴出。</p>
+</blockquote>
+<p>动态数据源的注入代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">     * 创建动态数据源的SqlSessionFactory，传入的是动态数据源</div><div class="line">     * <span class="doctag">@Primary</span>这个注解很重要，如果项目中存在多个SqlSessionFactory，这个注解一定要加上</div><div class="line">     */</div><div class="line">    <span class="meta">@Primary</span></div><div class="line">    <span class="meta">@Bean</span>(<span class="string">"sqlSessionFactory2"</span>)</div><div class="line">    <span class="function"><span class="keyword">public</span> SqlSessionFactory <span class="title">sqlSessionFactoryBean</span><span class="params">(DynamicDataSource dynamicDataSource)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        SqlSessionFactoryBean sqlSessionFactoryBean = <span class="keyword">new</span> SqlSessionFactoryBean();</div><div class="line">        sqlSessionFactoryBean.setDataSource(dynamicDataSource);</div><div class="line">        org.apache.ibatis.session.Configuration configuration = <span class="keyword">new</span> org.apache.ibatis.session.Configuration();</div><div class="line">        configuration.setMapUnderscoreToCamelCase(<span class="keyword">true</span>);</div><div class="line">        configuration.setDefaultFetchSize(<span class="number">100</span>);</div><div class="line">        configuration.setDefaultStatementTimeout(<span class="number">30</span>);</div><div class="line">        sqlSessionFactoryBean.setConfiguration(configuration);</div><div class="line">        <span class="keyword">return</span> sqlSessionFactoryBean.getObject();</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>这里还有一个问题：IOC中存在多个数据源了，那么事务管理器怎么办呢？它也懵逼了，到底选择哪个数据源呢？因此事务管理器肯定还是要重新配置的。</p>
+</blockquote>
+<p>事务管理器此时管理的数据源将是动态数据源<code>DynamicDataSource</code>，配置如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">  * 重写事务管理器，管理动态数据源</div><div class="line">  */</div><div class="line"> <span class="meta">@Primary</span></div><div class="line"> <span class="meta">@Bean</span>(value = <span class="string">"transactionManager2"</span>)</div><div class="line"> <span class="function"><span class="keyword">public</span> PlatformTransactionManager <span class="title">annotationDrivenTransactionManager</span><span class="params">(DynamicDataSource dataSource)</span> </span>&#123;</div><div class="line">     <span class="keyword">return</span> <span class="keyword">new</span> DataSourceTransactionManager(dataSource);</div><div class="line"> &#125;</div></pre></td></tr></table></figure></p>
+<p>至此，Mybatis与多数据源的整合就完成了。</p>
+<h3 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h3><p>使用也是很简单，在需要切换数据源的方法上方标注<code>@SwitchSource</code>切换到指定的数据源即可，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//不开启事务</span></div><div class="line"><span class="meta">@Transactional</span>(propagation = Propagation.NOT_SUPPORTED)</div><div class="line"><span class="comment">//切换到HIS的数据源</span></div><div class="line"><span class="meta">@SwitchSource</span></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> List&lt;DeptInfo&gt; <span class="title">list</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> hisDeptInfoMapper.listDept();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这样只要执行到这方法将会切换到<code>HIS</code>的数据源，方法执行结束之后将会清除，执行默认的数据源。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本篇文章讲了Spring Boot与单数据源、Mybatis、多数据源之间的整合，希望这篇文章能够帮助读者理解多数据源的整合，虽说用的不多，但是在有些领域仍然是比较重要的。</p>
+<p>原创不易，点点赞分享一波，谢谢支持~</p>
+<blockquote>
+<p><strong>源码已经上传，需要源码的朋友公众号回复关键词<code>多数据源</code>。</strong></p>
+</blockquote>
+<p><img src="https://gitee.com/chenjiabing666/BlogImage/raw/master/myjszl_log.png" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Spring-Boot-进阶/">Spring Boot 进阶</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Spring-Boot/">Spring Boot</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2020/10/21/SpringBoot与多数据源的那点事儿/" data-title="Spring Boot 与多数据源的那点事儿~ | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2020/10/20/这类注解都不知道，还好意思说用过Spring Boot/"  title="这类注解都不知道，还好意思说用过Spring Boot~">
+ <strong>下一篇：</strong><br/> 
+ <span>这类注解都不知道，还好意思说用过Spring Boot~
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#写这篇文章的目的"><span class="toc-number">2.</span> <span class="toc-text">写这篇文章的目的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#什么是多数据源？"><span class="toc-number">3.</span> <span class="toc-text">什么是多数据源？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#何时用到多数据源？"><span class="toc-number">4.</span> <span class="toc-text">何时用到多数据源？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#整合单一的数据源"><span class="toc-number">5.</span> <span class="toc-text">整合单一的数据源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#整合Mybatis"><span class="toc-number">6.</span> <span class="toc-text">整合Mybatis</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#多数据源如何整合？"><span class="toc-number">7.</span> <span class="toc-text">多数据源如何整合？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是动态数据源？"><span class="toc-number">7.1.</span> <span class="toc-text">什么是动态数据源？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#数据源切换如何保证线程隔离？"><span class="toc-number">7.2.</span> <span class="toc-text">数据源切换如何保证线程隔离？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何构造一个动态数据源？"><span class="toc-number">7.3.</span> <span class="toc-text">如何构造一个动态数据源？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#定义一个注解"><span class="toc-number">7.4.</span> <span class="toc-text">定义一个注解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何与Mybatis整合？"><span class="toc-number">7.5.</span> <span class="toc-text">如何与Mybatis整合？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#演示"><span class="toc-number">7.6.</span> <span class="toc-text">演示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Mybatis进阶/" title="Mybatis进阶">Mybatis进阶<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring-Boot-进阶/" title="Spring Boot 进阶">Spring Boot 进阶<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/开发工具/" title="开发工具">开发工具<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring-Boot/" title="Spring Boot">Spring Boot<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mybatis/" title="Mybatis">Mybatis<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/破解/" title="破解">破解<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

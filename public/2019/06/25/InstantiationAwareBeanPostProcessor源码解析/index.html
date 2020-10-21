@@ -1,0 +1,843 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>InstantiationAwareBeanPostProcessor源码解析 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="简介
+继承BeanPostProcessor接口，在此基础上又定义了三个方法，分别在Bean实例化前后【不是初始化】执行。
+从上面的介绍可以看到，这个接口相对于BeanPostProcessor功能更加强大，一个接口承担了Bean的实例化前后、初始化前后责任。
+
+Bean加载顺序
+ioc容器创建加载Bean的执行顺序如下：
+InstantiationAwareBeanPostProcessor接口">
+<meta property="og:type" content="article">
+<meta property="og:title" content="InstantiationAwareBeanPostProcessor源码解析">
+<meta property="og:url" content="http://chenjiabing666.github.io/2019/06/25/InstantiationAwareBeanPostProcessor源码解析/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="简介
+继承BeanPostProcessor接口，在此基础上又定义了三个方法，分别在Bean实例化前后【不是初始化】执行。
+从上面的介绍可以看到，这个接口相对于BeanPostProcessor功能更加强大，一个接口承担了Bean的实例化前后、初始化前后责任。
+
+Bean加载顺序
+ioc容器创建加载Bean的执行顺序如下：
+InstantiationAwareBeanPostProcessor接口">
+<meta property="og:image" content="https://github.com/chenjiabing666/BlogImage/blob/master/spring4.png?raw=true">
+<meta property="og:image" content="https://github.com/chenjiabing666/BlogImage/blob/master/spring5.png?raw=true">
+<meta property="og:image" content="https://github.com/chenjiabing666/BlogImage/blob/master/spring6.png?raw=true">
+<meta property="og:image" content="https://github.com/chenjiabing666/BlogImage/blob/master/spring7.png?raw=true">
+<meta property="og:image" content="https://github.com/chenjiabing666/BlogImage/blob/master/spring8.png?raw=true">
+<meta property="og:image" content="https://github.com/chenjiabing666/BlogImage/blob/master/spring9.png?raw=true">
+<meta property="og:image" content="https://github.com/chenjiabing666/BlogImage/blob/master/spring10.png?raw=true">
+<meta property="og:image" content="https://github.com/chenjiabing666/BlogImage/blob/master/spring11.png?raw=true">
+<meta property="og:image" content="https://github.com/chenjiabing666/BlogImage/blob/master/spring12.png?raw=true">
+<meta property="og:image" content="https://github.com/chenjiabing666/BlogImage/blob/master/spring13.png?raw=true">
+<meta property="og:image" content="https://github.com/chenjiabing666/BlogImage/blob/master/spring14.png?raw=true">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T05:56:41.654Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="InstantiationAwareBeanPostProcessor源码解析">
+<meta name="twitter:description" content="简介
+继承BeanPostProcessor接口，在此基础上又定义了三个方法，分别在Bean实例化前后【不是初始化】执行。
+从上面的介绍可以看到，这个接口相对于BeanPostProcessor功能更加强大，一个接口承担了Bean的实例化前后、初始化前后责任。
+
+Bean加载顺序
+ioc容器创建加载Bean的执行顺序如下：
+InstantiationAwareBeanPostProcessor接口">
+<meta name="twitter:image" content="https://github.com/chenjiabing666/BlogImage/blob/master/spring4.png?raw=true">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/06/25/InstantiationAwareBeanPostProcessor源码解析/" title="InstantiationAwareBeanPostProcessor源码解析" itemprop="url">InstantiationAwareBeanPostProcessor源码解析</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2019-06-25T13:24:43.000Z" itemprop="datePublished"> 发表于 2019-06-25</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Bean加载顺序"><span class="toc-number">2.</span> <span class="toc-text">Bean加载顺序</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#InstantiationAwareBeanPostProcessor接口方法的执行顺序"><span class="toc-number">3.</span> <span class="toc-text">InstantiationAwareBeanPostProcessor接口方法的执行顺序</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#方法解析"><span class="toc-number">4.</span> <span class="toc-text">方法解析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#实例"><span class="toc-number">5.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#源码梳理"><span class="toc-number">6.</span> <span class="toc-text">源码梳理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Autowired源码解析"><span class="toc-number">7.</span> <span class="toc-text">Autowired源码解析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">8.1.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><ul>
+<li>继承<code>BeanPostProcessor</code>接口，在此基础上又定义了三个方法，分别在Bean<strong>实例化前后【不是初始化】</strong>执行。</li>
+<li>从上面的介绍可以看到，这个接口相对于BeanPostProcessor功能更加强大，一个接口承担了Bean的实例化前后、初始化前后责任。</li>
+</ul>
+<h1 id="Bean加载顺序"><a href="#Bean加载顺序" class="headerlink" title="Bean加载顺序"></a>Bean加载顺序</h1><ul>
+<li>ioc容器创建加载Bean的执行顺序如下：<ul>
+<li>InstantiationAwareBeanPostProcessor接口中的<code>postProcessBeforeInstantiation</code>，在实例化之前调用</li>
+<li>Bean的实例化，调用构造方法</li>
+<li>InstantiationAwareBeanPostProcessor接口中的<code>postProcessAfterInstantiation</code>，在实例化之后调用</li>
+<li>InstantiationAwareBeanPostProcessor接口中的<code>postProcessPropertyValues</code><strong>【当postProcessAfterInstantiation返回true才执行】</strong></li>
+<li>BeanPostProcessor接口中的<code>postProcessBeforeInitialization</code>，在初始化之前调用</li>
+<li>InitializingBean中的afterProperties方法，执行初始化</li>
+<li>BeanPostProcessor接口中的<code>postProcessAfterInitialization</code>，在实例化之后调用</li>
+</ul>
+</li>
+</ul>
+<h1 id="InstantiationAwareBeanPostProcessor接口方法的执行顺序"><a href="#InstantiationAwareBeanPostProcessor接口方法的执行顺序" class="headerlink" title="InstantiationAwareBeanPostProcessor接口方法的执行顺序"></a>InstantiationAwareBeanPostProcessor接口方法的执行顺序</h1><ul>
+<li>正常的执行顺序如下：<ul>
+<li>postProcessBeforeInstantiation</li>
+<li>postProcessAfterInstantiation</li>
+<li>postProcessProperties</li>
+<li>postProcessBeforeInitialization</li>
+<li>postProcessAfterInitialization</li>
+</ul>
+</li>
+</ul>
+<h1 id="方法解析"><a href="#方法解析" class="headerlink" title="方法解析"></a>方法解析</h1><ul>
+<li><p><code>Object postProcessBeforeInstantiation(Class&lt;?&gt; beanClass, String beanName)</code>：在实例化之前执行【构造方法之前执行】</p>
+<ul>
+<li>返回值：如果返回的不为<code>null</code>，那么后续的Bean的创建流程【实例化、初始化afterProperties】都不会执行，而是直接使用返回的快捷Bean，此时的正常执行顺序如下：<ul>
+<li>InstantiationAwareBeanPostProcessor接口中的<code>postProcessBeforeInstantiation</code>，在实例化之前调用</li>
+<li>BeanPostProcessor接口中的<code>postProcessAfterInitialization</code>，在实例化之后调用<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">* org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.resolveBeforeInstantiation </div><div class="line">* 作用：在实例化之前解析是否有快捷创建的Bean，既是通过postProcessBeforeInstantiation返回的Bean</div><div class="line">* 内部调用两个重要的方法：</div><div class="line">*   1、applyBeanPostProcessorsBeforeInstantiation：内部遍历调用postProcessBeforeInstantiation方法【在实例化之前调用】</div><div class="line">*   2、applyBeanPostProcessorsAfterInitialization：如果postProcessBeforeInstantiation方法返回了快捷的Bean，内部遍历调用postProcessBeforeInstantiation方法【在初始化之后调用】</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">protected</span> Object <span class="title">resolveBeforeInstantiation</span><span class="params">(String beanName, RootBeanDefinition mbd)</span> </span>&#123;</div><div class="line">		Object bean = <span class="keyword">null</span>;</div><div class="line">		<span class="keyword">if</span> (!Boolean.FALSE.equals(mbd.beforeInstantiationResolved)) &#123;</div><div class="line">			<span class="comment">// Make sure bean class is actually resolved at this point.</span></div><div class="line">			<span class="keyword">if</span> (!mbd.isSynthetic() &amp;&amp; hasInstantiationAwareBeanPostProcessors()) &#123;</div><div class="line">				Class&lt;?&gt; targetType = determineTargetType(beanName, mbd);</div><div class="line">				<span class="keyword">if</span> (targetType != <span class="keyword">null</span>) &#123;</div><div class="line">				    <span class="comment">//调用方法，内部遍历调用postProcessBeforeInstantiation方法【在实例化之前调用】</span></div><div class="line">					bean = applyBeanPostProcessorsBeforeInstantiation(targetType, beanName);</div><div class="line">					<span class="comment">//如果返回了快捷的Bean</span></div><div class="line">					<span class="keyword">if</span> (bean != <span class="keyword">null</span>) &#123;</div><div class="line">					    <span class="comment">//如果postProcessBeforeInstantiation方法返回了快捷的Bean，内部遍历调用postProcessBeforeInstantiation方法【在初始化之后调用】</span></div><div class="line">						bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);</div><div class="line">					&#125;</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			mbd.beforeInstantiationResolved = (bean != <span class="keyword">null</span>);</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> bean;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	*   org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInstantiation</div><div class="line">	*   作用：调用postProcessBeforeInstantiation方法</div><div class="line">    */</div><div class="line">	<span class="function"><span class="keyword">protected</span> Object <span class="title">applyBeanPostProcessorsBeforeInstantiation</span><span class="params">(Class&lt;?&gt; beanClass, String beanName)</span></span></div><div class="line">    			<span class="keyword">throws</span> BeansException &#123;</div><div class="line">	        <span class="comment">//遍历所有的后置处理器</span></div><div class="line">    		<span class="keyword">for</span> (BeanPostProcessor bp : getBeanPostProcessors()) &#123;</div><div class="line">    		    <span class="comment">//判断是否是InstantiationAwareBeanPostProcessor类型的，如果是的，调用postProcessBeforeInstantiation方法获取快捷Bean</span></div><div class="line">    			<span class="keyword">if</span> (bp <span class="keyword">instanceof</span> InstantiationAwareBeanPostProcessor) &#123;</div><div class="line">    				InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;</div><div class="line">    				Object result = ibp.postProcessBeforeInstantiation(beanClass, beanName);</div><div class="line">    				<span class="keyword">if</span> (result != <span class="keyword">null</span>) &#123;</div><div class="line">    					<span class="keyword">return</span> result;</div><div class="line">    				&#125;</div><div class="line">    			&#125;</div><div class="line">    		&#125;</div><div class="line">    		<span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    	&#125;</div><div class="line">	</div><div class="line">	<span class="comment">/**</span></div><div class="line">	*   org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsAfterInitialization</div><div class="line">	*   作用：遍历调用postProcessAfterInitialization</div><div class="line">	*/</div><div class="line">	<span class="function"><span class="keyword">public</span> Object <span class="title">applyBeanPostProcessorsAfterInitialization</span><span class="params">(Object existingBean, String beanName)</span></span></div><div class="line">    			<span class="keyword">throws</span> BeansException &#123;</div><div class="line">    		Object result = existingBean;</div><div class="line">    		<span class="keyword">for</span> (BeanPostProcessor beanProcessor : getBeanPostProcessors()) &#123;</div><div class="line">    			result = beanProcessor.postProcessAfterInitialization(result, beanName);</div><div class="line">    			<span class="keyword">if</span> (result == <span class="keyword">null</span>) &#123;</div><div class="line">    				<span class="keyword">return</span> result;</div><div class="line">    			&#125;</div><div class="line">    		&#125;</div><div class="line">    		<span class="keyword">return</span> result;</div><div class="line">    	&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>boolean postProcessAfterInstantiation(Object bean, String beanName) throws BeansException</code>：正常情况下在实例化之后在执行<code>populateBean</code>之前调用</p>
+<ul>
+<li>返回值：如果有指定的bean的时候返回false，那么后续的属性填充和属性依赖注入【<code>populateBean</code>】将不会执行，同时后续的<code>postProcessPropertyValues</code>将不会执行,但是初始化和<code>BeanPostProcessor</code>的仍然会执行。<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">* org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean</div><div class="line">* 填充指定Bean的属性</div><div class="line">* 在该方法内部遍历所有的BeanPostPorcessor，调用postProcessAfterInstantiation方法</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">populateBean</span><span class="params">(String beanName, RootBeanDefinition mbd, BeanWrapper bw)</span> </span>&#123;</div><div class="line">        <span class="comment">//获取属性</span></div><div class="line">		PropertyValues pvs = mbd.getPropertyValues();</div><div class="line">		<span class="keyword">if</span> (bw == <span class="keyword">null</span>) &#123;</div><div class="line">			<span class="keyword">if</span> (!pvs.isEmpty()) &#123;</div><div class="line">				<span class="keyword">throw</span> <span class="keyword">new</span> BeanCreationException(</div><div class="line">						mbd.getResourceDescription(), beanName, <span class="string">"Cannot apply property values to null instance"</span>);</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">else</span> &#123;</div><div class="line">				<span class="comment">// Skip property population phase for null instance.</span></div><div class="line">				<span class="keyword">return</span>;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">        <span class="comment">//**********************逻辑开始执行********************</span></div><div class="line">        <span class="comment">//标志，判断是否继续执行属性填充，默认为false</span></div><div class="line">		<span class="keyword">boolean</span> continueWithPropertyPopulation = <span class="keyword">true</span>;</div><div class="line">        <span class="comment">//判断ioc容器中是否存在InstantiationAwareBeanPostProcessors(</span></div><div class="line">		<span class="keyword">if</span> (!mbd.isSynthetic() &amp;&amp; hasInstantiationAwareBeanPostProcessors()) &#123;</div><div class="line">		    <span class="comment">//遍历所有的BeanPostProcessor</span></div><div class="line">			<span class="keyword">for</span> (BeanPostProcessor bp : getBeanPostProcessors()) &#123;</div><div class="line">			    <span class="comment">//判断类型是InstantiationAwareBeanPostProcessor</span></div><div class="line">				<span class="keyword">if</span> (bp <span class="keyword">instanceof</span> InstantiationAwareBeanPostProcessor) &#123;</div><div class="line">					InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;</div><div class="line">					<span class="comment">//执行postProcessAfterInstantiation方法</span></div><div class="line">					<span class="keyword">if</span> (!ibp.postProcessAfterInstantiation(bw.getWrappedInstance(), beanName)) &#123;</div><div class="line">					    <span class="comment">//返回结果为false，那么赋值continueWithPropertyPopulation=false，表示不继续执行属性填充</span></div><div class="line">						continueWithPropertyPopulation = <span class="keyword">false</span>;</div><div class="line">						<span class="keyword">break</span>;</div><div class="line">					&#125;</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">        <span class="comment">//如果continueWithPropertyPopulation为false，直接返回，不执行下面的步骤</span></div><div class="line">		<span class="keyword">if</span> (!continueWithPropertyPopulation) &#123;</div><div class="line">			<span class="keyword">return</span>;</div><div class="line">		&#125;</div><div class="line">        <span class="comment">//</span></div><div class="line">		<span class="keyword">if</span> (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_NAME ||</div><div class="line">				mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_TYPE) &#123;</div><div class="line">			MutablePropertyValues newPvs = <span class="keyword">new</span> MutablePropertyValues(pvs);</div><div class="line"></div><div class="line">			<span class="comment">// Add property values based on autowire by name if applicable.</span></div><div class="line">			<span class="keyword">if</span> (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_NAME) &#123;</div><div class="line">				autowireByName(beanName, mbd, bw, newPvs);</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			<span class="comment">// Add property values based on autowire by type if applicable.</span></div><div class="line">			<span class="keyword">if</span> (mbd.getResolvedAutowireMode() == RootBeanDefinition.AUTOWIRE_BY_TYPE) &#123;</div><div class="line">				autowireByType(beanName, mbd, bw, newPvs);</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			pvs = newPvs;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		<span class="keyword">boolean</span> hasInstAwareBpps = hasInstantiationAwareBeanPostProcessors();</div><div class="line">		<span class="keyword">boolean</span> needsDepCheck = (mbd.getDependencyCheck() != RootBeanDefinition.DEPENDENCY_CHECK_NONE);</div><div class="line"></div><div class="line">		<span class="keyword">if</span> (hasInstAwareBpps || needsDepCheck) &#123;</div><div class="line">			PropertyDescriptor[] filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);</div><div class="line">			<span class="keyword">if</span> (hasInstAwareBpps) &#123;</div><div class="line">			    <span class="comment">//同样是遍历BeanPostProcessor</span></div><div class="line">				<span class="keyword">for</span> (BeanPostProcessor bp : getBeanPostProcessors()) &#123;</div><div class="line">					<span class="keyword">if</span> (bp <span class="keyword">instanceof</span> InstantiationAwareBeanPostProcessor) &#123;</div><div class="line">						InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;</div><div class="line">						<span class="comment">//执行postProcessPropertyValues方法</span></div><div class="line">						pvs = ibp.postProcessPropertyValues(pvs, filteredPds, bw.getWrappedInstance(), beanName);</div><div class="line">						<span class="keyword">if</span> (pvs == <span class="keyword">null</span>) &#123;</div><div class="line">							<span class="keyword">return</span>;</div><div class="line">						&#125;</div><div class="line">					&#125;</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">if</span> (needsDepCheck) &#123;</div><div class="line">				checkDependencies(beanName, mbd, filteredPds, pvs);</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="comment">//重要的一步，设置属性</span></div><div class="line">		applyPropertyValues(beanName, mbd, bw, pvs);</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p><code>public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName)</code>：实例化之后调用，在方法<code>applyPropertyValues</code>【属性填充】之前</p>
+<ul>
+<li>返回值：如果返回null，那么将不会进行后续的属性填充，比如依赖注入等，如果返回的pvs额外的添加了属性，那么后续会填充到该类对应的属性中。</li>
+<li>pvs：PropertyValues对象，用于封装指定类的对象，简单来说就是PropertyValue的集合，里面相当于以key-value形式存放类的属性和值</li>
+<li>pds：PropertyDescriptor对象数组，PropertyDescriptor相当于存储类的属性，不过可以调用set，get方法设置和获取对应属性的值<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">* org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean的代码片段</div><div class="line">*/</div><div class="line"><span class="keyword">if</span> (hasInstAwareBpps || needsDepCheck) &#123;</div><div class="line">			PropertyDescriptor[] filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);</div><div class="line">			<span class="keyword">if</span> (hasInstAwareBpps) &#123;</div><div class="line">			    <span class="comment">//遍历调用postProcessPropertyValues方法</span></div><div class="line">				<span class="keyword">for</span> (BeanPostProcessor bp : getBeanPostProcessors()) &#123;</div><div class="line">					<span class="keyword">if</span> (bp <span class="keyword">instanceof</span> InstantiationAwareBeanPostProcessor) &#123;</div><div class="line">						InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;</div><div class="line">						pvs = ibp.postProcessPropertyValues(pvs, filteredPds, bw.getWrappedInstance(), beanName);</div><div class="line">						<span class="comment">//如果返回的pvs是null，直接返回</span></div><div class="line">						<span class="keyword">if</span> (pvs == <span class="keyword">null</span>) &#123;</div><div class="line">							<span class="keyword">return</span>;</div><div class="line">						&#125;</div><div class="line">					&#125;</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			<span class="keyword">if</span> (needsDepCheck) &#123;</div><div class="line">				checkDependencies(beanName, mbd, filteredPds, pvs);</div><div class="line">			&#125;</div><div class="line">		&#125;   </div><div class="line">        <span class="comment">//执行真正的属性填充</span></div><div class="line">		applyPropertyValues(beanName, mbd, bw, pvs);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><ul>
+<li>只是写了<code>InstantiationAwareBeanPostProcessor</code>定义的方法，另外的<code>BeanPostProcessor</code>的方法，<a href="https://chenjiabing666.github.io/2019/06/23/Bean%E7%9A%84%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8/">请看上一篇文章</a><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyInstantiationAwareBeanPostProcessor</span> <span class="keyword">implements</span> <span class="title">InstantiationAwareBeanPostProcessor</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 在实例化之前调用，如果返回null，一切按照正常顺序执行，如果返回的是一个实例的对象，那么这个将会跳过实例化、初始化的过程</div><div class="line">     * <span class="doctag">@param</span> beanClass</div><div class="line">     * <span class="doctag">@param</span> beanName</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">postProcessBeforeInstantiation</span><span class="params">(Class&lt;?&gt; beanClass, String beanName)</span> <span class="keyword">throws</span> BeansException </span>&#123;</div><div class="line">        <span class="keyword">if</span> (beanClass == User.class) &#123;</div><div class="line">            System.out.println(<span class="string">"postProcessBeforeInstantiation执行"</span>);</div><div class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 在实例化之后，postProcessBeforeInitialization之前执行</div><div class="line">     * <span class="doctag">@param</span> bean</div><div class="line">     * <span class="doctag">@param</span> beanName</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     * <span class="doctag">@throws</span> BeansException</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">postProcessAfterInstantiation</span><span class="params">(Object bean, String beanName)</span> <span class="keyword">throws</span> BeansException </span>&#123;</div><div class="line">        <span class="keyword">if</span> (bean <span class="keyword">instanceof</span> User) &#123;</div><div class="line">            System.out.println(<span class="string">"postProcessAfterInstantiation执行"</span>);</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 实例化之后调用，属性填充之前</div><div class="line">     * <span class="doctag">@param</span> pvs PropertyValues对象，用于封装指定类的对象，简单来说就是PropertyValue的集合，里面相当于以key-value形式存放类的属性和值</div><div class="line">     * <span class="doctag">@param</span> pds PropertyDescriptor对象数组，PropertyDescriptor相当于存储类的属性，不过可以调用set，get方法设置和获取对应属性的值</div><div class="line">     * <span class="doctag">@param</span> bean 当前的bean</div><div class="line">     * <span class="doctag">@param</span> beanName beanName</div><div class="line">     * <span class="doctag">@return</span> 如果返回null，那么将不会进行后续的属性填充，比如依赖注入等，如果返回的pvs额外的添加了属性，那么后续会填充到该类对应的属性中。</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> PropertyValues <span class="title">postProcessPropertyValues</span><span class="params">(PropertyValues pvs, PropertyDescriptor[] pds, Object bean, String beanName)</span> <span class="keyword">throws</span> BeansException </span>&#123;</div><div class="line">        <span class="keyword">if</span> (pvs <span class="keyword">instanceof</span> MutablePropertyValues&amp;&amp;bean <span class="keyword">instanceof</span> User)&#123;</div><div class="line">           MutablePropertyValues mutablePropertyValues= (MutablePropertyValues) pvs;</div><div class="line">           HashMap&lt;Object, Object&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</div><div class="line">           map.put(<span class="string">"name"</span>,<span class="string">"陈加兵"</span>);</div><div class="line">           map.put(<span class="string">"age"</span>,<span class="number">44</span>);</div><div class="line">           mutablePropertyValues.addPropertyValues(map);</div><div class="line">           <span class="keyword">return</span> mutablePropertyValues;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">/**使用pds设置值</span></div><div class="line">        if (bean instanceof User) &#123;</div><div class="line">            for (PropertyDescriptor descriptor:pds) &#123;</div><div class="line">                try &#123;</div><div class="line">                    if ("name".equals(descriptor.getName())) &#123;</div><div class="line">                        descriptor.getWriteMethod().invoke(bean, "陈加兵");</div><div class="line">                    &#125;else if("age".equals(descriptor.getName()))&#123;</div><div class="line">                        descriptor.getWriteMethod().invoke(bean,40);</div><div class="line">                    &#125;</div><div class="line">                &#125;catch (Exception e)&#123;</div><div class="line">                    e.printStackTrace();</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            return null;</div><div class="line">        &#125;**/</div><div class="line">        <span class="keyword">return</span> pvs;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">postProcessBeforeInitialization</span><span class="params">(Object bean, String beanName)</span> <span class="keyword">throws</span> BeansException </span>&#123;</div><div class="line">        <span class="keyword">if</span> (bean <span class="keyword">instanceof</span> User) &#123;</div><div class="line">            System.out.println(<span class="string">"postProcessBeforeInitialization执行"</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> bean;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">postProcessAfterInitialization</span><span class="params">(Object bean, String beanName)</span> <span class="keyword">throws</span> BeansException </span>&#123;</div><div class="line">        <span class="keyword">if</span> (bean <span class="keyword">instanceof</span> User) &#123;</div><div class="line">            System.out.println(<span class="string">"postProcessAfterInitialization执行"</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> bean;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="源码梳理"><a href="#源码梳理" class="headerlink" title="源码梳理"></a>源码梳理</h1><ul>
+<li>无论是BeanPostProcessor还是<code>InstantiationAwareBeanPostProcessor</code>都是在对象实例化和初始化前后执行的逻辑，因此我们主要的代码都在<code>getBean</code>，<code>doGetBean</code>，<code>cerateBean</code>方法中</li>
+<li><code>BeanPostProcessor</code>的两个方法的执行源码请看<a href="https://chenjiabing666.github.io/2019/06/23/Bean%E7%9A%84%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8/">上一篇的文章</a></li>
+<li>步骤如下：<ul>
+<li><img src="https://github.com/chenjiabing666/BlogImage/blob/master/spring4.png?raw=true" alt=""></li>
+<li><img src="https://github.com/chenjiabing666/BlogImage/blob/master/spring5.png?raw=true" alt=""></li>
+<li><img src="https://github.com/chenjiabing666/BlogImage/blob/master/spring6.png?raw=true" alt=""></li>
+<li><img src="https://github.com/chenjiabing666/BlogImage/blob/master/spring7.png?raw=true" alt=""></li>
+<li><img src="https://github.com/chenjiabing666/BlogImage/blob/master/spring8.png?raw=true" alt=""></li>
+<li><img src="https://github.com/chenjiabing666/BlogImage/blob/master/spring9.png?raw=true" alt=""></li>
+<li><img src="https://github.com/chenjiabing666/BlogImage/blob/master/spring10.png?raw=true" alt=""></li>
+<li><img src="https://github.com/chenjiabing666/BlogImage/blob/master/spring11.png?raw=true" alt=""></li>
+<li><img src="https://github.com/chenjiabing666/BlogImage/blob/master/spring12.png?raw=true" alt=""></li>
+</ul>
+</li>
+</ul>
+<h1 id="Autowired源码解析"><a href="#Autowired源码解析" class="headerlink" title="Autowired源码解析"></a>Autowired源码解析</h1><ul>
+<li>从源码可以看出，Autowired的功能实现最重要的一个接口就是<code>AutowiredAnnotationBeanPostProcessor</code>，继承关系如下：<br><img src="https://github.com/chenjiabing666/BlogImage/blob/master/spring13.png?raw=true" alt=""></li>
+<li>从继承关系图可以看出，实际上关键的实现了<code>InstantiationAwareBeanPostProcessor</code>这个接口。</li>
+<li>源码实现如下图：<br><img src="https://github.com/chenjiabing666/BlogImage/blob/master/spring14.png?raw=true" alt=""></li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
+<li>源码：<ul>
+<li>ioc容器创建Bean的方法是从<code>createBean</code>方法进入的，真正执行创建的Bean的是<code>doCreateBean</code>方法，我们从createBean开始往下走<ul>
+<li>调用<code>resolveBeforeInstantiation</code>方法【在doCreatBean之前执行，即是实例化之前】，在内部遍历BeanPostProcessor调用<code>postProcessBeforeInstantiation</code>方法</li>
+<li>如果<code>postProcessBeforeInstantiation</code>方法返回null，那么需要执行实例化的过程，调用<code>doCreatBean</code>实例化Bean。<ul>
+<li><code>doCreateBean</code>内部分为两步：①调用createBeanInstance实例化Bean；②调用<code>populateBean</code>设置Bean的属性</li>
+</ul>
+</li>
+<li>在<code>populateBean</code>内部分为如下的步骤：<ul>
+<li>调用<code>postProcessAfterInstantiation</code>【实例化之后调用】，分为两种情况：①返回false，后续的<code>postProcessPropertyValues</code>将不再执行，属性也不在进行设置；②返回true，程序照常进行，调用<code>postProcessPropertyValues</code>，属性设置的过程正常进行</li>
+</ul>
+</li>
+<li>执行完<code>populateBean</code>之后将会调用<code>initializeBean</code>【初始化Bean，调用afterPropertiesSet方法】，在内部就涉及到BeanPostProcessor定义的接口了，步骤如下：<ul>
+<li>执行<code>applyBeanPostProcessorsBeforeInitialization</code>方法调用<code>postProcessBeforeInitialization</code>【在初始化之前调用】方法</li>
+<li>执行<code>invokeInitMethods</code>方法，内部其实是调用afterPropeertiesSet方法，进行初始化</li>
+<li>执行<code>applyBeanPostProcessorsAfterInitialization</code>，内部调用<code>postProcessAfterInitialization</code>【在实例化之后调用】方法</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Spring/">Spring</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Spring/">Spring</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2019/06/25/InstantiationAwareBeanPostProcessor源码解析/" data-title="InstantiationAwareBeanPostProcessor源码解析 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2019/06/27/BeanWrapper解析/" title="BeanWrapper解析">
+  <strong>上一篇：</strong><br/>
+  <span>
+  BeanWrapper解析</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2019/06/23/FactoryBean解析/"  title="FactoryBean解析">
+ <strong>下一篇：</strong><br/> 
+ <span>FactoryBean解析
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#简介"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Bean加载顺序"><span class="toc-number">2.</span> <span class="toc-text">Bean加载顺序</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#InstantiationAwareBeanPostProcessor接口方法的执行顺序"><span class="toc-number">3.</span> <span class="toc-text">InstantiationAwareBeanPostProcessor接口方法的执行顺序</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#方法解析"><span class="toc-number">4.</span> <span class="toc-text">方法解析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#实例"><span class="toc-number">5.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#源码梳理"><span class="toc-number">6.</span> <span class="toc-text">源码梳理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Autowired源码解析"><span class="toc-number">7.</span> <span class="toc-text">Autowired源码解析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">8.1.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

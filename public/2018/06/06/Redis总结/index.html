@@ -1,0 +1,1075 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Redis总结 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="Redis
+中文文档
+
+数据库的分类
+关系型数据库
+存储表
+使用SQL
+也称为结构化数据库
+常见产品
+MySQL
+Oracle
+SQL Server
+DB2
+
+
+
+
+非关系型数据库
+泛指不使用SQL操作的数据库
+文档数据库
+存储文档
+MogoDB，用于存储JSON文档
+
+
+Key_Value数据库
+核心原理就是散列表(hash)
+查询性能奇高，经常作为数据库的缓存使用
+常见产品
+MemoryCac">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis总结">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/06/06/Redis总结/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="Redis
+中文文档
+
+数据库的分类
+关系型数据库
+存储表
+使用SQL
+也称为结构化数据库
+常见产品
+MySQL
+Oracle
+SQL Server
+DB2
+
+
+
+
+非关系型数据库
+泛指不使用SQL操作的数据库
+文档数据库
+存储文档
+MogoDB，用于存储JSON文档
+
+
+Key_Value数据库
+核心原理就是散列表(hash)
+查询性能奇高，经常作为数据库的缓存使用
+常见产品
+MemoryCac">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/types.png">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/session.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:07:33.488Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis总结">
+<meta name="twitter:description" content="Redis
+中文文档
+
+数据库的分类
+关系型数据库
+存储表
+使用SQL
+也称为结构化数据库
+常见产品
+MySQL
+Oracle
+SQL Server
+DB2
+
+
+
+
+非关系型数据库
+泛指不使用SQL操作的数据库
+文档数据库
+存储文档
+MogoDB，用于存储JSON文档
+
+
+Key_Value数据库
+核心原理就是散列表(hash)
+查询性能奇高，经常作为数据库的缓存使用
+常见产品
+MemoryCac">
+<meta name="twitter:image" content="http://ono60m7tl.bkt.clouddn.com/types.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/06/06/Redis总结/" title="Redis总结" itemprop="url">Redis总结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-06-06T02:23:50.000Z" itemprop="datePublished"> 发表于 2018-06-06</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis"><span class="toc-number">1.</span> <span class="toc-text">Redis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#数据库的分类"><span class="toc-number">1.1.</span> <span class="toc-text">数据库的分类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#what"><span class="toc-number">1.2.</span> <span class="toc-text">what</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#特点"><span class="toc-number">1.3.</span> <span class="toc-text">特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis安装"><span class="toc-number">1.4.</span> <span class="toc-text">Redis安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#第一种-yum-安装"><span class="toc-number">1.4.1.</span> <span class="toc-text">第一种  yum 安装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#常用命令"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">常用命令</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编译安装"><span class="toc-number">1.4.2.</span> <span class="toc-text">编译安装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#配置环境变量"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">配置环境变量</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#启动客户端"><span class="toc-number">1.5.</span> <span class="toc-text">启动客户端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis-提供了5中数据类型"><span class="toc-number">1.6.</span> <span class="toc-text">Redis 提供了5中数据类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#keys"><span class="toc-number">1.7.</span> <span class="toc-text">keys *</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#String类型命令"><span class="toc-number">1.8.</span> <span class="toc-text">String类型命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SET"><span class="toc-number">1.8.1.</span> <span class="toc-text">SET</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#get"><span class="toc-number">1.8.2.</span> <span class="toc-text">get</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#del"><span class="toc-number">1.8.3.</span> <span class="toc-text">del</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#append"><span class="toc-number">1.8.4.</span> <span class="toc-text">append</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#decr"><span class="toc-number">1.8.5.</span> <span class="toc-text">decr</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#decrby"><span class="toc-number">1.8.6.</span> <span class="toc-text">decrby</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#incr"><span class="toc-number">1.8.7.</span> <span class="toc-text">incr</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#incrby"><span class="toc-number">1.8.8.</span> <span class="toc-text">incrby</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#incrbyfloat"><span class="toc-number">1.8.9.</span> <span class="toc-text">incrbyfloat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#strlen"><span class="toc-number">1.8.10.</span> <span class="toc-text">strlen</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mset"><span class="toc-number">1.8.11.</span> <span class="toc-text">mset</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mget"><span class="toc-number">1.8.12.</span> <span class="toc-text">mget</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hash类型"><span class="toc-number">1.9.</span> <span class="toc-text">Hash类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#hset"><span class="toc-number">1.9.1.</span> <span class="toc-text">hset</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hget"><span class="toc-number">1.9.2.</span> <span class="toc-text">hget</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hdel"><span class="toc-number">1.9.3.</span> <span class="toc-text">hdel</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#List-列表"><span class="toc-number">1.10.</span> <span class="toc-text">List 列表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#lpush"><span class="toc-number">1.10.1.</span> <span class="toc-text">lpush</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LPOP"><span class="toc-number">1.10.2.</span> <span class="toc-text">LPOP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rpush"><span class="toc-number">1.10.3.</span> <span class="toc-text">rpush</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rpop"><span class="toc-number">1.10.4.</span> <span class="toc-text">rpop</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LLEN"><span class="toc-number">1.10.5.</span> <span class="toc-text">LLEN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BRPOP"><span class="toc-number">1.10.6.</span> <span class="toc-text">BRPOP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BLPOP"><span class="toc-number">1.10.7.</span> <span class="toc-text">BLPOP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Set-集合"><span class="toc-number">1.11.</span> <span class="toc-text">Set 集合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SortedSet-有序集合"><span class="toc-number">1.12.</span> <span class="toc-text">SortedSet 有序集合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-操作-Redis"><span class="toc-number">1.13.</span> <span class="toc-text">Java 操作 Redis</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#添加依赖"><span class="toc-number">1.13.1.</span> <span class="toc-text">添加依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试"><span class="toc-number">1.13.2.</span> <span class="toc-text">测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis解决Session共享"><span class="toc-number">1.14.</span> <span class="toc-text">Redis解决Session共享</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Session管理器"><span class="toc-number">1.14.1.</span> <span class="toc-text">Session管理器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#下载jar包"><span class="toc-number">1.14.2.</span> <span class="toc-text">下载jar包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#将下载的jar包放在每个应用服务器的Tomcat中"><span class="toc-number">1.14.3.</span> <span class="toc-text">将下载的jar包放在每个应用服务器的Tomcat中</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档"><span class="toc-number">1.15.</span> <span class="toc-text">参考文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.16.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h1><ul>
+<li><a href="http://redisdoc.com/" target="_blank" rel="external">中文文档</a></li>
+</ul>
+<h2 id="数据库的分类"><a href="#数据库的分类" class="headerlink" title="数据库的分类"></a>数据库的分类</h2><ul>
+<li>关系型数据库<ul>
+<li>存储表</li>
+<li>使用<code>SQL</code></li>
+<li>也称为结构化数据库</li>
+<li>常见产品<ul>
+<li>MySQL</li>
+<li>Oracle</li>
+<li>SQL Server</li>
+<li>DB2</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>非关系型数据库<ul>
+<li>泛指不使用SQL操作的数据库</li>
+<li>文档数据库<ul>
+<li>存储文档</li>
+<li><code>MogoDB</code>，用于存储<code>JSON文档</code></li>
+</ul>
+</li>
+<li><code>Key_Value</code>数据库<ul>
+<li>核心原理就是散列表(hash)</li>
+<li>查询性能奇高，经常作为数据库的缓存使用</li>
+<li>常见产品<ul>
+<li><code>MemoryCache</code></li>
+<li><code>Redis</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="what"><a href="#what" class="headerlink" title="what"></a>what</h2><ul>
+<li>一种非关系型<code>Key_Value</code>数据库</li>
+</ul>
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ol>
+<li>是内存型数据库，同时提供了磁盘持久存储功能</li>
+<li>Redis采用散列表技术，查询性能高，可以达到千万级并发，Mysql的并发是千级并发</li>
+<li>Redis经常作为关系型数据库的缓存使用</li>
+<li>Redis支持5种数据类型</li>
+</ol>
+<h2 id="Redis安装"><a href="#Redis安装" class="headerlink" title="Redis安装"></a>Redis安装</h2><h3 id="第一种-yum-安装"><a href="#第一种-yum-安装" class="headerlink" title="第一种  yum 安装"></a>第一种  yum 安装</h3><ul>
+<li><code>yum -y install redis</code></li>
+<li></li>
+</ul>
+<h4 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h4><ul>
+<li><code>systemctl start  redis.service</code>  </li>
+<li><code>ps -A | grep redis</code> ： 查看redis进程</li>
+<li><code>systemctl restart  redis.service</code></li>
+<li><code>systemctl stop  redis.service</code></li>
+</ul>
+<h3 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h3><ul>
+<li><a href="https://redis.io/download" target="_blank" rel="external">下载地址</a></li>
+<li><a href="https://blog.csdn.net/lixianlin/article/details/7024893" target="_blank" rel="external">安装教程</a></li>
+</ul>
+<h4 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h4><ul>
+<li><code>export PATH=/usr/local/redis/bin:$PATH</code></li>
+<li><code>redis-server</code>   : 启动redis</li>
+</ul>
+<h2 id="启动客户端"><a href="#启动客户端" class="headerlink" title="启动客户端"></a>启动客户端</h2><ul>
+<li><code>redis-cli</code>，默认端口为<code>6379</code></li>
+</ul>
+<h2 id="Redis-提供了5中数据类型"><a href="#Redis-提供了5中数据类型" class="headerlink" title="Redis 提供了5中数据类型"></a>Redis 提供了5中数据类型</h2><ul>
+<li>Redis为每种数据类型提供的对应的一组操作命令<ul>
+<li>String </li>
+<li>Hash</li>
+<li>List</li>
+<li>Set</li>
+<li>Sorted Set</li>
+</ul>
+</li>
+<li>除了5中类型的命令，还提供了其他的命令</li>
+<li>都是指存储到数据库中的<code>value</code>的类型，<code>key</code>的类型永远都是字符串</li>
+</ul>
+<h2 id="keys"><a href="#keys" class="headerlink" title="keys *"></a>keys *</h2><ul>
+<li>获取所有的<code>key</code></li>
+</ul>
+<h2 id="String类型命令"><a href="#String类型命令" class="headerlink" title="String类型命令"></a>String类型命令</h2><ul>
+<li>可以存储字符串，也可以存储数字(字符串形式)，并且其中对数字的处理也提供了一些命令，便于我们操作数字</li>
+</ul>
+<h3 id="SET"><a href="#SET" class="headerlink" title="SET"></a>SET</h3><ul>
+<li><code>set key value</code>  : 设置key的值为value，如果已经有值了，那么就会覆盖旧值<ul>
+<li><code>set message &quot;hello world&quot;</code></li>
+</ul>
+</li>
+<li><code>set key value EX seconds</code>  设置key的值，并且过期时间为秒<ul>
+<li><code>set message &quot;beijing&quot; EX 10</code> ： 10秒之后过期</li>
+</ul>
+</li>
+</ul>
+<h3 id="get"><a href="#get" class="headerlink" title="get"></a>get</h3><ul>
+<li><code>get key</code>  : 获取指定key的值<ul>
+<li><code>get message</code> </li>
+</ul>
+</li>
+</ul>
+<h3 id="del"><a href="#del" class="headerlink" title="del"></a>del</h3><ul>
+<li><code>del key</code> : 删除指定的key</li>
+</ul>
+<h3 id="append"><a href="#append" class="headerlink" title="append"></a>append</h3><ul>
+<li><code>append key value</code> : 在指定的key后面追加值</li>
+</ul>
+<h3 id="decr"><a href="#decr" class="headerlink" title="decr"></a>decr</h3><ul>
+<li><code>decr key</code>  : 如果key中存储的是一个数字，那么这个值将会减一，如果不是数字报错<ul>
+<li><code>set a &quot;10&quot;</code>,<code>desr a</code>: 执行这两个命令之后，a的值就是<code>&quot;9&quot;</code>、</li>
+</ul>
+</li>
+</ul>
+<h3 id="decrby"><a href="#decrby" class="headerlink" title="decrby"></a>decrby</h3><ul>
+<li><code>decrby key number</code> : 减少number<ul>
+<li><code>decrby a 10</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="incr"><a href="#incr" class="headerlink" title="incr"></a>incr</h3><ul>
+<li><code>incr key</code> : 如果key中存储的是一个数据，那么值将会加一<ul>
+<li><code>incr a</code>  </li>
+</ul>
+</li>
+</ul>
+<h3 id="incrby"><a href="#incrby" class="headerlink" title="incrby"></a>incrby</h3><ul>
+<li><code>incrby key number</code> : 如果key中存储的数据是一个整型数据，那么增加<code>number</code><ul>
+<li><code>incrby a 10</code> : a对应的整型数据+10</li>
+</ul>
+</li>
+</ul>
+<h3 id="incrbyfloat"><a href="#incrbyfloat" class="headerlink" title="incrbyfloat"></a>incrbyfloat</h3><ul>
+<li><code>incrbyfloat key number</code> : 增加浮点数<ul>
+<li><code>incrbyfloat a 10.4</code>  ：增加10.4</li>
+<li><code>incrbyfloat a -10.5</code>   :  减少10.5</li>
+</ul>
+</li>
+</ul>
+<h3 id="strlen"><a href="#strlen" class="headerlink" title="strlen"></a>strlen</h3><ul>
+<li><code>str key</code> : 获取指定key的长度</li>
+</ul>
+<h3 id="mset"><a href="#mset" class="headerlink" title="mset"></a>mset</h3><ul>
+<li><code>mset a &quot;cen&quot; b &quot;ceg&quot;</code>：同时设置多个key-value</li>
+</ul>
+<h3 id="mget"><a href="#mget" class="headerlink" title="mget"></a>mget</h3><ul>
+<li><code>megt key1 key2 ..........</code>  : 同时获取多个key的值</li>
+</ul>
+<h2 id="Hash类型"><a href="#Hash类型" class="headerlink" title="Hash类型"></a>Hash类型</h2><ul>
+<li><code>key</code>是字符串的类型，其中的value是Hash类型，形式如下：</li>
+<li><img src="http://ono60m7tl.bkt.clouddn.com/types.png" alt="Hash类型"></li>
+</ul>
+<ul>
+<li>简单的理解就是每一个key中对应的值相当于Java中的对象，其中的<code>value</code>就是成员变量的字段和对应的值</li>
+</ul>
+<h3 id="hset"><a href="#hset" class="headerlink" title="hset"></a>hset</h3><ul>
+<li><p><code>hset key  field value</code> : 为指定的key设置其中的域为field的值为value</p>
+<ul>
+<li><code>hset user name &quot;chenjiabing&quot;</code> : 设置key为<code>user</code>的<code>name</code>域的值为<code>chenjiabing</code></li>
+<li><code>hset user age &quot;22&quot;</code></li>
+<li><code>hset user password &quot;123456&quot;</code></li>
+</ul>
+</li>
+<li>形象的输出就好像是javascript中的对象，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">user=&#123;</div><div class="line">    <span class="string">"name"</span>:<span class="string">"chenjiabing"</span>,</div><div class="line">    <span class="string">"age"</span>:<span class="string">"22"</span>,</div><div class="line">    <span class="string">"password"</span>:<span class="string">"123456"</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="hget"><a href="#hget" class="headerlink" title="hget"></a>hget</h3><ul>
+<li><code>hget key field</code> : 获取指定key中的域为<code>field</code>的值<ul>
+<li><code>hget user name</code> : 获取name的值</li>
+</ul>
+</li>
+</ul>
+<h3 id="hdel"><a href="#hdel" class="headerlink" title="hdel"></a>hdel</h3><ul>
+<li><code>hdel key field</code> : 删除指定的域<ul>
+<li><code>hdel user name</code>  : 删除user中的name域</li>
+</ul>
+</li>
+</ul>
+<h2 id="List-列表"><a href="#List-列表" class="headerlink" title="List 列表"></a>List 列表</h2><ul>
+<li><strong>实际上是一个<code>双向队列</code>，可以在左侧插入，左侧取出，右侧插入，右侧取出</strong></li>
+</ul>
+<h3 id="lpush"><a href="#lpush" class="headerlink" title="lpush"></a>lpush</h3><ul>
+<li><code>lpush key value .....</code> : 从左侧插入一个或者多个value<ul>
+<li><code>lpush list 1 32 3 &quot;chenjiabing&quot;</code> ： 在左侧插入4个value</li>
+</ul>
+</li>
+</ul>
+<h3 id="LPOP"><a href="#LPOP" class="headerlink" title="LPOP"></a>LPOP</h3><ul>
+<li><code>lpop key</code> ： 从左侧取出一个值，那么此时的list的长度就会减一<ul>
+<li><code>lpop list</code>  : 取出一个值</li>
+</ul>
+</li>
+</ul>
+<h3 id="rpush"><a href="#rpush" class="headerlink" title="rpush"></a>rpush</h3><ul>
+<li><code>rpush key value .....</code> : 从右侧插入一个或者多个值<ul>
+<li><code>rpush list 1 3 4</code> </li>
+</ul>
+</li>
+</ul>
+<h3 id="rpop"><a href="#rpop" class="headerlink" title="rpop"></a>rpop</h3><ul>
+<li><code>rpop key</code> : 从右侧取出一个值<ul>
+<li><code>rpop list</code> ： 从右侧取出一个值，那么长度减一</li>
+</ul>
+</li>
+</ul>
+<h3 id="LLEN"><a href="#LLEN" class="headerlink" title="LLEN"></a>LLEN</h3><ul>
+<li><code>LLEN key</code> ： 查看长度<ul>
+<li><code>LLEN list</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="BRPOP"><a href="#BRPOP" class="headerlink" title="BRPOP"></a>BRPOP</h3><ul>
+<li><code>BRPOP key timeout</code> :阻塞从右侧取值， 从右侧取出数据，如果其中的数据为空，那么等待<code>timeout秒</code>，如果其中一旦插入数据就会立即返回<ul>
+<li><code>BROP list 60</code>  : 从右侧取出list中的数据，如果list中没有数据那么等待<code>60s</code>，如果一旦其中插入了数据，会立即返回数据</li>
+</ul>
+</li>
+</ul>
+<h3 id="BLPOP"><a href="#BLPOP" class="headerlink" title="BLPOP"></a>BLPOP</h3><ul>
+<li><code>BLPOP key timeout</code>  : 阻塞从左侧取值<ul>
+<li><code>BLPOP list 60</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="Set-集合"><a href="#Set-集合" class="headerlink" title="Set 集合"></a>Set 集合</h2><ul>
+<li>不重复</li>
+</ul>
+<h2 id="SortedSet-有序集合"><a href="#SortedSet-有序集合" class="headerlink" title="SortedSet 有序集合"></a>SortedSet 有序集合</h2><h2 id="Java-操作-Redis"><a href="#Java-操作-Redis" class="headerlink" title="Java 操作 Redis"></a>Java 操作 Redis</h2><h3 id="添加依赖"><a href="#添加依赖" class="headerlink" title="添加依赖"></a>添加依赖</h3><ul>
+<li>Jedis</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>redis.clients<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jedis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>2.9.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><ul>
+<li>开启<code>6379</code>端口<ul>
+<li><code>firewall-cmd --zone=public --add-port=6379/tcp</code></li>
+</ul>
+</li>
+<li>如果显示<code>firewall not running</code><ul>
+<li><code>start firewalld.service</code></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>测试如下</p>
+<ul>
+<li>Jedis中的方法名和Redis中的命令是一样的</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//操作String类型的数据</span></div><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testString</span><span class="params">()</span></span>&#123;</div><div class="line">	Jedis jedis=<span class="keyword">new</span> Jedis(<span class="string">"47.104.192.157"</span>);  <span class="comment">//创建jedis对象，其中的参数是IP地址，如果是本地写localhost</span></div><div class="line">	jedis.set(<span class="string">"name"</span>, <span class="string">"chenjiabing"</span>);   <span class="comment">//添加一个String 类型的数据  key为name</span></div><div class="line">	jedis.get(<span class="string">"name"</span>);  <span class="comment">//获取key为name的值</span></div><div class="line">	jedis.del(<span class="string">"name"</span>);  <span class="comment">//删除key为name的数据</span></div><div class="line">       jedis.close();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//测试Hash类型</span></div><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testHashSet</span><span class="params">()</span></span>&#123;</div><div class="line">	Jedis jedis=<span class="keyword">new</span> Jedis(<span class="string">"localhost"</span>);</div><div class="line">	jedis.hset(<span class="string">"user"</span>, <span class="string">"name"</span>,<span class="string">"陈加兵"</span>);   <span class="comment">//添加一个key为user的Hash类型的数据</span></div><div class="line">	jedis.hset(<span class="string">"user"</span>, <span class="string">"age"</span>, <span class="string">"22"</span>);   <span class="comment">//添加age</span></div><div class="line">	jedis.hincrBy(<span class="string">"user"</span>, <span class="string">"age"</span>, <span class="number">200</span>);   <span class="comment">//年龄增加200</span></div><div class="line">	String name=jedis.hget(<span class="string">"user"</span>, <span class="string">"name"</span>); <span class="comment">//获取name的值</span></div><div class="line">	Integer age=Integer.parseInt(jedis.hget(<span class="string">"user"</span>, <span class="string">"age"</span>));  <span class="comment">//获取age的值，转换为Integer类型</span></div><div class="line">	System.out.println(name);</div><div class="line">	System.out.println(age);</div><div class="line">       jedis.close();</div><div class="line">	</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//测试List类型</span></div><div class="line"><span class="meta">@Test</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testList</span><span class="params">()</span></span>&#123;</div><div class="line">	Jedis jedis=<span class="keyword">new</span> Jedis(<span class="string">"localhost"</span>);</div><div class="line">	jedis.lpush(<span class="string">"list"</span>, <span class="string">"陈加兵"</span>);  <span class="comment">//从左侧添加一个值</span></div><div class="line">	System.out.println(jedis.llen(<span class="string">"list"</span>));  <span class="comment">//获取长度</span></div><div class="line">	jedis.lpush(<span class="string">"list"</span>, <span class="string">"1"</span>,<span class="string">"2"</span>,<span class="string">"TOM"</span>);  <span class="comment">//左侧存放多个值</span></div><div class="line">	System.out.println(jedis.rpop(<span class="string">"list"</span>));  <span class="comment">//从右侧取出</span></div><div class="line">       jedis.close();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="Redis解决Session共享"><a href="#Redis解决Session共享" class="headerlink" title="Redis解决Session共享"></a>Redis解决Session共享</h2><ul>
+<li>当浏览器登录，Nginx会分发请求给应用服务器，此时的这个服务器中保存了该用户的<code>session</code>，但是可能再次请求的时候，Nginx会把请求分发给另外一个应用服务器，那么又需要重新登录一次。我们可以使用Nginx的<code>ip_hash</code>策略解决这个问题，但是我们也可以使用Redis解决</li>
+<li>我们将<code>session id</code>存放在<code>Redis</code>中，每一个应用服务器都从Redis中获取<code>Session id</code></li>
+<li><strong>需要一个远程数据库<code>Redis</code>，并且所有的应用服务器(Tomcat)共享这个远程数据库，那么Redis中的<code>sessionId</code>才能实现共享存取</strong></li>
+<li><img src="http://ono60m7tl.bkt.clouddn.com/session.png" alt=""></li>
+</ul>
+<h3 id="Session管理器"><a href="#Session管理器" class="headerlink" title="Session管理器"></a>Session管理器</h3><ul>
+<li><code>Redis Session Manage for Apache Tomcat</code></li>
+<li><a href="https://github.com/jcoleman/tomcat-redis-session-manager" target="_blank" rel="external">参考文章</a></li>
+</ul>
+<h3 id="下载jar包"><a href="#下载jar包" class="headerlink" title="下载jar包"></a>下载jar包</h3><ul>
+<li><a href="https://search.maven.org/#search%7Cga%7C1%7Ctomcat-redis-session-manager" target="_blank" rel="external"><code>tomcat-redis-session-manager-VERSION.jar</code></a></li>
+<li><a href="http://mvnrepository.com/artifact/redis.clients/jedis" target="_blank" rel="external"><code>jedis-2.5.2.jar</code></a></li>
+<li><a href="http://mvnrepository.com/artifact/org.apache.commons/commons-pool2" target="_blank" rel="external"><code>commons-pool2-2.2.jar</code></a></li>
+</ul>
+<h3 id="将下载的jar包放在每个应用服务器的Tomcat中"><a href="#将下载的jar包放在每个应用服务器的Tomcat中" class="headerlink" title="将下载的jar包放在每个应用服务器的Tomcat中"></a>将下载的jar包放在每个应用服务器的Tomcat中</h3><ul>
+<li><p><strong>不适用于<code>Tomcat8.*</code></strong></p>
+</li>
+<li><p><strong>这里是要修改每一台应用服务器上面的Tomcat内容，这样才能实现多台应用服务器中的<code>SessionId</code>共享</strong></p>
+</li>
+<li><p>将jar包放在<code>Tomcat</code>目录中的<code>lib</code>文件夹下</p>
+</li>
+<li>修改<code>Tomcat</code>目录下的<code>conf/context.xml</code>中添加如下内容</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;Valve className="com.orangefunction.tomcat.redissessions.RedisSessionHandlerValve" /&gt;</div><div class="line">&lt;Manager className="com.orangefunction.tomcat.redissessions.RedisSessionManager"</div><div class="line">         host="47.104.192.157" &lt;!-- 服务器的IP，这个是Redis数据库所在服务器的IP --&gt;</div><div class="line">         port="6379" &lt;!-- 端口 "6379" --&gt;</div><div class="line">         database="0" &lt;!-- optional: defaults to "0" --&gt;</div><div class="line">         maxInactiveInterval="60" /&gt; &lt;!-- 失效时间 "60" (in seconds) --&gt;</div></pre></td></tr></table></figure>
+<h2 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h2><ul>
+<li><a href="http://redisdoc.com/" target="_blank" rel="external">http://redisdoc.com/</a></li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Redis/">Redis</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Redis/">Redis</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/06/06/Redis总结/" data-title="Redis总结 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/06/14/二分查找/" title="二分查找">
+  <strong>上一篇：</strong><br/>
+  <span>
+  二分查找</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/06/06/Nginx总结/"  title="Nginx总结">
+ <strong>下一篇：</strong><br/> 
+ <span>Nginx总结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis"><span class="toc-number">1.</span> <span class="toc-text">Redis</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#数据库的分类"><span class="toc-number">1.1.</span> <span class="toc-text">数据库的分类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#what"><span class="toc-number">1.2.</span> <span class="toc-text">what</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#特点"><span class="toc-number">1.3.</span> <span class="toc-text">特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis安装"><span class="toc-number">1.4.</span> <span class="toc-text">Redis安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#第一种-yum-安装"><span class="toc-number">1.4.1.</span> <span class="toc-text">第一种  yum 安装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#常用命令"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">常用命令</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编译安装"><span class="toc-number">1.4.2.</span> <span class="toc-text">编译安装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#配置环境变量"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">配置环境变量</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#启动客户端"><span class="toc-number">1.5.</span> <span class="toc-text">启动客户端</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis-提供了5中数据类型"><span class="toc-number">1.6.</span> <span class="toc-text">Redis 提供了5中数据类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#keys"><span class="toc-number">1.7.</span> <span class="toc-text">keys *</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#String类型命令"><span class="toc-number">1.8.</span> <span class="toc-text">String类型命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SET"><span class="toc-number">1.8.1.</span> <span class="toc-text">SET</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#get"><span class="toc-number">1.8.2.</span> <span class="toc-text">get</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#del"><span class="toc-number">1.8.3.</span> <span class="toc-text">del</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#append"><span class="toc-number">1.8.4.</span> <span class="toc-text">append</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#decr"><span class="toc-number">1.8.5.</span> <span class="toc-text">decr</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#decrby"><span class="toc-number">1.8.6.</span> <span class="toc-text">decrby</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#incr"><span class="toc-number">1.8.7.</span> <span class="toc-text">incr</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#incrby"><span class="toc-number">1.8.8.</span> <span class="toc-text">incrby</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#incrbyfloat"><span class="toc-number">1.8.9.</span> <span class="toc-text">incrbyfloat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#strlen"><span class="toc-number">1.8.10.</span> <span class="toc-text">strlen</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mset"><span class="toc-number">1.8.11.</span> <span class="toc-text">mset</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mget"><span class="toc-number">1.8.12.</span> <span class="toc-text">mget</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Hash类型"><span class="toc-number">1.9.</span> <span class="toc-text">Hash类型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#hset"><span class="toc-number">1.9.1.</span> <span class="toc-text">hset</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hget"><span class="toc-number">1.9.2.</span> <span class="toc-text">hget</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hdel"><span class="toc-number">1.9.3.</span> <span class="toc-text">hdel</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#List-列表"><span class="toc-number">1.10.</span> <span class="toc-text">List 列表</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#lpush"><span class="toc-number">1.10.1.</span> <span class="toc-text">lpush</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LPOP"><span class="toc-number">1.10.2.</span> <span class="toc-text">LPOP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rpush"><span class="toc-number">1.10.3.</span> <span class="toc-text">rpush</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rpop"><span class="toc-number">1.10.4.</span> <span class="toc-text">rpop</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LLEN"><span class="toc-number">1.10.5.</span> <span class="toc-text">LLEN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BRPOP"><span class="toc-number">1.10.6.</span> <span class="toc-text">BRPOP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BLPOP"><span class="toc-number">1.10.7.</span> <span class="toc-text">BLPOP</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Set-集合"><span class="toc-number">1.11.</span> <span class="toc-text">Set 集合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SortedSet-有序集合"><span class="toc-number">1.12.</span> <span class="toc-text">SortedSet 有序集合</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java-操作-Redis"><span class="toc-number">1.13.</span> <span class="toc-text">Java 操作 Redis</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#添加依赖"><span class="toc-number">1.13.1.</span> <span class="toc-text">添加依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#测试"><span class="toc-number">1.13.2.</span> <span class="toc-text">测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis解决Session共享"><span class="toc-number">1.14.</span> <span class="toc-text">Redis解决Session共享</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Session管理器"><span class="toc-number">1.14.1.</span> <span class="toc-text">Session管理器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#下载jar包"><span class="toc-number">1.14.2.</span> <span class="toc-text">下载jar包</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#将下载的jar包放在每个应用服务器的Tomcat中"><span class="toc-number">1.14.3.</span> <span class="toc-text">将下载的jar包放在每个应用服务器的Tomcat中</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文档"><span class="toc-number">1.15.</span> <span class="toc-text">参考文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.16.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

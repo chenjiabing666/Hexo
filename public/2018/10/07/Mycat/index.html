@@ -1,0 +1,1155 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>数据库中间件之Mycat | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="Mycat入门安装
+点击下载
+配置java环境
+配置mysql数据库
+打开conf/wrapper.conf文件，将其中的wrapper.java.command的值改成服务器上的jdk地址，如wrapper.java.command=/usr/local/jdk/jdk1.8.0_172/bin/java 
+为bin文件夹中的所有内容赋予执行的权限:chmod a+x *
+修改schemal.x">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据库中间件之Mycat">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/10/07/Mycat/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="Mycat入门安装
+点击下载
+配置java环境
+配置mysql数据库
+打开conf/wrapper.conf文件，将其中的wrapper.java.command的值改成服务器上的jdk地址，如wrapper.java.command=/usr/local/jdk/jdk1.8.0_172/bin/java 
+为bin文件夹中的所有内容赋予执行的权限:chmod a+x *
+修改schemal.x">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:04:35.376Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="数据库中间件之Mycat">
+<meta name="twitter:description" content="Mycat入门安装
+点击下载
+配置java环境
+配置mysql数据库
+打开conf/wrapper.conf文件，将其中的wrapper.java.command的值改成服务器上的jdk地址，如wrapper.java.command=/usr/local/jdk/jdk1.8.0_172/bin/java 
+为bin文件夹中的所有内容赋予执行的权限:chmod a+x *
+修改schemal.x">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/10/07/Mycat/" title="数据库中间件之Mycat" itemprop="url">数据库中间件之Mycat</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-10-07T12:57:37.000Z" itemprop="datePublished"> 发表于 2018-10-07</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Mycat入门"><span class="toc-number">1.</span> <span class="toc-text">Mycat入门</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装"><span class="toc-number">1.1.</span> <span class="toc-text">安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的命令"><span class="toc-number">1.1.1.</span> <span class="toc-text">常用的命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据库切分"><span class="toc-number">1.2.</span> <span class="toc-text">数据库切分</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#垂直切分"><span class="toc-number">1.2.1.</span> <span class="toc-text">垂直切分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#水平切分"><span class="toc-number">1.2.2.</span> <span class="toc-text">水平切分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#垂直拆分和水平拆分的共同缺点"><span class="toc-number">1.2.3.</span> <span class="toc-text">垂直拆分和水平拆分的共同缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#日志分析"><span class="toc-number">1.3.</span> <span class="toc-text">日志分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sql防火墙配置"><span class="toc-number">1.4.</span> <span class="toc-text">sql防火墙配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mycat配置"><span class="toc-number">1.5.</span> <span class="toc-text">Mycat配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#schema（逻辑库）"><span class="toc-number">1.5.1.</span> <span class="toc-text">schema（逻辑库）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#table-逻辑表"><span class="toc-number">1.5.2.</span> <span class="toc-text">table (逻辑表)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dataNode"><span class="toc-number">1.5.3.</span> <span class="toc-text">dataNode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dataHost"><span class="toc-number">1.5.4.</span> <span class="toc-text">dataHost</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#heartbeat"><span class="toc-number">1.5.5.</span> <span class="toc-text">heartbeat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#writeHost-、-readHost"><span class="toc-number">1.5.6.</span> <span class="toc-text">writeHost 、 readHost</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#childTable"><span class="toc-number">1.5.7.</span> <span class="toc-text">childTable</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#server-xml中的标签"><span class="toc-number">1.5.8.</span> <span class="toc-text">server.xml中的标签</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#设置用户"><span class="toc-number">1.5.8.1.</span> <span class="toc-text">设置用户</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#system标签"><span class="toc-number">1.5.8.2.</span> <span class="toc-text">system标签</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#全局表"><span class="toc-number">1.6.</span> <span class="toc-text">全局表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mycat的跨分片join"><span class="toc-number">1.7.</span> <span class="toc-text">Mycat的跨分片join</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#全局表-1"><span class="toc-number">1.7.1.</span> <span class="toc-text">全局表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ER-join"><span class="toc-number">1.7.2.</span> <span class="toc-text">ER join</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Share-Join"><span class="toc-number">1.7.3.</span> <span class="toc-text">Share Join</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mycat自增主键的配置（数据库方式）"><span class="toc-number">1.8.</span> <span class="toc-text">mycat自增主键的配置（数据库方式）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#测试步骤"><span class="toc-number">1.8.1.</span> <span class="toc-text">测试步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考文章"><span class="toc-number">1.8.2.</span> <span class="toc-text">参考文章</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java操作Mycat"><span class="toc-number">1.9.</span> <span class="toc-text">Java操作Mycat</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mycat的事务处理"><span class="toc-number">1.10.</span> <span class="toc-text">Mycat的事务处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mycat查询"><span class="toc-number">1.11.</span> <span class="toc-text">Mycat查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#非分片字段查询"><span class="toc-number">1.11.1.</span> <span class="toc-text">非分片字段查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分页查询"><span class="toc-number">1.11.2.</span> <span class="toc-text">分页查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#排序查询"><span class="toc-number">1.11.3.</span> <span class="toc-text">排序查询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章-1"><span class="toc-number">1.12.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.13.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Mycat入门"><a href="#Mycat入门" class="headerlink" title="Mycat入门"></a>Mycat入门</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><ul>
+<li><a href="https://github.com/MyCATApache/Mycat-download" target="_blank" rel="external">点击下载</a></li>
+<li>配置java环境</li>
+<li>配置mysql数据库</li>
+<li><strong>打开<code>conf/wrapper.conf</code>文件，将其中的<code>wrapper.java.command</code>的值改成服务器上的jdk地址，如<code>wrapper.java.command=/usr/local/jdk/jdk1.8.0_172/bin/java</code></strong> </li>
+<li>为bin文件夹中的所有内容赋予执行的权限:<code>chmod a+x *</code></li>
+<li>修改<code>schemal.xml</code>文件中的内容，填上对应的表，数据节点，数据主机的内容</li>
+<li>启动 ：<code>./mycat start</code> (后台启动)、<code>./mycat console</code>（前台启动）</li>
+<li>开启服务器的8086端口</li>
+<li>使用navicat连接mycat，端口是8086</li>
+</ul>
+<h3 id="常用的命令"><a href="#常用的命令" class="headerlink" title="常用的命令"></a>常用的命令</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">./mycat start 启动</div><div class="line"></div><div class="line">./mycat stop 停止</div><div class="line"></div><div class="line">./mycat console 前台运行</div><div class="line"></div><div class="line">./mycat install 添加到系统自动启动（暂未实现）</div><div class="line"></div><div class="line">./mycat remove 取消随系统自动启动（暂未实现）</div><div class="line"></div><div class="line">./mycat restart 重启服务</div><div class="line"></div><div class="line">./mycat pause 暂停</div><div class="line"></div><div class="line">./mycat status 查看启动状态</div></pre></td></tr></table></figure>
+<h2 id="数据库切分"><a href="#数据库切分" class="headerlink" title="数据库切分"></a>数据库切分</h2><ul>
+<li>数据库切分分为垂直切分，水平切分</li>
+</ul>
+<h3 id="垂直切分"><a href="#垂直切分" class="headerlink" title="垂直切分"></a>垂直切分</h3><ul>
+<li>一个数据库由很多表的构成，每个表对应着不同的业务，垂直切分是指按照业务将表进行分类，分布到不同 的数据库上面，这样也就将数据或者说压力分担到不同的库上面 。</li>
+<li>比如商城项目可以根据不同的业务将表分成用户表、订单表等，这些表分布在不同的数据库中，从而实现了垂直切分</li>
+<li>优点：<ul>
+<li>拆分后业务清晰，拆分规则明确。    </li>
+<li>系统之间整合或扩展容易    </li>
+<li>数据维护简单。    </li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>部分业务表无法 join，只能通过接口方式解决，提高了系统复杂度。    </li>
+<li>受每种业务不同的限制存在单库性能瓶颈，不易数据扩展跟性能提高。    </li>
+<li>事务处理复杂。    </li>
+</ul>
+</li>
+<li><strong>由于垂直切分是按照业务的分类将表分散到不同的库，所以有些业务表会过于庞大，存在单库读写与存储瓶 颈，所以就需要水平拆分来做解决。</strong>    </li>
+</ul>
+<h3 id="水平切分"><a href="#水平切分" class="headerlink" title="水平切分"></a>水平切分</h3><ul>
+<li>水平拆分不是将表做分类，而是按照某个字段的某种规则来分散到多个库之中，每个表中 包含一部分数据。简单来说，我们可以将数据的水平切分理解为是按照数据行的切分，就是将表中的某些行切分 到一个数据库，而另外的某些行又切分到其他的数据库中    </li>
+<li>拆分规则：<ul>
+<li>按照用户 ID 求模，将数据分散到不同的数据库，具有相同数据用户的数据都被分散到一个库中。</li>
+<li>按照日期，将不同月甚至日的数据分散到不同的库中。</li>
+<li>按照某个特定的字段求摸，或者根据特定范围段分散到不同的库中。    </li>
+</ul>
+</li>
+<li>优点：<ul>
+<li>拆分规则抽象好，join 操作基本可以数据库做。</li>
+<li>不存在单库大数据，高并发的性能瓶颈。</li>
+<li>应用端改造较少。 </li>
+<li>提高了系统的稳定性跟负载能力。    </li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>拆分规则难以抽象。 </li>
+<li>分片事务一致性难以解决。 </li>
+<li>数据多次扩展难度跟维护量极大。 </li>
+<li>跨库 join 性能较差。    </li>
+</ul>
+</li>
+</ul>
+<h3 id="垂直拆分和水平拆分的共同缺点"><a href="#垂直拆分和水平拆分的共同缺点" class="headerlink" title="垂直拆分和水平拆分的共同缺点"></a>垂直拆分和水平拆分的共同缺点</h3><ul>
+<li>引入分布式事务的问题。 </li>
+<li>跨节点 Join 的问题。 </li>
+<li>跨节点合并排序分页问题。 </li>
+<li>多数据源管理问题。    </li>
+</ul>
+<h2 id="日志分析"><a href="#日志分析" class="headerlink" title="日志分析"></a>日志分析</h2><h2 id="sql防火墙配置"><a href="#sql防火墙配置" class="headerlink" title="sql防火墙配置"></a>sql防火墙配置</h2><ul>
+<li>在server.xml中配置</li>
+</ul>
+<h2 id="Mycat配置"><a href="#Mycat配置" class="headerlink" title="Mycat配置"></a>Mycat配置</h2><h3 id="schema（逻辑库）"><a href="#schema（逻辑库）" class="headerlink" title="schema（逻辑库）"></a>schema（逻辑库）</h3><ul>
+<li><p>一个标签，定义一个逻辑数据库。可以同时指定多个标签来指定不同的逻辑库</p>
+</li>
+<li><p>标签体的属性如下：</p>
+<ul>
+<li><code>dataNode</code>：字符串，该属性用于绑定逻辑库到某个具体的 database 上 ，多个值用逗号分隔</li>
+<li><code>checkSQLschema</code>：布尔值，当该值设置为 true 时，如果我们执行语句<strong>select * from TESTDB.travelrecord;</strong>则 MyCat 会把语句修改 为<strong>select * from travelrecord;</strong> ，设置这个属性为true，可以在navicat中直接查看逻辑表中的所有数据，否则将会报异常（Table ‘testdb.travelrecord’ doesn’ t exist）   </li>
+<li><code>sqlMaxLimit</code>：当该值设置为某个数值时。每条执行的 SQL 语句，如果没有加上 limit 语句，MyCat 也会自动的加上所对应 的值。例如设置值为 100，执行<strong>select * from TESTDB.travelrecord;</strong>的效果为和执行<strong>select * from TESTDB.travelrecord limit 100;</strong>相同。 设置该值的话，MyCat 默认会把查询到的信息全部都展示出来，造成过多的输出。所以，在正常使用中，还 是建议加上一个值，用于减少过多的数据返回.当然 SQL 语句中也显式的指定 limit 的大小，不受该属性的约束。 需要注意的是，如果运行的 schema 为非拆分库的，那么该属性不会生效。需要手动添加 limit 语句。    </li>
+</ul>
+</li>
+</ul>
+<h3 id="table-逻辑表"><a href="#table-逻辑表" class="headerlink" title="table (逻辑表)"></a>table (逻辑表)</h3><ul>
+<li>属性如下：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>String</th>
+<th>定义逻辑表的表名，这个名字就如同我在数据库中执行 create table 命令指定的名字一样，同个 schema 标 签中定义的名字必须唯一</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dataNode</td>
+<td>String</td>
+<td>定义这个逻辑表所属的 dataNode, 该属性的值需要和 dataNode 标签中 name 属性的值相互对应。多个值用逗号分隔</td>
+</tr>
+<tr>
+<td>rule</td>
+<td>String</td>
+<td>该属性用于指定逻辑表要使用的规则名字，规则名字在 rule.xml 中定义，必须与 tableRule 标签中 name 属 性属性值一一对应</td>
+</tr>
+<tr>
+<td>ruleRequired</td>
+<td>boolean</td>
+<td>该属性用于指定表是否绑定分片规则，如果配置为 true，但没有配置具体 rule 的话 ，程序会报错。</td>
+</tr>
+<tr>
+<td>primaryKey</td>
+<td>String</td>
+<td>该逻辑表对应真实表的主键，例如：分片的规则是使用非主键进行分片的，那么在使用主键查询的时候，就 会发送查询语句到所有配置的 DN 上，如果使用该属性配置真实表的主键。难么 MyCat 会缓存主键与具体 DN 的 信息，那么再次使用非主键进行查询的时候就不会进行广播式的查询，就会直接发送语句给具体的 DN，但是尽管 配置该属性，如果缓存并没有命中的话，还是会发送语句给具体的 DN，来获得数据。<strong>如果没有指定，那么默认使用的是主键字段是id</strong></td>
+</tr>
+<tr>
+<td>type</td>
+<td>String</td>
+<td>该属性定义了逻辑表的类型，目前逻辑表只有“全局表”和”普通表”两种类型。对应的配置： 1、全局表：global。 2、 普通表：不指定该值为 globla 的所有表</td>
+</tr>
+<tr>
+<td>autoIncrement</td>
+<td>boolean</td>
+<td>mysql 对非自增长主键，使用 last_insert_id()是不会返回结果的，只会返回 0。所以，只有定义了自增长主 键的表才可以用 last_insert_id()返回主键值。 mycat 目前提供了自增长主键功能，但是如果对应的 mysql 节点上数据表，没有定义 auto_increment，那 么在 mycat 层调用 last_insert_id()也是不会返回结果的。 由于 insert 操作的时候没有带入分片键，mycat 会先取下这个表对应的全局序列，然后赋值给分片键。这样 才能正常的插入到数据库中，最后使用 last_insert_id()才会返回插入的分片键值。 如果要使用这个功能最好配合使用数据库模式的全局序列。 75 使用 autoIncrement=“true” 指定这个表有使用自增长主键，这样 mycat 才会不抛出分片键找不到的异 常。 使用 autoIncrement=“false” 来禁用这个功能，当然你也可以直接删除掉这个属性。默认就是禁用的。</td>
+</tr>
+<tr>
+<td>subTables</td>
+<td>String</td>
+<td></td>
+</tr>
+<tr>
+<td>needAddLimit</td>
+<td>boolean</td>
+<td>指定表是否需要自动的在每个语句后面加上 limit 限制。由于使用了分库分表，数据量有时会特别巨大。这时 候执行查询语句，如果恰巧又忘记了加上数量限制的话。那么查询所有的数据出来，也够等上一小会儿的。 所以，mycat 就自动的为我们加上 LIMIT 100。当然，如果语句中有 limit，就不会在次添加了。 这个属性默认为 true,你也可以设置成 false`禁用掉默认行为。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dataNode"><a href="#dataNode" class="headerlink" title="dataNode"></a>dataNode</h3><ul>
+<li>数据节点，用来设置</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>String</th>
+<th>定义数据节点的名字，这个名字需要是唯一的，我们需要在 table 标签上应用这个名字，来建立表与分片对 应的关系</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dataHost</td>
+<td>String</td>
+<td>该属性用于定义该分片属于哪个数据库实例的，属性值是引用 dataHost 标签上定义的 name 属性。</td>
+</tr>
+<tr>
+<td>database</td>
+<td>String</td>
+<td>该属性用于定义该分片属性哪个具体数据库实例上的具体库，因为这里使用两个纬度来定义分片，就是：实 例+具体的库。因为每个库上建立的表和表结构是一样的。所以这样做就可以轻松的对表进行水平拆分</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dataHost"><a href="#dataHost" class="headerlink" title="dataHost"></a>dataHost</h3><ul>
+<li><p>作为 Schema.xml 中最后的一个标签，该标签在 mycat 逻辑库中也是作为最底层的标签存在，直接定义了具 体的数据库实例、读写分离配置和心跳语句。现在我们就解析下这个标签。    </p>
+</li>
+<li><p>配置如下：</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>String</th>
+<th>唯一标识 dataHost 标签，供上层的标签使用。</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>maxCon</td>
+<td>Integer</td>
+<td>指定每个读写实例连接池的最大连接。也就是说，标签内嵌套的 writeHost、 readHost 标签都会使用这个属 性的值来实例化出连接池的最大连接数</td>
+</tr>
+<tr>
+<td>minCon</td>
+<td>Integer</td>
+<td>指定每个读写实例连接池的最小连接，初始化连接池的大小</td>
+</tr>
+<tr>
+<td>balance</td>
+<td>Integer</td>
+<td>负载均衡类型，目前的取值有 3 种： 1. balance=”0”, 不开启读写分离机制，所有读操作都发送到当前可用的 writeHost 上。 2. balance=”1”，全部的 readHost 与 stand by writeHost 参与 select 语句的负载均衡，简单的说，当双 主双从模式(M1-&gt;S1，M2-&gt;S2，并且 M1 与 M2 互为主备)，正常情况下，M2,S1,S2 都参与 select 语句的负载 均衡。 3. balance=”2”，所有读操作都随机的在 writeHost、 readhost 上分发。 4. balance=”3”，所有读请求随机的分发到 wiriterHost 对应的 readhost 执行，writerHost 不负担读压 力，注意 balance=3 只在 1.4 及其以后版本有，1.3 没有。</td>
+</tr>
+<tr>
+<td>writeType</td>
+<td>Integer</td>
+<td>负载均衡类型，目前的取值有 3 种： 1. writeType=”0”, 所有写操作发送到配置的第一个 writeHost，第一个挂了切到还生存的第二个 writeHost，重新启动后已切换后的为准，切换记录在配置文件中:dnindex.properties . 2. writeType=”1”，所有写操作都随机的发送到配置的 writeHost，1.5 以后废弃不推荐。</td>
+</tr>
+<tr>
+<td>dbType</td>
+<td>String</td>
+<td>指定后端连接的数据库类型，目前支持二进制的 mysql 协议，还有其他使用 JDBC 连接的数据库。例如： mongodb、 oracle、 spark 等。</td>
+</tr>
+<tr>
+<td>dbDriver</td>
+<td>String</td>
+<td>指定连接后端数据库使用的 Driver，目前可选的值有 native 和 JDBC。使用 native 的话，因为这个值执行的 是二进制的 mysql 协议，所以可以使用 mysql 和 maridb。其他类型的数据库则需要使用 JDBC 驱动来支持。 从 1.6 版本开始支持 postgresql 的 native 原始协议。 如果使用 JDBC 的话需要将符合 JDBC 4 标准的驱动 JAR 包放到 MYCAT\lib 目录下，并检查驱动 JAR 包中 包括如下目录结构的文件：META-INF\services\java.sql.Driver。在这个文件内写上具体的 Driver 类名，例如： com.mysql.jdbc.Driver。</td>
+</tr>
+<tr>
+<td>switchType</td>
+<td>Integer</td>
+<td>-1 表示不自动切换 1 默认值，自动切换 2 基于 MySQL 主从同步的状态决定是否切换 心跳语句为 show slave status 3 基于 MySQL galary cluster 的切换机制（适合集群）（1.4.1） 心跳语句为 show status like ‘wsrep%’.    这个和writeType结合使用</td>
+</tr>
+</tbody>
+</table>
+<h3 id="heartbeat"><a href="#heartbeat" class="headerlink" title="heartbeat"></a>heartbeat</h3><ul>
+<li>这个标签内指明用于和后端数据库进行心跳检查的语句。例如,MYSQL 可以使用<code>select user()</code>，Oracle 可以 使用 <code>select 1 from dual</code>等。 这个标签还有一个 <code>connectionInitSql</code>属性，主要是当使用 Oracla 数据库时，需要执行的初始化 SQL 语句就 这个放到这里面来。例如：alter session set nls_date_format=’yyyy-mm-dd hh24:mi:ss’ <strong>1.4 主从切换的语句必须是：show slave status</strong>    </li>
+</ul>
+<h3 id="writeHost-、-readHost"><a href="#writeHost-、-readHost" class="headerlink" title="writeHost 、 readHost"></a>writeHost 、 readHost</h3><ul>
+<li>这两个标签都指定后端数据库的相关配置给 mycat，用于实例化后端连接池。唯一不同的是，writeHost 指 定写实例、 readHost 指定读实例，组着这些读写实例来满足系统的要求    </li>
+<li>在一个 dataHost 内可以定义多个 writeHost 和 readHost。但是，如果 writeHost 指定的后端数据库宕机， 那么这个 writeHost 绑定的所有 readHost 都将不可用。另一方面，由于这个 writeHost 宕机系统会自动的检测 到，并切换到备用的 writeHost 上去   </li>
+<li>这两个标签的属性相同，这里就一起介绍。    </li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>host</th>
+<th>String</th>
+<th>用于标识不同实例，一般 writeHost 我们使用<em>M1，readHost 我们用</em>S1。</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>url</td>
+<td>String</td>
+<td>后端实例连接地址，如果是使用 native 的 dbDriver，则一般为 address:port 这种形式。用 JDBC 或其他的 dbDriver，则需要特殊指定。当使用 JDBC 时则可以这么写：jdbc:mysql://localhost:3306/。</td>
+</tr>
+<tr>
+<td>password</td>
+<td>String</td>
+<td>后端存储实例需要的用户名字  ,即是指向mysql的密码</td>
+</tr>
+<tr>
+<td>user</td>
+<td>String</td>
+<td>后端存储实例需要的密码    ，即是指向mysql的用户</td>
+</tr>
+<tr>
+<td>weight</td>
+<td>String</td>
+<td>权重 配置在 readhost 中作为读节点的权重（1.4 以后）</td>
+</tr>
+<tr>
+<td>usingDecrypt</td>
+<td>String</td>
+<td>是否对密码加密默认 0 否 如需要开启配置 1，同时使用加密程序对密码加密</td>
+</tr>
+</tbody>
+</table>
+<h3 id="childTable"><a href="#childTable" class="headerlink" title="childTable"></a>childTable</h3><ul>
+<li>childTable 标签用于定义 E-R 分片的子表。通过标签上的属性与父表进行关联。    </li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>String</th>
+<th>定义子表的表名。</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>joinKey</td>
+<td>String</td>
+<td>插入子表的时候会使用这个列的值查找父表存储的数据节点</td>
+</tr>
+<tr>
+<td>parentKey</td>
+<td>String</td>
+<td>属性指定的值一般为与父表建立关联关系的列名。程序首先获取 joinkey 的值，再通过 parentKey 属性指定 的列名产生查询语句，通过执行该语句得到父表存储在哪个分片上。从而确定子表存储的位置。</td>
+</tr>
+<tr>
+<td>primaryKey</td>
+<td>String</td>
+<td>同 table 标签所描述的</td>
+</tr>
+<tr>
+<td>needAddLimit</td>
+<td>boolean</td>
+<td>同 table 标签所描述的</td>
+</tr>
+<tr>
+<td>autoIncrement</td>
+<td>boolean</td>
+<td>设置是否主键自增</td>
+</tr>
+</tbody>
+</table>
+<h3 id="server-xml中的标签"><a href="#server-xml中的标签" class="headerlink" title="server.xml中的标签"></a>server.xml中的标签</h3><h4 id="设置用户"><a href="#设置用户" class="headerlink" title="设置用户"></a>设置用户</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--</span></div><div class="line">		user标签可以设置登录的用户，可以指定多个</div><div class="line">		</div><div class="line">		&lt;property name="password"&gt;： 设置该用户登录的密码</div><div class="line">		</div><div class="line">		&lt;property name="schemas"&gt; ：设置该用户可以访问的逻辑库，如果有多个，那么需要使用逗号分隔</div><div class="line">		</div><div class="line">		&lt;property name="readOnly"&gt;true&lt;/property&gt; ： 设置该用户是否对逻辑库为只读权限</div><div class="line">		</div><div class="line">		&lt;property name="benchmark"&gt;11111&lt;/property&gt;： mycat 连接服务降级处理：benchmark 基准, 当前端的整体 connection 数达到基准值是, 对来自该账户的请求开始拒绝连接， 0 或不设</div><div class="line">表示不限制</div><div class="line">		</div><div class="line">		&lt;property name="usingDecrypt"&gt;1&lt;/property&gt;：是否对密码加密默认 0 否 如需要开启配置 1，同时使用加密程序对密码加密</div><div class="line">		</div><div class="line">		privileges 子节点：对用户的 schema 及 下级的 table 进行精细化的 DML 权限控制，privileges 节点中的 check 属性是用</div><div class="line">于标识是否开启 DML 权限检查， 默认 false 标识不检查，当然 privileges 节点不配置，等同 check=false,</div><div class="line">由于 Mycat 一个用户的 schemas 属性可配置多个 schema ，所以 privileges 的下级节点 schema 节点同样</div><div class="line">可配置多个，对多库多表进行细粒度的 DML 权限控制</div><div class="line"></div><div class="line">				schema 标签： 指定逻辑库的名称，用来选择对应的表，可以有多个</div><div class="line"></div><div class="line">        				dml：设置对指定表的crud操作，分别是insert,update,select,delete，对应的如果是0表示禁止，1表示不禁止</div><div class="line">		</div><div class="line">		</div><div class="line">		</div><div class="line">	--&gt;</div><div class="line">	<span class="tag">&lt;<span class="name">user</span> <span class="attr">name</span>=<span class="string">"root"</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"password"</span>&gt;</span>123456<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"schemas"</span>&gt;</span>Test<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div><div class="line">		</div><div class="line">		<span class="comment">&lt;!-- 表级 DML 权限设置 --&gt;</span></div><div class="line">		<span class="comment">&lt;!-- 		</span></div><div class="line">		&lt;privileges check="false"&gt;</div><div class="line">			&lt;schema name="TESTDB" dml="0110" &gt;</div><div class="line">				&lt;table name="tb01" dml="0000"&gt;&lt;/table&gt;</div><div class="line">				&lt;table name="tb02" dml="1111"&gt;&lt;/table&gt;</div><div class="line">			&lt;/schema&gt;</div><div class="line">			</div><div class="line">			&lt;schema name="TESTDB" dml="0110" &gt;</div><div class="line">				&lt;table name="tb01" dml="0000"&gt;&lt;/table&gt;</div><div class="line">				&lt;table name="tb02" dml="1111"&gt;&lt;/table&gt;</div><div class="line">			&lt;/schema&gt;</div><div class="line">			</div><div class="line">		&lt;/privileges&gt;		</div><div class="line">		 --&gt;</div><div class="line">	<span class="tag">&lt;/<span class="name">user</span>&gt;</span></div></pre></td></tr></table></figure>
+<h4 id="system标签"><a href="#system标签" class="headerlink" title="system标签"></a>system标签</h4><ul>
+<li>这个标签内嵌套的所有 property 标签都与系统配置有关，请注意，下面我会省去标签 property 直接使用这 个标签的 name 属性内的值来介绍这个属性的作用。    </li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>作用</th>
+<th>概要</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>charset</td>
+<td>字符集设置。</td>
+<td>配置字符集的时候一定要坚持 mycat 的字符集与数据库端的字符集是一致的，可以通过变量来查询。比如<code>&lt;property name=&quot;charset&quot;&gt;utf8&lt;/property&gt;</code></td>
+</tr>
+<tr>
+<td>defaultSqlParser</td>
+<td>1.3 解析器默认为 fdbparser，1.4 默认为 druidparser，1.4 以后 fdbparser 作废。</td>
+<td>由于 mycat 最初是时候 Foundation DB 的 sql 解析器，而后才添加的 Druid 的解析器。所以这个属性用来 指定默认的解析器。目前的可用的取值有：druidparser 和 fdbparser。使用的时候可以选择其中的一种，目前一 般都使用 druidparser</td>
+</tr>
+<tr>
+<td>processors</td>
+<td></td>
+<td>这个属性主要用于指定系统可用的线程数，默认值为机器 CPU 核心线程数。 主要影响 processorBufferPool、 processorBufferLocalPercent、 processorExecutor 属性。 NIOProcessor 的个数也是由这个属性定义的，所以调优的时候可以适当的调高这个属性。</td>
+</tr>
+<tr>
+<td>processorBufferChunk</td>
+<td></td>
+<td>这个属性指定每次分配 Socket Direct Buffer 的大小，默认是 4096 个字节。这个属性也影响 buffer pool 的 长度。如果一次性获取的数过大 buffer 不够用 经常出现警告，则可以适当调大。</td>
+</tr>
+<tr>
+<td>processorBufferPool</td>
+<td></td>
+<td>这个属性指定 bufferPool 计算 比例值。由于每次执行 NIO 读、写操作都需要使用到 buffer，系统初始化的 时候会建立一定长度的 buffer 池来加快读、写的效率，减少建立 buffer 的时间。 Mycat 中有两个主要的 buffer 池: - BufferPool - ThreadLocalPool BufferPool 由 ThreadLocalPool 组合而成，每次从 BufferPool 中获取 buffer 都会优先获取 ThreadLocalPool 中的 buffer，未命中之后才会去获取 BufferPool 中的 buffer。也就是说 ThreadLocalPool 是 作为 BufferPool 的二级缓存，每个线程内部自己使用的。当然，这其中还有一些限制条件需要线程的名字是由$_ 开头。然而，BufferPool 上的 buffer 则是每个 NIOProcessor 都共享的。 默认这个属性的值为： 默认 bufferChunkSize(4096) <em> processors 属性 </em> 1000 BufferPool 的总长度 = bufferPool / bufferChunk。 若 bufferPool 不是 bufferChunk 的整数倍，则总长度为前面计算得出的商 + 1 假设系统线程数为 4，其他都为属性的默认值，则： bufferPool ＝ 4096 <em> 4 </em> 1000 BufferPool 的总长度 : 4000 = 16384000 / 4096</td>
+</tr>
+<tr>
+<td>processorBufferLocalPercent</td>
+<td></td>
+<td>前面提到了 ThreadLocalPool。这个属性就是用来控制分配这个 pool 的大小用的，但其也并不是一个准确 的值，也是一个比例值。这个属性默认值为 100。 线程缓存百分比 = bufferLocalPercent / processors 属性。 例如，系统可以同时运行 4 个线程，使用默认值，则根据公式每个线程的百分比为 25。最后根据这个百分比 来计算出具体的 ThreadLocalPool 的长度公式如下： ThreadLocalPool 的长度 = 线程缓存百分比 <em> BufferPool 长度 / 100 假设 BufferPool 的长度为 4000，其他保持默认值。 那么最后每个线程建立上的 ThreadLocalPool 的长度为： 1000 = 25 </em> 4000 / 100</td>
+</tr>
+<tr>
+<td>processorExecutor</td>
+<td></td>
+<td>这个属性主要用于指定 NIOProcessor 上共享的 businessExecutor 固定线程池大小。 mycat 在需要处理一 些异步逻辑的时候会把任务提交到这个线程池中。新版本中这个连接池的使用频率不是很大了，可以设置一个较 小的值</td>
+</tr>
+<tr>
+<td><strong>sequnceHandlerType</strong></td>
+<td></td>
+<td>指定使用 Mycat 全局序列的类型。 0 为本地文件方式，1 为数据库方式，2 为时间戳序列方式，3 为分布式 ZK ID 生成器，4 为 zk 递增 id 生成。</td>
+</tr>
+<tr>
+<td><strong>handleDistributedTransactions</strong></td>
+<td></td>
+<td>分布式事务开关，0为不过滤分布式事务，1为过滤分布式事务（如果分布式事务内只涉及全局表，则不过滤），2为不过滤分布式事务,但是记录分布式事务日志</td>
+</tr>
+</tbody>
+</table>
+<h2 id="全局表"><a href="#全局表" class="headerlink" title="全局表"></a>全局表</h2><ul>
+<li>mycat中使用type定义全局表和普通表(<code>type=global</code>)，没有定义type的类型的都是普通表，是需要分片的</li>
+<li>全局表适合那些数据量比较少的，变动不是很频繁的</li>
+<li>全局表的插入，更新操作会实时在所有节点上执行，保持各个分片的数据一致性。没有太激烈的update操作。</li>
+<li><strong>全局表查询只从一个节点获取</strong></li>
+<li><strong>全局表可以和任何一个表进行JOIN操作</strong></li>
+<li>需要注意的是，全局表每个分片节点上都要有运行创建表的 DDL 语句。    </li>
+</ul>
+<h2 id="Mycat的跨分片join"><a href="#Mycat的跨分片join" class="headerlink" title="Mycat的跨分片join"></a>Mycat的跨分片join</h2><ul>
+<li>同一个分片的数据可以任意的join，join的数量也没有限制，但是不同分片的数据跨分片join的话，是查询不到结果的</li>
+</ul>
+<h3 id="全局表-1"><a href="#全局表-1" class="headerlink" title="全局表"></a>全局表</h3><ul>
+<li>全局表在每一个分片上都保持着相同的数据，因此全局表可以和任意的表跨分片join</li>
+</ul>
+<h3 id="ER-join"><a href="#ER-join" class="headerlink" title="ER join"></a>ER join</h3><ul>
+<li>我们可以根据ER关系设置每张表的关系，比如订单表依赖于用户表，我们可以设置ER join方式的，那么会根据外键（joinKey）的值和相关依赖的表分配在同一个分片上，那么就可以join了</li>
+<li><strong>支持多表join</strong></li>
+<li>配置如下（其中childTable中也可以嵌套childTable）：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">"t_user"</span> <span class="attr">dataNode</span>=<span class="string">"dn1,dn2,dn3"</span> <span class="attr">rule</span>=<span class="string">"auto-sharding-long"</span> <span class="attr">primaryKey</span>=<span class="string">"id"</span> <span class="attr">autoIncrement</span>=<span class="string">"true"</span>&gt;</span></div><div class="line">			<span class="comment">&lt;!--订单表，</span></div><div class="line">			joinKey是t_order和t_user关联的外键关系，</div><div class="line">			parentKey指定的是t_user表中的主键</div><div class="line">			primaryKey：指定的是t_order的主键</div><div class="line">			autoIncrement：设置是否主键自增</div><div class="line">--&gt;</div><div class="line">			<span class="tag">&lt;<span class="name">childTable</span> <span class="attr">name</span>=<span class="string">"t_order"</span> <span class="attr">joinKey</span>=<span class="string">"user_id"</span> <span class="attr">parentKey</span>=<span class="string">"id"</span> <span class="attr">primaryKey</span>=<span class="string">"id"</span> <span class="attr">autoIncrement</span>=<span class="string">"true"</span>/&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">table</span>&gt;</span></div></pre></td></tr></table></figure>
+<h3 id="Share-Join"><a href="#Share-Join" class="headerlink" title="Share Join"></a>Share Join</h3><h2 id="mycat自增主键的配置（数据库方式）"><a href="#mycat自增主键的配置（数据库方式）" class="headerlink" title="mycat自增主键的配置（数据库方式）"></a>mycat自增主键的配置（数据库方式）</h2><ul>
+<li>在mycat中并没有实现mysql的自增主键的配置，如果需要实现的话，需要自己配置。</li>
+<li>自增主键的方式配置有多种方式，比如本地方式，数据库方式，ZK方式，时间戳的方式，这里我们测试的是数据库的方式。</li>
+</ul>
+<h3 id="测试步骤"><a href="#测试步骤" class="headerlink" title="测试步骤"></a>测试步骤</h3><p>1、修改<code>server.xml</code>中生成方式为数据库生成的方式</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--将sequnceHandlerType设置为1--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"sequnceHandlerType"</span>&gt;</span>1<span class="tag">&lt;/<span class="name">property</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>2、在<code>schema.xml</code>中，table中增加属性<code>autoIncrement</code>值为<code>true</code>，添加<code>mycat_sequence</code>表 </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">schema</span> <span class="attr">name</span>=<span class="string">"Test"</span> <span class="attr">checkSQLschema</span>=<span class="string">"true"</span>&gt;</span></div><div class="line">		<span class="comment">&lt;!-- auto sharding by id (long)</span></div><div class="line"> 		rule:指定分片的规则为根据Id自动分片</div><div class="line">		primaryKey： 指定主键</div><div class="line">		autoIncrement： 指定自增长，一定要为true</div><div class="line">		--&gt;</div><div class="line">		<span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">"t_item"</span> <span class="attr">dataNode</span>=<span class="string">"dn1,dn2,dn3"</span> <span class="attr">rule</span>=<span class="string">"auto-sharding-long"</span> <span class="attr">primaryKey</span>=<span class="string">"id"</span> <span class="attr">autoIncrement</span>=<span class="string">"true"</span>  /&gt;</span></div><div class="line">    	<span class="comment">&lt;!--指定自增长的表，数据节点为dn1--&gt;</span></div><div class="line">		<span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">"mycat_sequence"</span> <span class="attr">primaryKey</span>=<span class="string">"name"</span> <span class="attr">dataNode</span>=<span class="string">"dn1"</span> /&gt;</span></div><div class="line">		</div><div class="line">	<span class="tag">&lt;/<span class="name">schema</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">dataNode</span> <span class="attr">name</span>=<span class="string">"dn1"</span> <span class="attr">dataHost</span>=<span class="string">"localhost1"</span> <span class="attr">database</span>=<span class="string">"db1"</span> /&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">dataNode</span> <span class="attr">name</span>=<span class="string">"dn2"</span> <span class="attr">dataHost</span>=<span class="string">"localhost1"</span> <span class="attr">database</span>=<span class="string">"db2"</span> /&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">dataNode</span> <span class="attr">name</span>=<span class="string">"dn3"</span> <span class="attr">dataHost</span>=<span class="string">"localhost1"</span> <span class="attr">database</span>=<span class="string">"db3"</span> /&gt;</span></div></pre></td></tr></table></figure>
+<p>3、在数据节点<code>dn1</code>的数据库<code>db1</code>中新建<code>mycat_sequence</code>的表，如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1、name：sequence：名称</div><div class="line"></div><div class="line">2、currenct_value：当前value</div><div class="line"></div><div class="line">3、increment：增长步长</div></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">EXISTS</span> MYCAT_SEQUENCE;   </div><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> MYCAT_SEQUENCE(   </div><div class="line">    <span class="keyword">name</span> <span class="built_in">VARCHAR</span>(<span class="number">50</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,  </div><div class="line">    current_value <span class="built_in">INT</span> <span class="keyword">NOT</span> <span class="literal">NULL</span>,  </div><div class="line">    <span class="keyword">increment</span> <span class="built_in">INT</span> <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="number">100</span>,  </div><div class="line">    PRIMARY <span class="keyword">KEY</span>(<span class="keyword">name</span>)  </div><div class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span>;</div></pre></td></tr></table></figure>
+<p>4、在db1数据中创建存储函数，用来维持自增长</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div></pre></td><td class="code"><pre><div class="line"><span class="comment">-- 获取当前sequence的值 (返回当前值,增量)  </span></div><div class="line"><span class="keyword">DROP</span> <span class="keyword">FUNCTION</span> <span class="keyword">IF</span> <span class="keyword">EXISTS</span> mycat_seq_currval;  </div><div class="line">DELIMITER $  </div><div class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> mycat_seq_currval(seq_name <span class="built_in">VARCHAR</span>(<span class="number">50</span>)) <span class="keyword">RETURNS</span> <span class="built_in">varchar</span>(<span class="number">64</span>) <span class="keyword">CHARSET</span> utf8  </div><div class="line"><span class="keyword">DETERMINISTIC</span>  </div><div class="line"><span class="keyword">BEGIN</span>  </div><div class="line"><span class="keyword">DECLARE</span> retval <span class="built_in">VARCHAR</span>(<span class="number">64</span>);  </div><div class="line"><span class="keyword">SET</span> retval=<span class="string">"-999999999,null"</span>;  </div><div class="line"><span class="keyword">SELECT</span> <span class="keyword">concat</span>(<span class="keyword">CAST</span>(current_value <span class="keyword">AS</span> <span class="built_in">CHAR</span>),<span class="string">","</span>,<span class="keyword">CAST</span>(<span class="keyword">increment</span> <span class="keyword">AS</span> <span class="built_in">CHAR</span>)) <span class="keyword">INTO</span> retval <span class="keyword">FROM</span> MYCAT_SEQUENCE <span class="keyword">WHERE</span> <span class="keyword">name</span> = seq_name;  </div><div class="line">RETURN retval;  </div><div class="line"><span class="keyword">END</span> $  </div><div class="line">DELIMITER ;  </div><div class="line">      </div><div class="line"><span class="comment">-- 设置sequence值  </span></div><div class="line"><span class="keyword">DROP</span> <span class="keyword">FUNCTION</span> <span class="keyword">IF</span> <span class="keyword">EXISTS</span> mycat_seq_setval;  </div><div class="line">DELIMITER $  </div><div class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> mycat_seq_setval(seq_name <span class="built_in">VARCHAR</span>(<span class="number">50</span>),<span class="keyword">value</span> <span class="built_in">INTEGER</span>) <span class="keyword">RETURNS</span> <span class="built_in">varchar</span>(<span class="number">64</span>) <span class="keyword">CHARSET</span> utf8  </div><div class="line"><span class="keyword">DETERMINISTIC</span>  </div><div class="line"><span class="keyword">BEGIN</span>  </div><div class="line"><span class="keyword">UPDATE</span> MYCAT_SEQUENCE  </div><div class="line"><span class="keyword">SET</span> current_value = <span class="keyword">value</span>  </div><div class="line"><span class="keyword">WHERE</span> <span class="keyword">name</span> = seq_name;  </div><div class="line">RETURN mycat_seq_currval(seq_name);  </div><div class="line"><span class="keyword">END</span> $  </div><div class="line">DELIMITER ;  </div><div class="line">    </div><div class="line"><span class="comment">-- 获取下一个sequence值  </span></div><div class="line"><span class="keyword">DROP</span> <span class="keyword">FUNCTION</span> <span class="keyword">IF</span> <span class="keyword">EXISTS</span> mycat_seq_nextval;  </div><div class="line">DELIMITER $  </div><div class="line"><span class="keyword">CREATE</span> <span class="keyword">FUNCTION</span> mycat_seq_nextval(seq_name <span class="built_in">VARCHAR</span>(<span class="number">50</span>)) <span class="keyword">RETURNS</span> <span class="built_in">varchar</span>(<span class="number">64</span>) <span class="keyword">CHARSET</span> utf8  </div><div class="line"><span class="keyword">DETERMINISTIC</span>  </div><div class="line"><span class="keyword">BEGIN</span>  </div><div class="line"><span class="keyword">UPDATE</span> MYCAT_SEQUENCE  </div><div class="line"><span class="keyword">SET</span> current_value = current_value + <span class="keyword">increment</span> <span class="keyword">WHERE</span> <span class="keyword">name</span> = seq_name;  </div><div class="line">RETURN mycat_seq_currval(seq_name);  </div><div class="line"><span class="keyword">END</span> $  </div><div class="line">DELIMITER ;</div></pre></td></tr></table></figure>
+<p>5、在<code>mycat_sequence</code>表中插入数据，用来记录<code>t_item</code>表的自增长数据，名称必须全部大写</p>
+<p>​    1、<strong>当然这里一条数据就代表一张表自增长，如果想要其他的表也能自增长，那么直接添加即可</strong></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> MYCAT_SEQUENCE(<span class="keyword">name</span>, current_value, <span class="keyword">increment</span>) <span class="keyword">VALUES</span> (<span class="string">'T_TIEM'</span>, <span class="number">0</span>,<span class="number">1</span>);</div></pre></td></tr></table></figure>
+<p>6、在<code>conf/sequence_db_conf.properties</code>的文件中添加依赖全局序列，增加序列，与table名称相同全大写 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># T_ITEM是自增长的表，dn1是mycat_sequence所在的数据节点，之后每添加一张自增长的表，只需要在其中添加即可</div><div class="line">T_ITEM=dn1</div></pre></td></tr></table></figure>
+<p>7、测试，向t_item表中添加数据</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> t_item(<span class="keyword">name</span>) <span class="keyword">values</span>(<span class="string">"chenjiabing"</span>);</div></pre></td></tr></table></figure>
+<p>8、测试使用mybatis添加数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Insert</span>(<span class="string">"INSERT into t_item(name) values(#&#123;name&#125;)"</span>)</div><div class="line"><span class="meta">@Options</span>(useGeneratedKeys = <span class="keyword">true</span>,keyProperty = <span class="string">"id"</span>)   <span class="comment">//自增长主键返回</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(Item item)</span></span>;</div></pre></td></tr></table></figure>
+<h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><ul>
+<li><a href="http://deweing.github.io/2016/06/28/mycat-auto-increment/" target="_blank" rel="external">http://deweing.github.io/2016/06/28/mycat-auto-increment/</a></li>
+</ul>
+<h2 id="Java操作Mycat"><a href="#Java操作Mycat" class="headerlink" title="Java操作Mycat"></a>Java操作Mycat</h2><ul>
+<li>只需要将连接mysql的端口改成<strong>8066</strong>即可，其他的就像是操作mysql一样</li>
+</ul>
+<h2 id="Mycat的事务处理"><a href="#Mycat的事务处理" class="headerlink" title="Mycat的事务处理"></a>Mycat的事务处理</h2><ul>
+<li>Mycat 目前没有出来跨分片的事务强一致性支持，目前单库内部可以保证事务的完整性，如果跨库事务， 在执行的时候任何分片出错，可以保证所有分片回滚，但是一旦应用发起 commit 指令，无法保证所有分片都成 功，考虑到某个分片挂的可能性不大所以称为弱 XA。    </li>
+<li>也就是说，我们在单体应用中可以正常使用spring提供的事务管理器进行事务的管理，在处理出现异常的时候也是可以回滚的。</li>
+</ul>
+<h2 id="Mycat查询"><a href="#Mycat查询" class="headerlink" title="Mycat查询"></a>Mycat查询</h2><h3 id="非分片字段查询"><a href="#非分片字段查询" class="headerlink" title="非分片字段查询"></a>非分片字段查询</h3><ul>
+<li>如果查询条件中有分片字段的话，那么mycat就可以轻松的根据分片规则找到对应的数据节点，然后在对应节点中查询，比如使用的是id取模分片规则，那么此时的id就是分片字段，一旦查询条件中有id这个字段的，就可以根据id的值定位到指定的节点中查询，否则将会在每个节点中执行sql语句，然后将每个节点的返回结果汇总返回</li>
+</ul>
+<h3 id="分页查询"><a href="#分页查询" class="headerlink" title="分页查询"></a>分页查询</h3><ul>
+<li>mycat针对分页查询的执行逻辑如下：<ul>
+<li>根据sql语句的过滤条件到每个数据节点筛选数据，筛选完成之后返回各个节点的分页数据</li>
+<li>mycat会判断哪个节点先返回数据，真正返回给客户端的就是<strong>先返回数据</strong>的那个节点上的数据库中</li>
+</ul>
+</li>
+<li><strong>根据上面的分析，我们可以判断分页查询的数据每次都是不同的，不同数据节点的返回速度决定着分页查询的数据显示。</strong></li>
+<li><strong>解决办法：在分页查询的时候必要的时候进行排序，这样返回的结果才是正确的，不然每次返回的结果可能不同，比如<code>select * from t_item order by id desc limit 1,29</code></strong></li>
+</ul>
+<h3 id="排序查询"><a href="#排序查询" class="headerlink" title="排序查询"></a>排序查询</h3><ul>
+<li>mycat 的排序查询的执行逻辑如下：<ul>
+<li>将sql语句发送到各个节点进行筛选数据，返回数据给mycat</li>
+<li>mycat获取到各个节点的数据的时候会根据 不同的排序规则（升序，降序）对全部节点的数据重新排序，最后所有数据排序完成的结果就是正确的结果</li>
+</ul>
+</li>
+</ul>
+<h2 id="参考文章-1"><a href="#参考文章-1" class="headerlink" title="参考文章"></a>参考文章</h2><ul>
+<li><a href="https://www.cnblogs.com/jpfss/p/8194111.html" target="_blank" rel="external">https://www.cnblogs.com/jpfss/p/8194111.html</a></li>
+<li><a href="http://ono60m7tl.bkt.clouddn.com/Mycat_V1.6.0.pdf" target="_blank" rel="external">Mycat权威指南</a></li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/分布式/">分布式</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/分布式/">分布式</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/10/07/Mycat/" data-title="数据库中间件之Mycat | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/10/09/docker安装服务/" title="docker安装服务">
+  <strong>上一篇：</strong><br/>
+  <span>
+  docker安装服务</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/10/03/springBoot整合dubbo/"  title="springBoot整合dubbo">
+ <strong>下一篇：</strong><br/> 
+ <span>springBoot整合dubbo
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Mycat入门"><span class="toc-number">1.</span> <span class="toc-text">Mycat入门</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#安装"><span class="toc-number">1.1.</span> <span class="toc-text">安装</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的命令"><span class="toc-number">1.1.1.</span> <span class="toc-text">常用的命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据库切分"><span class="toc-number">1.2.</span> <span class="toc-text">数据库切分</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#垂直切分"><span class="toc-number">1.2.1.</span> <span class="toc-text">垂直切分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#水平切分"><span class="toc-number">1.2.2.</span> <span class="toc-text">水平切分</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#垂直拆分和水平拆分的共同缺点"><span class="toc-number">1.2.3.</span> <span class="toc-text">垂直拆分和水平拆分的共同缺点</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#日志分析"><span class="toc-number">1.3.</span> <span class="toc-text">日志分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sql防火墙配置"><span class="toc-number">1.4.</span> <span class="toc-text">sql防火墙配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mycat配置"><span class="toc-number">1.5.</span> <span class="toc-text">Mycat配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#schema（逻辑库）"><span class="toc-number">1.5.1.</span> <span class="toc-text">schema（逻辑库）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#table-逻辑表"><span class="toc-number">1.5.2.</span> <span class="toc-text">table (逻辑表)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dataNode"><span class="toc-number">1.5.3.</span> <span class="toc-text">dataNode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dataHost"><span class="toc-number">1.5.4.</span> <span class="toc-text">dataHost</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#heartbeat"><span class="toc-number">1.5.5.</span> <span class="toc-text">heartbeat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#writeHost-、-readHost"><span class="toc-number">1.5.6.</span> <span class="toc-text">writeHost 、 readHost</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#childTable"><span class="toc-number">1.5.7.</span> <span class="toc-text">childTable</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#server-xml中的标签"><span class="toc-number">1.5.8.</span> <span class="toc-text">server.xml中的标签</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#设置用户"><span class="toc-number">1.5.8.1.</span> <span class="toc-text">设置用户</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#system标签"><span class="toc-number">1.5.8.2.</span> <span class="toc-text">system标签</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#全局表"><span class="toc-number">1.6.</span> <span class="toc-text">全局表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mycat的跨分片join"><span class="toc-number">1.7.</span> <span class="toc-text">Mycat的跨分片join</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#全局表-1"><span class="toc-number">1.7.1.</span> <span class="toc-text">全局表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ER-join"><span class="toc-number">1.7.2.</span> <span class="toc-text">ER join</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Share-Join"><span class="toc-number">1.7.3.</span> <span class="toc-text">Share Join</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mycat自增主键的配置（数据库方式）"><span class="toc-number">1.8.</span> <span class="toc-text">mycat自增主键的配置（数据库方式）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#测试步骤"><span class="toc-number">1.8.1.</span> <span class="toc-text">测试步骤</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考文章"><span class="toc-number">1.8.2.</span> <span class="toc-text">参考文章</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Java操作Mycat"><span class="toc-number">1.9.</span> <span class="toc-text">Java操作Mycat</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mycat的事务处理"><span class="toc-number">1.10.</span> <span class="toc-text">Mycat的事务处理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mycat查询"><span class="toc-number">1.11.</span> <span class="toc-text">Mycat查询</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#非分片字段查询"><span class="toc-number">1.11.1.</span> <span class="toc-text">非分片字段查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分页查询"><span class="toc-number">1.11.2.</span> <span class="toc-text">分页查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#排序查询"><span class="toc-number">1.11.3.</span> <span class="toc-text">排序查询</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章-1"><span class="toc-number">1.12.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.13.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

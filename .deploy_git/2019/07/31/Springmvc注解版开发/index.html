@@ -1,0 +1,942 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Springmvc注解版开发 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="项目搭建搭建原理
+springMVC版本
+此次使用的版本是Spring 5.1.8
+
+配置内嵌tomcat
+为了简化开发，使用tomcat插件实现web项目的运行，只需要在pom.xml中配置一个插件即可，如下：
+
+123456789101112&amp;lt;plugins&amp;gt;        &amp;lt;plugin&amp;gt;          &amp;lt;groupId&amp;gt;org.apache.tomc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Springmvc注解版开发">
+<meta property="og:url" content="http://chenjiabing666.github.io/2019/07/31/Springmvc注解版开发/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="项目搭建搭建原理
+springMVC版本
+此次使用的版本是Spring 5.1.8
+
+配置内嵌tomcat
+为了简化开发，使用tomcat插件实现web项目的运行，只需要在pom.xml中配置一个插件即可，如下：
+
+123456789101112&amp;lt;plugins&amp;gt;        &amp;lt;plugin&amp;gt;          &amp;lt;groupId&amp;gt;org.apache.tomc">
+<meta property="og:image" content="https://docs.spring.io/spring/docs/5.1.8.RELEASE/spring-framework-reference/images/mvc-context-hierarchy.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:13:50.784Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Springmvc注解版开发">
+<meta name="twitter:description" content="项目搭建搭建原理
+springMVC版本
+此次使用的版本是Spring 5.1.8
+
+配置内嵌tomcat
+为了简化开发，使用tomcat插件实现web项目的运行，只需要在pom.xml中配置一个插件即可，如下：
+
+123456789101112&amp;lt;plugins&amp;gt;        &amp;lt;plugin&amp;gt;          &amp;lt;groupId&amp;gt;org.apache.tomc">
+<meta name="twitter:image" content="https://docs.spring.io/spring/docs/5.1.8.RELEASE/spring-framework-reference/images/mvc-context-hierarchy.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2019/07/31/Springmvc注解版开发/" title="Springmvc注解版开发" itemprop="url">Springmvc注解版开发</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2019-07-31T06:45:22.000Z" itemprop="datePublished"> 发表于 2019-07-31</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#项目搭建"><span class="toc-number">1.</span> <span class="toc-text">项目搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#搭建原理"><span class="toc-number">1.1.</span> <span class="toc-text">搭建原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#springMVC版本"><span class="toc-number">1.2.</span> <span class="toc-text">springMVC版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置内嵌tomcat"><span class="toc-number">1.3.</span> <span class="toc-text">配置内嵌tomcat</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置DispatcherServlet初始化器"><span class="toc-number">1.4.</span> <span class="toc-text">配置DispatcherServlet初始化器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#主配置文件"><span class="toc-number">1.5.</span> <span class="toc-text">主配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC配置类"><span class="toc-number">1.6.</span> <span class="toc-text">MVC配置类</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置拦截器"><span class="toc-number">2.</span> <span class="toc-text">配置拦截器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置过滤器"><span class="toc-number">3.</span> <span class="toc-text">配置过滤器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置视图解析器"><span class="toc-number">4.</span> <span class="toc-text">配置视图解析器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置ViewController"><span class="toc-number">5.</span> <span class="toc-text">配置ViewController</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置MessageConverters"><span class="toc-number">6.</span> <span class="toc-text">配置MessageConverters</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#注解版"><span class="toc-number">6.1.</span> <span class="toc-text">注解版</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#异常处理器"><span class="toc-number">7.</span> <span class="toc-text">异常处理器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#异常处理器执行的顺序"><span class="toc-number">7.1.</span> <span class="toc-text">异常处理器执行的顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SimpleMappingExceptionResolver"><span class="toc-number">7.2.</span> <span class="toc-text">SimpleMappingExceptionResolver</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DefaultHandlerExceptionResolver"><span class="toc-number">7.3.</span> <span class="toc-text">DefaultHandlerExceptionResolver</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ResponseStatusExceptionResolver"><span class="toc-number">7.4.</span> <span class="toc-text">ResponseStatusExceptionResolver</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ExceptionHandlerExceptionResolver"><span class="toc-number">7.5.</span> <span class="toc-text">ExceptionHandlerExceptionResolver</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置跨域请求"><span class="toc-number">8.</span> <span class="toc-text">配置跨域请求</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用注解"><span class="toc-number">8.1.</span> <span class="toc-text">使用注解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#全局配置"><span class="toc-number">8.2.</span> <span class="toc-text">全局配置</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置静态资源解析"><span class="toc-number">9.</span> <span class="toc-text">配置静态资源解析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#高级配置"><span class="toc-number">10.</span> <span class="toc-text">高级配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">10.1.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="项目搭建"><a href="#项目搭建" class="headerlink" title="项目搭建"></a>项目搭建</h1><h2 id="搭建原理"><a href="#搭建原理" class="headerlink" title="搭建原理"></a>搭建原理</h2><p><img src="https://docs.spring.io/spring/docs/5.1.8.RELEASE/spring-framework-reference/images/mvc-context-hierarchy.png" alt=""></p>
+<h2 id="springMVC版本"><a href="#springMVC版本" class="headerlink" title="springMVC版本"></a>springMVC版本</h2><ul>
+<li>此次使用的版本是Spring 5.1.8</li>
+</ul>
+<h2 id="配置内嵌tomcat"><a href="#配置内嵌tomcat" class="headerlink" title="配置内嵌tomcat"></a>配置内嵌tomcat</h2><ul>
+<li>为了简化开发，使用tomcat插件实现web项目的运行，只需要在pom.xml中配置一个插件即可，如下：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">plugins</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></div><div class="line">          <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.tomcat.maven<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">          <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tomcat7-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">          <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">port</span>&gt;</span>8080<span class="tag">&lt;/<span class="name">port</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">path</span>&gt;</span>/<span class="tag">&lt;/<span class="name">path</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">uriEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">uriEncoding</span>&gt;</span></div><div class="line">            <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>之后在IDEA右侧的maven处可以看见tomcat7这个插件了，点击run即可运行</li>
+</ul>
+<h2 id="配置DispatcherServlet初始化器"><a href="#配置DispatcherServlet初始化器" class="headerlink" title="配置DispatcherServlet初始化器"></a>配置DispatcherServlet初始化器</h2><ul>
+<li>配置的方式有多种，但是根据Spring文档推荐的方式如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> cn.tedu.demo.config.AppConfig;</div><div class="line"><span class="keyword">import</span> cn.tedu.demo.config.WebMvcConfig;</div><div class="line"><span class="keyword">import</span> org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 配置DispatcherServlet初始化器，在容器启动的时候会加载初始化</div><div class="line"> * 入口就是/org/springframework/spring-web/5.1.8.RELEASE/spring-web-5.1.8.RELEASE.jar!/META-INF/services/javax.servlet.ServletContainerInitializer</div><div class="line"> * web容器在启动的时候会加载META-INF/service下的文件</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StrartWebApplicationInitializer</span> <span class="keyword">extends</span> <span class="title">AbstractAnnotationConfigDispatcherServletInitializer</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 配置主配置类，主配置类的作用就是配置业务所需要的各种Bean，比如dao，service</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="keyword">protected</span> Class&lt;?&gt;[] getRootConfigClasses() &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Class[]&#123;AppConfig.class&#125;;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 配置MVC所需的配置类，该配置类的作用就是扫描controller，配置mvc的各种组件，比如视图解析器，拦截器等</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="keyword">protected</span> Class&lt;?&gt;[] getServletConfigClasses() &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Class[]&#123;WebMvcConfig.class&#125;;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 配置servletMapping，相当于在DispatcherServlet中配置的url</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="keyword">protected</span> String[] getServletMappings() &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> String[]&#123;<span class="string">"/"</span>&#125;;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="主配置文件"><a href="#主配置文件" class="headerlink" title="主配置文件"></a>主配置文件</h2><ul>
+<li>主配置文件主要的作用就是配置业务需求的Bean，比如dao，service层的</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> org.springframework.context.annotation.ComponentScan;</div><div class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</div><div class="line"><span class="keyword">import</span> org.springframework.context.annotation.FilterType;</div><div class="line"><span class="keyword">import</span> org.springframework.stereotype.Controller;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 业务逻辑的配置类，扫描所有的业务Bean，比如dao，service，排除所有的controller</div><div class="line"> */</div><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="meta">@ComponentScan</span>(basePackages = &#123;<span class="string">"cn.tedu.demo"</span>&#125;,excludeFilters = &#123;<span class="meta">@ComponentScan</span>.Filter(type = FilterType.ANNOTATION,classes = &#123;Controller.class&#125;)&#125;)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppConfig</span> </span>&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="MVC配置类"><a href="#MVC配置类" class="headerlink" title="MVC配置类"></a>MVC配置类</h2><ul>
+<li>MVC配置类主要的作用就是扫描Controller，配置各种组件，比如视图解析器，拦截器等等</li>
+<li>重要的两点如下：<ul>
+<li>使用<code>@EnableWebMvc</code>注解开启MVC功能，相当于xml文件中的<code>&lt;mvc:annotation-driven/&gt;</code></li>
+<li>配置类需要实现<code>WebMvcConfigurer</code>，该接口下有各种方法，开发者可以实现其中的方法完成相关组件的生成</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> cn.tedu.demo.interceptor.CustomInterceptor;</div><div class="line"><span class="keyword">import</span> org.springframework.context.annotation.ComponentScan;</div><div class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</div><div class="line"><span class="keyword">import</span> org.springframework.context.annotation.FilterType;</div><div class="line"><span class="keyword">import</span> org.springframework.stereotype.Controller;</div><div class="line"><span class="keyword">import</span> org.springframework.web.servlet.config.annotation.*;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * MVC的配置类，扫描所有的controller，排除所有的业务类</div><div class="line"> * <span class="doctag">@EnableWebMvc</span> 注解开启mvc功能</div><div class="line"> * <span class="doctag">@ComponentScan</span> 注解中的属性useDefaultFilters（默认是true，扫描全部的Bean），这里我们定义了只扫描controller，因此要设置该属性为false，否则不起作用，排除Bean则不需要</div><div class="line"> */</div><div class="line"><span class="meta">@EnableWebMvc</span></div><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="meta">@ComponentScan</span>(basePackages = &#123;<span class="string">"cn.tedu.demo"</span>&#125;,includeFilters = &#123;<span class="meta">@ComponentScan</span>.Filter(type = FilterType.ANNOTATION,classes = &#123;Controller.class&#125;)&#125;,useDefaultFilters = <span class="keyword">false</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebMvcConfig</span> <span class="keyword">implements</span> <span class="title">WebMvcConfigurer</span> </span>&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="配置拦截器"><a href="#配置拦截器" class="headerlink" title="配置拦截器"></a>配置拦截器</h1><ul>
+<li>自定义一个拦截器，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 自定义一个拦截器，实现HandlerInterceptor</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomInterceptor</span> <span class="keyword">implements</span> <span class="title">HandlerInterceptor</span> </span>&#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 在拦截器方法之前执行</div><div class="line">     * <span class="doctag">@param</span> request request</div><div class="line">     * <span class="doctag">@param</span> response response</div><div class="line">     * <span class="doctag">@param</span> handler 拦截的handler</div><div class="line">     * <span class="doctag">@return</span> 如果返回false，后续的拦截器和拦截的handler不执行</div><div class="line">     * <span class="doctag">@throws</span> Exception</div><div class="line">     */</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">preHandle</span><span class="params">(HttpServletRequest request, HttpServletResponse response, Object handler)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        System.out.println(<span class="string">"在之前执行"</span>);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>在配置类设置自定义的拦截器，使得起作用</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addInterceptors</span><span class="params">(InterceptorRegistry registry)</span> </span>&#123;</div><div class="line">       <span class="comment">//创建</span></div><div class="line">       CustomInterceptor customInterceptor = <span class="keyword">new</span> CustomInterceptor();</div><div class="line">       <span class="comment">//添加自定义的拦截器</span></div><div class="line">       registry.addInterceptor(customInterceptor).addPathPatterns(<span class="string">"/**"</span>);</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>自定义的拦截器的真实实现类其实是<code>MappedInterceptor</code>，在源码中获取处理器执行链的时候会将其添加到执行链中。</li>
+</ul>
+<h1 id="配置过滤器"><a href="#配置过滤器" class="headerlink" title="配置过滤器"></a>配置过滤器</h1><ul>
+<li>过滤器不属于SpringMVC，而是属于Servlet中的组件，因此配置过滤器使用的并不是MVC的配置，但是在Servlet3.0中也是提供了注解版的Servlet和Filter的生成方式，我们使用注解生成一个Filter，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 自定义过滤器</div><div class="line"> */</div><div class="line"><span class="meta">@WebFilter</span>(filterName = <span class="string">"customFilter"</span>,urlPatterns = <span class="string">"/*"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomFilter</span> <span class="keyword">implements</span> <span class="title">Filter</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(FilterConfig filterConfig)</span> <span class="keyword">throws</span> ServletException </span>&#123;</div><div class="line">        System.out.println(<span class="string">"过滤器初始化"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doFilter</span><span class="params">(ServletRequest request, ServletResponse response, FilterChain chain)</span> <span class="keyword">throws</span> IOException, ServletException </span>&#123;</div><div class="line">        System.out.println(<span class="string">"过滤器执行"</span>);</div><div class="line">        chain.doFilter(request,response);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"过滤器销毁"</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="配置视图解析器"><a href="#配置视图解析器" class="headerlink" title="配置视图解析器"></a>配置视图解析器</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureViewResolvers</span><span class="params">(ViewResolverRegistry registry)</span> </span>&#123;</div><div class="line">       registry.jsp(<span class="string">"/WEB_INF/"</span>,<span class="string">".jsp"</span>);</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<h1 id="配置ViewController"><a href="#配置ViewController" class="headerlink" title="配置ViewController"></a>配置ViewController</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addViewControllers</span><span class="params">(ViewControllerRegistry registry)</span> </span>&#123;</div><div class="line">        <span class="comment">//定义一个controller，访问路径是/index.do，跳转的视图是index.jsp</span></div><div class="line">        registry.addViewController(<span class="string">"/index.do"</span>).setViewName(<span class="string">"index"</span>);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h1 id="配置MessageConverters"><a href="#配置MessageConverters" class="headerlink" title="配置MessageConverters"></a>配置MessageConverters</h1><ul>
+<li>消息转换器用于对Request和Response的消息进行处理，比如将Response中的消息转换为指定JSON字符串的形式</li>
+<li>默认的消息转换器对于日期的类型的转换是时间戳，即是返回的JSON字符串的日期类型是时间戳，接收的日期类型参数也只能是时间戳</li>
+<li>如何配置消息转换器，只需要重写springmvc配置类中的方法即可。</li>
+<li>我们使用的是<code>MappingJackson2HttpMessageConverter</code>这类转换器，但是其中依赖的是ObjectMapper，因此我们比如引入依赖，如下：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.fasterxml.jackson.core<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jackson-databind<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">   <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.9.9<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"> <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>在上述的MVC配置类中重写如下方法：<ul>
+<li>设置日期的格式化格式是yyyy-MM-dd，此时返回和接收的格式就是<code>yyyy-MM-dd</code></li>
+<li>在配置类中配置的消息转换器属于<strong>全局配置</strong>，所有的消息都会遵循这种配置。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configureMessageConverters</span><span class="params">(List&lt;HttpMessageConverter&lt;?&gt;&gt; converters)</span> </span>&#123;</div><div class="line">       Jackson2ObjectMapperBuilder builder = <span class="keyword">new</span> Jackson2ObjectMapperBuilder()</div><div class="line">               .indentOutput(<span class="keyword">true</span>)</div><div class="line">               <span class="comment">//指定格式化的日期，这里只是举例，不建议在此处全局配置</span></div><div class="line">               .dateFormat(<span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>))</div><div class="line">               <span class="comment">//设置时区，默认是UTC，需要修改成北京时间</span></div><div class="line">               .timeZone(<span class="string">"GMT+8"</span>);</div><div class="line">       converters.add(<span class="keyword">new</span> MappingJackson2HttpMessageConverter(builder.build()));</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<h2 id="注解版"><a href="#注解版" class="headerlink" title="注解版"></a>注解版</h2><ul>
+<li>在实际的项目中这种方式太鸡肋，实际的需求有实际的变化，因此我们最好能够寻找一种灵活的处理方式，类似注解的方式。</li>
+<li>在<code>jackson-databind</code>中提供了许多的注解，可以供我们使用，<strong>可以覆盖全局配置，和全局配置形成一种互补的作用</strong>。</li>
+<li><code>@JsonFormat</code>：日期格式化注解，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//timeZone如果在全局配置过，可以不写	</span></div><div class="line"><span class="meta">@JsonFormat</span>(pattern = <span class="string">"yyyy-MM-dd HH:mm:ss"</span>,timezone = <span class="string">"GMT+8"</span>)</div><div class="line">    <span class="keyword">private</span> Date birthDay;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>@JsonIgnore</code>：在返回的JSON字符串中不显示</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@JsonIgnore</span></div><div class="line">   <span class="keyword">private</span> String name;</div></pre></td></tr></table></figure>
+<ul>
+<li>其他的注解请参考<a href="https://blog.51cto.com/7308310/2310930?source=dra" target="_blank" rel="external">https://blog.51cto.com/7308310/2310930?source=dra</a></li>
+</ul>
+<h1 id="异常处理器"><a href="#异常处理器" class="headerlink" title="异常处理器"></a>异常处理器</h1><ul>
+<li>springMvc处理异常有三种方式，分别为：<ul>
+<li><code>ExceptionHandlerExceptionResolver</code>：通过调用或 类中的<code>@ExceptionHandler</code>方法来解决异常，可以结合<code>@ControllerAdvice</code></li>
+<li><code>DefaultHandlerExceptionResolver</code>：对一些特殊的异常进行处理</li>
+<li><code>ResponseStatusExceptionResolver</code>：使用<code>@ResponseStatus</code>解析异常，并根据注解中的值将它们映射到HTTP状态代码 </li>
+<li><code>SimpleMappingExceptionResolver</code>：异常和视图的映射，可以自定义指定的异常对应的视图</li>
+</ul>
+</li>
+<li><strong>原理：主要的解析逻辑都是在<code>doResolveException</code>方法中完成的。</strong></li>
+</ul>
+<h2 id="异常处理器执行的顺序"><a href="#异常处理器执行的顺序" class="headerlink" title="异常处理器执行的顺序"></a>异常处理器执行的顺序</h2><ul>
+<li>异常处理器的执行是有顺序的，优先级高的执行完之后，如果有对应的处理，那么后续的就不再执行。</li>
+<li>异常处理器的执行顺序如下：<ul>
+<li><code>ExceptionHandlerExceptionResolver</code></li>
+<li><code>DefaultHandlerExceptionResolver</code></li>
+<li><code>ResponseStatusExceptionResolver</code></li>
+<li><code>SimpleMappingExceptionResolver</code></li>
+</ul>
+</li>
+<li>四种异常处理器的顺序执行可以形成一种互补的配置。</li>
+</ul>
+<h2 id="SimpleMappingExceptionResolver"><a href="#SimpleMappingExceptionResolver" class="headerlink" title="SimpleMappingExceptionResolver"></a>SimpleMappingExceptionResolver</h2><ul>
+<li>在配置中配置即可</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Bean</span></div><div class="line">    <span class="function"><span class="keyword">public</span> SimpleMappingExceptionResolver <span class="title">simpleMappingExceptionResolver</span><span class="params">()</span></span>&#123;</div><div class="line">        SimpleMappingExceptionResolver resolver = <span class="keyword">new</span> SimpleMappingExceptionResolver();</div><div class="line">        <span class="comment">//设置默认的视图，如果有的异常没有指定处理，那么使用默认的视图</span></div><div class="line">        resolver.setDefaultErrorView(<span class="string">"index"</span>);</div><div class="line">        <span class="comment">//设置排除的异常</span></div><div class="line"><span class="comment">//        resolver.setExcludedExceptions();</span></div><div class="line">        <span class="comment">//指定异常视图映射</span></div><div class="line">        Properties properties=<span class="keyword">new</span> Properties();</div><div class="line">        properties.put(RuntimeException.class.getName(),<span class="string">"error"</span>);</div><div class="line">        resolver.setExceptionMappings(properties);</div><div class="line">        <span class="keyword">return</span> resolver;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h2 id="DefaultHandlerExceptionResolver"><a href="#DefaultHandlerExceptionResolver" class="headerlink" title="DefaultHandlerExceptionResolver"></a>DefaultHandlerExceptionResolver</h2><ul>
+<li>此类异常解析器只能针对一些特殊的异常进行处理，如下：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Exception</th>
+<th>HTTP Status Code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HttpRequestMethodNotSupportedException</td>
+<td>405 (SC_METHOD_NOT_ALLOWED)</td>
+</tr>
+<tr>
+<td>HttpMediaTypeNotSupportedException</td>
+<td>415 (SC_UNSUPPORTED_MEDIA_TYPE)</td>
+</tr>
+<tr>
+<td>HttpMediaTypeNotAcceptableException</td>
+<td>406 (SC_NOT_ACCEPTABLE)</td>
+</tr>
+<tr>
+<td>MissingPathVariableException</td>
+<td>500 (SC_INTERNAL_SERVER_ERROR)</td>
+</tr>
+<tr>
+<td>MissingServletRequestParameterException</td>
+<td>400 (SC_BAD_REQUEST)</td>
+</tr>
+<tr>
+<td>ServletRequestBindingException</td>
+<td>400 (SC_BAD_REQUEST)</td>
+</tr>
+<tr>
+<td>ConversionNotSupportedException</td>
+<td>500 (SC_INTERNAL_SERVER_ERROR)</td>
+</tr>
+<tr>
+<td>TypeMismatchException</td>
+<td>400 (SC_BAD_REQUEST)</td>
+</tr>
+<tr>
+<td>HttpMessageNotReadableException</td>
+<td>400 (SC_BAD_REQUEST)</td>
+</tr>
+<tr>
+<td>HttpMessageNotWritableException</td>
+<td>500 (SC_INTERNAL_SERVER_ERROR)</td>
+</tr>
+<tr>
+<td>MethodArgumentNotValidException</td>
+<td>400 (SC_BAD_REQUEST)</td>
+</tr>
+<tr>
+<td>MissingServletRequestPartException</td>
+<td>400 (SC_BAD_REQUEST)</td>
+</tr>
+<tr>
+<td>BindException</td>
+<td>400 (SC_BAD_REQUEST)</td>
+</tr>
+<tr>
+<td>NoHandlerFoundException</td>
+<td>404 (SC_NOT_FOUND)</td>
+</tr>
+<tr>
+<td>AsyncRequestTimeoutException</td>
+<td>503 (SC_SERVICE_UNAVAILABLE)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>不需要声明，默认存在</li>
+</ul>
+<h2 id="ResponseStatusExceptionResolver"><a href="#ResponseStatusExceptionResolver" class="headerlink" title="ResponseStatusExceptionResolver"></a>ResponseStatusExceptionResolver</h2><ul>
+<li>在自定义的异常类上标注<code>@ResponseStatus</code>注解，当抛出此种异常的时候，将会响应定义的状态码和提示语</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ResponseStatus</span>(code = HttpStatus.FORBIDDEN,reason = <span class="string">"没有权限"</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CustomException</span> <span class="keyword">extends</span>  <span class="title">RuntimeException</span> </span>&#123;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="ExceptionHandlerExceptionResolver"><a href="#ExceptionHandlerExceptionResolver" class="headerlink" title="ExceptionHandlerExceptionResolver"></a>ExceptionHandlerExceptionResolver</h2><ul>
+<li>集合<code>@ControllerAdvice</code>和<code>@RestControllerAdvice</code>使用</li>
+<li>方法中能够自动赋值的参数和返回值的类型都在Spring文档上有详细的记载，参考<code>https://docs.spring.io/spring/docs/5.1.8.RELEASE/spring-framework-reference/web.html#mvc-ann-exceptionhandler-args</code></li>
+<li>详细的使用如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@ControllerAdvice</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExceptionController</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     *</div><div class="line">     *处理FileNotFoundException，返回JSOn数据</div><div class="line">     */</div><div class="line">    <span class="meta">@ExceptionHandler</span>(value = ArrayIndexOutOfBoundsException.class)</div><div class="line">    <span class="meta">@ResponseBody</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">handleFileNotFoundException</span><span class="params">(Exception ex, HttpServletRequest request, HandlerMethod method)</span></span>&#123;</div><div class="line">        System.out.println(request.getRequestURI());</div><div class="line">        System.out.println(method);</div><div class="line">        System.out.println(ex);</div><div class="line">        <span class="keyword">return</span> <span class="string">"index"</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@ExceptionHandler</span>(value = Exception.class)</div><div class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">handleException</span><span class="params">(Exception ex, HttpServletRequest request, HandlerMethod method)</span></span>&#123;</div><div class="line">        System.out.println(request.getRequestURI());</div><div class="line">        System.out.println(method);</div><div class="line">        System.out.println(ex);</div><div class="line">        <span class="keyword">return</span> <span class="string">"index"</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h1 id="配置跨域请求"><a href="#配置跨域请求" class="headerlink" title="配置跨域请求"></a>配置跨域请求</h1><h2 id="使用注解"><a href="#使用注解" class="headerlink" title="使用注解"></a>使用注解</h2><ul>
+<li>使用注解<code>@CrossOrigin</code>，可以标注在Controller上，也可以标注在方法上，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@CrossOrigin</span></div><div class="line">   <span class="meta">@PostMapping</span>(<span class="string">"/getObj"</span>)</div><div class="line">   <span class="function"><span class="keyword">public</span> Object <span class="title">getObject</span><span class="params">(@RequestBody AdminReq req)</span></span>&#123;</div><div class="line">       System.out.println(req);</div><div class="line">       <span class="keyword">return</span> <span class="keyword">new</span> Admin(<span class="string">"陈加兵"</span>,<span class="number">22</span>,<span class="keyword">new</span> Date(),<span class="keyword">new</span> Date());</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>该注解中可以配置各种属性，这里不再细讲，在下面的全局配置中会涉及到。</li>
+</ul>
+<h2 id="全局配置"><a href="#全局配置" class="headerlink" title="全局配置"></a>全局配置</h2><ul>
+<li>全局配置就是在MVC的配置文件中重写方法即可，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addCorsMappings</span><span class="params">(CorsRegistry registry)</span> </span>&#123;</div><div class="line">       registry.addMapping(<span class="string">"/api/**"</span>)</div><div class="line">               <span class="comment">//允许的源</span></div><div class="line">               .allowedOrigins(<span class="string">"https://domain2.com"</span>)</div><div class="line">               <span class="comment">//允许请求跨域的请求类型</span></div><div class="line">               .allowedMethods(<span class="string">"PUT"</span>, <span class="string">"DELETE"</span>)</div><div class="line">               <span class="comment">//允许的请求头</span></div><div class="line">               .allowedHeaders(<span class="string">"header1"</span>, <span class="string">"header2"</span>, <span class="string">"header3"</span>)</div><div class="line">               <span class="comment">//暴露的请求头</span></div><div class="line">               .exposedHeaders(<span class="string">"header1"</span>, <span class="string">"header2"</span>)</div><div class="line">               <span class="comment">//允许携带cookie等用户信息，这样才能实现登录</span></div><div class="line">               .allowCredentials(<span class="keyword">true</span>).maxAge(<span class="number">3600</span>);</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<h1 id="配置静态资源解析"><a href="#配置静态资源解析" class="headerlink" title="配置静态资源解析"></a>配置静态资源解析</h1><ul>
+<li>springmvc中的DispatcherServlet如果设置了拦截的请求是<code>/</code>，那么也会拦截静态资源，但是我们可以在配置文件中配置，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addResourceHandlers</span><span class="params">(ResourceHandlerRegistry registry)</span> </span>&#123;</div><div class="line">       <span class="comment">//拦截的请求</span></div><div class="line">       registry.addResourceHandler(<span class="string">"/resources/**"</span>)</div><div class="line">               <span class="comment">//资源的位置</span></div><div class="line">               .addResourceLocations(<span class="string">"/public"</span>, <span class="string">"classpath:/static/"</span>)</div><div class="line">               <span class="comment">//缓存的时间，单位秒</span></div><div class="line">               .setCachePeriod(<span class="number">31556926</span>);</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>该配置会在ioc中注册一个<code>ResourceHttpRequestHandler</code>，封装在<strong>SimpleUrlHandlermapping</strong>中。</li>
+</ul>
+<h1 id="高级配置"><a href="#高级配置" class="headerlink" title="高级配置"></a>高级配置</h1><ul>
+<li><code>@EnableMvc</code>注解其实就是注入了一个配置类<code>DelegatingWebMvcConfiguration</code>，那么我们可以将自定义的配置类实现该类即可完成MVC的高级功能，此时就不需要使用该注解了，如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Configuration</span></div><div class="line"><span class="meta">@ComponentScan</span>(basePackages = &#123;<span class="string">"cn.tedu.demo"</span>&#125;,includeFilters = &#123;<span class="meta">@ComponentScan</span>.Filter(type = FilterType.ANNOTATION,classes = &#123;Controller.class, Component.class&#125;)&#125;,useDefaultFilters = <span class="keyword">false</span>)</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AdvanceConfig</span> <span class="keyword">extends</span> <span class="title">DelegatingWebMvcConfiguration</span> </span>&#123;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/Spring/">Spring</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Spring/">Spring</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2019/07/31/Springmvc注解版开发/" data-title="Springmvc注解版开发 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2019/07/31/Springmvc源码解读/" title="Springmvc源码解读">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Springmvc源码解读</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2019/07/19/一文搞懂Spring-AOP原理/"  title="一文搞懂Spring-AOP原理">
+ <strong>下一篇：</strong><br/> 
+ <span>一文搞懂Spring-AOP原理
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#项目搭建"><span class="toc-number">1.</span> <span class="toc-text">项目搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#搭建原理"><span class="toc-number">1.1.</span> <span class="toc-text">搭建原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#springMVC版本"><span class="toc-number">1.2.</span> <span class="toc-text">springMVC版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置内嵌tomcat"><span class="toc-number">1.3.</span> <span class="toc-text">配置内嵌tomcat</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置DispatcherServlet初始化器"><span class="toc-number">1.4.</span> <span class="toc-text">配置DispatcherServlet初始化器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#主配置文件"><span class="toc-number">1.5.</span> <span class="toc-text">主配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MVC配置类"><span class="toc-number">1.6.</span> <span class="toc-text">MVC配置类</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置拦截器"><span class="toc-number">2.</span> <span class="toc-text">配置拦截器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置过滤器"><span class="toc-number">3.</span> <span class="toc-text">配置过滤器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置视图解析器"><span class="toc-number">4.</span> <span class="toc-text">配置视图解析器</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置ViewController"><span class="toc-number">5.</span> <span class="toc-text">配置ViewController</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置MessageConverters"><span class="toc-number">6.</span> <span class="toc-text">配置MessageConverters</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#注解版"><span class="toc-number">6.1.</span> <span class="toc-text">注解版</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#异常处理器"><span class="toc-number">7.</span> <span class="toc-text">异常处理器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#异常处理器执行的顺序"><span class="toc-number">7.1.</span> <span class="toc-text">异常处理器执行的顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SimpleMappingExceptionResolver"><span class="toc-number">7.2.</span> <span class="toc-text">SimpleMappingExceptionResolver</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DefaultHandlerExceptionResolver"><span class="toc-number">7.3.</span> <span class="toc-text">DefaultHandlerExceptionResolver</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ResponseStatusExceptionResolver"><span class="toc-number">7.4.</span> <span class="toc-text">ResponseStatusExceptionResolver</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ExceptionHandlerExceptionResolver"><span class="toc-number">7.5.</span> <span class="toc-text">ExceptionHandlerExceptionResolver</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置跨域请求"><span class="toc-number">8.</span> <span class="toc-text">配置跨域请求</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用注解"><span class="toc-number">8.1.</span> <span class="toc-text">使用注解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#全局配置"><span class="toc-number">8.2.</span> <span class="toc-text">全局配置</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#配置静态资源解析"><span class="toc-number">9.</span> <span class="toc-text">配置静态资源解析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#高级配置"><span class="toc-number">10.</span> <span class="toc-text">高级配置</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">10.1.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

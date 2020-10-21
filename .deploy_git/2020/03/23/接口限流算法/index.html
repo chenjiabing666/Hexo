@@ -1,0 +1,735 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>接口限流算法 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="导读
+前几天和一个朋友讨论了他们公司的系统问题，传统的单体应用，集群部署，他说近期服务的并发量可能会出现瞬时增加的风险，虽然部署了集群，但是通过压测后发现请求延迟仍然是很大，想问问我有什么改进的地方。我沉思了一会，现在去改架构显然是不可能的，于是我给出了一个建议，让他去做个接口限流，这样能够保证瞬时并发量飙高也不会出现请求延迟的问题，用户的体验度也会上去。
+至于什么是接口限流？怎么实现接口限流？如">
+<meta property="og:type" content="article">
+<meta property="og:title" content="接口限流算法">
+<meta property="og:url" content="http://chenjiabing666.github.io/2020/03/23/接口限流算法/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="导读
+前几天和一个朋友讨论了他们公司的系统问题，传统的单体应用，集群部署，他说近期服务的并发量可能会出现瞬时增加的风险，虽然部署了集群，但是通过压测后发现请求延迟仍然是很大，想问问我有什么改进的地方。我沉思了一会，现在去改架构显然是不可能的，于是我给出了一个建议，让他去做个接口限流，这样能够保证瞬时并发量飙高也不会出现请求延迟的问题，用户的体验度也会上去。
+至于什么是接口限流？怎么实现接口限流？如">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/8ded7a2b90e1482093f92fff555b3615.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/4d03e8e43a8edc3f32376d90e52b85f4.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/ae4d3cd14efb8dc7046d691c90264715.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/75938d1010138ce66e38c6ed0392f103.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/eca0e5eaa35dac938c673fecf2ec9a93.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-23T01:39:56.213Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="接口限流算法">
+<meta name="twitter:description" content="导读
+前几天和一个朋友讨论了他们公司的系统问题，传统的单体应用，集群部署，他说近期服务的并发量可能会出现瞬时增加的风险，虽然部署了集群，但是通过压测后发现请求延迟仍然是很大，想问问我有什么改进的地方。我沉思了一会，现在去改架构显然是不可能的，于是我给出了一个建议，让他去做个接口限流，这样能够保证瞬时并发量飙高也不会出现请求延迟的问题，用户的体验度也会上去。
+至于什么是接口限流？怎么实现接口限流？如">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/8ded7a2b90e1482093f92fff555b3615.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2020/03/23/接口限流算法/" title="接口限流算法" itemprop="url">接口限流算法</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2020-03-23T01:38:58.000Z" itemprop="datePublished"> 发表于 2020-03-23</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#导读"><span class="toc-number">1.</span> <span class="toc-text">导读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#限流的常见几种算法"><span class="toc-number">2.</span> <span class="toc-text">限流的常见几种算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#固定窗口计数器"><span class="toc-number">2.1.</span> <span class="toc-text">固定窗口计数器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#滑动窗口计数器"><span class="toc-number">2.2.</span> <span class="toc-text">滑动窗口计数器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#漏桶算法"><span class="toc-number">2.3.</span> <span class="toc-text">漏桶算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#令牌桶算法"><span class="toc-number">2.4.</span> <span class="toc-text">令牌桶算法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#单体应用实现"><span class="toc-number">3.</span> <span class="toc-text">单体应用实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分布式限流"><span class="toc-number">4.</span> <span class="toc-text">分布式限流</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis如何实现"><span class="toc-number">4.1.</span> <span class="toc-text">Redis如何实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#开撸"><span class="toc-number">4.2.</span> <span class="toc-text">开撸</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">5.</span> <span class="toc-text">笔者有话说</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="导读"><a href="#导读" class="headerlink" title="导读"></a>导读</h2><ul>
+<li>前几天和一个朋友讨论了他们公司的系统问题，传统的单体应用，集群部署，他说近期服务的并发量可能会出现瞬时增加的风险，虽然部署了集群，但是通过压测后发现请求延迟仍然是很大，想问问我有什么改进的地方。我沉思了一会，现在去改架构显然是不可能的，于是我给出了一个建议，让他去做个接口限流，这样能够保证瞬时并发量飙高也不会出现请求延迟的问题，用户的体验度也会上去。</li>
+<li>至于什么是接口限流？怎么实现接口限流？如何实现单机应用的限流？如何实现分布式应用的限流？本篇文章将会详细阐述。</li>
+</ul>
+<h2 id="限流的常见几种算法"><a href="#限流的常见几种算法" class="headerlink" title="限流的常见几种算法"></a>限流的常见几种算法</h2><ul>
+<li>常见的限流算法有很多，但是最常用的算法无非以下四种。</li>
+</ul>
+<h3 id="固定窗口计数器"><a href="#固定窗口计数器" class="headerlink" title="固定窗口计数器"></a>固定窗口计数器</h3><p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/8ded7a2b90e1482093f92fff555b3615.png" alt=""></p>
+<ul>
+<li>固定算法的概念如下</li>
+</ul>
+<ol>
+<li>将时间划分为多个窗口</li>
+<li>在每个窗口内每有一次请求就将计数器加一</li>
+<li>如果计数器超过了限制数量，则本窗口内所有的请求都被丢弃当时间到达下一个窗口时，计数器重置。</li>
+</ol>
+<ul>
+<li>固定窗口计数器是最为简单的算法，但这个算法有时会让通过请求量允许为限制的两倍。考虑如下情况：限制 1 秒内最多通过 5 个请求，在第一个窗口的最后半秒内通过了 5 个请求，第二个窗口的前半秒内又通过了 5 个请求。这样看来就是在 1 秒内通过了 10 个请求。 </li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/4d03e8e43a8edc3f32376d90e52b85f4.png" alt=""></p>
+<h3 id="滑动窗口计数器"><a href="#滑动窗口计数器" class="headerlink" title="滑动窗口计数器"></a>滑动窗口计数器</h3><p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/ae4d3cd14efb8dc7046d691c90264715.png" alt=""></p>
+<ul>
+<li>滑动窗口计数器算法概念如下：</li>
+</ul>
+<ol>
+<li>将时间划分为多个区间；</li>
+<li>在每个区间内每有一次请求就将计数器加一维持一个时间窗口，占据多个区间；</li>
+<li>每经过一个区间的时间，则抛弃最老的一个区间，并纳入最新的一个区间；</li>
+<li>如果当前窗口内区间的请求计数总和超过了限制数量，则本窗口内所有的请求都被丢弃。</li>
+</ol>
+<ul>
+<li>滑动窗口计数器是通过将窗口再细分，并且按照时间 “ 滑动 “，这种算法避免了固定窗口计数器带来的双倍突发请求，但时间区间的精度越高，算法所需的空间容量就越大。</li>
+</ul>
+<h3 id="漏桶算法"><a href="#漏桶算法" class="headerlink" title="漏桶算法"></a>漏桶算法</h3><p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/75938d1010138ce66e38c6ed0392f103.png" alt=""></p>
+<ul>
+<li>漏桶算法概念如下：</li>
+</ul>
+<ol>
+<li>将每个请求视作 “ 水滴 “ 放入 “ 漏桶 “ 进行存储；</li>
+<li>“漏桶 “ 以固定速率向外 “ 漏 “ 出请求来执行如果 “ 漏桶 “ 空了则停止 “ 漏水”；</li>
+<li>如果 “ 漏桶 “ 满了则多余的 “ 水滴 “ 会被直接丢弃。</li>
+</ol>
+<ul>
+<li>漏桶算法多使用队列实现，服务的请求会存到队列中，服务的提供方则按照固定的速率从队列中取出请求并执行，过多的请求则放在队列中排队或直接拒绝。</li>
+<li>漏桶算法的缺陷也很明显，当短时间内有大量的突发请求时，即便此时服务器没有任何负载，每个请求也都得在队列中等待一段时间才能被响应。</li>
+</ul>
+<h3 id="令牌桶算法"><a href="#令牌桶算法" class="headerlink" title="令牌桶算法"></a>令牌桶算法</h3><p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/eca0e5eaa35dac938c673fecf2ec9a93.png" alt=""></p>
+<ul>
+<li>令牌桶算法概念如下：</li>
+</ul>
+<ol>
+<li>令牌以固定速率生成。</li>
+<li>生成的令牌放入令牌桶中存放，如果令牌桶满了则多余的令牌会直接丢弃，当请求到达时，会尝试从令牌桶中取令牌，取到了令牌的请求可以执行。</li>
+<li>如果桶空了，那么尝试取令牌的请求会被直接丢弃。</li>
+</ol>
+<ul>
+<li>令牌桶算法既能够将所有的请求平均分布到时间区间内，又能接受服务器能够承受范围内的突发请求，因此是目前使用较为广泛的一种限流算法。 </li>
+</ul>
+<h2 id="单体应用实现"><a href="#单体应用实现" class="headerlink" title="单体应用实现"></a>单体应用实现</h2><ul>
+<li>在传统的单体应用中限流只需要考虑到多线程即可，使用Google开源工具类guava即可。其中有一个RateLimiter专门实现了单体应用的限流，使用的是令牌桶算法。</li>
+<li>单体应用的限流不是本文的重点，官网上现成的API，读者自己去看看即可，这里不再详细解释。</li>
+</ul>
+<h2 id="分布式限流"><a href="#分布式限流" class="headerlink" title="分布式限流"></a>分布式限流</h2><ul>
+<li>分布式限流和熔断现在有很多的现成的工具，比如Hystrix，Sentinel  等，但是还是有些企业不引用外来类库，因此就需要自己实现。</li>
+<li>Redis作为单线程多路复用的特性，很显然能够胜任这项任务。</li>
+</ul>
+<h3 id="Redis如何实现"><a href="#Redis如何实现" class="headerlink" title="Redis如何实现"></a>Redis如何实现</h3><ul>
+<li>使用令牌桶的算法实现，根据前面的介绍，我们了解到令牌桶算法的基础需要两个个变量，分别是桶容量，产生令牌的速率。</li>
+<li>这里我们实现的就是每秒产生的速率加上一个桶容量。但是如何实现呢？这里有几个问题。</li>
+<li><p>需要保存什么数据在redis中？</p>
+<ul>
+<li>当前桶的容量，最新的请求时间</li>
+</ul>
+</li>
+<li>以什么数据结构存储？<ul>
+<li>因为是针对接口限流，每个接口的业务逻辑不同，对并发的处理也是不同，因此要细化到每个接口的限流，此时我们选用HashMap的结构，hashKey是接口的唯一id，可以是请求的uri，里面的分别存储当前桶的容量和最新的请求时间。</li>
+</ul>
+</li>
+<li>如何计算需要放令牌？<ul>
+<li>根据redis保存的上次的请求时间和当前时间比较，如果相差大于的<strong>产生令牌的时间（陈某实现的是1秒）</strong>则再次产生令牌，此时的桶容量为当前令牌+产生的令牌</li>
+</ul>
+</li>
+<li>如何保证redis的原子性？<ul>
+<li>保证redis的原子性，使用lua脚本即可解决。</li>
+</ul>
+</li>
+<li>有了上述的几个问题，便能很容易的实现。</li>
+</ul>
+<h3 id="开撸"><a href="#开撸" class="headerlink" title="开撸"></a>开撸</h3><p>1、lua脚本如下：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">local</span> ratelimit_info = redis.<span class="built_in">pcall</span>(<span class="string">'HMGET'</span>,KEYS[<span class="number">1</span>],<span class="string">'last_time'</span>,<span class="string">'current_token'</span>)</div><div class="line"><span class="keyword">local</span> last_time = ratelimit_info[<span class="number">1</span>]</div><div class="line"><span class="keyword">local</span> current_token = <span class="built_in">tonumber</span>(ratelimit_info[<span class="number">2</span>])</div><div class="line"><span class="keyword">local</span> max_token = <span class="built_in">tonumber</span>(ARGV[<span class="number">1</span>])</div><div class="line"><span class="keyword">local</span> token_rate = <span class="built_in">tonumber</span>(ARGV[<span class="number">2</span>])</div><div class="line"><span class="keyword">local</span> current_time = <span class="built_in">tonumber</span>(ARGV[<span class="number">3</span>])</div><div class="line"><span class="keyword">if</span> current_token == <span class="literal">nil</span> <span class="keyword">then</span></div><div class="line">  current_token = max_token</div><div class="line">  last_time = current_time</div><div class="line"><span class="keyword">else</span></div><div class="line">  <span class="keyword">local</span> past_time = current_time-last_time</div><div class="line">  </div><div class="line">  <span class="keyword">if</span> past_time&gt;<span class="number">1000</span> <span class="keyword">then</span></div><div class="line">	  current_token = current_token+token_rate</div><div class="line">	  last_time = current_time</div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line">  ## 防止溢出</div><div class="line">  <span class="keyword">if</span> current_token&gt;max_token <span class="keyword">then</span></div><div class="line">    current_token = max_token</div><div class="line">	last_time = current_time</div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">local</span> result = <span class="number">0</span></div><div class="line"><span class="keyword">if</span>(current_token&gt;<span class="number">0</span>) <span class="keyword">then</span></div><div class="line">  result = <span class="number">1</span></div><div class="line">  current_token = current_token<span class="number">-1</span></div><div class="line">  last_time = current_time</div><div class="line"><span class="keyword">end</span></div><div class="line">redis.call(<span class="string">'HMSET'</span>,KEYS[<span class="number">1</span>],<span class="string">'last_time'</span>,last_time,<span class="string">'current_token'</span>,current_token)</div><div class="line"><span class="keyword">return</span> result</div></pre></td></tr></table></figure>
+<ul>
+<li>调用lua脚本出四个参数，分别是接口方法唯一id，桶容量，每秒产生令牌的数量，当前请求的时间戳。</li>
+</ul>
+<p>2、 SpringBoot代码实现</p>
+<ul>
+<li>采用Spring-data-redis实现lua脚本的执行。</li>
+<li>Redis序列化配置：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line">    * 重新注入模板</div><div class="line">    */</div><div class="line">   <span class="meta">@Bean</span>(value = <span class="string">"redisTemplate"</span>)</div><div class="line">   <span class="meta">@Primary</span></div><div class="line">   <span class="function"><span class="keyword">public</span> RedisTemplate <span class="title">redisTemplate</span><span class="params">(RedisConnectionFactory redisConnectionFactory)</span></span>&#123;</div><div class="line">       RedisTemplate&lt;String, Object&gt; template = <span class="keyword">new</span> RedisTemplate&lt;&gt;();</div><div class="line">       template.setConnectionFactory(redisConnectionFactory);</div><div class="line">       ObjectMapper objectMapper = <span class="keyword">new</span> ObjectMapper();</div><div class="line">       objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);</div><div class="line">       objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);</div><div class="line">       <span class="comment">//设置序列化方式，key设置string 方式，value设置成json</span></div><div class="line">       StringRedisSerializer stringRedisSerializer = <span class="keyword">new</span> StringRedisSerializer();</div><div class="line">       Jackson2JsonRedisSerializer jsonRedisSerializer = <span class="keyword">new</span> Jackson2JsonRedisSerializer(Object.class);</div><div class="line">       jsonRedisSerializer.setObjectMapper(objectMapper);</div><div class="line">       template.setEnableDefaultSerializer(<span class="keyword">false</span>);</div><div class="line">       template.setKeySerializer(stringRedisSerializer);</div><div class="line">       template.setHashKeySerializer(stringRedisSerializer);</div><div class="line">       template.setValueSerializer(jsonRedisSerializer);</div><div class="line">       template.setHashValueSerializer(jsonRedisSerializer);</div><div class="line">       <span class="keyword">return</span> template;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>限流工具类</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * <span class="doctag">@Description</span> 限流工具类</div><div class="line"> * <span class="doctag">@Author</span> CJB</div><div class="line"> * <span class="doctag">@Date</span> 2020/3/19 17:21</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RedisLimiterUtils</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> StringRedisTemplate stringRedisTemplate=ApplicationContextUtils.applicationContext.getBean(StringRedisTemplate.class);</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * lua脚本，限流</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String TEXT=<span class="string">"local ratelimit_info = redis.pcall('HMGET',KEYS[1],'last_time','current_token')\n"</span> +</div><div class="line">            <span class="string">"local last_time = ratelimit_info[1]\n"</span> +</div><div class="line">            <span class="string">"local current_token = tonumber(ratelimit_info[2])\n"</span> +</div><div class="line">            <span class="string">"local max_token = tonumber(ARGV[1])\n"</span> +</div><div class="line">            <span class="string">"local token_rate = tonumber(ARGV[2])\n"</span> +</div><div class="line">            <span class="string">"local current_time = tonumber(ARGV[3])\n"</span> +</div><div class="line">            <span class="string">"if current_token == nil then\n"</span> +</div><div class="line">            <span class="string">"  current_token = max_token\n"</span> +</div><div class="line">            <span class="string">"  last_time = current_time\n"</span> +</div><div class="line">            <span class="string">"else\n"</span> +</div><div class="line">            <span class="string">"  local past_time = current_time-last_time\n"</span> +</div><div class="line">            <span class="string">"  \n"</span> +</div><div class="line">            <span class="string">"  if past_time&gt;1000 then\n"</span> +</div><div class="line">            <span class="string">"\t  current_token = current_token+token_rate\n"</span> +</div><div class="line">            <span class="string">"\t  last_time = current_time\n"</span> +</div><div class="line">            <span class="string">"  end\n"</span> +</div><div class="line">            <span class="string">"\n"</span> +</div><div class="line">            <span class="string">"  if current_token&gt;max_token then\n"</span> +</div><div class="line">            <span class="string">"    current_token = max_token\n"</span> +</div><div class="line">            <span class="string">"\tlast_time = current_time\n"</span> +</div><div class="line">            <span class="string">"  end\n"</span> +</div><div class="line">            <span class="string">"end\n"</span> +</div><div class="line">            <span class="string">"\n"</span> +</div><div class="line">            <span class="string">"local result = 0\n"</span> +</div><div class="line">            <span class="string">"if(current_token&gt;0) then\n"</span> +</div><div class="line">            <span class="string">"  result = 1\n"</span> +</div><div class="line">            <span class="string">"  current_token = current_token-1\n"</span> +</div><div class="line">            <span class="string">"  last_time = current_time\n"</span> +</div><div class="line">            <span class="string">"end\n"</span> +</div><div class="line">            <span class="string">"redis.call('HMSET',KEYS[1],'last_time',last_time,'current_token',current_token)\n"</span> +</div><div class="line">            <span class="string">"return result"</span>;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 获取令牌</div><div class="line">     * <span class="doctag">@param</span> key 请求id</div><div class="line">     * <span class="doctag">@param</span> max 最大能同时承受多少的并发（桶容量）</div><div class="line">     * <span class="doctag">@param</span> rate  每秒生成多少的令牌</div><div class="line">     * <span class="doctag">@return</span> 获取令牌返回true，没有获取返回false</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">tryAcquire</span><span class="params">(String key, <span class="keyword">int</span> max,<span class="keyword">int</span> rate)</span> </span>&#123;</div><div class="line">        List&lt;String&gt; keyList = <span class="keyword">new</span> ArrayList&lt;&gt;(<span class="number">1</span>);</div><div class="line">        keyList.add(key);</div><div class="line">        DefaultRedisScript&lt;Long&gt; script = <span class="keyword">new</span> DefaultRedisScript&lt;&gt;();</div><div class="line">        script.setResultType(Long.class);</div><div class="line">        script.setScriptText(TEXT);</div><div class="line">        <span class="keyword">return</span> Long.valueOf(<span class="number">1</span>).equals(stringRedisTemplate.execute(script,keyList,Integer.toString(max), Integer.toString(rate),</div><div class="line">                Long.toString(System.currentTimeMillis())));</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>采用拦截器+注解的方式实现，注解如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * <span class="doctag">@Description</span> 限流的注解，标注在类上或者方法上。在方法上的注解会覆盖类上的注解，同<span class="doctag">@Transactional</span></div><div class="line"> * <span class="doctag">@Author</span> CJB</div><div class="line"> * <span class="doctag">@Date</span> 2020/3/20 13:36</div><div class="line"> */</div><div class="line"><span class="meta">@Inherited</span></div><div class="line"><span class="meta">@Target</span>(&#123;ElementType.TYPE, ElementType.METHOD&#125;)</div><div class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</div><div class="line"><span class="keyword">public</span> <span class="meta">@interface</span> RateLimit &#123;</div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 令牌桶的容量，默认100</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">int</span> <span class="title">capacity</span><span class="params">()</span> <span class="keyword">default</span> 100</span>;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 每秒钟默认产生令牌数量，默认10个</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">int</span> <span class="title">rate</span><span class="params">()</span> <span class="keyword">default</span> 10</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>拦截器如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * <span class="doctag">@Description</span> 限流的拦器</div><div class="line"> * <span class="doctag">@Author</span> CJB</div><div class="line"> * <span class="doctag">@Date</span> 2020/3/19 14:34</div><div class="line"> */</div><div class="line"><span class="meta">@Component</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RateLimiterIntercept</span> <span class="keyword">implements</span> <span class="title">HandlerInterceptor</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">preHandle</span><span class="params">(HttpServletRequest request, HttpServletResponse response, Object handler)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        <span class="keyword">if</span> (handler <span class="keyword">instanceof</span> HandlerMethod)&#123;</div><div class="line">            HandlerMethod handlerMethod=(HandlerMethod)handler;</div><div class="line">            Method method = handlerMethod.getMethod();</div><div class="line">            <span class="comment">/**</span></div><div class="line">             * 首先获取方法上的注解</div><div class="line">             */</div><div class="line">            RateLimit rateLimit = AnnotationUtils.findAnnotation(method, RateLimit.class);</div><div class="line">            <span class="comment">//方法上没有标注该注解，尝试获取类上的注解</span></div><div class="line">            <span class="keyword">if</span> (Objects.isNull(rateLimit))&#123;</div><div class="line">                <span class="comment">//获取类上的注解</span></div><div class="line">                rateLimit = AnnotationUtils.findAnnotation(handlerMethod.getBean().getClass(), RateLimit.class);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="comment">//没有标注注解，放行</span></div><div class="line">            <span class="keyword">if</span> (Objects.isNull(rateLimit))</div><div class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line"></div><div class="line">            <span class="comment">//尝试获取令牌，如果没有令牌了</span></div><div class="line">            <span class="keyword">if</span> (!RedisLimiterUtils.tryAcquire(request.getRequestURI(),rateLimit.capacity(),rateLimit.rate()))&#123;</div><div class="line">                <span class="comment">//抛出请求超时的异常</span></div><div class="line">                <span class="keyword">throw</span> <span class="keyword">new</span>  TimeOutException();</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>SpringBoot配置拦截器的代码就不贴了，以上就是完整的代码，至此分布式限流就完成了。</li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/杂谈/">杂谈</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/杂谈/">杂谈</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2020/03/23/接口限流算法/" data-title="接口限流算法 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2020/03/23/Spring生命周期/" title="Spring生命周期">
+  <strong>上一篇：</strong><br/>
+  <span>
+  Spring生命周期</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2020/03/18/SpringBoot整合多数据源的巨坑/"  title="SpringBoot整合多数据源的巨坑">
+ <strong>下一篇：</strong><br/> 
+ <span>SpringBoot整合多数据源的巨坑
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#导读"><span class="toc-number">1.</span> <span class="toc-text">导读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#限流的常见几种算法"><span class="toc-number">2.</span> <span class="toc-text">限流的常见几种算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#固定窗口计数器"><span class="toc-number">2.1.</span> <span class="toc-text">固定窗口计数器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#滑动窗口计数器"><span class="toc-number">2.2.</span> <span class="toc-text">滑动窗口计数器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#漏桶算法"><span class="toc-number">2.3.</span> <span class="toc-text">漏桶算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#令牌桶算法"><span class="toc-number">2.4.</span> <span class="toc-text">令牌桶算法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#单体应用实现"><span class="toc-number">3.</span> <span class="toc-text">单体应用实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#分布式限流"><span class="toc-number">4.</span> <span class="toc-text">分布式限流</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis如何实现"><span class="toc-number">4.1.</span> <span class="toc-text">Redis如何实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#开撸"><span class="toc-number">4.2.</span> <span class="toc-text">开撸</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">5.</span> <span class="toc-text">笔者有话说</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Mybatis进阶/" title="Mybatis进阶">Mybatis进阶<sup>11</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring-Boot-进阶/" title="Spring Boot 进阶">Spring Boot 进阶<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/开发工具/" title="开发工具">开发工具<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring-Boot/" title="Spring Boot">Spring Boot<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>13</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Mybatis/" title="Mybatis">Mybatis<sup>11</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/破解/" title="破解">破解<sup>3</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>1</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

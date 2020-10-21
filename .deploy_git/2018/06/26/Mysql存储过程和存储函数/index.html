@@ -1,0 +1,1015 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>Mysql存储过程和存储函数 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="Mysql存储过程和存储函数存储过程的好处
+增强SQL语言的功能和灵活性：存储过程可以用控制语句编写，有很强的灵活性，可以完成复杂的判断和较复杂的运算。
+标准组件式编程：存储过程被创建后，可以在程序中被多次调用，而不必重新编写该存储过程的SQL语句。而且数据库专业人员可以随时对存储过程进行修改，对应用程序源代码毫无影响。
+较快的执行速度：如果某一操作包含大量的Transaction-SQL代码或分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql存储过程和存储函数">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/06/26/Mysql存储过程和存储函数/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="Mysql存储过程和存储函数存储过程的好处
+增强SQL语言的功能和灵活性：存储过程可以用控制语句编写，有很强的灵活性，可以完成复杂的判断和较复杂的运算。
+标准组件式编程：存储过程被创建后，可以在程序中被多次调用，而不必重新编写该存储过程的SQL语句。而且数据库专业人员可以随时对存储过程进行修改，对应用程序源代码毫无影响。
+较快的执行速度：如果某一操作包含大量的Transaction-SQL代码或分">
+<meta property="og:image" content="http://ono60m7tl.bkt.clouddn.com/storefunction1.png">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:04:57.489Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Mysql存储过程和存储函数">
+<meta name="twitter:description" content="Mysql存储过程和存储函数存储过程的好处
+增强SQL语言的功能和灵活性：存储过程可以用控制语句编写，有很强的灵活性，可以完成复杂的判断和较复杂的运算。
+标准组件式编程：存储过程被创建后，可以在程序中被多次调用，而不必重新编写该存储过程的SQL语句。而且数据库专业人员可以随时对存储过程进行修改，对应用程序源代码毫无影响。
+较快的执行速度：如果某一操作包含大量的Transaction-SQL代码或分">
+<meta name="twitter:image" content="http://ono60m7tl.bkt.clouddn.com/storefunction1.png">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/06/26/Mysql存储过程和存储函数/" title="Mysql存储过程和存储函数" itemprop="url">Mysql存储过程和存储函数</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-06-26T14:56:37.000Z" itemprop="datePublished"> 发表于 2018-06-26</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Mysql存储过程和存储函数"><span class="toc-number">1.</span> <span class="toc-text">Mysql存储过程和存储函数</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#存储过程的好处"><span class="toc-number">1.1.</span> <span class="toc-text">存储过程的好处</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存储函数"><span class="toc-number">1.2.</span> <span class="toc-text">存储函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建存储函数"><span class="toc-number">1.2.1.</span> <span class="toc-text">创建存储函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#指定参数"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">指定参数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#调用存储函数"><span class="toc-number">1.2.2.</span> <span class="toc-text">调用存储函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除存储函数"><span class="toc-number">1.2.3.</span> <span class="toc-text">删除存储函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看存储函数状态"><span class="toc-number">1.2.4.</span> <span class="toc-text">查看存储函数状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看存储函数的定义"><span class="toc-number">1.2.5.</span> <span class="toc-text">查看存储函数的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改存储函数"><span class="toc-number">1.2.6.</span> <span class="toc-text">修改存储函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#变量的使用"><span class="toc-number">1.3.</span> <span class="toc-text">变量的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义变量"><span class="toc-number">1.3.1.</span> <span class="toc-text">定义变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#定义用户变量"><span class="toc-number">1.3.2.</span> <span class="toc-text">定义用户变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为变量赋值"><span class="toc-number">1.3.3.</span> <span class="toc-text">为变量赋值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例"><span class="toc-number">1.3.4.</span> <span class="toc-text">实例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#在存储函数中使用"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">在存储函数中使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在存储过程中使用"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">在存储过程中使用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注释"><span class="toc-number">1.4.</span> <span class="toc-text">注释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#流程控制标签的使用"><span class="toc-number">1.5.</span> <span class="toc-text">流程控制标签的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IF-THEN-ELSEIF-ELSE-ENDIF"><span class="toc-number">1.5.1.</span> <span class="toc-text">IF - THEN - ELSEIF - ELSE -ENDIF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CASE-WHEN-THEN-ELSE-END-CASE"><span class="toc-number">1.5.2.</span> <span class="toc-text">CASE - WHEN - THEN - ELSE - END CASE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LOOP-ENDLOOP"><span class="toc-number">1.5.3.</span> <span class="toc-text">LOOP - ENDLOOP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LEAVE"><span class="toc-number">1.5.4.</span> <span class="toc-text">LEAVE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ITERATE"><span class="toc-number">1.5.5.</span> <span class="toc-text">ITERATE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#REPEAT"><span class="toc-number">1.5.6.</span> <span class="toc-text">REPEAT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WHILE"><span class="toc-number">1.5.7.</span> <span class="toc-text">WHILE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存储过程"><span class="toc-number">1.6.</span> <span class="toc-text">存储过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建存储过程"><span class="toc-number">1.6.1.</span> <span class="toc-text">创建存储过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参数"><span class="toc-number">1.6.2.</span> <span class="toc-text">参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#过程体"><span class="toc-number">1.6.3.</span> <span class="toc-text">过程体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例-1"><span class="toc-number">1.6.4.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#调用存储过程"><span class="toc-number">1.6.5.</span> <span class="toc-text">调用存储过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看存储过程的状态"><span class="toc-number">1.6.6.</span> <span class="toc-text">查看存储过程的状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看存储过程的定义"><span class="toc-number">1.6.7.</span> <span class="toc-text">查看存储过程的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除存储过程"><span class="toc-number">1.6.8.</span> <span class="toc-text">删除存储过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#游标cursor"><span class="toc-number">1.7.</span> <span class="toc-text">游标cursor</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#声明游标"><span class="toc-number">1.7.1.</span> <span class="toc-text">声明游标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#打开游标"><span class="toc-number">1.7.2.</span> <span class="toc-text">打开游标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用游标获取一行数据"><span class="toc-number">1.7.3.</span> <span class="toc-text">使用游标获取一行数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关闭游标"><span class="toc-number">1.7.4.</span> <span class="toc-text">关闭游标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例-2"><span class="toc-number">1.7.5.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存储过程和存储函数的区别"><span class="toc-number">1.8.</span> <span class="toc-text">存储过程和存储函数的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">1.9.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.10.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.11.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="Mysql存储过程和存储函数"><a href="#Mysql存储过程和存储函数" class="headerlink" title="Mysql存储过程和存储函数"></a>Mysql存储过程和存储函数</h1><h2 id="存储过程的好处"><a href="#存储过程的好处" class="headerlink" title="存储过程的好处"></a>存储过程的好处</h2><ul>
+<li><strong>增强SQL语言的功能和灵活性</strong>：存储过程可以用控制语句编写，有很强的灵活性，可以完成复杂的判断和较复杂的运算。</li>
+<li><strong>标准组件式编程</strong>：存储过程被创建后，可以在程序中被多次调用，而不必重新编写该存储过程的SQL语句。而且数据库专业人员可以随时对存储过程进行修改，对应用程序源代码毫无影响。</li>
+<li><strong>较快的执行速度</strong>：如果某一操作包含大量的Transaction-SQL代码或分别被多次执行，那么存储过程要比批处理的执行速度快很多。因为存储过程是预编译的。在首次运行一个存储过程时查询，优化器对其进行分析优化，并且给出最终被存储在系统表中的执行计划。而批处理的Transaction-SQL语句在每次运行时都要进行编译和优化，速度相对要慢一些。</li>
+<li>减少网络流量：针对同一个数据库对象的操作（如查询、修改），如果这一操作所涉及的Transaction-SQL语句被组织进存储过程，那么当在客户计算机上调用该存储过程时，网络中传送的只是该调用语句，从而大大减少网络流量并降低了网络负载。</li>
+<li>作为一种安全机制来充分利用：通过对执行某一存储过程的权限进行限制，能够实现对相应的数据的访问权限的限制，避免了非授权用户对数据的访问，保证了数据的安全。</li>
+</ul>
+<h2 id="存储函数"><a href="#存储函数" class="headerlink" title="存储函数"></a>存储函数</h2><h3 id="创建存储函数"><a href="#创建存储函数" class="headerlink" title="创建存储函数"></a>创建存储函数</h3><ul>
+<li>在Mysql中有许多已经存在的存储函数，比如<code>CONCAT(..)</code>,<code>LENGTH(str)</code>。但是我们也可以自己定义存储函数。</li>
+<li>格式如下：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">delimiter //    -- 指定分割符</div><div class="line">	create function fun_name()</div><div class="line">	returns type     -- type是执行存储函数返回的类型</div><div class="line">	begin </div><div class="line">	-- 执行其他的语句</div><div class="line">	return ();   -- 返回的数据</div><div class="line">	end</div><div class="line">	//</div><div class="line"></div><div class="line">delimiter ;  -- 指定创建结束</div></pre></td></tr></table></figure>
+<ul>
+<li><code>returns type</code> : 指定存储函数返回的类型，比如<code>returns char(50)</code>,<code>returns int</code></li>
+<li><strong>存储函数有且只有一个返回值</strong></li>
+<li><code>return ()</code> : 存储函数的返回值，这里的返回值类型需要和<code>returns type</code>中的类型一致，如果不一致会强制转换<ul>
+<li><code>return (select name from user where id=1);</code></li>
+</ul>
+</li>
+<li>下面我们创建一个存储函数，返回<code>user</code>表中的<code>id=1</code>的<code>name</code>值</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">	create function selectUserById()</div><div class="line">	returns varchar(50) </div><div class="line">	begin </div><div class="line">	return (select name from user where id=1);</div><div class="line">	end</div><div class="line">	//</div><div class="line">	delimiter ;</div></pre></td></tr></table></figure>
+<h4 id="指定参数"><a href="#指定参数" class="headerlink" title="指定参数"></a>指定参数</h4><ul>
+<li><strong>在存储函数创建的时候还可以指定参数，这个参数是用户调用的时候输入的。</strong></li>
+<li><strong>存储函数中的参数默认是<code>IN</code>参数，而存储过程中的参数可以是<code>IN</code>、<code>OUT</code>、<code>INOUT</code></strong></li>
+<li>直接使用<code>parameter 类型</code>指定即可，如果有多个参数可以使用<code>,</code>分割</li>
+<li>在调用的时候直接使用<code>select funName(parmeter1,....);</code>即可</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">	create function selectUserById(uid int)</div><div class="line">	returns varchar(50) </div><div class="line">	begin </div><div class="line">	return (select name from user where id=uid);</div><div class="line">	end</div><div class="line">	//</div><div class="line">	delimiter ;</div></pre></td></tr></table></figure>
+<h3 id="调用存储函数"><a href="#调用存储函数" class="headerlink" title="调用存储函数"></a>调用存储函数</h3><ul>
+<li>存储函数是依赖数据库的，因此我们需要在指定的数据库中调用，或者前面指定数据库的名称<ul>
+<li><code>select selectUserById();</code>  : 直接在存储函数所在数据库中调用</li>
+<li><code>select dbName.selectUserById();</code>  : 直接使用数据库的名称调用</li>
+</ul>
+</li>
+</ul>
+<h3 id="删除存储函数"><a href="#删除存储函数" class="headerlink" title="删除存储函数"></a>删除存储函数</h3><ul>
+<li><code>drop function selectUserById;</code> ：直接在存储函数所在数据库中直接删除存储函数</li>
+<li><code>drop function dbName.selectUserById;</code> ：使用数据库名称删除存储函数</li>
+</ul>
+<h3 id="查看存储函数状态"><a href="#查看存储函数状态" class="headerlink" title="查看存储函数状态"></a>查看存储函数状态</h3><ul>
+<li>格式：<code>show function status [like pattern]</code>    ： 查看存储函数的状态<ul>
+<li><code>show function status \G</code> : 查看所有的存储函数状态,<code>\G</code>是一种特定格式的输出</li>
+<li><code>show function status like &#39;select%&#39;\G</code> ：查看<code>select</code>开头的存储函数状态，<code>\G</code>是一种特定格式的输入。</li>
+</ul>
+</li>
+</ul>
+<h3 id="查看存储函数的定义"><a href="#查看存储函数的定义" class="headerlink" title="查看存储函数的定义"></a>查看存储函数的定义</h3><ul>
+<li>格式：<code>show create function dbName.funName</code><ul>
+<li><code>show create function test.selectUserById \G;</code>  ：查询<code>test</code>数据库中的存储函数<code>selectUserById</code>的定义，<code>\G</code>是一种特定的输出格式</li>
+</ul>
+</li>
+</ul>
+<h3 id="修改存储函数"><a href="#修改存储函数" class="headerlink" title="修改存储函数"></a>修改存储函数</h3><p><img src="http://ono60m7tl.bkt.clouddn.com/storefunction1.png" alt=""></p>
+<h2 id="变量的使用"><a href="#变量的使用" class="headerlink" title="变量的使用"></a>变量的使用</h2><ul>
+<li>变量的作用范围是<code>begin.....end</code>程序中</li>
+</ul>
+<h3 id="定义变量"><a href="#定义变量" class="headerlink" title="定义变量"></a>定义变量</h3><ul>
+<li>格式：<code>declare var_name,.... type [default value]</code> <ul>
+<li><code>declare age int default 22</code> ：定义一个<strong>局部变量</strong><code>age</code>，类型为<code>int</code>，默认值为<code>22</code></li>
+<li><code>declare var1,var2,var3 int</code> ： 定义三个<strong>局部变量</strong>，类型为<code>int</code></li>
+</ul>
+</li>
+<li><strong>全部变量的声明一定要在赋值的前面，否则报错</strong></li>
+</ul>
+<h3 id="定义用户变量"><a href="#定义用户变量" class="headerlink" title="定义用户变量"></a>定义用户变量</h3><ul>
+<li>用户变量以<code>@</code>开头</li>
+<li><code>set @pin=10</code></li>
+</ul>
+<h3 id="为变量赋值"><a href="#为变量赋值" class="headerlink" title="为变量赋值"></a>为变量赋值</h3><ul>
+<li>格式：<code>set var1=value1,[var2=value2,....]</code><ul>
+<li><code>set age=33;</code> ： 设置age的值为33</li>
+<li><code>set var1=22,var2=33</code>: 同时设置多个值</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">declare var1,var2,var3 int;</div><div class="line">set var1=22,var2=33;</div><div class="line">set var3=var1+var2;</div></pre></td></tr></table></figure>
+<ul>
+<li>使用<code>select col_name[,...] into var_name[,....]  table_expr</code> : 使用<code>select</code>查询得到的结果赋值给变量<ul>
+<li>这个<code>select</code>把选定的列的值直接赋值给对应位置的变量</li>
+<li><code>table_expr</code>: 可以是表的查询条件，其中包含<code>from 表名</code></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">declare uname varchar(10);  -- 定义变量uname</div><div class="line">declare uage int;    -- 定义变量uage</div><div class="line">select name,age into uname,uage from user where id=1;  -- 将id=1的用户姓名和年龄赋值给变量</div></pre></td></tr></table></figure>
+<h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><h4 id="在存储函数中使用"><a href="#在存储函数中使用" class="headerlink" title="在存储函数中使用"></a>在存储函数中使用</h4><ul>
+<li>在存储函数中定义局部变量，并且获取输出</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">	create function selectUserById(uid int)</div><div class="line">	returns varchar(50) </div><div class="line">	begin </div><div class="line">	declare uname varchar(50);</div><div class="line">	select name into uname from user where id=uid;</div><div class="line">	return uname;</div><div class="line">	end</div><div class="line">	//</div><div class="line">	delimiter ;</div></pre></td></tr></table></figure>
+<h4 id="在存储过程中使用"><a href="#在存储过程中使用" class="headerlink" title="在存储过程中使用"></a>在存储过程中使用</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">	create procedure selectUserById(IN uid int)</div><div class="line">		begin</div><div class="line">			declare offest,count int;   -- 定义偏移量</div><div class="line">			set offest=0,count=2;       -- 赋值</div><div class="line">			if uid is not null          -- 如果uid不为null，按照id查询</div><div class="line">				then select * from user where id=uid;  -- 按照id查询</div><div class="line">				else select * from user limit offest,count;  -- 否则uid为null，按照分页查询前面两个</div><div class="line">			end if;</div><div class="line">		end </div><div class="line">		//</div><div class="line">delimiter ;</div></pre></td></tr></table></figure>
+<ul>
+<li><code>call selectUserById(1)</code>;  ： 查询<code>id=1</code>的用户信息</li>
+<li><code>call selectUserById(null);</code>  ：查询所有的用户信息，显示前面两个</li>
+</ul>
+<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><ul>
+<li>MySQL存储过程可使用两种风格的注释：<ul>
+<li>双杠：–，该风格一般用于单行注释</li>
+<li>C风格： 一般用于多行注释</li>
+</ul>
+</li>
+</ul>
+<h2 id="流程控制标签的使用"><a href="#流程控制标签的使用" class="headerlink" title="流程控制标签的使用"></a>流程控制标签的使用</h2><ul>
+<li>在<code>begin</code>和<code>end</code>之间使用</li>
+</ul>
+<h3 id="IF-THEN-ELSEIF-ELSE-ENDIF"><a href="#IF-THEN-ELSEIF-ELSE-ENDIF" class="headerlink" title="IF - THEN - ELSEIF - ELSE -ENDIF"></a>IF - THEN - ELSEIF - ELSE -ENDIF</h3><ul>
+<li>格式</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">begin</div><div class="line">	if expression   -- 判断条件</div><div class="line">    	then .... ;   -- 条件成立执行</div><div class="line">    	elseif .....;   -- 其他条件</div><div class="line">    	else ..... ;  -- 条件相反执行</div><div class="line">    endif;   		  -- 结束if</div><div class="line">end</div></pre></td></tr></table></figure>
+<ul>
+<li><p>可以不是成对出现，比如只有<code>if</code>，或者<code>if-else</code></p>
+</li>
+<li><p><strong>如果没有<code>else</code>，那么可以省略，比如<code>if - then - endif</code></strong></p>
+</li>
+<li>判断相等使用<code>=</code></li>
+</ul>
+<ul>
+<li>实例</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">	create procedure selectUserById(IN uid int)</div><div class="line">		begin</div><div class="line">			declare offest,count int;   -- 定义偏移量</div><div class="line">			set offest=0,count=2;       -- 赋值</div><div class="line">			if uid is not null          -- 如果uid不为null，按照id查询</div><div class="line">				then select * from user where id=uid;  -- 按照id查询</div><div class="line">				else select * from user limit offest,count;  -- 否则uid为null，按照分页查询前面两个</div><div class="line">			end if;</div><div class="line">		end </div><div class="line">		//</div><div class="line">delimiter ;</div></pre></td></tr></table></figure>
+<h3 id="CASE-WHEN-THEN-ELSE-END-CASE"><a href="#CASE-WHEN-THEN-ELSE-END-CASE" class="headerlink" title="CASE - WHEN - THEN - ELSE - END CASE"></a>CASE - WHEN - THEN - ELSE - END CASE</h3><ul>
+<li>这个和java中的<code>switch-case-default</code>相似</li>
+<li>格式：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">case expr</div><div class="line">	when value1 then ....;</div><div class="line">	when value2  then .....;</div><div class="line">	when......;</div><div class="line">	....</div><div class="line">	else  .......;</div><div class="line">end case;</div></pre></td></tr></table></figure>
+<ul>
+<li>实例<ul>
+<li>创建一个存储过程，使用<code>case</code></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">	create procedure deleteUserById(IN uid int)</div><div class="line">		begin</div><div class="line">			case uid   -- uid做选择</div><div class="line">				when 1   -- uid==1</div><div class="line">					then delete from user where id=1;   </div><div class="line">				when 2   -- uid==2</div><div class="line">					then delete from user where id=2;</div><div class="line">				else   </div><div class="line">					delete from user;	  -- 删除全部</div><div class="line">			end case;</div><div class="line">		end;</div><div class="line">		//</div><div class="line">delimiter ;</div></pre></td></tr></table></figure>
+<h3 id="LOOP-ENDLOOP"><a href="#LOOP-ENDLOOP" class="headerlink" title="LOOP - ENDLOOP"></a>LOOP - ENDLOOP</h3><ul>
+<li><code>LOOP</code>只是创建一个循环执行的过程，并不进行条件判断，这个和<code>while</code>不一样，不需要判断条件，如果不跳出，那么将会永远的执行的下去。<strong>但是我们可以使用<code>leave</code>跳出循环</strong></li>
+<li>格式：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[LOOP_LABEL]:LOOP</div><div class="line">	statement;</div><div class="line">END LOOP [LOOP_LABEL];</div></pre></td></tr></table></figure>
+<ul>
+<li>实例<ul>
+<li>执行这个语句可以插入<code>9</code>条数据，如果<code>i&gt;=10</code>跳出循环</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">	create procedure insertUserByName(IN uname varchar(50))</div><div class="line">		begin	</div><div class="line">			declare i int default 0;</div><div class="line">			add_loop:loop  -- 开始循环</div><div class="line">				set i=i+1;  -- id++操作</div><div class="line">				insert into user(name) values(uname);  -- 插入语句</div><div class="line">				if i&gt;=10</div><div class="line">					then leave add_loop;   -- 使用leave跳出循环</div><div class="line">				end if;</div><div class="line">			end loop add_loop;   -- 结束循环</div><div class="line">		end</div><div class="line">		//</div><div class="line">delimiter ;</div></pre></td></tr></table></figure>
+<h3 id="LEAVE"><a href="#LEAVE" class="headerlink" title="LEAVE"></a>LEAVE</h3><ul>
+<li>和循环一起使用，用于退出循环控制，见上面的例子</li>
+</ul>
+<h3 id="ITERATE"><a href="#ITERATE" class="headerlink" title="ITERATE"></a>ITERATE</h3><ul>
+<li><p>格式：<code>iterate label</code></p>
+</li>
+<li><p><code>iterate</code>只可以出现在<code>LOOP</code>，<code>REPEAT</code>，<code>WHIE</code>语句内，表示再次循环的意思，<code>label</code>表示循环的标志</p>
+</li>
+<li>实例<ul>
+<li>如果<code>p&lt;10</code>重复执行<code>p++</code></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">	create procedure doiterate()</div><div class="line">		begin	</div><div class="line">			declare p int default 0;  -- 定义局部变量</div><div class="line">			my_loop:loop</div><div class="line">				set p=p+1;  -- p++</div><div class="line">                if p&lt;10 </div><div class="line">                	then iterate my_loop;  -- 继续执行前面的循环的语句，p++</div><div class="line">                elseif p&gt;20</div><div class="line">                	then leave my_loop;</div><div class="line">                end if</div><div class="line">        			select &quot;p在10到20之间&quot;   -- 输出语句</div><div class="line">			end loop my_loop;</div><div class="line">		end</div><div class="line">		//</div><div class="line">delimiter ;</div></pre></td></tr></table></figure>
+<h3 id="REPEAT"><a href="#REPEAT" class="headerlink" title="REPEAT"></a>REPEAT</h3><ul>
+<li>这个也是循环语句，相当于<code>do-while</code></li>
+<li>格式：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[repeat_loop]: repeat</div><div class="line">	statement_list;</div><div class="line">	until exper    -- 没有分号</div><div class="line">	end repeat;</div></pre></td></tr></table></figure>
+<ul>
+<li>实例</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">	create procedure dorepeat()</div><div class="line">		begin	</div><div class="line">			declare p int default 0;  -- 定义局部变量</div><div class="line">			my_loop:repeat</div><div class="line">				set p=p+1;</div><div class="line">				select p;</div><div class="line">				until p&gt;10  -- 当p&gt;10的时候循环结束</div><div class="line">			end repeat my_loop;</div><div class="line">		end</div><div class="line">		//</div><div class="line">delimiter ;</div></pre></td></tr></table></figure>
+<h3 id="WHILE"><a href="#WHILE" class="headerlink" title="WHILE"></a>WHILE</h3><ul>
+<li>这个和<code>REPEAT</code>不同，先进行判断，然后才执行语句</li>
+<li>格式：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">[while_label]:while expr do</div><div class="line">	statement_list;</div><div class="line">	end while [while_lable];</div></pre></td></tr></table></figure>
+<ul>
+<li>实例</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">	create procedure dowhile()</div><div class="line">		begin	</div><div class="line">			declare p int default 0;  -- 定义局部变量</div><div class="line">			my_loop:while p&lt;10  do   -- 满足条件才执行</div><div class="line">				set p=p+1;   -- p++</div><div class="line">			end while my_loop;    -- 结束循环</div><div class="line">		end</div><div class="line">		//</div><div class="line">delimiter ;</div></pre></td></tr></table></figure>
+<h2 id="存储过程"><a href="#存储过程" class="headerlink" title="存储过程"></a>存储过程</h2><ul>
+<li>存储过程没有返回值</li>
+</ul>
+<h3 id="创建存储过程"><a href="#创建存储过程" class="headerlink" title="创建存储过程"></a>创建存储过程</h3><ul>
+<li>格式：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">create procedure p_name([IN,OUT,INOUT]parameter 类型.....)</div><div class="line">	begin</div><div class="line">	-- 执行功能</div><div class="line">	end</div><div class="line">	//</div><div class="line">delimiter ;</div></pre></td></tr></table></figure>
+<h3 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h3><ul>
+<li>存储过程根据需要可能会有输入、输出、输入输出参数，如果有多个参数用”,”分割开。MySQL存储过程的参数用在存储过程的定义，共有三种参数类型,IN,OUT,INOUT:<ul>
+<li><strong>IN</strong>参数的值必须在调用存储过程时指定，在存储过程中修改该参数的值不能被返回，为默认值</li>
+<li><strong>OUT</strong>:该值可在存储过程内部被改变，并可返回</li>
+<li><strong>INOUT</strong>:调用时指定，并且可被改变和返回</li>
+</ul>
+</li>
+</ul>
+<h3 id="过程体"><a href="#过程体" class="headerlink" title="过程体"></a>过程体</h3><ul>
+<li>过程体的开始与结束使用<code>BEGIN</code>与<code>END</code>进行标识。</li>
+</ul>
+<h3 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a>实例</h3><ul>
+<li>定义一个根据<code>id</code>查询的查询用户信息的存储过程，这里的id是由用户输入的，因此可以使用<code>IN</code>参数</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">	create procedure selectUserById(IN uid int)</div><div class="line">		begin</div><div class="line">			select * from user where id=uid;</div><div class="line">		end</div><div class="line">		//</div><div class="line">delimiter ;</div></pre></td></tr></table></figure>
+<h3 id="调用存储过程"><a href="#调用存储过程" class="headerlink" title="调用存储过程"></a>调用存储过程</h3><ul>
+<li>格式：<code>call procedure_name(...)</code><ul>
+<li><code>call selectUserById(1);</code>  :  直接在当前的数据库中调用存储过程<code>selectUserById</code></li>
+<li><code>call db_name.selectUsrById(1)</code> : 指定数据库的名字调用</li>
+</ul>
+</li>
+</ul>
+<h3 id="查看存储过程的状态"><a href="#查看存储过程的状态" class="headerlink" title="查看存储过程的状态"></a>查看存储过程的状态</h3><ul>
+<li>格式：<code>show procedure status like pattern \G</code><ul>
+<li><code>show procedure status like &quot;select%&quot;\G</code> : 查看<code>select</code>开头的存储过程状态</li>
+<li><code>show procedure status \G</code> : 查看所有的存储过程状态</li>
+</ul>
+</li>
+<li>查询的结果如下：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">*************************** 1. row ***************************</div><div class="line">                  Db: test   -- 数据库名称</div><div class="line">                Name: selectUserById     -- 存储过程的名字</div><div class="line">                Type: PROCEDURE  </div><div class="line">             Definer: root@localhost</div><div class="line">            Modified: 2018-06-25 22:25:44</div><div class="line">             Created: 2018-06-25 22:25:44</div><div class="line">       Security_type: DEFINER</div><div class="line">             Comment: </div><div class="line">character_set_client: utf8</div><div class="line">collation_connection: utf8_general_ci</div><div class="line">  Database Collation: utf8_general_ci</div><div class="line">1 row in set (0.01 sec)</div></pre></td></tr></table></figure>
+<h3 id="查看存储过程的定义"><a href="#查看存储过程的定义" class="headerlink" title="查看存储过程的定义"></a>查看存储过程的定义</h3><ul>
+<li>格式：<code>show create procedure  db.pro_name</code><ul>
+<li><code>show create procedure test.selectUserById\G</code> : 查询数据库<code>test</code>中存储过程的定义</li>
+</ul>
+</li>
+<li>返回的结果如下：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">*************************** 1. row ***************************</div><div class="line">           Procedure: selectUserById</div><div class="line">            sql_mode: ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION</div><div class="line">    Create Procedure: CREATE DEFINER=`root`@`localhost` PROCEDURE `selectUserById`(IN uid int)</div><div class="line">begin</div><div class="line">select * from user where id=uid;</div><div class="line">end</div><div class="line">character_set_client: utf8</div><div class="line">collation_connection: utf8_general_ci</div><div class="line">  Database Collation: utf8_general_ci</div></pre></td></tr></table></figure>
+<h3 id="删除存储过程"><a href="#删除存储过程" class="headerlink" title="删除存储过程"></a>删除存储过程</h3><ul>
+<li>格式<code>drop procedure pro_name</code><ul>
+<li><code>drop procedure selectUserById</code> : 删除当前数据库的<code>selectUserById</code>的存储过程</li>
+<li><code>drop procedure test.selectUserById;</code>: 删除<code>test</code>数据库的<code>selectUserById</code>的存储过程</li>
+</ul>
+</li>
+</ul>
+<h2 id="游标cursor"><a href="#游标cursor" class="headerlink" title="游标cursor"></a>游标cursor</h2><ul>
+<li>在面对大量的数据的时候，游标能够一行一行的读取数据</li>
+</ul>
+<h3 id="声明游标"><a href="#声明游标" class="headerlink" title="声明游标"></a>声明游标</h3><ul>
+<li>格式：<code>declare cursor_name cursor for select_statement</code><ul>
+<li><code>cursor_name</code> : 游标的变量名称</li>
+<li><code>select_statement</code> ：表示<code>select</code>语句，用于返回一个结果集给游标</li>
+</ul>
+</li>
+<li>比如： <code>declare users cursor for select name,age from user;</code></li>
+</ul>
+<h3 id="打开游标"><a href="#打开游标" class="headerlink" title="打开游标"></a>打开游标</h3><ul>
+<li>格式：<code>open cursor_name;</code> <ul>
+<li><code>open users</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="使用游标获取一行数据"><a href="#使用游标获取一行数据" class="headerlink" title="使用游标获取一行数据"></a>使用游标获取一行数据</h3><ul>
+<li>格式：<code>fetch cursor_name into var_name[,var_name,...]</code><ul>
+<li><code>cursor_name</code>：表示游标的名称</li>
+<li><code>var_name</code> ： 表示将<code>select</code>语句查询到的一行信息存入到该参数中，<strong><code>var_name</code>必须在声明游标之前定义好</strong></li>
+</ul>
+</li>
+<li>比如： <code>fetch user into uname,uage</code></li>
+</ul>
+<h3 id="关闭游标"><a href="#关闭游标" class="headerlink" title="关闭游标"></a>关闭游标</h3><ul>
+<li>格式：<code>close cursor_name</code></li>
+</ul>
+<h3 id="实例-2"><a href="#实例-2" class="headerlink" title="实例"></a>实例</h3><ul>
+<li>使用游标获取<code>user</code>表中的一行数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">    create procedure selectOneUser()</div><div class="line">        begin</div><div class="line">        	declare uname varchar(50);  -- 定义uname存储</div><div class="line">        	declare uage int;   -- 定义uage存储</div><div class="line">        	declare users cursor for select name,age from user; -- 声明游标</div><div class="line">        	open users;      -- 打开游标</div><div class="line">        	fetch users into uname,uage;  -- 获取一行数据到存储到uname和uage中</div><div class="line">        	select uname as name,uage as age;    -- 输出一行的结果</div><div class="line">        	close users;    -- 关闭游标</div><div class="line">        end</div><div class="line">        //</div><div class="line">delimiter ;</div><div class="line"></div><div class="line">call selectOneUser();  -- 调用存储过程，此时只是输出第一行的数据</div></pre></td></tr></table></figure>
+<ul>
+<li>使用循环获取所有的数据<ul>
+<li><strong>这里使用循环获取，首先需要使用<code>select count(*)</code>获取总数</strong></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">    create procedure selectUsers()</div><div class="line">        begin</div><div class="line">        	declare uname varchar(50);  -- 定义uname存储</div><div class="line">        	declare uage int;   -- 定义uage存储</div><div class="line">        	declare total int default 0;  -- 定义count，这个用来统计总数</div><div class="line">        	declare i int default 1;  -- 用来循环</div><div class="line">        	declare users cursor for select name,age from user; -- 声明游标</div><div class="line">        	select count(*) from user into total;   -- 查询总数</div><div class="line">        	open users;      -- 打开游标</div><div class="line">        	-- 开始循环遍历</div><div class="line">    		my_loop:while i&lt;=total do</div><div class="line">                set i=i+1;  -- i++</div><div class="line">                fetch users into uname,uage;  -- 获取一行数据到存储到uname和uage中</div><div class="line">                select uname as name,uage as age;    -- 输出一行的结果</div><div class="line">    		end while my_loop;</div><div class="line">        	close users;    -- 关闭游标</div><div class="line">        end</div><div class="line">        //</div><div class="line">delimiter ;</div><div class="line"></div><div class="line">call selectUsers();  -- 调用存储过程，获取全部数据</div></pre></td></tr></table></figure>
+<ul>
+<li>使用<code>HANDLER</code>判断游标是否还有元素<ul>
+<li><code>continue HANDLER for not found</code></li>
+<li>当游标中没有值的时候就会指定返回的值</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">    create procedure selectUsers()</div><div class="line">        begin</div><div class="line">        	declare uname varchar(50);  -- 定义uname存储</div><div class="line">        	declare uage int;   -- 定义uage存储</div><div class="line">        	declare flag int default 1;  -- 创建结束游标的标志，默认值为1</div><div class="line">        	declare users cursor for select name,age from user; -- 声明游标</div><div class="line">        	declare continue HANDLER for not found set flag=0;  -- 指定游标结束时的返回值</div><div class="line">        	open users;      -- 打开游标</div><div class="line">        	my_loop:loop</div><div class="line">        		if flag=0  -- 这里使用=，否则报错</div><div class="line">        			 then leave my_loop;  -- 跳出循环</div><div class="line">        		end if;</div><div class="line">        		fetch users into uname,uage;  -- 获取一行数据到存储到uname和uage中</div><div class="line">				select uname as name,uage as age;    -- 输出一行的结果</div><div class="line">        	end loop my_loop;</div><div class="line">        	close users;    -- 关闭游标</div><div class="line">        end</div><div class="line">        //</div><div class="line">delimiter ;</div></pre></td></tr></table></figure>
+<h2 id="存储过程和存储函数的区别"><a href="#存储过程和存储函数的区别" class="headerlink" title="存储过程和存储函数的区别"></a>存储过程和存储函数的区别</h2><ol>
+<li>存储函数可以使用<code>return</code>返回一个返回值，但是存储过程不能有返回值，如果需要实现返回的功能，可以使用<code>OUT</code>参数实现返回</li>
+<li>存储函数只能有输入参数，而且不能带in, 而存储过程可以有多个in,out,inout参数。</li>
+<li>存储过程中的语句功能更强大，存储过程可以实现很复杂的业务逻辑，而函数有很多限制，如不能在函数中使用<code>insert</code>,<code>update</code>,<code>delete</code>,<code>create</code>等语句；<strong>存储函数只完成查询的工作，可接受输入参数并返回一个结果，也就是函数实现的功能针对性比较强。</strong></li>
+<li><strong>存储过程可以调用存储函数。但函数不能调用存储过程。</strong></li>
+<li>存储过程一般是作为一个独立的部分来执行(call调用)。而函数可以作为查询语句的一个部分来调用。</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>存储过程中可以使用<code>call</code>调用其他的存储过程，但是不能使用<code>drop</code>语句删除其他的存储过程</li>
+<li><strong>存储过程的参数不要和数据库表的字段相同，否则将出现无法预料的结果</strong></li>
+</ol>
+<h2 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h2><ul>
+<li><a href="https://www.cnblogs.com/mark-chan/p/5384139.html" target="_blank" rel="external">https://www.cnblogs.com/mark-chan/p/5384139.html</a></li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+<p>​    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">	create function selectUserById()</div><div class="line">	returns varchar(50) </div><div class="line">	begin </div><div class="line">	declare uname varchar(50);</div><div class="line">	select name into uname from user where id=2;</div><div class="line">	return uname;</div><div class="line">	end</div><div class="line">	//</div><div class="line">	delimiter ;</div></pre></td></tr></table></figure>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/数据库干货篇/">数据库干货篇</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/SQL/">SQL</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/06/26/Mysql存储过程和存储函数/" data-title="Mysql存储过程和存储函数 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/06/26/MySQL中的锁/" title="MySQL中的锁">
+  <strong>上一篇：</strong><br/>
+  <span>
+  MySQL中的锁</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/06/26/并发编程之Callable、Future、FutureTask/"  title="并发编程之Callable、Future、FutureTask">
+ <strong>下一篇：</strong><br/> 
+ <span>并发编程之Callable、Future、FutureTask
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Mysql存储过程和存储函数"><span class="toc-number">1.</span> <span class="toc-text">Mysql存储过程和存储函数</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#存储过程的好处"><span class="toc-number">1.1.</span> <span class="toc-text">存储过程的好处</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存储函数"><span class="toc-number">1.2.</span> <span class="toc-text">存储函数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建存储函数"><span class="toc-number">1.2.1.</span> <span class="toc-text">创建存储函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#指定参数"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">指定参数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#调用存储函数"><span class="toc-number">1.2.2.</span> <span class="toc-text">调用存储函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除存储函数"><span class="toc-number">1.2.3.</span> <span class="toc-text">删除存储函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看存储函数状态"><span class="toc-number">1.2.4.</span> <span class="toc-text">查看存储函数状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看存储函数的定义"><span class="toc-number">1.2.5.</span> <span class="toc-text">查看存储函数的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改存储函数"><span class="toc-number">1.2.6.</span> <span class="toc-text">修改存储函数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#变量的使用"><span class="toc-number">1.3.</span> <span class="toc-text">变量的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义变量"><span class="toc-number">1.3.1.</span> <span class="toc-text">定义变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#定义用户变量"><span class="toc-number">1.3.2.</span> <span class="toc-text">定义用户变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#为变量赋值"><span class="toc-number">1.3.3.</span> <span class="toc-text">为变量赋值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例"><span class="toc-number">1.3.4.</span> <span class="toc-text">实例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#在存储函数中使用"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">在存储函数中使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#在存储过程中使用"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">在存储过程中使用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注释"><span class="toc-number">1.4.</span> <span class="toc-text">注释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#流程控制标签的使用"><span class="toc-number">1.5.</span> <span class="toc-text">流程控制标签的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IF-THEN-ELSEIF-ELSE-ENDIF"><span class="toc-number">1.5.1.</span> <span class="toc-text">IF - THEN - ELSEIF - ELSE -ENDIF</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CASE-WHEN-THEN-ELSE-END-CASE"><span class="toc-number">1.5.2.</span> <span class="toc-text">CASE - WHEN - THEN - ELSE - END CASE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LOOP-ENDLOOP"><span class="toc-number">1.5.3.</span> <span class="toc-text">LOOP - ENDLOOP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LEAVE"><span class="toc-number">1.5.4.</span> <span class="toc-text">LEAVE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ITERATE"><span class="toc-number">1.5.5.</span> <span class="toc-text">ITERATE</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#REPEAT"><span class="toc-number">1.5.6.</span> <span class="toc-text">REPEAT</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#WHILE"><span class="toc-number">1.5.7.</span> <span class="toc-text">WHILE</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存储过程"><span class="toc-number">1.6.</span> <span class="toc-text">存储过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建存储过程"><span class="toc-number">1.6.1.</span> <span class="toc-text">创建存储过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参数"><span class="toc-number">1.6.2.</span> <span class="toc-text">参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#过程体"><span class="toc-number">1.6.3.</span> <span class="toc-text">过程体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例-1"><span class="toc-number">1.6.4.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#调用存储过程"><span class="toc-number">1.6.5.</span> <span class="toc-text">调用存储过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看存储过程的状态"><span class="toc-number">1.6.6.</span> <span class="toc-text">查看存储过程的状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看存储过程的定义"><span class="toc-number">1.6.7.</span> <span class="toc-text">查看存储过程的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除存储过程"><span class="toc-number">1.6.8.</span> <span class="toc-text">删除存储过程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#游标cursor"><span class="toc-number">1.7.</span> <span class="toc-text">游标cursor</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#声明游标"><span class="toc-number">1.7.1.</span> <span class="toc-text">声明游标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#打开游标"><span class="toc-number">1.7.2.</span> <span class="toc-text">打开游标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用游标获取一行数据"><span class="toc-number">1.7.3.</span> <span class="toc-text">使用游标获取一行数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关闭游标"><span class="toc-number">1.7.4.</span> <span class="toc-text">关闭游标</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例-2"><span class="toc-number">1.7.5.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#存储过程和存储函数的区别"><span class="toc-number">1.8.</span> <span class="toc-text">存储过程和存储函数的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">1.9.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参考文章"><span class="toc-number">1.10.</span> <span class="toc-text">参考文章</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.11.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

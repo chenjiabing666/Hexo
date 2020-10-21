@@ -1,0 +1,1102 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>MongoDB使用总结 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="MongoDB使用总结数据库操作
+show dbs  : 显示所有的数据库
+use user  : 选择数据库user，如果这个数据库存在，那么就使用，不存在就新建，但是此时的数据库中根本不存在数据，因此使用show dbs不能显示该数据库
+db.dropDatabase()   : 删除数据库，其中的db表示当前数据库
+
+集合操作(表)
+在MongoDB中，数据库中的集合相当于SQL中的表，一个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB使用总结">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/06/26/MongoDB使用总结/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="MongoDB使用总结数据库操作
+show dbs  : 显示所有的数据库
+use user  : 选择数据库user，如果这个数据库存在，那么就使用，不存在就新建，但是此时的数据库中根本不存在数据，因此使用show dbs不能显示该数据库
+db.dropDatabase()   : 删除数据库，其中的db表示当前数据库
+
+集合操作(表)
+在MongoDB中，数据库中的集合相当于SQL中的表，一个">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:02:55.692Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MongoDB使用总结">
+<meta name="twitter:description" content="MongoDB使用总结数据库操作
+show dbs  : 显示所有的数据库
+use user  : 选择数据库user，如果这个数据库存在，那么就使用，不存在就新建，但是此时的数据库中根本不存在数据，因此使用show dbs不能显示该数据库
+db.dropDatabase()   : 删除数据库，其中的db表示当前数据库
+
+集合操作(表)
+在MongoDB中，数据库中的集合相当于SQL中的表，一个">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/06/26/MongoDB使用总结/" title="MongoDB使用总结" itemprop="url">MongoDB使用总结</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-06-26T14:43:56.000Z" itemprop="datePublished"> 发表于 2018-06-26</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MongoDB使用总结"><span class="toc-number">1.</span> <span class="toc-text">MongoDB使用总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#数据库操作"><span class="toc-number">1.1.</span> <span class="toc-text">数据库操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集合操作-表"><span class="toc-number">1.2.</span> <span class="toc-text">集合操作(表)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建集合"><span class="toc-number">1.2.1.</span> <span class="toc-text">创建集合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除集合"><span class="toc-number">1.2.2.</span> <span class="toc-text">删除集合</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文档操作"><span class="toc-number">1.3.</span> <span class="toc-text">文档操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#插入文档"><span class="toc-number">1.3.1.</span> <span class="toc-text">插入文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更新文档"><span class="toc-number">1.3.2.</span> <span class="toc-text">更新文档</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除文档"><span class="toc-number">1.3.3.</span> <span class="toc-text">删除文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查询文档"><span class="toc-number">1.3.4.</span> <span class="toc-text">查询文档</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#插入数据（准备）"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">插入数据（准备）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#查询全部"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">查询全部</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#指定显示字段"><span class="toc-number">1.3.4.3.</span> <span class="toc-text">指定显示字段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#指定查询条件"><span class="toc-number">1.3.4.4.</span> <span class="toc-text">指定查询条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AND条件"><span class="toc-number">1.3.4.5.</span> <span class="toc-text">AND条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#OR-条件"><span class="toc-number">1.3.4.6.</span> <span class="toc-text">OR 条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AND-和-OR-联合使用"><span class="toc-number">1.3.4.7.</span> <span class="toc-text">AND 和 OR 联合使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#条件操作符"><span class="toc-number">1.3.4.8.</span> <span class="toc-text">条件操作符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#实例-1"><span class="toc-number">1.3.4.8.1.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#limit"><span class="toc-number">1.3.4.9.</span> <span class="toc-text">limit</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#skip"><span class="toc-number">1.3.4.10.</span> <span class="toc-text">skip</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#分页查询"><span class="toc-number">1.3.4.11.</span> <span class="toc-text">分页查询</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sort-排序"><span class="toc-number">1.3.4.12.</span> <span class="toc-text">sort 排序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#limit，skip，sort执行顺序"><span class="toc-number">1.3.4.13.</span> <span class="toc-text">limit，skip，sort执行顺序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#in"><span class="toc-number">1.3.4.14.</span> <span class="toc-text">$in</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#nin"><span class="toc-number">1.3.4.15.</span> <span class="toc-text">$nin</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#exists"><span class="toc-number">1.3.4.16.</span> <span class="toc-text">$exists</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#slice"><span class="toc-number">1.3.4.17.</span> <span class="toc-text">slice</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#count"><span class="toc-number">1.3.4.18.</span> <span class="toc-text">count</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#索引"><span class="toc-number">1.4.</span> <span class="toc-text">索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#聚合"><span class="toc-number">1.5.</span> <span class="toc-text">聚合</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的聚合"><span class="toc-number">1.5.1.</span> <span class="toc-text">常用的聚合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#管道"><span class="toc-number">1.5.2.</span> <span class="toc-text">管道</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#math"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">$math</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#limit-1"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">$limit</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sort"><span class="toc-number">1.5.2.3.</span> <span class="toc-text">$sort</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#总结"><span class="toc-number">1.5.2.4.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="MongoDB使用总结"><a href="#MongoDB使用总结" class="headerlink" title="MongoDB使用总结"></a>MongoDB使用总结</h1><h2 id="数据库操作"><a href="#数据库操作" class="headerlink" title="数据库操作"></a>数据库操作</h2><ul>
+<li><code>show dbs</code>  : 显示所有的数据库</li>
+<li><code>use user</code>  : 选择数据库<code>user</code>，如果这个数据库存在，那么就使用，不存在就新建，但是此时的数据库中根本不存在数据，因此使用<code>show dbs</code>不能显示该数据库</li>
+<li><code>db.dropDatabase()</code>   : 删除数据库，其中的<code>db</code>表示当前数据库</li>
+</ul>
+<h2 id="集合操作-表"><a href="#集合操作-表" class="headerlink" title="集合操作(表)"></a>集合操作(表)</h2><ul>
+<li>在MongoDB中，数据库中的集合相当于SQL中的表，一个数据库中可以存在多个集合，每一个集合都是一个JSON文档形式的存储</li>
+<li><code>show tables</code>  : 显示所有的集合</li>
+<li><code>show collections</code> : 显示所有的集合</li>
+</ul>
+<h3 id="创建集合"><a href="#创建集合" class="headerlink" title="创建集合"></a>创建集合</h3><ul>
+<li><code>db.createCollection(name, options)</code></li>
+<li><a href="http://www.runoob.com/mongodb/mongodb-create-collection.html" target="_blank" rel="external">文档</a></li>
+</ul>
+<h3 id="删除集合"><a href="#删除集合" class="headerlink" title="删除集合"></a>删除集合</h3><ul>
+<li><code>db.collection.drop()</code><ul>
+<li><code>db.user.drop()</code> : 删除<code>user</code>集合</li>
+</ul>
+</li>
+</ul>
+<h2 id="文档操作"><a href="#文档操作" class="headerlink" title="文档操作"></a>文档操作</h2><ul>
+<li>一个集合中可以包含多条文档，一个文档就相当于SQL中的一条数据，这里的文档是JSON格式的文档</li>
+</ul>
+<h3 id="插入文档"><a href="#插入文档" class="headerlink" title="插入文档"></a>插入文档</h3><ul>
+<li><p><code>db.collectionName.insert(JSON)</code> </p>
+<ul>
+<li><code>db.user.insert({name:&quot;陈加兵&quot;,age:22})</code>  : 向user集合中插入一条文档，如果这个<code>user</code>集合不存在，那么就会新建一个，这个方法默认会为我们插入一个<code>_id</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="更新文档"><a href="#更新文档" class="headerlink" title="更新文档"></a>更新文档</h3><p>update() 方法用于更新已存在的文档。语法格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">db.collection.update(</div><div class="line">   &lt;query&gt;,</div><div class="line">   &lt;update&gt;,</div><div class="line">   &#123;</div><div class="line">     upsert: &lt;boolean&gt;,</div><div class="line">     multi: &lt;boolean&gt;,</div><div class="line">     writeConcern: &lt;document&gt;</div><div class="line">   &#125;</div><div class="line">)</div></pre></td></tr></table></figure>
+<p><strong>参数说明：</strong></p>
+<ul>
+<li><strong>query</strong> : update的查询条件，类似sql update查询内where后面的。</li>
+<li><strong>update</strong> : update的对象和一些更新的操作符（如$,​$inc…）等，也可以理解为sql update查询内set后面的</li>
+<li><strong>upsert</strong> : 可选，这个参数的意思是，如果不存在update的记录，是否插入objNew,true为插入，默认是false，不插入。</li>
+<li><strong>multi</strong> : 可选，mongodb 默认是false,只更新找到的第一条记录，如果这个参数为true,就把按条件查出来多条记录全部更新。</li>
+<li><strong>writeConcern</strong> :可选，抛出异常的级别。 </li>
+</ul>
+<h4 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h4><ul>
+<li><code>db.user.update({name:&quot;jack&quot;},{$set:{name:&quot;tom&quot;}})</code>  ：相当于sql语句中的<code>update user set name=&quot;tom&quot; where name=&quot;jack&quot;</code>,不过这里默认只是更新一条</li>
+<li><code>db.user.update({name:&quot;陈加兵&quot;},{$set:{name:&quot;郑元梅&quot;}},{multi:true})</code>    ： 更新所有的数据</li>
+<li><code>db.user.update({name:&quot;陈加兵&quot;},{$set:{name:&quot;郑元梅&quot;}},{upsert:true})</code>  : 更新数据，如果不存在就插入</li>
+<li><strong>这里的query条件也是可以使用逻辑比较的，比如<code>age&gt;12</code>，后续在讲到查询文档的时候会详细描述</strong></li>
+</ul>
+<h3 id="删除文档"><a href="#删除文档" class="headerlink" title="删除文档"></a>删除文档</h3><ul>
+<li>删除格式，默认是删除多条，但是我们可以设置<code>justone : true</code>或者<code>justone：1</code>即可删除一条数据</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">db.collection.remove(</div><div class="line">   &lt;query&gt;,</div><div class="line">   &#123;</div><div class="line">     justOne: &lt;boolean&gt;,</div><div class="line">     writeConcern: &lt;document&gt;</div><div class="line">   &#125;</div><div class="line">)</div></pre></td></tr></table></figure>
+<ul>
+<li><code>db.user.remove({name:&quot;陈加兵&quot;})</code>  : 删除全部<code>name=陈加兵</code>的文档</li>
+<li><code>db.user.remove({})</code> : 删除集合user中的全部文档</li>
+<li><code>db.user.remove({})</code>  : 删除全部文档，因为这里没有条件</li>
+<li><code>db.user.remove({name:&quot;陈加兵&quot;},{justone:true})</code> : 只删除一条文档</li>
+</ul>
+<h3 id="查询文档"><a href="#查询文档" class="headerlink" title="查询文档"></a>查询文档</h3><ul>
+<li><p><code>db.collection.findOne(query,projection)</code>  ： 只显示满足条件的一条文档</p>
+</li>
+<li><p>格式：<code>db.collection.find(query,projection)</code>  ： 查询满足条件的全部文档</p>
+<ul>
+<li><code>query</code> ：可选， 查询的条件，相当于where子句</li>
+<li><code>projection</code>： 可选，使用投影操作符指定返回的键。查询时返回文档中所有键值， 只需省略该参数即可（默认省略）</li>
+</ul>
+</li>
+</ul>
+<h4 id="插入数据（准备）"><a href="#插入数据（准备）" class="headerlink" title="插入数据（准备）"></a>插入数据（准备）</h4><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">db.user.insert(&#123;name:"Jack",age:22&#125;)</div><div class="line">db.user.insert(&#123;name:"Tom",age:40&#125;)</div><div class="line">db.user.insert(&#123;name:"Mary",age:25&#125;)</div><div class="line">db.user.insert(&#123;name:"Lucy",age:22&#125;)</div></pre></td></tr></table></figure>
+<h4 id="查询全部"><a href="#查询全部" class="headerlink" title="查询全部"></a>查询全部</h4><ul>
+<li><code>db.user.find().pretty()</code> ： 这里没有指定查询条件，那么就是查询全部</li>
+</ul>
+<h4 id="指定显示字段"><a href="#指定显示字段" class="headerlink" title="指定显示字段"></a>指定显示字段</h4><ul>
+<li>默认显示全部的字段，但是我们可以指定<code>projection</code>来显示指定的字段</li>
+<li><code>inclusion模式</code>，指定返回的键，比如<code>db.user.find({},{name:1})</code>,这里只会显示<code>_id</code>和<code>name</code>这两个字段，其他的字段都是不会显示的</li>
+<li><code>exclusion模式</code>，指定不反回的键，比如<code>db.user.find({},{name:0})</code> : 这里只会显示<code>age</code>和<code>_id</code>,只有<code>name</code>不显示</li>
+<li><strong>两种模式不可以混用，比如<code>db.user.find({},{name:1,age:0})</code> ,这个是不可以的</strong></li>
+</ul>
+<h4 id="指定查询条件"><a href="#指定查询条件" class="headerlink" title="指定查询条件"></a>指定查询条件</h4><ul>
+<li><code>db.user.find({name:&quot;Jack&quot;})</code>   ： 查询<code>name=Jack</code>的全部文档内容</li>
+<li><code>db.user.find({name:&quot;Jack&quot;},{name:0})</code>  : 不显示<code>name</code>字段</li>
+</ul>
+<h4 id="AND条件"><a href="#AND条件" class="headerlink" title="AND条件"></a>AND条件</h4><ul>
+<li><code>db.user.find({name:&quot;Jack&quot;,age:22})</code>  ： 查询<code>name=Jack并且age=22</code>的文档信息</li>
+<li><code>db.user.find({$and:[{expression1},{expression2},{experssion3},......]})</code><ul>
+<li><code>db.user.find({$and:[{name:&quot;Jack&quot;},{age:22}]})</code> : 和上面一样的效果</li>
+</ul>
+</li>
+</ul>
+<h4 id="OR-条件"><a href="#OR-条件" class="headerlink" title="OR 条件"></a>OR 条件</h4><ul>
+<li><code>db.user.find({$or:[{expression1},{expression2},{expression3}......]})</code><ul>
+<li><code>db.user.find({$or:[{name:&quot;Jack&quot;},{age:25}]})</code>  : 查找<code>name=Jack或者age=25</code>的文档信息</li>
+</ul>
+</li>
+</ul>
+<h4 id="AND-和-OR-联合使用"><a href="#AND-和-OR-联合使用" class="headerlink" title="AND 和 OR 联合使用"></a>AND 和 OR 联合使用</h4><ul>
+<li><code>db.user.find({name:&quot;Jack&quot;,$or:[{_id:1},{age:22}]})</code> : 查找<code>name=Jack and (_id=1 or age=22)</code></li>
+</ul>
+<h4 id="条件操作符"><a href="#条件操作符" class="headerlink" title="条件操作符"></a>条件操作符</h4><ul>
+<li><code>(&gt;) 大于 - $gt</code></li>
+<li><code>(&lt;) 小于 - $lt</code></li>
+<li><code>(&gt;=) 大于等于 - $gte</code></li>
+<li><code>(&lt;= ) 小于等于 - $lte</code></li>
+<li><code>(!=) 不等于  - $ne</code></li>
+</ul>
+<h5 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a>实例</h5><ul>
+<li><code>db.user.find({age:{$gt:22}})</code>  : 查找 <code>age&gt;22</code>的信息</li>
+<li><code>db.user.find({age:{$gte:22},name:&quot;Jack&quot;})</code>  : 查找<code>age&gt;=22 and name=Jack</code>的信息</li>
+</ul>
+<h4 id="limit"><a href="#limit" class="headerlink" title="limit"></a>limit</h4><ul>
+<li>指定显示记录的条数</li>
+<li><code>db.user.find().limit(2)</code> : 只显示两条记录</li>
+<li><code>db.user.find({name:&quot;Jack&quot;}).limit(2)</code></li>
+</ul>
+<h4 id="skip"><a href="#skip" class="headerlink" title="skip"></a>skip</h4><ul>
+<li>跳过的条数</li>
+<li><code>db.user.find().skip(10)</code> : 跳过前面的十条记录，显示后面的</li>
+</ul>
+<h4 id="分页查询"><a href="#分页查询" class="headerlink" title="分页查询"></a>分页查询</h4><ul>
+<li>显示第三页，每页显示10条信息，相当于SQL中的<code>select * from user limit 20,5</code><ul>
+<li><code>db.user.find().skip(20).limit(5)</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="sort-排序"><a href="#sort-排序" class="headerlink" title="sort 排序"></a>sort 排序</h4><ul>
+<li>在MongoDB中使用使用<code>sort()</code>方法对数据进行排序，sort()方法可以通过参数指定排序的字段，并使用 1 和 -1 来指定排序的方式，其中<code>1</code> 为升序排列，而<code>-1</code>是用于降序排列。</li>
+<li><code>db.collection.find().sort({key:1})</code>  </li>
+<li><code>db.user.find().sort({age:-1})</code>   : 按照<code>age</code>降序排列</li>
+<li><code>db.user.find({},{name:1,age:1}).sort({age:-1,name:1})</code>  : 按照name升序，age降序排列</li>
+</ul>
+<h4 id="limit，skip，sort执行顺序"><a href="#limit，skip，sort执行顺序" class="headerlink" title="limit，skip，sort执行顺序"></a>limit，skip，sort执行顺序</h4><ul>
+<li>执行顺序为：<code>sort()</code> — &gt; <code>skip()</code>  —-&gt; <code>limit()</code>  ,这个相当于SQL中的<code>select * from name where group by  having order by limit m,n</code> 这种顺序一样</li>
+</ul>
+<h4 id="in"><a href="#in" class="headerlink" title="$in"></a>$in</h4><ul>
+<li>表示一个数据在多个数据中，类似于SQL中的<code>in</code></li>
+<li><code>db.user.find({age:{$in:[22,33,44]}})</code>  : 查找<code>age in (22,33,44)之中的任意一个</code></li>
+</ul>
+<h4 id="nin"><a href="#nin" class="headerlink" title="$nin"></a>$nin</h4><ul>
+<li>相当于SQL中的<code>not in</code></li>
+<li><code>db.user.find({age:{$nin:[22,33,44]}})</code></li>
+</ul>
+<h4 id="exists"><a href="#exists" class="headerlink" title="$exists"></a>$exists</h4><ul>
+<li>表示不存在 </li>
+<li><code>db.user.find({sex:{$exists:false}})</code>  : 查找不存在<code>sex</code>这个字段的文档</li>
+</ul>
+<h4 id="slice"><a href="#slice" class="headerlink" title="slice"></a>slice</h4><blockquote>
+<p><strong>$slice操作符控制查询返回的数组中元素的个数。此操作符根据参数{ field: value } 指定键名和键值选择出文档集合，并且该文档集合中指定array键将返回从指定数量的元素。如果count的值大于数组中元素的数量，该查询返回数组中的所有元素的。</strong></p>
+<p><strong>语法：db.collection.find( { field: value }, { array: {$slice: count }});</strong></p>
+<ul>
+<li><strong>下面将查询grades中的前两个数</strong></li>
+</ul>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;name:&apos;jack&apos;&#125;,&#123;grades:&#123;$slice:2&#125;,name:1,age:1,&apos;school.name&apos;:1&#125;);</div><div class="line"></div><div class="line">//输出，可以看出这里的grades只输出了前面两个</div><div class="line"></div><div class="line">&#123; &quot;_id&quot; : ObjectId(&quot;59057c16f551d8c9003d31df&quot;), &quot;name&quot; : &quot;jack&quot;, &quot;age&quot; : 22, &quot;grades&quot; : [ 22, 33 ], &quot;school&quot; : &#123; &quot;name&quot; : &quot;shida&quot; &#125; &#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li><strong>下面将输出后3个数据</strong></li>
+</ul>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;name:&apos;jhon&apos;&#125;,&#123;grades:&#123;$slice:-3&#125;,name:1&#125;);</div><div class="line"></div><div class="line">//输出</div><div class="line">&#123; &quot;_id&quot; : ObjectId(&quot;59057c16f551d8c9003d31e0&quot;), &quot;name&quot; : &quot;jhon&quot;, &quot;grades&quot; : [ 22, 44, 88 ] &#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<ul>
+<li><strong>下面介绍指定一个数组作为参数。数组参数使用[ skip , limit ] 格式，其中第一个值表示在数组中跳过的项目数,第二个值表示返回的项目数。</strong></li>
+</ul>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">db.user.find(&#123;name:&apos;jack&apos;&#125;,&#123;grades:&#123;$slice:[2,2]&#125;,name:1&#125;);  //这里将会跳过前面的两个，直接得到后面的两个数据</div><div class="line"></div><div class="line"></div><div class="line">//输出</div><div class="line"></div><div class="line">&#123; &quot;_id&quot; : ObjectId(&quot;59057c16f551d8c9003d31df&quot;), &quot;name&quot; : &quot;jack&quot;, &quot;grades&quot; : [ 44, 55 ] &#125;</div></pre></td></tr></table></figure>
+<h4 id="count"><a href="#count" class="headerlink" title="count"></a>count</h4><ul>
+<li>统计数量</li>
+<li><code>db.user.find().count()</code>  : 统计全部的数量</li>
+<li><code>db.user.find({name:&quot;Jack&quot;}).count()</code>  : 统计<code>name=Jack</code>的人数</li>
+</ul>
+<h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><ul>
+<li><p><code>db.collection.ensureIndex({key1:1})</code> : 创建索引，其中的<code>key</code>的值如果为1表示按照升序创建索引，-1表示降序创建索引</p>
+<ul>
+<li><code>db.user.ensureIndex({name:1})</code> ： 单个索引</li>
+<li><code>db.user.ensureIndex({name:1,age:-1})</code>  : 复合索引</li>
+</ul>
+</li>
+<li><code>ensureIndex()</code> 接收可选参数，可选参数列表如下：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>background</td>
+<td>Boolean</td>
+<td>建索引过程会阻塞其它数据库操作，background可指定以后台方式创建索引，即增加 “background” 可选参数。 “background” 默认值为<strong>false</strong>。</td>
+</tr>
+<tr>
+<td>unique</td>
+<td>Boolean</td>
+<td>建立的索引是否唯一。指定为true创建唯一索引。默认值为<strong>false</strong>.</td>
+</tr>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>索引的名称。如果未指定，MongoDB的通过连接索引的字段名和排序顺序生成一个索引名称。</td>
+</tr>
+<tr>
+<td>dropDups</td>
+<td>Boolean</td>
+<td>在建立唯一索引时是否删除重复记录,指定 true 创建唯一索引。默认值为 <strong>false</strong>.</td>
+</tr>
+<tr>
+<td>sparse</td>
+<td>Boolean</td>
+<td>对文档中不存在的字段数据不启用索引；这个参数需要特别注意，如果设置为true的话，在索引字段中不会查询出不包含对应字段的文档.。默认值为 <strong>false</strong>.</td>
+</tr>
+<tr>
+<td>expireAfterSeconds</td>
+<td>integer</td>
+<td>指定一个以秒为单位的数值，完成 TTL设定，设定集合的生存时间。</td>
+</tr>
+<tr>
+<td>v</td>
+<td>index version</td>
+<td>索引的版本号。默认的索引版本取决于mongod创建索引时运行的版本。</td>
+</tr>
+<tr>
+<td>weights</td>
+<td>document</td>
+<td>索引权重值，数值在 1 到 99,999 之间，表示该索引相对于其他索引字段的得分权重。</td>
+</tr>
+<tr>
+<td>default_language</td>
+<td>string</td>
+<td>对于文本索引，该参数决定了停用词及词干和词器的规则的列表。 默认为英语</td>
+</tr>
+<tr>
+<td>language_override</td>
+<td>string</td>
+<td>对于文本索引，该参数指定了包含在文档中的字段名，语言覆盖默认的language，默认值为 language.</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><code>db.user.ensureIndex({age:1},{background:true})</code>  : 在后台创建索引</li>
+</ul>
+<h2 id="聚合"><a href="#聚合" class="headerlink" title="聚合"></a>聚合</h2><ul>
+<li><p><a href="https://blog.csdn.net/congcong68/article/details/51619882" target="_blank" rel="external">参考文章</a></p>
+</li>
+<li><p><code>db.collection.aggregate(pipeline,options)</code></p>
+<ul>
+<li><code>db.user.aggregate([{$group:{_id:null,count:{$sum:1}}}])</code> : 查询总数，相当于<code>select count(*) from user</code>,这里的聚合函数<code>$sum</code>表示求和，可以使用<code>$</code>引用集合中的字段，也可以直接使用数字，这里填写<code>1</code>就表示查询到一条记录就加一，那么最后显示的就是总数了。<ul>
+<li><strong><code>_id</code> : 表示需要分组的字段，如果为<code>null</code>表示不分组</strong></li>
+</ul>
+</li>
+<li><code>db.user.aggregate([{$group:{_id:&quot;$name&quot;,sum_age:{$sum:&quot;$age&quot;}}}])</code> : 根据字段<code>name</code>分组,对字段<code>age</code>求和，输入如下</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&#123; <span class="attr">"_id"</span> : <span class="string">"Mary"</span>, <span class="attr">"sum_age"</span> : <span class="number">75</span> &#125;</div><div class="line">&#123; <span class="attr">"_id"</span> : <span class="string">"Jack"</span>, <span class="attr">"sum_age"</span> : <span class="number">66</span> &#125;</div><div class="line">&#123; <span class="attr">"_id"</span> : <span class="string">"zhengyunamei"</span>, <span class="attr">"sum_age"</span> : <span class="number">0</span> &#125;</div><div class="line">&#123; <span class="attr">"_id"</span> : <span class="string">"Tom"</span>, <span class="attr">"sum_age"</span> : <span class="number">120</span> &#125;</div><div class="line">&#123; <span class="attr">"_id"</span> : <span class="string">"陈加兵"</span>, <span class="attr">"sum_age"</span> : <span class="number">22</span> &#125;</div><div class="line">&#123; <span class="attr">"_id"</span> : <span class="string">"Lucy"</span>, <span class="attr">"sum_age"</span> : <span class="number">66</span> &#125;</div><div class="line">&#123; <span class="attr">"_id"</span> : <span class="string">"郑元梅"</span>, <span class="attr">"sum_age"</span> : <span class="number">22</span> &#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><code>db.user.aggregate([{$group:{_id:null,max_age:{$max:&quot;$age&quot;}}}])</code>  : 求出年龄最大的人信息</p>
+</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&#123; <span class="attr">"_id"</span> : <span class="literal">null</span>, <span class="attr">"max_age"</span> : <span class="number">40</span> &#125;</div></pre></td></tr></table></figure>
+<h3 id="常用的聚合"><a href="#常用的聚合" class="headerlink" title="常用的聚合"></a>常用的聚合</h3><table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>描述</th>
+<th>实例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$sum</td>
+<td>计算总和。</td>
+<td>db.mycol.aggregate([{$group : {_id : “$by_user”, num_tutorial : {$sum : “$likes”}}}])</td>
+</tr>
+<tr>
+<td>$avg</td>
+<td>计算平均值</td>
+<td>db.mycol.aggregate([{$group : {_id : “$by_user”, num_tutorial : {$avg : “$likes”}}}])</td>
+</tr>
+<tr>
+<td>$min</td>
+<td>获取集合中所有文档对应值得最小值。</td>
+<td>db.mycol.aggregate([{$group : {_id : “$by_user”, num_tutorial : {$min : “$likes”}}}])</td>
+</tr>
+<tr>
+<td>$max</td>
+<td>获取集合中所有文档对应值得最大值。</td>
+<td>db.mycol.aggregate([{$group : {_id : “$by_user”, num_tutorial : {$max : “$likes”}}}])</td>
+</tr>
+<tr>
+<td>$push</td>
+<td>在结果文档中插入值到一个数组中。</td>
+<td>db.mycol.aggregate([{$group : {_id : “$by_user”, url : {$push: “$url”}}}])</td>
+</tr>
+<tr>
+<td>$addToSet</td>
+<td>在结果文档中插入值到一个数组中，但不创建副本。</td>
+<td>db.mycol.aggregate([{$group : {_id : “$by_user”, url : {$addToSet : “$url”}}}])</td>
+</tr>
+<tr>
+<td>$first</td>
+<td>根据资源文档的排序获取第一个文档数据。</td>
+<td>db.mycol.aggregate([{$group : {_id : “$by_user”, first_url : {$first : “$url”}}}])</td>
+</tr>
+<tr>
+<td>$last</td>
+<td>根据资源文档的排序获取最后一个文档数据</td>
+<td>db.mycol.aggregate([{$group : {_id : “$by_user”, last_url : {$last : “$url”}}}])</td>
+</tr>
+</tbody>
+</table>
+<h3 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h3><p>管道在Unix和Linux中一般用于将当前命令的输出结果作为下一个命令的参数。</p>
+<p>MongoDB的聚合管道将MongoDB文档在一个管道处理完毕后将结果传递给下一个管道处理。管道操作是可以重复的。</p>
+<p>表达式：处理输入文档并输出。表达式是无状态的，只能用于计算当前聚合管道的文档，不能处理其它的文档。</p>
+<p>这里我们介绍一下聚合框架中常用的几个操作：</p>
+<ul>
+<li><code>$project</code>：修改输入文档的结构。可以用来重命名、增加或删除域，也可以用于创建计算结果以及嵌套文档。</li>
+<li><code>$match</code>：用于过滤数据，只输出符合条件的文档。$match使用MongoDB的标准查询操作。</li>
+<li><code>$limit</code>：用来限制MongoDB聚合管道返回的文档数。</li>
+<li><code>$skip</code>：在聚合管道中跳过指定数量的文档，并返回余下的文档。</li>
+<li><code>$unwind</code>：将文档中的某一个数组类型字段拆分成多条，每条包含数组中的一个值。</li>
+<li><code>$group</code>：将集合中的文档分组，可用于统计结果。</li>
+<li><code>$sort</code>：将输入文档排序后输出。</li>
+<li><code>$geoNear</code>：输出接近某一地理位置的有序文档。</li>
+</ul>
+<h4 id="math"><a href="#math" class="headerlink" title="$math"></a>$math</h4><ul>
+<li>这个相当于where语句，用来过滤文档的</li>
+<li><strong>这个位置是非常重要的，如果在<code>$group</code>之前就是<code>where子句</code>，如果在之后，那么相当于`having子句</strong>`</li>
+<li><code>db.user.aggregate([{$match:{name:&quot;Jack&quot;}},{$group:{_id:null,count:{$sum:1}}}])</code> ： 统计<code>name=Jack</code>的人数<ul>
+<li>这个命令相当于SQL中的<code>select count(*) from user where name=&quot;Jack&quot;</code></li>
+<li>我们可以使用<code>db.user.find({name:&quot;Jack&quot;}).count()</code>同样可以查询、</li>
+</ul>
+</li>
+<li><code>db.user.aggregate([{$match:{age:{$gt:20}}},{$group:{_id:&quot;$name&quot;,sum_age:{$sum:&quot;$age&quot;}}}])</code><ul>
+<li>相当于SQL中的<code>select _id,sum(age) as sum_age from user where age&gt;20 group by name</code></li>
+</ul>
+</li>
+<li><code>db.user.aggregate([{$group:{_id:&quot;$name&quot;,sum_age:{$sum:&quot;$age&quot;}}},{$match:{sum_age:{$gte:75}}}])</code><ul>
+<li><code>select _id,sum(age) as sum_age from user group by name having sum_age&gt;=75</code></li>
+</ul>
+</li>
+<li><code>db.user.aggregate([{$match:{name:&quot;Tom&quot;}},{$group:{_id:&quot;$name&quot;,sum_age:{$sum:&quot;$age&quot;}}},{$match:{sum_age:{$gte:75}}}])</code><ul>
+<li><code>select _id,sum(age) as sum_age from user where name=&quot;Tom&quot; group by name having sum_age&gt;=75</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="limit-1"><a href="#limit-1" class="headerlink" title="$limit"></a>$limit</h4><ul>
+<li>控制显示的条数，因为使用聚合之后，不能再使用<code>limit()</code>方法来限制</li>
+<li><code>db.user.aggregate([{$group:{_id:&quot;$name&quot;,sum_age:{$sum:&quot;$age&quot;}}},{$limit:1}])</code> ： 根据姓名分组之后显示一条数据<ul>
+<li>相当于 <code>select _id,sum(age) as sum_age from user group by name limit 0,1</code></li>
+</ul>
+</li>
+<li><code>db.user.aggregate([{$match:{name:&quot;Tom&quot;}},{$group:{_id:&quot;$name&quot;,sum_age:{$sum:&quot;$age&quot;}}},{$match:{sum_age:{$gte:75}}},{$skip:0},{$limit:1}])</code><ul>
+<li><code>select _id ,sum(age) as sum_age from user where name=&quot;Tom&quot; group by name having age&gt;=75 limit 0,1</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="sort"><a href="#sort" class="headerlink" title="$sort"></a>$sort</h4><ul>
+<li>排序输出</li>
+<li><code>db.collection.aggregate([{},{},{},......,{$sort:{key:1}}])</code> </li>
+<li><code>db.user.aggregate([{$match:{name:&quot;Tom&quot;}},{$group:{_id:&quot;$name&quot;,sum_age:{sum:&quot;age&quot;}}},{$match:{sum_age:{$gte:75}}},{$sort:{sum_age:1}},{$skip:0},{$limit:1}])</code><ul>
+<li><code>select _id ,sum(age) as sum_age from user where name=&quot;Tom&quot; group by name having age&gt;=75 order by sum_age asc limit 0,1</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><ul>
+<li>常用的格式： <code>db.collection.aggregate([{$match:{key:value,...},{$group:{_id:value,..}},{$match:{key:value,....}},{$sort:{key:1,key2:-1}},{$skip:num},{$limit:num}])</code><ul>
+<li>对应SQL中的语句为：<code>select _id,key1,key2 from collection where group by order by limit n,m</code></li>
+</ul>
+</li>
+</ul>
+<p> 笔者有话说</p>
+<ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/数据库干货篇/">数据库干货篇</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/MongoDB/">MongoDB</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/06/26/MongoDB使用总结/" data-title="MongoDB使用总结 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/06/26/并发编程之三大性质/" title="并发编程之三大性质">
+  <strong>上一篇：</strong><br/>
+  <span>
+  并发编程之三大性质</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/06/26/Git使用总结/"  title="Git使用总结">
+ <strong>下一篇：</strong><br/> 
+ <span>Git使用总结
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MongoDB使用总结"><span class="toc-number">1.</span> <span class="toc-text">MongoDB使用总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#数据库操作"><span class="toc-number">1.1.</span> <span class="toc-text">数据库操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#集合操作-表"><span class="toc-number">1.2.</span> <span class="toc-text">集合操作(表)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建集合"><span class="toc-number">1.2.1.</span> <span class="toc-text">创建集合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除集合"><span class="toc-number">1.2.2.</span> <span class="toc-text">删除集合</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文档操作"><span class="toc-number">1.3.</span> <span class="toc-text">文档操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#插入文档"><span class="toc-number">1.3.1.</span> <span class="toc-text">插入文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#更新文档"><span class="toc-number">1.3.2.</span> <span class="toc-text">更新文档</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#实例"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#删除文档"><span class="toc-number">1.3.3.</span> <span class="toc-text">删除文档</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查询文档"><span class="toc-number">1.3.4.</span> <span class="toc-text">查询文档</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#插入数据（准备）"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">插入数据（准备）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#查询全部"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">查询全部</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#指定显示字段"><span class="toc-number">1.3.4.3.</span> <span class="toc-text">指定显示字段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#指定查询条件"><span class="toc-number">1.3.4.4.</span> <span class="toc-text">指定查询条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AND条件"><span class="toc-number">1.3.4.5.</span> <span class="toc-text">AND条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#OR-条件"><span class="toc-number">1.3.4.6.</span> <span class="toc-text">OR 条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AND-和-OR-联合使用"><span class="toc-number">1.3.4.7.</span> <span class="toc-text">AND 和 OR 联合使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#条件操作符"><span class="toc-number">1.3.4.8.</span> <span class="toc-text">条件操作符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#实例-1"><span class="toc-number">1.3.4.8.1.</span> <span class="toc-text">实例</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#limit"><span class="toc-number">1.3.4.9.</span> <span class="toc-text">limit</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#skip"><span class="toc-number">1.3.4.10.</span> <span class="toc-text">skip</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#分页查询"><span class="toc-number">1.3.4.11.</span> <span class="toc-text">分页查询</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sort-排序"><span class="toc-number">1.3.4.12.</span> <span class="toc-text">sort 排序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#limit，skip，sort执行顺序"><span class="toc-number">1.3.4.13.</span> <span class="toc-text">limit，skip，sort执行顺序</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#in"><span class="toc-number">1.3.4.14.</span> <span class="toc-text">$in</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#nin"><span class="toc-number">1.3.4.15.</span> <span class="toc-text">$nin</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#exists"><span class="toc-number">1.3.4.16.</span> <span class="toc-text">$exists</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#slice"><span class="toc-number">1.3.4.17.</span> <span class="toc-text">slice</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#count"><span class="toc-number">1.3.4.18.</span> <span class="toc-text">count</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#索引"><span class="toc-number">1.4.</span> <span class="toc-text">索引</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#聚合"><span class="toc-number">1.5.</span> <span class="toc-text">聚合</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用的聚合"><span class="toc-number">1.5.1.</span> <span class="toc-text">常用的聚合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#管道"><span class="toc-number">1.5.2.</span> <span class="toc-text">管道</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#math"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">$math</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#limit-1"><span class="toc-number">1.5.2.2.</span> <span class="toc-text">$limit</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#sort"><span class="toc-number">1.5.2.3.</span> <span class="toc-text">$sort</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#总结"><span class="toc-number">1.5.2.4.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>

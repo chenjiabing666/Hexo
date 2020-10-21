@@ -1,0 +1,817 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+  
+    <title>MySQL触发器 | 爱撒谎的男孩</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="不才陈某">
+    
+
+    
+    <meta name="description" content="MySQL触发器定义
+MySQL的触发器和存储过程一样，都是嵌入到MysQL中的一段程序，不过触发器不要调用，而是由事件触发的，这些事件包括insert，update，delete语句，如果定义了触发程序，当数据执行这些语句的时候就会激发触发器执行相应的操作。
+
+创建触发器创建一行执行语句的触发器
+格式：create trigger trigger_name trigger_time trigge">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL触发器">
+<meta property="og:url" content="http://chenjiabing666.github.io/2018/06/26/MySQL触发器/index.html">
+<meta property="og:site_name" content="爱撒谎的男孩">
+<meta property="og:description" content="MySQL触发器定义
+MySQL的触发器和存储过程一样，都是嵌入到MysQL中的一段程序，不过触发器不要调用，而是由事件触发的，这些事件包括insert，update，delete语句，如果定义了触发程序，当数据执行这些语句的时候就会激发触发器执行相应的操作。
+
+创建触发器创建一行执行语句的触发器
+格式：create trigger trigger_name trigger_time trigge">
+<meta property="og:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+<meta property="og:updated_time" content="2020-03-13T06:05:12.441Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySQL触发器">
+<meta name="twitter:description" content="MySQL触发器定义
+MySQL的触发器和存储过程一样，都是嵌入到MysQL中的一段程序，不过触发器不要调用，而是由事件触发的，这些事件包括insert，update，delete语句，如果定义了触发程序，当数据执行这些语句的时候就会激发触发器执行相应的操作。
+
+创建触发器创建一行执行语句的触发器
+格式：create trigger trigger_name trigger_time trigge">
+<meta name="twitter:image" content="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg">
+
+    
+    <link rel="alternative" href="/atom.xml" title="爱撒谎的男孩" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/avatar.jpg" alt="爱撒谎的男孩" title="爱撒谎的男孩"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="爱撒谎的男孩">爱撒谎的男孩</a></h1>
+				<h2 class="blog-motto">微信公众号：码猿技术专栏</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives/">归档</a></li>
+					
+						<li><a href="/about/">关于我</a></li>
+					
+					<li>
+ 					
+						<form class="search" action="https://chenjiabing666.github.io/search" target="_blank">
+							<label>Search</label>
+						<input name="s" type="hidden" value= 14509119671822170000 ><input type="text" name="q" size="30" placeholder="搜索"><br>
+						</form>
+					
+					</li>
+				</ul>
+			</nav>	
+			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/06/26/MySQL触发器/" title="MySQL触发器" itemprop="url">MySQL触发器</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="不才陈某" target="_blank" itemprop="author">不才陈某</a>
+		
+  <p class="article-time">
+    <time datetime="2018-06-26T14:58:57.000Z" itemprop="datePublished"> 发表于 2018-06-26</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MySQL触发器"><span class="toc-number">1.</span> <span class="toc-text">MySQL触发器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#定义"><span class="toc-number">1.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建触发器"><span class="toc-number">1.2.</span> <span class="toc-text">创建触发器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建一行执行语句的触发器"><span class="toc-number">1.2.1.</span> <span class="toc-text">创建一行执行语句的触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建多行执行语句的触发器"><span class="toc-number">1.2.2.</span> <span class="toc-text">创建多行执行语句的触发器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查看触发器"><span class="toc-number">1.3.</span> <span class="toc-text">查看触发器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#查看所有触发器"><span class="toc-number">1.3.1.</span> <span class="toc-text">查看所有触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看指定的触发器"><span class="toc-number">1.3.2.</span> <span class="toc-text">查看指定的触发器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#删除触发器"><span class="toc-number">1.4.</span> <span class="toc-text">删除触发器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#触发器执行的顺序"><span class="toc-number">1.5.</span> <span class="toc-text">触发器执行的顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NEW-和-OLD"><span class="toc-number">1.6.</span> <span class="toc-text">NEW 和 OLD</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用方式"><span class="toc-number">1.6.1.</span> <span class="toc-text">使用方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#注意"><span class="toc-number">1.6.2.</span> <span class="toc-text">注意</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.7.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h1 id="MySQL触发器"><a href="#MySQL触发器" class="headerlink" title="MySQL触发器"></a>MySQL触发器</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><ul>
+<li>MySQL的触发器和存储过程一样，都是嵌入到MysQL中的一段程序，不过触发器不要调用，而是由事件触发的，这些事件包括<code>insert</code>，<code>update</code>，<code>delete</code>语句，如果定义了触发程序，当数据执行这些语句的时候就会激发触发器执行相应的操作。</li>
+</ul>
+<h2 id="创建触发器"><a href="#创建触发器" class="headerlink" title="创建触发器"></a>创建触发器</h2><h3 id="创建一行执行语句的触发器"><a href="#创建一行执行语句的触发器" class="headerlink" title="创建一行执行语句的触发器"></a>创建一行执行语句的触发器</h3><ul>
+<li>格式：<code>create trigger trigger_name trigger_time trigger_event on table for each row trigger_stmt</code><ul>
+<li><code>trigger_name</code> ：触发器的名字</li>
+<li><code>trigger_time</code>： 触发器触发的时机，取值为<code>before</code>，<code>after</code><ul>
+<li><code>before</code>：表示在激发触发器的语句执行之前执行触发器的执行语句</li>
+<li><code>after</code>：表示在激发触发器的语句执行之后执行触发器的执行语句</li>
+</ul>
+</li>
+<li><code>trigger_event</code>：触发事件，取值为<code>insert</code>，<code>update</code>，<code>delete</code><ul>
+<li><code>insert</code> ：比如Mysql中的<code>insert</code>和<code>replace</code>语句就会触发这个事件</li>
+<li><code>update</code>：更新某一行的数据会激发这个事件，比如<code>update</code>语句</li>
+<li><code>delete</code>：删除某一行的时候激发触发器，可能通过<code>delete</code>或者<code>replace</code>语句激发</li>
+</ul>
+</li>
+<li><code>table</code>：标识建立触发器的表名，即是当那张表发生了<code>insert</code>，<code>update</code>，<code>delete</code>事件激发触发器</li>
+<li><code>trigger_stmt</code>：触发器执行的语句<ul>
+<li>执行语句中不能返回结果集</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>实例：<ul>
+<li><code>new.age</code>：获取新插入的字段<code>age</code>的值</li>
+<li><code>new.name</code> ： 获取新插入的<code>name</code>字段的值</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">-- 创建user表</div><div class="line">create table user(id int primary key auto_increment,name varchar(10),age int); </div><div class="line"></div><div class="line">-- 设置用户变量@sum，用于统计年龄</div><div class="line">set @sum=0;  </div><div class="line"></div><div class="line">-- 插入数据,将会在插入数据之前激发触发器，执行触发器中定义的语句，计算出插入的年龄总和赋值给@sum</div><div class="line">insert into user(name,age) values(&quot;Jack&quot;,22),(&quot;Tom&quot;,33);</div><div class="line"></div><div class="line">-- 创建触发器，insert事件，在user表插入数据之前执行语句，其中的new.age是获取插入的每一行的age字段的值</div><div class="line">create trigger sum before  insert on user for each row set @sum=@sum+new.age;</div></pre></td></tr></table></figure>
+<h3 id="创建多行执行语句的触发器"><a href="#创建多行执行语句的触发器" class="headerlink" title="创建多行执行语句的触发器"></a>创建多行执行语句的触发器</h3><ul>
+<li>格式：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">delimiter //</div><div class="line">	create trigger trigger_name trigger_time trigger_event on table for each row</div><div class="line">		begin</div><div class="line">			-- 语句执行列表</div><div class="line">		end </div><div class="line">		//</div><div class="line">delimiter ;</div></pre></td></tr></table></figure>
+<ul>
+<li>实例<ul>
+<li>如果修改的名字和已经存在的重复，那么就设置异常（主键冲突）取消后面的更新语句，不过这个一定要使用<code>before</code>的触发时间</li>
+<li><strong><code>new.name</code> : 表示修改之后的<code>name</code>字段的值，如果没有修改，那么和之前的一样</strong></li>
+<li><strong><code>old.name</code> ：表示修改之前的<code>name</code>字段的值</strong></li>
+<li><strong>触发器不能撤销后面的操作，如果想要撤销操作可以制造异常，那么后面的语句就不会执行了，如下面的程序制造了主键冲突的异常</strong></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">-- 创建user表</div><div class="line">create table user(id int primary key auto_increment,name varchar(10),age int);</div><div class="line"></div><div class="line">-- 创建触发器</div><div class="line">delimiter //</div><div class="line">	create trigger testUpdate before update on user for each row </div><div class="line">		begin</div><div class="line">			declare total int default 0;  -- 创建一个total变量，统计数量</div><div class="line">			select count(*) from user where name=new.name into total;  -- 根据修改之后的name查询出数量赋值给total</div><div class="line">			if old.name!=new.name&amp;&amp;total!=0  -- count!=0并且确实修改了名字表示修改的名字重复</div><div class="line">				then set new.id=1;   -- 名字重复导致主键冲突抛出异常，这样后续的语句就不会执行了</div><div class="line">			end if;</div><div class="line">		end</div><div class="line">		//</div><div class="line">delimiter ;</div></pre></td></tr></table></figure>
+<h2 id="查看触发器"><a href="#查看触发器" class="headerlink" title="查看触发器"></a>查看触发器</h2><h3 id="查看所有触发器"><a href="#查看所有触发器" class="headerlink" title="查看所有触发器"></a>查看所有触发器</h3><ul>
+<li><code>show triggers [from database]</code>  ： 查看当前数据的所有的触发器 <ul>
+<li><code>show triggers from test \G</code> : 查看<code>test</code>数据库中的所有触发器</li>
+<li><code>show triggers \G</code> ： 有条理的显示所有触发器</li>
+</ul>
+</li>
+</ul>
+<h3 id="查看指定的触发器"><a href="#查看指定的触发器" class="headerlink" title="查看指定的触发器"></a>查看指定的触发器</h3><ul>
+<li>如果需要查看指定的触发器，那么可以从<code>information_schema</code>数据库中的<code>triggers</code>表中查询指定的触发器<ul>
+<li><code>select * from information_schema.triggers where trigger_name=&quot;testUpdate&quot;\G</code> <ul>
+<li><code>where</code>后面是条件</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="删除触发器"><a href="#删除触发器" class="headerlink" title="删除触发器"></a>删除触发器</h2><ul>
+<li><code>drop db.trigger_name</code> : 删除指定数据库中的触发器<ul>
+<li><code>db</code> ：数据库的名字</li>
+<li><code>trigger_name</code> ：触发器的名字</li>
+</ul>
+</li>
+</ul>
+<h2 id="触发器执行的顺序"><a href="#触发器执行的顺序" class="headerlink" title="触发器执行的顺序"></a>触发器执行的顺序</h2><ul>
+<li>我们建立的数据库一般都是<code>InnoDB</code>数据库，其上建立的表是事务性表，也就是事务安全的。这时，若SQL语句或触发器执行失败，MySQL 会回滚事务，有：<ul>
+<li>如果 BEFORE 触发器执行失败，SQL 无法正确执行。</li>
+<li>SQL 执行失败时，AFTER 型触发器不会触发。</li>
+<li>AFTER 类型的触发器执行失败，SQL 会回滚。</li>
+</ul>
+</li>
+</ul>
+<h2 id="NEW-和-OLD"><a href="#NEW-和-OLD" class="headerlink" title="NEW 和 OLD"></a>NEW 和 OLD</h2><ul>
+<li>在<code>INSERT</code> 型触发器中，<code>NEW</code>用来表示将要（<code>BEFORE</code>）或已经（<code>AFTER</code>）插入的新数据；</li>
+<li>在<code>UPDATE</code>型触发器中，<code>OLD</code> 用来表示将要或已经被修改的原数据，<code>NEW</code> 用来表示将要或已经修改为的新数据；</li>
+<li>在 <code>DELETE</code>型触发器中，<code>OLD</code> 用来表示将要或已经被删除的原数据；</li>
+</ul>
+<h3 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h3><ul>
+<li><code>NEW/OLD.columName</code> : 比如获取更新后的<code>name</code>字段的值<ul>
+<li><code>new.name</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h3><ul>
+<li><code>OLD</code> 是只读的，不可以使用<code>set</code>修改</li>
+<li><code>new</code>是可以修改的，我们可以在触发器中使用<code>set</code>语句修改</li>
+</ul>
+<h2 id="笔者有话说"><a href="#笔者有话说" class="headerlink" title="笔者有话说"></a>笔者有话说</h2><ul>
+<li>最近建了一个微信交流群，提供给大家一个交流的平台，扫描下方笔者的微信二维码，备注【交流】，我会把大家拉进群</li>
+</ul>
+<p><img src="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20200310211704.jpg" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/数据库干货篇/">数据库干货篇</a>
+</div>
+
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/SQL/">SQL</a>
+  </div>
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://chenjiabing666.github.io/2018/06/26/MySQL触发器/" data-title="MySQL触发器 | 爱撒谎的男孩" data-tsina="5651317821" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2018/06/26/MySQL性能优化/" title="MySQL性能优化">
+  <strong>上一篇：</strong><br/>
+  <span>
+  MySQL性能优化</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2018/06/26/MySQL中的锁/"  title="MySQL中的锁">
+ <strong>下一篇：</strong><br/> 
+ <span>MySQL中的锁
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+<section id="comments" class="comment">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MySQL触发器"><span class="toc-number">1.</span> <span class="toc-text">MySQL触发器</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#定义"><span class="toc-number">1.1.</span> <span class="toc-text">定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建触发器"><span class="toc-number">1.2.</span> <span class="toc-text">创建触发器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建一行执行语句的触发器"><span class="toc-number">1.2.1.</span> <span class="toc-text">创建一行执行语句的触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建多行执行语句的触发器"><span class="toc-number">1.2.2.</span> <span class="toc-text">创建多行执行语句的触发器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#查看触发器"><span class="toc-number">1.3.</span> <span class="toc-text">查看触发器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#查看所有触发器"><span class="toc-number">1.3.1.</span> <span class="toc-text">查看所有触发器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#查看指定的触发器"><span class="toc-number">1.3.2.</span> <span class="toc-text">查看指定的触发器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#删除触发器"><span class="toc-number">1.4.</span> <span class="toc-text">删除触发器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#触发器执行的顺序"><span class="toc-number">1.5.</span> <span class="toc-text">触发器执行的顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#NEW-和-OLD"><span class="toc-number">1.6.</span> <span class="toc-text">NEW 和 OLD</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用方式"><span class="toc-number">1.6.1.</span> <span class="toc-text">使用方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#注意"><span class="toc-number">1.6.2.</span> <span class="toc-text">注意</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#笔者有话说"><span class="toc-number">1.7.</span> <span class="toc-text">笔者有话说</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+		  
+			<li><a href="/categories/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Java-Web/" title="Java-Web">Java-Web<sup>1</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Nginx/" title="Nginx">Nginx<sup>2</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/docker/" title="docker">docker<sup>4</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java学习/" title="java学习">java学习<sup>35</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/java并发编程/" title="java并发编程">java并发编程<sup>13</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/python/" title="python">python<sup>19</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据库干货篇/" title="数据库干货篇">数据库干货篇<sup>20</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>8</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+		  
+		
+		  
+			<li><a href="/categories/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+		  
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			
+				<li><a href="/tags/Spring/" title="Spring">Spring<sup>39</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/杂谈/" title="杂谈">杂谈<sup>22</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java基础/" title="java基础">java基础<sup>21</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/python爬虫/" title="python爬虫">python爬虫<sup>18</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java并发编程/" title="java并发编程">java并发编程<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SpringBoot/" title="SpringBoot">SpringBoot<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/SQL/" title="SQL">SQL<sup>16</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/分布式/" title="分布式">分布式<sup>14</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Struts2/" title="Struts2">Struts2<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Hibernate/" title="Hibernate">Hibernate<sup>12</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/数据结构与算法/" title="数据结构与算法">数据结构与算法<sup>10</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/设计模式/" title="设计模式">设计模式<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/java-IO编程/" title="java IO编程">java IO编程<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Elasticsearch/" title="Elasticsearch">Elasticsearch<sup>9</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Redis/" title="Redis">Redis<sup>8</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MyBatis/" title="MyBatis">MyBatis<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/web前端/" title="web前端">web前端<sup>7</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/MongoDB/" title="MongoDB">MongoDB<sup>5</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/docker/" title="docker">docker<sup>4</sup></a></li>
+			
+		
+			
+				<li><a href="/tags/Linux/" title="Linux">Linux<sup>3</sup></a></li>
+			
+		
+		</ul>
+</div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://gitee.com/chenjiabing666/Blog-file/raw/master/%E4%B8%83%E7%A7%92%E7%BC%96%E7%A8%8B.jpg" target="_blank" title="微信公众号">微信公众号</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://coderq.com" target="_blank" title="一个面向程序员交流分享的新一代社区">码农圈</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://www.zhihu.com/people/xiao-ming-64-34-45/activities" target="_blank" title="本人知乎">本人知乎</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/Chenjiabing/" target="_blank" title="本人博客园">本人博客园</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://blog.csdn.net/qq_34162294" target="_blank" title="本人CSDN">本人CSDN</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://juejin.im/user/2506542244708072" target="_blank" title="本人掘金">本人掘金</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> 欢迎关注微信公众号：码猿技术专栏 <br/>
+			This is my blog,believe it or not.</p>
+	</section>
+	 
+	 <script type="text/javascript">(function(){document.write(unescape('%3Cdiv id="bdcs"%3E%3C/div%3E'));var bdcs = document.createElement('script');bdcs.type = 'text/javascript';bdcs.async = true;bdcs.src = 'http://znsv.baidu.com/customer_search/api/js?sid=14509119671822169205' + '&plate_url=' + encodeURIComponent(window.location.href) + '&t=' + Math.ceil(new Date()/3600000);var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(bdcs, s);})();</script>
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/5651317821" target="_blank" class="icon-weibo" title="微博"></a>
+		
+		
+		<a href="https://github.com/chenjiabing666" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		<a href="https://www.douban.com/people/155022807" target="_blank" class="icon-douban" title="豆瓣"></a>
+		
+		
+		<a href="http://www.zhihu.com/people/https://www.zhihu.com/people/xiao-ming-64-34-45" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2020 
+		
+		<a href="/about" target="_blank" title="不才陈某">不才陈某</a>
+		
+		
+		</p>
+		
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    $('#toc.toc-aside').css('display', 'block').addClass('fadeIn');//新加的，打开文章时自动隐藏左边的栏
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+        getSize();
+        if (myWidth >= 1024) {
+          c.click();
+        }
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+<script type="text/javascript">
+
+var disqus_shortname = 'chenjiabing666';
+
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+(function(){
+  var dsq = document.createElement('script');
+  dsq.type = 'text/javascript';
+  dsq.async = true;
+  dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+  (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+}());
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'null', 'null');  
+ga('send', 'pageview');
+</script>
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1261577779'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s23.cnzz.com/z_stat.php%3Fid%3D1261577779' type='text/javascript'%3E%3C/script%3E"));</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+    <script type="text/javascript" src="/js/src/love.js"></script>
+
+  </body>
+  
+  <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+</html>
